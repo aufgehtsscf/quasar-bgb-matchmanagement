@@ -26,7 +26,7 @@
 
   <div class="q-pa-md" style="max-width: 500px">
     <q-toolbar class="bg-primary text-white">
-      <q-toolbar-title>
+      <q-toolbar-title class="text-h6">
         {{ txtMatchName }}
       </q-toolbar-title>
     </q-toolbar>
@@ -35,14 +35,14 @@
   <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
 
     <div class="q-gutter-y-md column" style="max-width: 470px">
-      <q-input dark outlined v-model="txtMatchAnnotations"
-        type="textarea"  :readonly="true">
+      <q-input dark outlined class="text-overline" v-model="txtMatchAnnotations"
+        type="textarea" :readonly="true">
       </q-input>
     </div>
 
     <div class="q-pa-md" style="max-width: 470px">
-      <q-toolbar class="bg-primary text-white">
-        Anwesend, Ankunft, Notiz
+      <q-toolbar class="bg-primary text-overline">
+          Anwesend, Ankunft, Notiz
       </q-toolbar>
     </div>
 
@@ -59,7 +59,7 @@
     </q-list>
 
     <div class="q-pa-md" style="max-width: 470px">
-    <q-toolbar class="bg-primary text-white">
+    <q-toolbar class="bg-primary text-overline">
         Karte weitergegeben oder bedarf (Karte hat dabei)
     </q-toolbar>
   </div>

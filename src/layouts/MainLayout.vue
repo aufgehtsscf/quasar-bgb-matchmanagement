@@ -12,7 +12,7 @@
         />
       </q-toolbar>
       <div class="q-px-lg q-pt-xl q-mb-md">
-        <div class="text-h3">BGB Spieltagsplanung</div>
+        <div class="text-h4">BGB Spieltagsplanung</div>
         <div class="text-subtitle1">{{ todaysDate }}</div>
       </div>
       <q-img src="statics/BGBLow.jpg" class="header-image absolute-top" />
