@@ -33,7 +33,7 @@
   <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
 
     <div class="q-gutter-y-md column" style="max-width: 470px">
-      <q-input dark outlined v-model="txtMatchAnnotations"
+      <q-input dark outlined v-model="txtAnnotationsMatch"
         type="textarea" :readonly="true">
       </q-input>
     </div>
@@ -72,6 +72,46 @@
         </q-item-section>
       </q-item>
     </q-list>
+
+    <div class="q-pa-md q-gutter-sm">
+      <q-dialog v-model="deleteParticipant" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="delete" color="primary" text-color="white" />
+            <span class="q-ml-sm">Datensatz löschen?</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Nein" color="primary" v-close-popup />
+            <q-btn flat label="Ja" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="editParticipant" persistent>
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h6">Teilnahme ändern</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-input dense v-model="txtParticipant" autofocus />
+            <q-select v-model="txtAction" :options="txtActionOptions" label="Aktion" />
+            <q-select v-model="txtArrival" :options="txtArrivalOptions" label="Ankunft" />
+            <q-input class="text-italic" dense v-model="txtReaction" :readonly="true" />
+            <q-input dense v-model="txtAnnotationsParticipant" />
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions class="text-primary">
+            <q-btn icon="delete" label="Löschen" color="primary" @click="deleteParticipant = true" />
+            <q-btn flat label="Abbrechen" v-close-popup />
+            <q-btn icon="save" label="Speichern" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+    </div>
   </div>
 
   <q-img src="statics/BGB.jpg" class="header-image absolute-top" />
@@ -100,7 +140,18 @@ export default {
   setup () {
     return {
       txtMatchName: ref(_constMatchName),
-      txtMatchAnnotations: ref(_constAnnotationsMatch)
+      txtAnnotationsMatch: ref(_constAnnotationsMatch),
+
+      alert: ref(false),
+      deleteParticipant: ref(false),
+      editParticipant: ref(false),
+
+      txtParticipant: ref(_constParticipant),
+      txtArrival: ref(_constArrival),
+      txtAnnotationsParticipant: ref(_constAnnotationsParticipant),
+      txtAction: ref(_constAction),
+      txtActionOptions: ['bin dabei', 'brauche Karte', 'meine Karte ist frei'],
+      txtReaction: ref(_constReaction)
     }
   },
 
@@ -211,6 +262,8 @@ export default {
       _constAnnotationsParticipant.value = _annotations
       _constAction.value = _action
       _constReaction.value = _reaction
+
+      this.editParticipant = true
     },
 
     getTableParticipant (_matchName, _time, _annotationsMatch) {
