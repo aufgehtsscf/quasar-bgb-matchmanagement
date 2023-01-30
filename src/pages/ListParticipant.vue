@@ -51,6 +51,7 @@
         <q-item-section>
           <q-item-label overline>{{ participantParticipant[i] }}</q-item-label>
           <q-item-label caption>{{ participantArrival[i] }}</q-item-label>
+          <q-item-label caption v-if="participantReaction[i]">habe Karte von {{ participantReaction[i] }}</q-item-label>
           <q-item-label caption>{{ participantAnnotations[i] }}</q-item-label>
         </q-item-section>
       </q-item>
@@ -261,7 +262,11 @@ export default {
       _constArrival.value = _arrival
       _constAnnotationsParticipant.value = _annotations
       _constAction.value = _action
-      _constReaction.value = _reaction
+      if (_reaction !== '') {
+        _constReaction.value = 'habe Karte von ' + _reaction
+      } else {
+        _constReaction.value = _reaction
+      }
 
       this.editParticipant = true
     },
@@ -302,13 +307,13 @@ export default {
                     if (this.reservation !== '') {
                       this.reservation += ', '
                     }
-                    this.reservation += this.participantParticipant[index + 1]
+                    this.reservation += this.participantParticipant[index + 1].trim()
                   } else {
                     this.reservation += ''
                   }
                   break
                 case 5:
-                  this.participantAnnotations[index + 1] = element[index2]
+                  this.participantAnnotations[index + 1] = element[index2].replace(/§§§/g, ' / ')
                   break
                 case 6:
                   this.participantAction[index + 1] = element[index2]
@@ -325,7 +330,7 @@ export default {
           if (this.reservation !== '') {
             this.reservation += ','
           }
-          _constAnnotationsMatch.value = _annotationsMatch.replace('§§§', '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substr(0, 2) - 2) + ':' + _time.substr(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
+          _constAnnotationsMatch.value = _annotationsMatch.replace(/§§§/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substr(0, 2) - 2) + ':' + _time.substr(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
         })
         .catch((err) => {
           console.log(err)

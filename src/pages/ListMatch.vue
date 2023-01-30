@@ -17,6 +17,7 @@
           <q-item-label overline>{{ match[i] }}</q-item-label>
           <q-item-label caption>{{ date[i] }} - {{ time[i] }}</q-item-label>
           <q-item-label caption>{{ txtPublished[i] }}</q-item-label>
+          <q-item-label caption>{{ annotations[i] }}</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
@@ -97,7 +98,7 @@ export default {
                   this.time[index + 1] = element[index2].substr(0, 5)
                   break
                 case 5:
-                  this.annotations[index + 1] = element[index2]
+                  this.annotations[index + 1] = element[index2].replace(/§§§/g, ' / ')
                   break
                 case 6:
                   this.date[index + 1] = element[index2]
