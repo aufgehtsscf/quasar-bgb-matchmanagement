@@ -40,7 +40,10 @@
 
     <div class="q-pa-md" style="max-width: 470px">
       <q-toolbar class="bg-primary text-white">
+        <q-toolbar-title>
           Anwesend, Ankunft, Notiz
+        </q-toolbar-title>
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" />
       </q-toolbar>
     </div>
 
@@ -59,7 +62,9 @@
 
     <div class="q-pa-md" style="max-width: 470px">
     <q-toolbar class="bg-primary text-white">
-        Karte weitergegeben oder bedarf (Karte hat dabei)
+      <q-toolbar-title>
+        Karte weitergegeben oder bedarf
+      </q-toolbar-title>
     </q-toolbar>
   </div>
 
@@ -85,6 +90,28 @@
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
             <q-btn flat label="Ja" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="addParticipant" persistent>
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h6">Teilnahme ändern</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-input dense v-model="txtParticipantNew" autofocus label="Name" />
+            <q-select v-model="txtActionNew" :options="cbxActionOptions" label="Aktion" />
+            <q-select v-model="txtArrivalNew" :options="cbxArrivalOptions" label="Ankunft" />
+            <q-input dense v-model="txtAnnotationsParticipantNew"  label="Kommentar"/>
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions class="text-primary" align="right">
+            <q-btn flat label="Abbrechen" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtTime, txtAnnotationsMatchOriginal)"  v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -149,6 +176,7 @@ export default {
       cbxArrivalOptions: ref(_constArrivalElements),
 
       deleteParticipant: ref(false),
+      addParticipant: ref(false),
       editParticipant: ref(false),
 
       intParticipantPosition: ref(_constPosition),
@@ -157,7 +185,12 @@ export default {
       txtAnnotationsParticipant: ref(_constAnnotationsParticipant),
       txtAction: ref(_constAction),
       cbxActionOptions: ['bin dabei', 'brauche Karte', 'meine Karte ist frei'],
-      txtReaction: ref(_constReaction)
+      txtReaction: ref(_constReaction),
+
+      txtParticipantNew: ref(''),
+      txtArrivalNew: ref(''),
+      txtAnnotationsParticipantNew: ref(''),
+      txtActionNew: ref('')
     }
   },
 
@@ -165,6 +198,7 @@ export default {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbxnei8jcKTw_SBb0Qr5k5Z4KgEzxDGQERJD4YDoOND0CRw9cOCIU5Xv7ciyG_EBkO8uXA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
       URLParticipant: 'https://script.google.com/macros/s/AKfycbyGo9ysE4UNyuwgQNgW_IbNEUwQzoEDfDfk1lXG37pCqIriOWbKKqpOB3AgC8PdA1JAFA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
+      URLParticipantNew: 'https://docs.google.com/forms/d/e/1FAIpQLSdMIFLm68GqFVDdW-s9EiescjDx7AfkTSzOE28IgG65Gx5myQ/formResponse',
 
       matchIndex: [],
       matchPosition: [],
@@ -282,6 +316,24 @@ export default {
       }
 
       this.editParticipant = true
+    },
+
+    addParticipantSave (_participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
+      console.log('addParticipantSave: ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+
+      if (_participant !== '') {
+        this.$axios(`${this.URLParticipantNew}?entry.1340026337=${encodeURI(_matchName)}&entry.1408155791=${encodeURI(_participant.replace(',', ' '))}&entry.2086717190=${_arrival}&entry.641659827=${encodeURI(_annotations.replace(',', ';'))}&entry.442709721=${_action}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.loadReloadData(_matchName, _time, _annotationsMatch)
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        alert('Name ist erforderlich')
+      }
     },
 
     editParticipantSave (_position, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
