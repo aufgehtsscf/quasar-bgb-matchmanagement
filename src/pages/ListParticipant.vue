@@ -190,7 +190,7 @@ export default {
       txtParticipantNew: ref(''),
       txtArrivalNew: ref(''),
       txtAnnotationsParticipantNew: ref(''),
-      txtActionNew: ref('')
+      txtActionNew: ref('bin dabei')
     }
   },
 
