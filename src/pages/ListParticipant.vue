@@ -96,11 +96,11 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtParticipant" autofocus />
+            <q-input dense v-model="txtParticipant" autofocus label="Name" />
             <q-select v-model="txtAction" :options="cbxActionOptions" label="Aktion" />
             <q-select v-model="txtArrival" :options="cbxArrivalOptions" label="Ankunft" />
             <q-input class="text-italic" dense v-model="txtReaction" :readonly="true" />
-            <q-input dense v-model="txtAnnotationsParticipant" />
+            <q-input dense v-model="txtAnnotationsParticipant"  label="Kommentar"/>
           </q-card-section>
 
           <q-separator />
@@ -108,7 +108,7 @@
           <q-card-actions class="text-primary">
             <q-btn icon="delete" label="Löschen" color="primary" @click="deleteParticipant = true" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatch)"  v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)"  v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -124,6 +124,7 @@ import { ref } from 'vue'
 
 const _constMatch = ref('')
 const _constTime = ref('')
+const _constAnnotationsMatchOriginal = ref('')
 const _constAnnotationsMatch = ref('')
 const _constDate = ref('')
 const _constMatchName = ref('')
@@ -143,6 +144,7 @@ export default {
     return {
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
+      txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
       cbxArrivalOptions: ref(_constArrivalElements),
 
@@ -295,6 +297,8 @@ export default {
           .catch((err) => {
             console.log(err)
           })
+      } else {
+        alert('Name ist erforderlich')
       }
     },
 
@@ -357,6 +361,7 @@ export default {
           if (this.reservation !== '') {
             this.reservation += ','
           }
+          _constAnnotationsMatchOriginal.value = _annotationsMatch
           _constAnnotationsMatch.value = _annotationsMatch.replace(/§§§/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substr(0, 2) - 2) + ':' + _time.substr(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
         })
         .catch((err) => {
@@ -427,6 +432,17 @@ export default {
       for (let index = 0; index <= 8; index++) {
         const _minutes = parseInt(minuteInterval * index)
         switch (minute) {
+          case '00':
+            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':00'
+            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':15'
+            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':30'
+            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
+            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
+            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
+            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
+            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
+            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
+            break
           case '15':
             if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':15'
             if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':30'
@@ -461,15 +477,6 @@ export default {
             if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':45'
             break
           default:
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':00'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':15'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':30'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
-            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
-            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
-            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
-            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
-            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
             break
         }
       }
