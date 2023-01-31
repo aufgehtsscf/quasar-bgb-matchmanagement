@@ -40,9 +40,7 @@
 
     <div class="q-pa-md" style="max-width: 470px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>
-          Anwesend, Ankunft, Notiz
-        </q-toolbar-title>
+        <q-toolbar-title class="text-overline">Anwesend (Ankunft)</q-toolbar-title>
         <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" />
       </q-toolbar>
     </div>
@@ -62,9 +60,7 @@
 
     <div class="q-pa-md" style="max-width: 470px">
     <q-toolbar class="bg-primary text-white">
-      <q-toolbar-title>
-        Karte weitergegeben oder bedarf
-      </q-toolbar-title>
+        <q-toolbar-title class="text-overline">Karte weitergegeben oder bedarf</q-toolbar-title>
     </q-toolbar>
   </div>
 
@@ -135,7 +131,7 @@
           <q-card-actions class="text-primary">
             <q-btn icon="delete" label="Löschen" color="primary" @click="deleteParticipant = true" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)"  v-close-popup />
+            <q-btn label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)"  v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
