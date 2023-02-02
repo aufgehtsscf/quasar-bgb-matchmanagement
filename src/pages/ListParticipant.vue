@@ -33,7 +33,7 @@
   <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
 
     <div class="q-gutter-y-md column" style="max-width: 470px">
-      <q-input dark outlined v-model="txtAnnotationsMatch"
+      <q-input dark outlined v-model="txtAnnotationsMatch" input-class="text-overline"
         type="textarea" :readonly="true">
       </q-input>
     </div>
