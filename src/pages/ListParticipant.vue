@@ -76,20 +76,6 @@
     </q-list>
 
     <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="deleteParticipant" persistent>
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="delete" color="primary" text-color="white" />
-            <span class="q-ml-sm">Datensatz löschen?</span>
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-
       <q-dialog v-model="addParticipant" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
@@ -128,10 +114,9 @@
 
           <q-separator />
 
-          <q-card-actions class="text-primary">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="deleteParticipant = true" />
+          <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)"  v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)"  v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -171,7 +156,6 @@ export default {
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
       cbxArrivalOptions: ref(_constArrivalElements),
 
-      deleteParticipant: ref(false),
       addParticipant: ref(false),
       editParticipant: ref(false),
 
