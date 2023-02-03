@@ -76,6 +76,20 @@
     </q-list>
 
     <div class="q-pa-md q-gutter-sm">
+      <q-dialog v-model="deleteParticipant" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="delete" color="primary" text-color="white" />
+            <span class="q-ml-sm">Datensatz löschen?</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Nein" color="primary" v-close-popup />
+            <q-btn flat label="Ja" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <q-dialog v-model="addParticipant" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
@@ -93,7 +107,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtTime, txtAnnotationsMatchOriginal)"  v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -115,6 +129,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
+            <q-btn icon="delete" label="Löschen" color="primary" @click="deleteParticipant = true" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)"  v-close-popup />
           </q-card-actions>
@@ -158,6 +173,7 @@ export default {
 
       addParticipant: ref(false),
       editParticipant: ref(false),
+      deleteParticipant: ref(false),
 
       intParticipantPosition: ref(_constPosition),
       txtParticipant: ref(_constParticipant),
@@ -177,8 +193,7 @@ export default {
   data () {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbxnei8jcKTw_SBb0Qr5k5Z4KgEzxDGQERJD4YDoOND0CRw9cOCIU5Xv7ciyG_EBkO8uXA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
-      URLParticipant: 'https://script.google.com/macros/s/AKfycbyGo9ysE4UNyuwgQNgW_IbNEUwQzoEDfDfk1lXG37pCqIriOWbKKqpOB3AgC8PdA1JAFA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
-      URLParticipantNew: 'https://docs.google.com/forms/d/e/1FAIpQLSdMIFLm68GqFVDdW-s9EiescjDx7AfkTSzOE28IgG65Gx5myQ/formResponse',
+      URLParticipant: 'https://script.google.com/macros/s/AKfycbzsIFP8MNp6ks3LWGVIZj6rV0eETzGsAqHJ8yl-43qVrwESQ_cmyGtIeh189DQHBUN_-w/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
 
       matchIndex: [],
       matchPosition: [],
@@ -302,7 +317,7 @@ export default {
       console.log('addParticipantSave: ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_participant !== '') {
-        this.$axios(`${this.URLParticipantNew}?entry.1340026337=${encodeURI(_matchName)}&entry.1408155791=${encodeURI(_participant.replace(',', ' '))}&entry.2086717190=${_arrival}&entry.641659827=${encodeURI(_annotations.replace(',', ';'))}&entry.442709721=${_action}`)
+        this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}&reaction=`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.loadReloadData(_matchName, _time, _annotationsMatch)
