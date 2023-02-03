@@ -129,9 +129,9 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="deleteParticipant = true" />
+            <q-btn icon="delete" label="Löschen" color="primary" @click="deleteParticipant = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)"  v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -165,6 +165,8 @@ export default {
 
   setup () {
     return {
+      IsAdministrator: ref(false),
+
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
