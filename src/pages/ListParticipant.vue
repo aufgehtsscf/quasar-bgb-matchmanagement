@@ -76,7 +76,7 @@
     </q-list>
 
     <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="deleteParticipant" persistent>
+      <q-dialog v-model="delParticipant" persistent>
         <q-card>
           <q-card-section class="row items-center">
             <q-avatar icon="delete" color="primary" text-color="white" />
@@ -85,7 +85,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteParticipant()" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(intParticipantPosition, txtReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -129,7 +129,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="deleteParticipant = true" v-if="IsAdministrator" />
+            <q-btn icon="delete" label="Löschen" color="primary" @click="delParticipant = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
@@ -165,7 +165,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
@@ -175,7 +175,7 @@ export default {
 
       addParticipant: ref(false),
       editParticipant: ref(false),
-      deleteParticipant: ref(false),
+      delParticipant: ref(false),
 
       intParticipantPosition: ref(_constPosition),
       txtParticipant: ref(_constParticipant),
@@ -362,6 +362,25 @@ export default {
           })
       } else {
         alert('Name ist erforderlich')
+      }
+    },
+
+    deleteParticipant (_position, _reaction, _matchName, _time, _annotationsMatch) {
+      console.log('deleteParticipant: ' + _position + ', ' + _reaction + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+
+      if (_reaction === '') {
+        this.$axios(`${this.URLParticipant}&func=Delete&index=${_position}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.editParticipant = false
+              this.loadReloadData(_matchName, _time, _annotationsMatch)
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        alert('Dies ist eine Kartenzuweisung und darf nicht gelöscht werden')
       }
     },
 
