@@ -49,7 +49,7 @@ export default {
 
   data () {
     return {
-      URLMatch: 'https://script.google.com/macros/s/AKfycbxnei8jcKTw_SBb0Qr5k5Z4KgEzxDGQERJD4YDoOND0CRw9cOCIU5Xv7ciyG_EBkO8uXA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
+      URLMatch: 'https://script.google.com/macros/s/AKfycbyh43MSF1Vz9W3TZ0_9e273B81CtCEk4se3yHj9HCbIvBlfw9g6tHE3d5O8eXW3yIkyog/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
 
       index: [],
       position: [],
@@ -109,14 +109,6 @@ export default {
             }
           }
           // console.log(res.data)
-          // console.log(this.tableMatch)
-          // console.log(this.index)
-          // console.log(this.position)
-          // console.log(this.match)
-          // console.log(this.published)
-          // console.log(this.time)
-          // console.log(this.annotations)
-          // console.log(this.date)
         })
         .catch((err) => {
           console.log(err)

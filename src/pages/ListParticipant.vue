@@ -194,7 +194,7 @@ export default {
 
   data () {
     return {
-      URLMatch: 'https://script.google.com/macros/s/AKfycbxnei8jcKTw_SBb0Qr5k5Z4KgEzxDGQERJD4YDoOND0CRw9cOCIU5Xv7ciyG_EBkO8uXA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
+      URLMatch: 'https://script.google.com/macros/s/AKfycbyh43MSF1Vz9W3TZ0_9e273B81CtCEk4se3yHj9HCbIvBlfw9g6tHE3d5O8eXW3yIkyog/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
       URLParticipant: 'https://script.google.com/macros/s/AKfycbzsIFP8MNp6ks3LWGVIZj6rV0eETzGsAqHJ8yl-43qVrwESQ_cmyGtIeh189DQHBUN_-w/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
 
       matchIndex: [],
@@ -362,8 +362,8 @@ export default {
       this.participantReaction = []
       this.reservation = ''
 
-      console.log('URLParticipant: ' + this.URLParticipant + '&func=Read&match=' + _matchName)
-      this.$axios(`${this.URLParticipant}&func=Read&match=${_matchName}`)
+      console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadAdmin&match=' + _matchName)
+      this.$axios(`${this.URLParticipant}&func=ReadAdmin&match=${_matchName}`)
         .then((res) => {
           this.tableParticipant = res.data.split('\n')
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {

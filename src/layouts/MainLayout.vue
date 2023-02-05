@@ -47,6 +47,14 @@
 
             <q-item-section> Spiele </q-item-section>
           </q-item>
+
+          <q-item to="/order" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="shopping_cart" />
+            </q-item-section>
+
+            <q-item-section> Bestellungen </q-item-section>
+          </q-item>
         </q-list>
 
         <q-item-label header> Wichtige Links </q-item-label>
