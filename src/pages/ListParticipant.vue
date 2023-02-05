@@ -52,8 +52,8 @@
         <q-item-section>
           <q-item-label overline>{{ participantParticipant[i] }}</q-item-label>
           <q-item-label caption>{{ participantArrival[i] }}</q-item-label>
-          <q-item-label caption v-if="participantReaction[i]">habe Karte von {{ participantReaction[i] }}</q-item-label>
           <q-item-label caption>{{ participantAnnotations[i] }}</q-item-label>
+          <q-item-label caption v-if="participantReaction[i] !== ''">habe Karte von {{ participantReaction[i] }}</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
@@ -67,7 +67,7 @@
     <q-list dark bordered separator style="max-width: 470px" v-for="i in ticketIndex"
       :key="i"
       v-ripple>
-      <q-item clickable v-ripple @click="onTicketClick()" v-if="i > 0">
+      <q-item clickable v-ripple @click="onTicketClick(ticketPosition[i], ticketParticipant[i], ticketArrival[i], ticketAnnotations[i], ticketAction[i], ticketReaction[i])" v-if="i > 0">
         <q-item-section>
           <q-item-label overline>{{ ticket[i] }}</q-item-label>
           <q-item-label caption>{{ ticketAnnotations[i] }}</q-item-label>
@@ -85,7 +85,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(intParticipantPosition, txtReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(intParticipantPosition, txtParticipantReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -119,11 +119,11 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtParticipant" autofocus label="Name" />
-            <q-select v-model="txtAction" :options="cbxActionOptions" label="Aktion" />
-            <q-select v-model="txtArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtActionNew === 'bin dabei'" />
-            <q-input class="text-italic" dense v-model="txtReaction" :readonly="true" />
-            <q-input dense v-model="txtAnnotationsParticipant"  label="Kommentar"/>
+            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" />
+            <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" />
+            <q-select v-model="txtParticipantArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtParticipantAction === 'bin dabei'" />
+            <q-input dense v-model="txtParticipantAnnotations"  label="Kommentar"/>
+            <q-input class="text-italic" dense v-model="txtParticipantReaction" :readonly="true" v-if="txtParticipantReaction !== ''" />
           </q-card-section>
 
           <q-separator />
@@ -131,10 +131,49 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" label="Löschen" color="primary" @click="delParticipant = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipant, txtArrival, txtAnnotationsParticipant, txtAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipantParticipant, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
+
+      <q-dialog v-model="delTicket" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="delete" color="primary" text-color="white" />
+            <span class="q-ml-sm">Datensatz löschen?</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Nein" color="primary" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicket(intTicketPosition, txtTicketReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="editTicket" persistent>
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h6">Teilnahme ändern</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-input dense v-model="txtTicketParticipant" autofocus label="Name" />
+            <q-select v-model="txtTicketAction" :options="cbxActionOptions" label="Aktion" />
+            <q-select v-model="txtTicketArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtTicketAction === 'bin dabei'" />
+            <q-input dense v-model="txtTicketAnnotations" label="Kommentar" />
+            <q-input class="text-italic" dense v-model="txtTicketReaction" :readonly="true" v-if="txtTicketReaction !== ''" />
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions class="text-primary" align="right">
+            <q-btn icon="delete" label="Löschen" color="primary" @click="delTicket = true" v-if="IsAdministrator" />
+            <q-btn flat label="Abbrechen" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketSave(intTicketPosition, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
     </div>
   </div>
 
@@ -153,12 +192,19 @@ const _constDate = ref('')
 const _constMatchName = ref('')
 const _constArrivalElements = []
 
-const _constPosition = ref('')
-const _constParticipant = ref('')
-const _constArrival = ref('')
-const _constAnnotationsParticipant = ref('')
-const _constAction = ref('')
-const _constReaction = ref('')
+const _constParticipantPosition = ref('')
+const _constParticipantParticipant = ref('')
+const _constParticipantArrival = ref('')
+const _constParticipantAnnotations = ref('')
+const _constParticipantAction = ref('')
+const _constParticipantReaction = ref('')
+
+const _constTicketPosition = ref('')
+const _constTicketParticipant = ref('')
+const _constTicketArrival = ref('')
+const _constTicketAnnotations = ref('')
+const _constTicketAction = ref('')
+const _constTicketReaction = ref('')
 
 export default {
   name: 'ListParticipant',
@@ -177,13 +223,24 @@ export default {
       editParticipant: ref(false),
       delParticipant: ref(false),
 
-      intParticipantPosition: ref(_constPosition),
-      txtParticipant: ref(_constParticipant),
-      txtArrival: ref(_constArrival),
-      txtAnnotationsParticipant: ref(_constAnnotationsParticipant),
-      txtAction: ref(_constAction),
+      editTicket: ref(false),
+      delTicket: ref(false),
+
+      intParticipantPosition: ref(_constParticipantPosition),
+      txtParticipantParticipant: ref(_constParticipantParticipant),
+      txtParticipantArrival: ref(_constParticipantArrival),
+      txtParticipantAnnotations: ref(_constParticipantAnnotations),
+      txtParticipantAction: ref(_constParticipantAction),
+      txtParticipantReaction: ref(_constParticipantReaction),
+
       cbxActionOptions: ['bin dabei', 'brauche Karte', 'meine Karte ist frei'],
-      txtReaction: ref(_constReaction),
+
+      intTicketPosition: ref(_constTicketPosition),
+      txtTicketParticipant: ref(_constTicketParticipant),
+      txtTicketArrival: ref(_constTicketArrival),
+      txtTicketAnnotations: ref(_constTicketAnnotations),
+      txtTicketAction: ref(_constTicketAction),
+      txtTicketReaction: ref(_constTicketReaction),
 
       txtParticipantNew: ref(''),
       txtArrivalNew: ref(''),
@@ -218,6 +275,7 @@ export default {
       ticketPosition: [],
       ticket: [],
       ticketParticipant: [],
+      ticketArrival: [],
       ticketAnnotations: [],
       ticketAction: [],
       ticketReaction: [],
@@ -309,17 +367,17 @@ export default {
       this.getTableTicketGiven(_constMatchName.value)
     },
 
-    onParticipantClick (_position, _participant, _arrival, _annotations, _action, _reaction) {
-      console.log('Clicked on an Participant: ' + _position + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
-      _constPosition.value = _position
-      _constParticipant.value = _participant
-      _constArrival.value = _arrival
-      _constAnnotationsParticipant.value = _annotations
-      _constAction.value = _action
+    onParticipantClick (_participantPosition, _participant, _arrival, _annotations, _action, _reaction) {
+      console.log('Clicked on Participant: ' + _participantPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
+      _constParticipantPosition.value = _participantPosition
+      _constParticipantParticipant.value = _participant
+      _constParticipantArrival.value = _arrival
+      _constParticipantAnnotations.value = _annotations
+      _constParticipantAction.value = _action
       if (_reaction !== '') {
-        _constReaction.value = 'habe Karte von ' + _reaction
+        _constParticipantReaction.value = 'habe Karte von ' + _reaction
       } else {
-        _constReaction.value = _reaction
+        _constParticipantReaction.value = _reaction
       }
 
       this.editParticipant = true
@@ -345,13 +403,13 @@ export default {
       }
     },
 
-    editParticipantSave (_position, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      console.log('editParticipantSave: ' + _position + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    editParticipantSave (_participantPosition, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
+      console.log('editParticipantSave: ' + _participantPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_participant !== '') {
         if (_action !== 'bin dabei') _arrival = ''
 
-        this.$axios(`${this.URLParticipant}&func=Update&index=${_position}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
+        this.$axios(`${this.URLParticipant}&func=Update&index=${_participantPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.loadReloadData(_matchName, _time, _annotationsMatch)
@@ -365,14 +423,69 @@ export default {
       }
     },
 
-    deleteParticipant (_position, _reaction, _matchName, _time, _annotationsMatch) {
-      console.log('deleteParticipant: ' + _position + ', ' + _reaction + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    deleteParticipant (_participantPosition, _reaction, _matchName, _time, _annotationsMatch) {
+      console.log('deleteParticipant: ' + _participantPosition + ', ' + _reaction + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_reaction === '') {
-        this.$axios(`${this.URLParticipant}&func=Delete&index=${_position}`)
+        this.$axios(`${this.URLParticipant}&func=Delete&index=${_participantPosition}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.editParticipant = false
+              this.loadReloadData(_matchName, _time, _annotationsMatch)
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        alert('Dies ist eine Kartenzuweisung und darf nicht gelöscht werden')
+      }
+    },
+
+    onTicketClick (_ticketPosition, _participant, _arrival, _annotations, _action, _reaction) {
+      console.log('Clicked on Ticket: ' + _ticketPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
+      _constTicketPosition.value = _ticketPosition
+      _constTicketParticipant.value = _participant
+      _constTicketArrival.value = _arrival
+      _constTicketAnnotations.value = _annotations
+      _constTicketAction.value = _action
+      if (_reaction !== '') {
+        _constTicketReaction.value = 'habe Karte von ' + _reaction
+      } else {
+        _constTicketReaction.value = _reaction
+      }
+
+      this.editTicket = true
+    },
+
+    editTicketSave (_ticketPosition, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
+      console.log('editTicketSave: ' + _ticketPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+
+      if (_participant !== '') {
+        if (_action !== 'bin dabei') _arrival = ''
+
+        this.$axios(`${this.URLParticipant}&func=Update&index=${_ticketPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.loadReloadData(_matchName, _time, _annotationsMatch)
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        alert('Name ist erforderlich')
+      }
+    },
+
+    deleteTicket (_ticketPosition, _reaction, _matchName, _time, _annotationsMatch) {
+      console.log('deleteTicket: ' + _ticketPosition + ', ' + _reaction + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+
+      if (_reaction === '') {
+        this.$axios(`${this.URLParticipant}&func=Delete&index=${_ticketPosition}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.editTicket = false
               this.loadReloadData(_matchName, _time, _annotationsMatch)
             }
           })
@@ -456,6 +569,7 @@ export default {
       this.ticketPosition = []
       this.ticket = []
       this.ticketParticipant = []
+      this.ticketArrival = []
       this.ticketAnnotations = []
       this.ticketAction = []
       this.ticketReaction = []
@@ -474,6 +588,9 @@ export default {
                   break
                 case 3:
                   this.ticketParticipant[index + 1] = element[index2]
+                  break
+                case 4:
+                  this.ticketArrival[index + 1] = element[index2]
                   break
                 case 5:
                   this.ticketAnnotations[index + 1] = element[index2]
