@@ -15,7 +15,7 @@
       <q-item clickable v-ripple @click="onOrderClick(position[i], name[i], product[i], size[i], color[i], initials[i])" v-if="i > 0">
         <q-item-section>
           <q-item-label overline>Name: {{ name[i] }}</q-item-label>
-          <q-item-label caption>Artikel: {{ product[i] }} - {{ size[i] }}</q-item-label>
+          <q-item-label caption>Artikel: {{ product[i] }}</q-item-label>
           <q-item-label caption>Größe: {{ size[i] }}</q-item-label>
           <q-item-label caption>Farbe: {{ color[i] }}</q-item-label>
           <q-item-label caption>Initialen: {{ initials[i] }}</q-item-label>
