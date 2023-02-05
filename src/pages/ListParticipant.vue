@@ -220,7 +220,15 @@ export default {
       ticketParticipant: [],
       ticketAnnotations: [],
       ticketAction: [],
-      ticketReaction: []
+      ticketReaction: [],
+
+      ticketRequiredIndex: [],
+      ticketRequiredPosition: [],
+      ticketRequiredParticipant: [],
+
+      ticketGivenIndex: [],
+      ticketGivenPosition: [],
+      ticketGivenParticipant: []
     }
   },
 
@@ -297,6 +305,8 @@ export default {
       this.setArrivalElements(_time)
       this.getTableParticipant(_constMatchName.value, _time, _annotationsMatch)
       this.getTableTicket(_constMatchName.value)
+      this.getTableTicketRequired(_constMatchName.value)
+      this.getTableTicketGiven(_constMatchName.value)
     },
 
     onParticipantClick (_position, _participant, _arrival, _annotations, _action, _reaction) {
@@ -466,6 +476,77 @@ export default {
               }
             }
           }
+          console.log('ticketIndex: ' + this.ticketIndex)
+          console.log('ticketPosition: ' + this.ticketPosition)
+          console.log('ticketParticipant: ' + this.ticketParticipant)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    getTableTicketRequired (_matchName) {
+      this.ticketRequiredIndex = []
+      this.ticketRequiredPosition = []
+      this.ticketRequiredParticipant = []
+
+      console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsRequired&match=' + _matchName)
+      this.$axios(`${this.URLParticipant}&func=ReadTicketsRequired&match=${_matchName}`)
+        .then((res) => {
+          this.tableTicket = res.data.split('\n')
+          for (let index = 0; index < this.tableTicket.length - 1; index++) {
+            const element = this.tableTicket[index].split(',')
+            for (let index2 = 0; index2 < element.length; index2++) {
+              switch (index2) {
+                case 0:
+                  this.ticketRequiredIndex[index + 1] = index + 1
+                  this.ticketRequiredPosition[index + 1] = element[index2]
+                  break
+                case 3:
+                  this.ticketRequiredParticipant[index + 1] = element[index2]
+                  break
+                default:
+                  break
+              }
+            }
+          }
+          console.log('ticketRequiredIndex: ' + this.ticketRequiredIndex)
+          console.log('ticketRequiredPosition: ' + this.ticketRequiredPosition)
+          console.log('ticketRequiredParticipant: ' + this.ticketRequiredParticipant)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    getTableTicketGiven (_matchName) {
+      this.ticketGivenIndex = []
+      this.ticketGivenPosition = []
+      this.ticketGivenParticipant = []
+
+      console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsGiven&match=' + _matchName)
+      this.$axios(`${this.URLParticipant}&func=ReadTicketsGiven&match=${_matchName}`)
+        .then((res) => {
+          this.tableTicket = res.data.split('\n')
+          for (let index = 0; index < this.tableTicket.length - 1; index++) {
+            const element = this.tableTicket[index].split(',')
+            for (let index2 = 0; index2 < element.length; index2++) {
+              switch (index2) {
+                case 0:
+                  this.ticketGivenIndex[index + 1] = index + 1
+                  this.ticketGivenPosition[index + 1] = element[index2]
+                  break
+                case 3:
+                  this.ticketGivenParticipant[index + 1] = element[index2]
+                  break
+                default:
+                  break
+              }
+            }
+          }
+          console.log('ticketGivenPosition: ' + this.ticketGivenPosition)
+          console.log('ticketGivenPosition: ' + this.ticketGivenPosition)
+          console.log('ticketGivenParticipant: ' + this.ticketGivenParticipant)
         })
         .catch((err) => {
           console.log(err)
