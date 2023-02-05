@@ -85,7 +85,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteParticipant()" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -93,13 +93,13 @@
       <q-dialog v-model="addParticipant" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Teilnahme ändern</div>
+            <div class="text-h6">Teilnahme erfassen</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtParticipantNew" autofocus label="Name" />
             <q-select v-model="txtActionNew" :options="cbxActionOptions" label="Aktion" />
-            <q-select v-model="txtArrivalNew" :options="cbxArrivalOptions" label="Ankunft" />
+            <q-select v-model="txtArrivalNew" :options="cbxArrivalOptions" label="Ankunft" v-if="txtActionNew === 'bin dabei'" />
             <q-input dense v-model="txtAnnotationsParticipantNew"  label="Kommentar"/>
           </q-card-section>
 
@@ -121,7 +121,7 @@
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtParticipant" autofocus label="Name" />
             <q-select v-model="txtAction" :options="cbxActionOptions" label="Aktion" />
-            <q-select v-model="txtArrival" :options="cbxArrivalOptions" label="Ankunft" />
+            <q-select v-model="txtArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtActionNew === 'bin dabei'" />
             <q-input class="text-italic" dense v-model="txtReaction" :readonly="true" />
             <q-input dense v-model="txtAnnotationsParticipant"  label="Kommentar"/>
           </q-card-section>
@@ -329,6 +329,8 @@ export default {
       console.log('addParticipantSave: ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_participant !== '') {
+        if (_action !== 'bin dabei') _arrival = ''
+
         this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}&reaction=`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
@@ -347,6 +349,8 @@ export default {
       console.log('editParticipantSave: ' + _position + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_participant !== '') {
+        if (_action !== 'bin dabei') _arrival = ''
+
         this.$axios(`${this.URLParticipant}&func=Update&index=${_position}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
