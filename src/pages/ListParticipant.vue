@@ -9,8 +9,8 @@
         no-caps
         icon="star"
         label="Spiel auswählen"
-        @click="onPositionMatchMainClick"
-      >
+        @click="onPositionMatchMainClick">
+
         <q-list v-for="i in matchIndex"
           :key="i"
           v-ripple>
@@ -24,72 +24,71 @@
       </q-btn-dropdown>
     </div>
 
-  <div class="q-pa-md" style="max-width: 500px">
-    <q-toolbar class="bg-primary text-white">
-        {{ txtMatchName }}
-    </q-toolbar>
-  </div>
-
-  <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
-
-    <div class="q-gutter-y-md column" style="max-width: 470px">
-      <q-input dark outlined v-model="txtAnnotationsMatch" input-class="text-overline"
-        type="textarea" :readonly="true">
-      </q-input>
-    </div>
-
-    <div class="q-pa-md" style="max-width: 470px">
+    <!-- Match aame -->
+    <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title class="text-overline">Anwesend (Ankunft)</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" />
+          {{ txtMatchName }}
       </q-toolbar>
     </div>
 
-    <q-list dark bordered separator style="max-width: 470px" v-for="i in participantIndex"
-      :key="i"
-      v-ripple>
-      <q-item clickable v-ripple @click="onParticipantClick(participantPosition[i], participantParticipant[i], participantArrival[i], participantAnnotations[i], participantAction[i], participantReaction[i])" v-if="i > 0">
-        <q-item-section>
-          <q-item-label overline>{{ participantParticipant[i] }}</q-item-label>
-          <q-item-label caption>{{ participantArrival[i] }}</q-item-label>
-          <q-item-label caption>{{ participantAnnotations[i] }}</q-item-label>
-          <q-item-label caption v-if="participantReaction[i] !== ''">habe Karte von {{ participantReaction[i] }}</q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
+    <!-- List of participants and tickets -->
+    <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
 
-    <div class="q-pa-md" style="max-width: 470px">
-    <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title class="text-overline">Karte weitergegeben oder bedarf</q-toolbar-title>
-    </q-toolbar>
-  </div>
+      <!-- Reservation area -->
+      <div class="q-gutter-y-md column" style="max-width: 470px">
+        <q-input dark outlined v-model="txtAnnotationsMatch" input-class="text-overline"
+          type="textarea" :readonly="true">
+        </q-input>
+      </div>
 
-    <q-list dark bordered separator style="max-width: 470px" v-for="i in ticketIndex"
-      :key="i"
-      v-ripple>
-      <q-item clickable v-ripple @click="onTicketClick(ticketPosition[i], ticketParticipant[i], ticketArrival[i], ticketAnnotations[i], ticketAction[i], ticketReaction[i])" v-if="i > 0">
-        <q-item-section>
-          <q-item-label overline>{{ ticket[i] }}</q-item-label>
-          <q-item-label caption>{{ ticketAnnotations[i] }}</q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
+      <!-- Participant area (Titel) -->
+      <div class="q-pa-md" style="max-width: 470px">
+        <q-toolbar class="bg-primary text-white">
+          <q-toolbar-title class="text-overline">Anwesend (Ankunft)</q-toolbar-title>
+          <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" />
+        </q-toolbar>
+      </div>
 
+      <!-- List of participants -->
+      <q-list dark bordered separator style="max-width: 470px" v-for="i in participantIndex"
+        :key="i"
+        v-ripple>
+        <q-item clickable v-ripple @click="onParticipantClick(participantPosition[i], participantParticipant[i], participantArrival[i], participantAnnotations[i], participantAction[i], participantReaction[i])" v-if="i > 0">
+          <q-item-section>
+            <q-item-label overline>{{ participantParticipant[i] }}</q-item-label>
+            <q-item-label caption>{{ participantArrival[i] }}</q-item-label>
+            <q-item-label caption>{{ participantAnnotations[i] }}</q-item-label>
+            <q-item-label caption v-if="participantReaction[i] !== ''">habe Karte von {{ participantReaction[i] }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+
+      <!-- Ticket assignment area (Titel) -->
+      <div class="q-pa-md" style="max-width: 470px">
+        <q-toolbar class="bg-primary text-white">
+            <q-toolbar-title class="text-overline">Karte weitergegeben oder bedarf</q-toolbar-title>
+            <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" />
+        </q-toolbar>
+      </div>
+
+      <!-- List of ticket assignments -->
+      <q-list dark bordered separator style="max-width: 470px" v-for="i in ticketIndex"
+        :key="i"
+        v-ripple>
+        <q-item clickable v-ripple @click="onTicketClick(ticketPosition[i], ticketParticipant[i], ticketArrival[i], ticketAnnotations[i], ticketAction[i], ticketReaction[i])" v-if="i > 0">
+          <q-item-section>
+            <q-item-label overline>{{ ticket[i] }}</q-item-label>
+            <q-item-label caption>{{ ticketAnnotations[i] }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </div>
+
+    <!-- Dialogs -->
     <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="delParticipant" persistent>
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="delete" color="primary" text-color="white" />
-            <span class="q-ml-sm">Datensatz löschen?</span>
-          </q-card-section>
 
-          <q-card-actions align="right">
-            <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(intParticipantPosition, txtParticipantReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-
+      <!-- Start Dialogs participant -->
+      <!-- Add participant -->
       <q-dialog v-model="addParticipant" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
@@ -112,6 +111,7 @@
         </q-card>
       </q-dialog>
 
+      <!-- Edit participant -->
       <q-dialog v-model="editParticipant" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
@@ -136,7 +136,8 @@
         </q-card>
       </q-dialog>
 
-      <q-dialog v-model="delTicket" persistent>
+      <!-- Delete participant -->
+      <q-dialog v-model="delParticipant" persistent>
         <q-card>
           <q-card-section class="row items-center">
             <q-avatar icon="delete" color="primary" text-color="white" />
@@ -145,12 +146,15 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicket(intTicketPosition, txtTicketReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(intParticipantPosition, txtParticipantReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <!-- End Dialogs participant -->
 
-      <q-dialog v-model="editTicket" persistent>
+      <!-- Start Dialogs ticket assignment-->
+      <!-- Edit ticket assignment -->
+      <q-dialog v-model="editTicketAssigment" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
             <div class="text-h6">Teilnahme ändern</div>
@@ -167,17 +171,32 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="delTicket = true" v-if="IsAdministrator" />
+            <q-btn icon="delete" label="Löschen" color="primary" @click="delTicketAssignment = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTicketSave(intTicketPosition, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssigmentSave(intTicketPosition, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
 
-    </div>
-  </div>
+      <!-- Delete ticket assignment -->
+      <q-dialog v-model="delTicketAssignment" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="delete" color="primary" text-color="white" />
+            <span class="q-ml-sm">Datensatz löschen?</span>
+          </q-card-section>
 
-  <q-img src="statics/BGB.jpg" class="header-image absolute-top" />
+          <q-card-actions align="right">
+            <q-btn flat label="Nein" color="primary" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(intTicketPosition, txtTicketReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <!-- Start Dialogs ticket assignment-->
+
+    </div>
+
+    <q-img src="statics/BGB.jpg" class="header-image absolute-top" />
   </q-page>
 </template>
 
@@ -223,8 +242,8 @@ export default {
       editParticipant: ref(false),
       delParticipant: ref(false),
 
-      editTicket: ref(false),
-      delTicket: ref(false),
+      editTicketAssigment: ref(false),
+      delTicketAssignment: ref(false),
 
       intParticipantPosition: ref(_constParticipantPosition),
       txtParticipantParticipant: ref(_constParticipantParticipant),
@@ -455,11 +474,11 @@ export default {
         _constTicketReaction.value = _reaction
       }
 
-      this.editTicket = true
+      this.editTicketAssigment = true
     },
 
-    editTicketSave (_ticketPosition, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      console.log('editTicketSave: ' + _ticketPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    editTicketAssigmentSave (_ticketPosition, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
+      console.log('editTicketAssigmentSave: ' + _ticketPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_participant !== '') {
         if (_action !== 'bin dabei') _arrival = ''
@@ -478,14 +497,14 @@ export default {
       }
     },
 
-    deleteTicket (_ticketPosition, _reaction, _matchName, _time, _annotationsMatch) {
+    deleteTicketAssignment (_ticketPosition, _reaction, _matchName, _time, _annotationsMatch) {
       console.log('deleteTicket: ' + _ticketPosition + ', ' + _reaction + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_reaction === '') {
         this.$axios(`${this.URLParticipant}&func=Delete&index=${_ticketPosition}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
-              this.editTicket = false
+              this.editTicketAssigment = false
               this.loadReloadData(_matchName, _time, _annotationsMatch)
             }
           })
