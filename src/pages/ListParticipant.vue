@@ -153,8 +153,29 @@
       <!-- End Dialogs participant -->
 
       <!-- Start Dialogs ticket assignment-->
+      <!-- Add ticket assignment -->
+      <q-dialog v-model="addTicketAssignment" persistent>
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h6">Karte zuweisen</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-select v-model="txtTicketAction" :options="cbxActionOptions" label="Aktion" />
+            <q-select v-model="txtTicketArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtTicketAction === 'bin dabei'" />
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions class="text-primary" align="right">
+            <q-btn flat label="Abbrechen" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addTicketAssigmentSave(intTicketPosition, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <!-- Edit ticket assignment -->
-      <q-dialog v-model="editTicketAssigment" persistent>
+      <q-dialog v-model="editTicketAssignment" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
             <div class="text-h6">Teilnahme ändern</div>
@@ -242,7 +263,8 @@ export default {
       editParticipant: ref(false),
       delParticipant: ref(false),
 
-      editTicketAssigment: ref(false),
+      addTicketAssignment: ref(false),
+      editTicketAssignment: ref(false),
       delTicketAssignment: ref(false),
 
       intParticipantPosition: ref(_constParticipantPosition),
@@ -474,7 +496,27 @@ export default {
         _constTicketReaction.value = _reaction
       }
 
-      this.editTicketAssigment = true
+      this.editTicketAssignment = true
+    },
+
+    addTicketAssigmentSave (_ticketPosition, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
+      console.log('editTicketAssigmentSave: ' + _ticketPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+
+      if (_participant !== '') {
+        if (_action !== 'bin dabei') _arrival = ''
+
+        this.$axios(`${this.URLParticipant}&func=Update&index=${_ticketPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.loadReloadData(_matchName, _time, _annotationsMatch)
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        alert('Name ist erforderlich')
+      }
     },
 
     editTicketAssigmentSave (_ticketPosition, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
@@ -498,22 +540,18 @@ export default {
     },
 
     deleteTicketAssignment (_ticketPosition, _reaction, _matchName, _time, _annotationsMatch) {
-      console.log('deleteTicket: ' + _ticketPosition + ', ' + _reaction + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+      console.log('deleteTicketAssignment: ' + _ticketPosition + ', ' + _reaction + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
-      if (_reaction === '') {
-        this.$axios(`${this.URLParticipant}&func=Delete&index=${_ticketPosition}`)
-          .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.editTicketAssigment = false
-              this.loadReloadData(_matchName, _time, _annotationsMatch)
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      } else {
-        alert('Dies ist eine Kartenzuweisung und darf nicht gelöscht werden')
-      }
+      this.$axios(`${this.URLParticipant}&func=Delete&index=${_ticketPosition}`)
+        .then((res) => {
+          if (res.data === 'Success, requested action completed') {
+            this.editTicketAssigment = false
+            this.loadReloadData(_matchName, _time, _annotationsMatch)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
 
     getTableParticipant (_matchName, _time, _annotationsMatch) {
