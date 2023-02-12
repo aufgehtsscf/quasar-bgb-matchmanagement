@@ -67,7 +67,7 @@
       <div class="q-pa-md" style="max-width: 470px">
         <q-toolbar class="bg-primary text-white">
             <q-toolbar-title class="text-overline">Karte weitergegeben oder bedarf</q-toolbar-title>
-            <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" />
+            <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="IsAdministrator" />
         </q-toolbar>
       </div>
 
@@ -120,7 +120,8 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" />
-            <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" />
+            <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="false" v-if="txtParticipantReaction === ''" />
+            <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== ''" />
             <q-select v-model="txtParticipantArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtParticipantAction === 'bin dabei'" />
             <q-input dense v-model="txtParticipantAnnotations"  label="Kommentar"/>
             <q-input class="text-italic" dense v-model="txtParticipantReaction" :readonly="true" v-if="txtParticipantReaction !== ''" />
@@ -169,7 +170,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addTicketAssigmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addTicketAssignmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -199,6 +200,30 @@
         </q-card>
       </q-dialog>
 
+      <!-- Edit ticket assignment Done -->
+      <q-dialog v-model="editTicketAssignmentDone" persistent>
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h6">Kartenzuweisung</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-select v-model="txtTicketAssignmentGiven" :options="cbxTicketAssignmentGivenOptions" label="Karte von" :readonly="false" v-if="IsAdministrator" />
+            <q-select v-model="txtTicketAssignmentGiven" :options="cbxTicketAssignmentGivenOptions" label="Karte von" :readonly="true" v-if="!IsAdministrator" />
+            <q-select v-model="txtTicketAssignmentRequired" :options="cbxTicketAssignmentRequiredOptions" label="Karte an" :readonly="false" v-if="IsAdministrator" />
+            <q-select v-model="txtTicketAssignmentRequired" :options="cbxTicketAssignmentRequiredOptions" label="Karte an" :readonly="true" v-if="!IsAdministrator" />
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions class="text-primary" align="right">
+            <q-btn icon="delete" label="Löschen" color="primary" @click="delTicketAssignmentDone = true" v-if="IsAdministrator" />
+            <q-btn flat label="Abbrechen" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssigmentDone(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup  v-if="IsAdministrator" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <!-- Delete ticket assignment -->
       <q-dialog v-model="delTicketAssignment" persistent>
         <q-card>
@@ -210,6 +235,21 @@
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
             <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(intTicketAssignmentPosition, txtTicketReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- Delete ticket assignment Done -->
+      <q-dialog v-model="delTicketAssignmentDone" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="delete" color="primary" text-color="white" />
+            <span class="q-ml-sm">Datensatz löschen?</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Nein" color="primary" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssigmentDone(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -258,7 +298,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(true),
+      IsAdministrator: ref(false),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
@@ -272,7 +312,9 @@ export default {
 
       addTicketAssignment: ref(false),
       editTicketAssignment: ref(false),
+      editTicketAssignmentDone: ref(false),
       delTicketAssignment: ref(false),
+      delTicketAssignmentDone: ref(false),
 
       intParticipantPosition: ref(_constParticipantPosition),
       txtParticipantParticipant: ref(_constParticipantParticipant),
@@ -300,7 +342,9 @@ export default {
       cbxTicketAssignmentGivenOptions: ref(_constTicketAssignmentGivenElements),
       cbxTicketAssignmentRequiredOptions: ref(_constTicketAssignmentRequiredElements),
       txtTicketAssignmentGiven: ref(_constTicketAssignmentGiven),
-      txtTicketAssignmentRequired: ref(_constTicketAssignmentRequired)
+      txtTicketAssignmentGivenDone: ref(_constTicketAssignmentGiven),
+      txtTicketAssignmentRequired: ref(_constTicketAssignmentRequired),
+      txtTicketAssignmentRequiredDone: ref(_constTicketAssignmentRequired)
     }
   },
 
@@ -500,28 +544,45 @@ export default {
       _constTicketAnnotations.value = _annotations
       _constTicketAction.value = _action
       if (_reaction !== '') {
-        _constTicketReaction.value = 'habe Karte von ' + _reaction
+        _constTicketReaction.value = 'habe Karte von ' + _participant
+        _constTicketAssignmentGiven.value = _participant
+        _constTicketAssignmentRequired.value = _reaction
+        this.editTicketAssignment = false
+        this.editTicketAssignmentDone = true
       } else {
-        _constTicketReaction.value = _reaction
+        _constTicketReaction.value = ''
+        _constTicketAssignmentRequired.value = ''
+        _constTicketAssignmentGiven.value = ''
+        this.editTicketAssignment = true
+        this.editTicketAssignmentDone = false
       }
-
-      this.editTicketAssignment = true
     },
 
-    addTicketAssigmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchName, _time, _annotationsMatch) {
-      console.log('addTicketAssigmentSave: ' + _ticketAssignmentGiven + ', ' + _ticketAssignmentRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchName, _time, _annotationsMatch) {
+      console.log('addTicketAssignmentSave: ' + _ticketAssignmentGiven + ', ' + _ticketAssignmentRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
-      const _ticketAssignmentGivenPosition = 0
-      const _reactionGiven = ''
-      const _ticketAssignmentRequiredPosition = 0
-      const _reactionRequired = ''
+      let _ticketAssignmentGivenPosition = 0
+      for (let index = 1; index < this.ticketGivenParticipant.length; index++) {
+        const element = this.ticketGivenParticipant[index]
 
-      this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&index=${_ticketAssignmentGivenPosition}&reaction=${_reactionGiven}`)
+        if (element === _ticketAssignmentGiven) {
+          _ticketAssignmentGivenPosition = this.ticketGivenPosition[index]
+        }
+      }
+      this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&index=${_ticketAssignmentGivenPosition}&reaction=${_ticketAssignmentRequired}`)
         .catch((err) => {
           console.log(err)
         })
 
-      this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&index=${_ticketAssignmentRequiredPosition}&action=bin dabei&reaction=${_reactionRequired}`)
+      let _ticketAssignmentRequiredPosition = 0
+      for (let index = 1; index < this.ticketRequiredParticipant.length; index++) {
+        const element = this.ticketRequiredParticipant[index]
+
+        if (element === _ticketAssignmentRequired) {
+          _ticketAssignmentRequiredPosition = this.ticketRequiredPosition[index]
+        }
+      }
+      this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&index=${_ticketAssignmentRequiredPosition}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.loadReloadData(_matchName, _time, _annotationsMatch)
@@ -578,8 +639,13 @@ export default {
       this.participantReaction = []
       this.reservation = ''
 
+      let readFunction = 'Read'
+      if (this.IsAdministrator) {
+        readFunction = 'ReadAdmin'
+      }
+
       console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadAdmin&match=' + _matchName)
-      this.$axios(`${this.URLParticipant}&func=ReadAdmin&match=${_matchName}`)
+      this.$axios(`${this.URLParticipant}&func=${readFunction}&match=${_matchName}`)
         .then((res) => {
           this.tableParticipant = res.data.split('\n')
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
@@ -725,8 +791,8 @@ export default {
           console.log('ticketRequiredParticipant: ' + this.ticketRequiredParticipant)
 
           _constTicketAssignmentRequiredElements.length = 0
-          for (let index = 0; index < this.ticketRequiredParticipant.length; index++) {
-            _constTicketAssignmentRequiredElements[index] = this.ticketRequiredParticipant[index]
+          for (let index = 1; index < this.ticketRequiredParticipant.length; index++) {
+            _constTicketAssignmentRequiredElements[index - 1] = this.ticketRequiredParticipant[index]
           }
           console.log('_constTicketAssignmentRequiredElements: ' + _constTicketAssignmentRequiredElements)
         })
@@ -765,8 +831,8 @@ export default {
           console.log('ticketGivenParticipant: ' + this.ticketGivenParticipant)
 
           _constTicketAssignmentGivenElements.length = 0
-          for (let index = 0; index < this.ticketGivenParticipant.length; index++) {
-            _constTicketAssignmentGivenElements[index] = this.ticketGivenParticipant[index]
+          for (let index = 1; index < this.ticketGivenParticipant.length; index++) {
+            _constTicketAssignmentGivenElements[index - 1] = this.ticketGivenParticipant[index]
           }
           console.log('_constTicketAssignmentGivenElements: ' + _constTicketAssignmentGivenElements)
         })
