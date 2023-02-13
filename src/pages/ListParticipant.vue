@@ -249,7 +249,6 @@
         </q-card>
       </q-dialog>
       <!-- Start Dialogs ticket assignment-->
-
     </div>
 
     <q-img src="statics/BGB.jpg" class="header-image absolute-top" />
