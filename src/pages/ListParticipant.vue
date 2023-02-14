@@ -99,7 +99,10 @@
             <q-input dense v-model="txtParticipantNew" autofocus label="Name" />
             <q-select v-model="txtActionNew" :options="cbxActionOptions" label="Aktion" />
             <q-select v-model="txtArrivalNew" :options="cbxArrivalOptions" label="Ankunft" v-if="txtActionNew === 'bin dabei'" />
-            <q-input dense v-model="txtAnnotationsParticipantNew"  label="Kommentar"/>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input v-model="txtAnnotationsParticipantNew" filled type="textarea" label="Kommentar"/>
+            </div>
+
           </q-card-section>
 
           <q-separator />
@@ -123,8 +126,10 @@
             <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="false" v-if="txtParticipantReaction === ''" />
             <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== ''" />
             <q-select v-model="txtParticipantArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtParticipantAction === 'bin dabei'" />
-            <q-input dense v-model="txtParticipantAnnotations"  label="Kommentar"/>
             <q-input class="text-italic" dense v-model="txtParticipantReaction" :readonly="true" v-if="txtParticipantReaction !== ''" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input v-model="txtParticipantAnnotations" filled type="textarea" label="Kommentar"/>
+            </div>
           </q-card-section>
 
           <q-separator />
@@ -185,7 +190,9 @@
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtTicketParticipant" autofocus label="Name" />
             <q-select v-model="txtTicketAction" :options="cbxActionOptions" label="Aktion" />
-            <q-input dense v-model="txtTicketAnnotations" label="Kommentar" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input v-model="txtTicketAnnotations" filled type="textarea" label="Kommentar"/>
+            </div>
           </q-card-section>
 
           <q-separator />
@@ -516,8 +523,8 @@ export default {
       }
     },
 
-    deleteParticipant (_participantPosition, _reaction, _matchName, _time, _annotationsMatch) {
-      console.log('deleteParticipant: ' + _participantPosition + ', ' + _reaction + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    deleteParticipant (_participantPosition, _matchName, _time, _annotationsMatch) {
+      console.log('deleteParticipant: ' + _participantPosition + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       this.$axios(`${this.URLParticipant}&func=Delete&index=${_participantPosition}`)
         .then((res) => {
