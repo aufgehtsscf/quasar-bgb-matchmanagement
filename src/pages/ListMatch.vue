@@ -1,10 +1,11 @@
 <template>
   <q-page>
+
+    <!-- Match area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>
-          Spiele
-        </q-toolbar-title>
+        <q-toolbar-title>Spiele</q-toolbar-title>
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true" v-if="IsAdministrator" />
       </q-toolbar>
     </div>
 
@@ -13,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="i in index"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(position[i], match[i], published[i], time[i], annotations[i], date[i])" v-if="i > 0">
+        <q-item clickable v-ripple @click="onMatchClick(position[i], match[i], published[i], date[i] + ' ' + time[i], annotations[i])" v-if="i > 0">
           <q-item-section>
             <q-item-label overline>{{ match[i] }}</q-item-label>
             <q-item-label caption>{{ date[i] }} - {{ time[i] }}</q-item-label>
@@ -37,14 +38,52 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtMatchNew" autofocus label="Spiel" />
-            <q-input dense v-model="txtAnnotationsNew"  label="Kommentar"/>
+
+            <div class="q-pt-md">
+              <div class="q-gutter-sm">
+                <div><q-checkbox left-label v-model="chbPublishedNew" label="Publizieren" /></div>
+              </div>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-input filled v-model="txtDatetimeNew">
+                <template v-slot:prepend>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-date v-model="txtDatetimeNew" mask="DD.MM.YYYY HH:mm">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-time v-model="txtDatetimeNew" mask="DD.MM.YYYY HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-input v-model="txtAnnotationsNew" filled type="textarea" label="Kommentar"/>
+            </div>
+
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtMatchNew, chbPublishedNew, txtDatetimeNew, txtAnnotationsNew)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -58,18 +97,53 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtMatch" autofocus label="Spiel" />
-            <q-input dense v-model="txtPublished" label="Publizieren" />
-            <q-input dense v-model="txtDate" label="Datum" />
-            <q-input dense v-model="txtTime" label="Uhrzeit" />
-            <q-input dense v-model="txtAnnotations"  label="Kommentar"/>
+
+            <div class="q-pt-md">
+              <div class="q-gutter-sm">
+                <div><q-checkbox left-label v-model="chbPublished" label="Publizieren" /></div>
+              </div>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-input filled v-model="txtDatetime">
+                <template v-slot:prepend>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-date v-model="txtDatetime" mask="DD.MM.YYYY HH:mm">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-time v-model="txtDatetime" mask="DD.MM.YYYY HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-input v-model="txtAnnotations" filled type="textarea" label="Kommentar"/>
+            </div>
+
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="delMatch = true" v-if="IsAdministrator" />
+            <q-btn icon="delete" label="Löschen" color="primary" @click="delMatch = true" v-if="IsSuperadministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intParticipantPosition, txtParticipantParticipant, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(intPosition, txtMatch, chbPublished, txtDatetime, txtAnnotations)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -84,7 +158,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteMatch(intParticipantPosition, txtParticipantReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteMatch(intPosition)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -100,10 +174,9 @@ import { ref } from 'vue'
 
 const _constPosition = ref('')
 const _constMatch = ref('')
-const _constPublished = ref('')
-const _constTime = ref('')
+const _constPublished = ref(false)
+const _constDatetime = ref('')
 const _constAnnotations = ref('')
-const _constDate = ref('')
 const _constMatchName = ref('')
 
 export default {
@@ -112,19 +185,18 @@ export default {
   setup () {
     return {
       IsAdministrator: ref(false),
+      IsSuperadministrator: ref(false),
 
       intPosition: ref(_constPosition),
       txtMatch: ref(_constMatch),
-      txtPublished: ref(_constPublished),
-      txtTime: ref(_constTime),
+      chbPublished: ref(_constPublished),
+      txtDatetime: ref(_constDatetime),
       txtAnnotations: ref(_constAnnotations),
-      txtDate: ref(_constDate),
 
       txtMatchNew: ref(''),
-      txtPublishedNew: ref(''),
-      txtTimeNew: ref(''),
+      chbPublishedNew: ref(false),
+      txtDatetimeNew: ref(''),
       txtAnnotationsNew: ref(''),
-      txtDateNew: ref(''),
 
       addMatch: ref(false),
       editMatch: ref(false),
@@ -200,17 +272,73 @@ export default {
         })
     },
 
-    onMatchClick (_position, _match, _published, _time, _annotations, _date) {
-      console.log('Clicked on an Match: ' + _position + ', ' + _match + ', ' + _published + ', ' + _time + ', ' + _annotations + ', ' + _date)
+    onMatchClick (_position, _match, _published, _datetime, _annotations) {
+      console.log('Clicked on an Match: ' + _position + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
       _constPosition.value = _position
       _constMatch.value = _match
-      _constPublished.value = _published
-      _constTime.value = _time
+      _constPublished.value = _published === 'TRUE'
+      _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
-      _constDate.value = _date
-      _constMatchName.value = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time
+      _constMatchName.value = _match.trim() + ' ' + _datetime.replace(' ', ' - ')
 
-      this.editMatch = true
+      if (this.IsAdministrator) this.editMatch = true
+    },
+
+    addMatchSave (_match, _published, _datetime, _annotations) {
+      console.log('addMatchSave: ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+
+      if (_match !== '') {
+        const _date = _datetime.substr(0, 10)
+        const _time = _datetime.substr(11, 5)
+
+        this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_datetime.replace(',', ';'))}&date=${_date}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.getTableMatch()
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        alert('Spiel ist erforderlich')
+      }
+    },
+
+    editMatchSave (_position, _match, _published, _datetime, _annotations) {
+      console.log('editMatchSave: ' + _position + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+
+      if (_match !== '') {
+        const _date = _datetime.substr(0, 10)
+        const _time = _datetime.substr(11, 5)
+
+        this.$axios(`${this.URLMatch}&func=Update&index=${_position}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';'))}&date=${_date}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.getTableMatch()
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        alert('Spiel ist erforderlich')
+      }
+    },
+
+    deleteMatch (_position) {
+      console.log('deleteMatch: ' + _position)
+
+      this.$axios(`${this.URLMatch}&func=Delete&index=${_position}`)
+        .then((res) => {
+          if (res.data === 'Success, requested action completed') {
+            this.editMatch = false
+            this.getTableMatch()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
 
   }
