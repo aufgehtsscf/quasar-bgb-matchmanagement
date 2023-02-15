@@ -83,7 +83,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtMatchNew, chbPublishedNew, txtDatetimeNew, txtAnnotationsNew)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtMatchNew, chbPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtMatchNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -143,7 +143,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" label="Löschen" color="primary" @click="delMatch = true" v-if="IsSuperadministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intPosition, txtMatch, chbPublished, txtDatetime, txtAnnotations)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(intPosition, txtMatch, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -228,8 +228,9 @@ export default {
 
   methods: {
     getTableMatch () {
-      console.log('URLMatch: ' + this.URLMatch + '&func=Read&published=TRUE')
-      this.$axios(`${this.URLMatch}&func=Read&published=TRUE`)
+      const publishedParam = this.IsAdministrator ? '' : 'TRUE'
+      console.log('URLMatch: ' + this.URLMatch + '&func=Read&published=' + publishedParam)
+      this.$axios(`${this.URLMatch}&func=Read&published=${publishedParam}`)
         .then((res) => {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
@@ -287,43 +288,35 @@ export default {
     addMatchSave (_match, _published, _datetime, _annotations) {
       console.log('addMatchSave: ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      if (_match !== '') {
-        const _date = _datetime.substr(0, 10)
-        const _time = _datetime.substr(11, 5)
+      const _date = _datetime.substr(0, 10)
+      const _time = _datetime.substr(11, 5)
 
-        this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_datetime.replace(',', ';'))}&date=${_date}`)
-          .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.getTableMatch()
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      } else {
-        alert('Spiel ist erforderlich')
-      }
+      this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';'))}&date=${_date}`)
+        .then((res) => {
+          if (res.data === 'Success, requested action completed') {
+            this.getTableMatch()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
 
     editMatchSave (_position, _match, _published, _datetime, _annotations) {
       console.log('editMatchSave: ' + _position + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      if (_match !== '') {
-        const _date = _datetime.substr(0, 10)
-        const _time = _datetime.substr(11, 5)
+      const _date = _datetime.substr(0, 10)
+      const _time = _datetime.substr(11, 5)
 
-        this.$axios(`${this.URLMatch}&func=Update&index=${_position}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';'))}&date=${_date}`)
-          .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.getTableMatch()
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      } else {
-        alert('Spiel ist erforderlich')
-      }
+      this.$axios(`${this.URLMatch}&func=Update&index=${_position}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';'))}&date=${_date}`)
+        .then((res) => {
+          if (res.data === 'Success, requested action completed') {
+            this.getTableMatch()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
 
     deleteMatch (_position) {
@@ -332,8 +325,8 @@ export default {
       this.$axios(`${this.URLMatch}&func=Delete&index=${_position}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
-            this.editMatch = false
             this.getTableMatch()
+            this.editMatch = false
           }
         })
         .catch((err) => {

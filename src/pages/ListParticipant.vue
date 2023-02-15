@@ -109,7 +109,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -122,7 +122,8 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" />
+            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="false" v-if="txtParticipantReaction === ''" />
+            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="true" v-if="txtParticipantReaction !== ''" />
             <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="false" v-if="txtParticipantReaction === ''" />
             <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== ''" />
             <q-select v-model="txtParticipantArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtParticipantAction === 'bin dabei'" />
@@ -137,7 +138,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" label="Löschen" color="primary" @click="delParticipant = true" v-if="IsAdministrator && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipantParticipant, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipantParticipant, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -200,7 +201,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" label="Löschen" color="primary" @click="delTicketAssignment = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(intTicketAssignmentPosition, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(intTicketAssignmentPosition, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -486,41 +487,33 @@ export default {
     addParticipantSave (_participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
       console.log('addParticipantSave: ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
-      if (_participant !== '') {
-        if (_action !== 'bin dabei') _arrival = ''
+      if (_action !== 'bin dabei') _arrival = ''
 
-        this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}&reaction=`)
-          .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.loadReloadData(_matchName, _time, _annotationsMatch)
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      } else {
-        alert('Name ist erforderlich')
-      }
+      this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}&reaction=`)
+        .then((res) => {
+          if (res.data === 'Success, requested action completed') {
+            this.loadReloadData(_matchName, _time, _annotationsMatch)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
 
     editParticipantSave (_participantPosition, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
       console.log('editParticipantSave: ' + _participantPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
-      if (_participant !== '') {
-        if (_action !== 'bin dabei') _arrival = ''
+      if (_action !== 'bin dabei') _arrival = ''
 
-        this.$axios(`${this.URLParticipant}&func=Update&index=${_participantPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
-          .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.loadReloadData(_matchName, _time, _annotationsMatch)
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      } else {
-        alert('Name ist erforderlich')
-      }
+      this.$axios(`${this.URLParticipant}&func=Update&index=${_participantPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
+        .then((res) => {
+          if (res.data === 'Success, requested action completed') {
+            this.loadReloadData(_matchName, _time, _annotationsMatch)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
 
     deleteParticipant (_participantPosition, _matchName, _time, _annotationsMatch) {
@@ -634,22 +627,18 @@ export default {
     editTicketAssignmentSave (_ticketAssignmentPosition, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
       console.log('editTicketAssignmentSave: ' + _ticketAssignmentPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
-      if (_participant !== '') {
-        if (_action !== 'bin dabei') _arrival = ''
+      if (_action !== 'bin dabei') _arrival = ''
 
-        this.$axios(`${this.URLParticipant}&func=Update&index=${_ticketAssignmentPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
-          .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.editTicketAssignment = false
-              this.loadReloadData(_matchName, _time, _annotationsMatch)
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      } else {
-        alert('Name ist erforderlich')
-      }
+      this.$axios(`${this.URLParticipant}&func=Update&index=${_ticketAssignmentPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
+        .then((res) => {
+          if (res.data === 'Success, requested action completed') {
+            this.editTicketAssignment = false
+            this.loadReloadData(_matchName, _time, _annotationsMatch)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
 
     deleteTicketAssignment (_ticketAssignmentPosition, _reaction, _matchName, _time, _annotationsMatch) {
