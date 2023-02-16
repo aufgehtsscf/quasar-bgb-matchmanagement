@@ -274,6 +274,9 @@ const _constDate = ref('')
 const _constMatchName = ref('')
 const _constArrivalElements = []
 
+const _constParticipantList = ref('')
+const _constTicketList = ref('')
+
 const _constParticipantPosition = ref('')
 const _constParticipantParticipant = ref('')
 const _constParticipantArrival = ref('')
@@ -362,6 +365,7 @@ export default {
       participantPosition: [],
       participantMatch: [],
       participantParticipant: [],
+      participantListElement: [],
       participantArrival: [],
       participantAnnotations: [],
       participantAction: [],
@@ -372,6 +376,7 @@ export default {
       ticketPosition: [],
       ticket: [],
       ticketParticipant: [],
+      ticketListElement: [],
       ticketArrival: [],
       ticketAnnotations: [],
       ticketAction: [],
@@ -661,6 +666,7 @@ export default {
       this.participantPosition = []
       this.participantMatch = []
       this.participantParticipant = []
+      this.participantListElement = []
       this.participantArrival = []
       this.participantAnnotations = []
       this.participantAction = []
@@ -689,9 +695,11 @@ export default {
                   break
                 case 3:
                   this.participantParticipant[index + 1] = element[index2]
+                  this.participantListElement[index] = element[index2]
                   break
                 case 4:
                   this.participantArrival[index + 1] = element[index2].substr(0, 5)
+                  this.participantListElement[index] += ' (' + element[index2].substr(0, 5) + ')'
                   if (parseInt(this.participantArrival[index + 1].substr(0, 2)) === parseInt(_time.substr(0, 2) - 2) &&
                   this.participantArrival[index + 1].substr(3, 2) === _time.substr(3, 2)) {
                     if (this.reservation !== '') {
@@ -704,6 +712,7 @@ export default {
                   break
                 case 5:
                   this.participantAnnotations[index + 1] = element[index2].replace(/§§§/g, ' / ')
+                  this.participantListElement[index] += ' (' + element[index2].replace(/§§§/g, ' / ') + ')'
                   break
                 case 6:
                   this.participantAction[index + 1] = element[index2]
@@ -720,6 +729,7 @@ export default {
           if (this.reservation !== '') {
             this.reservation += ','
           }
+
           _constAnnotationsMatchOriginal.value = _annotationsMatch
           _constAnnotationsMatch.value = _annotationsMatch.replace(/§§§/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substr(0, 2) - 2) + ':' + _time.substr(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
         })
@@ -733,6 +743,7 @@ export default {
       this.ticketPosition = []
       this.ticket = []
       this.ticketParticipant = []
+      this.ticketListElement = []
       this.ticketArrival = []
       this.ticketAnnotations = []
       this.ticketAction = []
@@ -761,9 +772,20 @@ export default {
                   break
                 case 6:
                   this.ticketAction[index + 1] = element[index2]
+                  if (this.ticketAction[index + 1] === 'brauche Karte') {
+                    this.ticketListElement[index] = '??? an ' + this.ticketParticipant[index + 1] + ' (' + this.ticketAnnotations[index + 1] + ')'
+                  }
                   break
                 case 7:
                   this.ticketReaction[index + 1] = element[index2]
+                  if (this.ticketAction[index + 1] === 'meine Karte ist frei') {
+                    this.ticketListElement[index] = this.ticketParticipant[index + 1]
+                    if (this.ticketReaction[index + 1] === '') {
+                      this.ticketListElement[index] += ' an ???'
+                    } else {
+                      this.ticketListElement[index] += ' (' + this.ticketReaction[index + 1] + ')'
+                    }
+                  }
                   break
                 default:
                   break
