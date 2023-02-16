@@ -274,9 +274,6 @@ const _constDate = ref('')
 const _constMatchName = ref('')
 const _constArrivalElements = []
 
-const _constParticipantList = ref('')
-const _constTicketList = ref('')
-
 const _constParticipantPosition = ref('')
 const _constParticipantParticipant = ref('')
 const _constParticipantArrival = ref('')
@@ -295,6 +292,9 @@ const _constTicketAssignmentGivenElements = []
 const _constTicketAssignmentRequiredElements = []
 const _constTicketAssignmentGiven = ref('')
 const _constTicketAssignmentRequired = ref('')
+
+const _constParticipantList = ref('')
+const _constTicketList = ref('')
 
 export default {
   name: 'ListParticipant',
@@ -345,7 +345,10 @@ export default {
       txtTicketAssignmentGiven: ref(_constTicketAssignmentGiven),
       txtTicketAssignedGiven: ref(_constTicketAssignmentGiven),
       txtTicketAssignmentRequired: ref(_constTicketAssignmentRequired),
-      txtTicketAssignedRequired: ref(_constTicketAssignmentRequired)
+      txtTicketAssignedRequired: ref(_constTicketAssignmentRequired),
+
+      txtParticipantList: ref(_constParticipantList),
+      txtTicketList: ref(_constTicketList)
     }
   },
 
@@ -392,7 +395,9 @@ export default {
 
       ticketAssignedIndex: [],
       ticketAssignedPosition: [],
-      ticketAssignedParticipant: []
+      ticketAssignedParticipant: [],
+
+      txtWhatsApp: ref('')
     }
   },
 
@@ -466,11 +471,11 @@ export default {
       console.log('loadReloadData: ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       this.setArrivalElements(_time)
-      this.getTableParticipant(_constMatchName.value, _time, _annotationsMatch)
-      this.getTableTicket(_constMatchName.value)
-      this.getTableTicketGiven(_constMatchName.value)
-      this.getTableTicketRequired(_constMatchName.value)
-      this.getTableTicketAssigned(_constMatchName.value)
+      this.getTableParticipant(_matchName, _time, _annotationsMatch)
+      this.getTableTicket(_matchName)
+      this.getTableTicketGiven(_matchName)
+      this.getTableTicketRequired(_matchName)
+      this.getTableTicketAssigned(_matchName)
     },
 
     onParticipantClick (_participantPosition, _participant, _arrival, _annotations, _action, _reaction) {
@@ -711,8 +716,10 @@ export default {
                   }
                   break
                 case 5:
-                  this.participantAnnotations[index + 1] = element[index2].replace(/§§§/g, ' / ')
-                  this.participantListElement[index] += ' (' + element[index2].replace(/§§§/g, ' / ') + ')'
+                  this.participantAnnotations[index + 1] = element[index2].replace(/§§§/g, '\n').trim()
+                  if (this.participantAnnotations[index + 1] !== '') {
+                    this.participantListElement[index] += ' (' + this.participantAnnotations[index + 1] + ')'
+                  }
                   break
                 case 6:
                   this.participantAction[index + 1] = element[index2]
@@ -732,6 +739,11 @@ export default {
 
           _constAnnotationsMatchOriginal.value = _annotationsMatch
           _constAnnotationsMatch.value = _annotationsMatch.replace(/§§§/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substr(0, 2) - 2) + ':' + _time.substr(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
+
+          _constParticipantList.value = ''
+          this.participantListElement.forEach(element => {
+            _constParticipantList.value += element + '\n'
+          })
         })
         .catch((err) => {
           console.log(err)
@@ -768,7 +780,7 @@ export default {
                   this.ticketArrival[index + 1] = element[index2]
                   break
                 case 5:
-                  this.ticketAnnotations[index + 1] = element[index2]
+                  this.ticketAnnotations[index + 1] = element[index2].replace(/§§§/g, '\n').trim()
                   break
                 case 6:
                   this.ticketAction[index + 1] = element[index2]
@@ -781,9 +793,9 @@ export default {
                   if (this.ticketAction[index + 1] === 'meine Karte ist frei') {
                     this.ticketListElement[index] = this.ticketParticipant[index + 1]
                     if (this.ticketReaction[index + 1] === '') {
-                      this.ticketListElement[index] += ' an ???'
+                      this.ticketListElement[index] += ' an ??? (' + this.ticketAnnotations[index + 1] + ')'
                     } else {
-                      this.ticketListElement[index] += ' (' + this.ticketReaction[index + 1] + ')'
+                      this.ticketListElement[index] += ' an ' + this.ticketReaction[index + 1] + ' (' + this.ticketAnnotations[index + 1] + ')'
                     }
                   }
                   break
@@ -802,6 +814,16 @@ export default {
               }
             }
           }
+
+          _constTicketList.value = ''
+          this.ticketListElement.forEach(element => {
+            _constTicketList.value += element + '\n'
+          })
+
+          this.txtWhatsApp = _matchName + '\n\nAnwesend (Ankunft):\n' + this.txtParticipantList
+          this.txtWhatsApp += '\nKarte weitergeben oder bedarf (Karte hat dabei):\n' + this.txtTicketList
+          this.txtWhatsApp += '\n' + this.txtAnnotationsMatch
+          console.log(this.txtWhatsApp)
         })
         .catch((err) => {
           console.log(err)
@@ -837,7 +859,6 @@ export default {
           for (let index = 1; index < this.ticketGivenParticipant.length; index++) {
             _constTicketAssignmentGivenElements[index - 1] = this.ticketGivenParticipant[index]
           }
-          console.log('_constTicketAssignmentGivenElements: ' + _constTicketAssignmentGivenElements)
         })
         .catch((err) => {
           console.log(err)
@@ -873,7 +894,6 @@ export default {
           for (let index = 1; index < this.ticketRequiredParticipant.length; index++) {
             _constTicketAssignmentRequiredElements[index - 1] = this.ticketRequiredParticipant[index]
           }
-          console.log('_constTicketAssignmentRequiredElements: ' + _constTicketAssignmentRequiredElements)
         })
         .catch((err) => {
           console.log(err)
