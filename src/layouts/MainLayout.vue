@@ -48,6 +48,14 @@
             <q-item-section> Spiele </q-item-section>
           </q-item>
 
+          <q-item to="/whereismycard" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="credit_card" />
+            </q-item-section>
+
+            <q-item-section> Wer hat meine Karte </q-item-section>
+          </q-item>
+
           <q-item to="/order" exact clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="shopping_cart" />
