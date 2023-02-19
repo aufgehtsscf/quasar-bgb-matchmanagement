@@ -14,10 +14,10 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="i in index"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onWhereIsMyCardClick(position[i], cardHolder[i], cardType[i], whoHasTheCard[i])" v-if="i > 0">
+        <q-item clickable v-ripple @click="onWhereIsMyCardClick(position[i], cardHolder[i], discounted[i], whoHasTheCard[i])" v-if="i > 0">
           <q-item-section>
-            <q-item-label overline>Kartenbesitzer: {{ cardHolder[i] }}</q-item-label>
-            <q-item-label caption>Kartenart: {{ cardType[i] }}</q-item-label>
+            <q-item-label overline>Inhaber: {{ cardHolder[i] }}</q-item-label>
+            <q-item-label caption>Ermäßigt: {{ textDiscounted[i] }}</q-item-label>
             <q-item-label caption>Wer hat die Karte: {{ whoHasTheCard[i] }}</q-item-label>
           </q-item-section>
         </q-item>
@@ -36,8 +36,14 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolderNew" autofocus label="Kartenbesitzer" />
-            <q-input dense v-model="txtCardTypeNew" autofocus label="Kartenart" />
+            <q-input dense v-model="txtCardHolderNew" autofocus label="Inhaber" />
+
+            <div class="q-pt-md">
+              <div class="q-gutter-sm">
+                <div><q-checkbox left-label v-model="txtDiscountedNew" label="Ermäßigt" /></div>
+              </div>
+            </div>
+
             <q-input dense v-model="txtWhoHasTheCardNew" autofocus label="Wer hat die Karte" />
           </q-card-section>
 
@@ -45,7 +51,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addWhereIsMyCardSave(txtCardHolderNew, txtCardTypeNew, txtWhoHasTheCardNew)" :disable="txtCardHolderNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addWhereIsMyCardSave(txtCardHolderNew, txtDiscountedNew, txtWhoHasTheCardNew)" :disable="txtCardHolderNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -58,17 +64,23 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolder" autofocus label="Kartenbesitzer" />
-            <q-input dense v-model="txtCardType" autofocus label="Kartenart" />
+            <q-input dense v-model="txtCardHolder" autofocus label="Inhaber" />
+
+            <div class="q-pt-md">
+              <div class="q-gutter-sm">
+                <div><q-checkbox left-label v-model="txtDiscounted" label="Ermäßigt" /></div>
+              </div>
+            </div>
+
             <q-input dense v-model="txtWhoHasTheCard" autofocus label="Wer hat die Karte" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="delWhereIsMyCard = true" />
+            <q-btn icon="delete" label="Löschen" color="primary" @click="delWhereIsMyCard = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intPosition, txtCardHolder, txtCardType, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intPosition, txtCardHolder, txtDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -99,7 +111,7 @@ import { ref } from 'vue'
 
 const _constPosition = ref('')
 const _constCardHolder = ref('')
-const _constCardType = ref('')
+const _constDiscounted = ref('')
 const _constWhoHasTheCard = ref('')
 
 export default {
@@ -107,15 +119,15 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       intPosition: ref(_constPosition),
       txtCardHolder: ref(_constCardHolder),
-      txtCardType: ref(_constCardType),
+      txtDiscounted: ref(_constDiscounted),
       txtWhoHasTheCard: ref(_constWhoHasTheCard),
 
       txtCardHolderNew: ref(''),
-      txtCardTypeNew: ref(''),
+      txtDiscountedNew: ref(false),
       txtWhoHasTheCardNew: ref(''),
 
       addWhereIsMyCard: ref(false),
@@ -126,12 +138,13 @@ export default {
 
   data () {
     return {
-      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbwz16DoMvjbSazbg86q28BcWxQVtbuBaAO0avvion5OWsXZH3khiK5sO9DtrHPWwuqZ/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
+      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbx3lJiQMsu9KNp7WgXYO4FX-5nPjeEpP7f2SmFgZ8ZZ2f944rghYctGxUMiNVZZ7Jn2/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
 
       index: [],
       position: [],
       cardHolder: [],
-      cardType: [],
+      discounted: [],
+      textDiscounted: [],
       whoHasTheCard: []
     }
   },
@@ -161,7 +174,12 @@ export default {
                   this.cardHolder[index + 1] = element[index2]
                   break
                 case 3:
-                  this.cardType[index + 1] = element[index2]
+                  this.discounted[index + 1] = element[index2]
+                  if (element[index2] === 'TRUE') {
+                    this.textDiscounted[index + 1] = 'Ja'
+                  } else {
+                    this.textDiscounted[index + 1] = 'Nein'
+                  }
                   break
                 case 4:
                   this.whoHasTheCard[index + 1] = element[index2]
@@ -178,20 +196,20 @@ export default {
         })
     },
 
-    onWhereIsMyCardClick (_position, _cardHolder, _cardType, _whoHasTheCard) {
-      console.log('Clicked on WhereIsMyCard: ' + _position + ', ' + _cardHolder + ', ' + _cardType + ', ' + _whoHasTheCard)
+    onWhereIsMyCardClick (_position, _cardHolder, _discounted, _whoHasTheCard) {
+      console.log('Clicked on WhereIsMyCard: ' + _position + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
       _constPosition.value = _position
       _constCardHolder.value = _cardHolder
-      _constCardType.value = _cardType
+      _constDiscounted.value = _discounted === 'TRUE'
       _constWhoHasTheCard.value = _whoHasTheCard
 
       this.editWhereIsMyCard = true
     },
 
-    addWhereIsMyCardSave (_cardHolder, _cardType, _whoHasTheCard) {
-      console.log('addWhereIsMyCardSave: ' + _cardHolder + ', ' + _cardType + ', ' + _whoHasTheCard)
+    addWhereIsMyCardSave (_cardHolder, _discounted, _whoHasTheCard) {
+      console.log('addWhereIsMyCardSave: ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
 
-      this.$axios(`${this.URLWhereIsMyCard}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&cardtype=${encodeURI(_cardType.replace(',', ' '))}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+      this.$axios(`${this.URLWhereIsMyCard}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.getTableWhereIsMyCard()
@@ -202,10 +220,10 @@ export default {
         })
     },
 
-    editWhereIsMyCardSave (_position, _cardHolder, _cardType, _whoHasTheCard, _annotations) {
-      console.log('editWhereIsMyCardSave: ' + _position + ', ' + _cardHolder + ', ' + _cardType + ', ' + _whoHasTheCard + ', ' + _annotations)
+    editWhereIsMyCardSave (_position, _cardHolder, _discounted, _whoHasTheCard, _annotations) {
+      console.log('editWhereIsMyCardSave: ' + _position + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard + ', ' + _annotations)
 
-      this.$axios(`${this.URLWhereIsMyCard}&func=Update&index=${_position}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&cardtype=${_cardType}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+      this.$axios(`${this.URLWhereIsMyCard}&func=Update&index=${_position}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.getTableWhereIsMyCard()
