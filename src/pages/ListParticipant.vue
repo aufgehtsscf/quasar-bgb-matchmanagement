@@ -24,6 +24,8 @@
       </q-btn-dropdown>
     </div>
 
+    <!-- <share-it :targets="['twitter', 'facebook']" /> -->
+
     <!-- Match Name -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
@@ -397,7 +399,63 @@ export default {
       ticketAssignedPosition: [],
       ticketAssignedParticipant: [],
 
-      txtWhatsApp: ref('')
+      txtWhatsApp: ref(''),
+      share: {
+        twitter: {
+          size: '2x',
+          label: 'Custom label!',
+          round: true
+        },
+        linkedin: {
+          size: '2x',
+          color: '#333',
+          backgroundColor: 'yellow'
+        },
+        facebook: {
+          size: '3x',
+          dark: true
+        },
+        whatsapp: {
+          size: '2x',
+          dense: true,
+          outline: true,
+          color: 'green'
+        }
+      },
+      iconConfig: {
+        twitter: {
+          icon: true,
+          size: 'sm',
+          color: '#333',
+          round: true,
+          backgroundColor: 'yellow'
+        },
+        linkedin: {
+          icon: true,
+          size: 'lg',
+          outline: true,
+          round: true
+        },
+        facebook: {
+          icon: true,
+          size: '2x',
+          outline: true,
+          round: true
+        },
+        whatsapp: {
+          icon: true,
+          size: '3x',
+          outline: true,
+          round: true
+        },
+        reddit: {
+          icon: true,
+          size: '4x',
+          outline: true,
+          round: true
+        }
+      }
+
     }
   },
 
