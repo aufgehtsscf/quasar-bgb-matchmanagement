@@ -184,7 +184,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
       IsSuperadministrator: ref(false),
 
       intPosition: ref(_constPosition),

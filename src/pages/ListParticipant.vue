@@ -178,7 +178,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addTicketAssignmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addTicketAssignmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketAssignmentGiven === '' || txtTicketAssignmentRequired === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -303,7 +303,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
