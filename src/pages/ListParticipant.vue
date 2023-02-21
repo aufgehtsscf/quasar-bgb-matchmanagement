@@ -24,13 +24,14 @@
       </q-btn-dropdown>
     </div>
 
-    <!-- <share-it :targets="['twitter', 'facebook']" /> -->
-
     <!-- Match Name -->
     <div class="q-pa-md" style="max-width: 500px">
-      <q-toolbar class="bg-primary text-white">
-          {{ txtMatchName }}
-      </q-toolbar>
+      <q-toolbar class="bg-primary text-white">{{ txtMatchName }}</q-toolbar>
+    </div>
+
+    <!-- Share -->
+    <div class="q-pa-md" style="max-width: 500px" v-if="IsAdministrator" >
+      <q-btn class="bg-white text-primary" icon="share" label="Übersicht teilen" @click="setTextShare(txtMatchName)" />
     </div>
 
     <!-- List of participants and tickets -->
@@ -88,6 +89,28 @@
 
     <!-- Dialogs -->
     <div class="q-pa-md q-gutter-sm">
+
+      <!-- Share -->
+      <q-dialog v-model="share" persistent>
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h6">Übersicht teilen</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input v-model="txtShare" filled type="textarea" rows="35" />
+            </div>
+
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions class="text-primary" align="right">
+            <q-btn flat label="Abbrechen" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
 
       <!-- Start Dialogs participant -->
       <!-- Add participant -->
@@ -297,6 +320,7 @@ const _constTicketAssignmentRequired = ref('')
 
 const _constParticipantList = ref('')
 const _constTicketList = ref('')
+const _constShare = ref('')
 
 export default {
   name: 'ListParticipant',
@@ -313,7 +337,7 @@ export default {
 
       addParticipant: ref(false),
       editParticipant: ref(false),
-      delParticipant: ref(false),
+      share: ref(false),
 
       addTicketAssignment: ref(false),
       editTicketAssignment: ref(false),
@@ -349,8 +373,7 @@ export default {
       txtTicketAssignmentRequired: ref(_constTicketAssignmentRequired),
       txtTicketAssignedRequired: ref(_constTicketAssignmentRequired),
 
-      txtParticipantList: ref(_constParticipantList),
-      txtTicketList: ref(_constTicketList)
+      txtShare: ref(_constShare)
     }
   },
 
@@ -397,65 +420,7 @@ export default {
 
       ticketAssignedIndex: [],
       ticketAssignedPosition: [],
-      ticketAssignedParticipant: [],
-
-      txtWhatsApp: ref(''),
-      share: {
-        twitter: {
-          size: '2x',
-          label: 'Custom label!',
-          round: true
-        },
-        linkedin: {
-          size: '2x',
-          color: '#333',
-          backgroundColor: 'yellow'
-        },
-        facebook: {
-          size: '3x',
-          dark: true
-        },
-        whatsapp: {
-          size: '2x',
-          dense: true,
-          outline: true,
-          color: 'green'
-        }
-      },
-      iconConfig: {
-        twitter: {
-          icon: true,
-          size: 'sm',
-          color: '#333',
-          round: true,
-          backgroundColor: 'yellow'
-        },
-        linkedin: {
-          icon: true,
-          size: 'lg',
-          outline: true,
-          round: true
-        },
-        facebook: {
-          icon: true,
-          size: '2x',
-          outline: true,
-          round: true
-        },
-        whatsapp: {
-          icon: true,
-          size: '3x',
-          outline: true,
-          round: true
-        },
-        reddit: {
-          icon: true,
-          size: '4x',
-          outline: true,
-          round: true
-        }
-      }
-
+      ticketAssignedParticipant: []
     }
   },
 
@@ -534,6 +499,13 @@ export default {
       this.getTableTicketGiven(_matchName)
       this.getTableTicketRequired(_matchName)
       this.getTableTicketAssigned(_matchName)
+    },
+
+    setTextShare (_matchName) {
+      _constShare.value = _matchName + '\n\nAnwesend (Ankunft):\n' + _constParticipantList.value
+      _constShare.value += '\nKarte weitergeben oder bedarf (Karte hat dabei):\n' + _constTicketList.value
+      _constShare.value += '\n' + _constAnnotationsMatch.value
+      this.share = true
     },
 
     onParticipantClick (_participantPosition, _participant, _arrival, _annotations, _action, _reaction) {
@@ -877,11 +849,6 @@ export default {
           this.ticketListElement.forEach(element => {
             _constTicketList.value += element + '\n'
           })
-
-          this.txtWhatsApp = _matchName + '\n\nAnwesend (Ankunft):\n' + this.txtParticipantList
-          this.txtWhatsApp += '\nKarte weitergeben oder bedarf (Karte hat dabei):\n' + this.txtTicketList
-          this.txtWhatsApp += '\n' + this.txtAnnotationsMatch
-          console.log(this.txtWhatsApp)
         })
         .catch((err) => {
           console.log(err)
