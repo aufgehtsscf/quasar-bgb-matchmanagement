@@ -143,7 +143,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="IsSuperadministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intPosition, txtMatch, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(intPosition, txtOldMatch, txtMatch, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -192,6 +192,7 @@ export default {
       chbPublished: ref(_constPublished),
       txtDatetime: ref(_constDatetime),
       txtAnnotations: ref(_constAnnotations),
+      txtOldMatch: ref(_constMatchName),
 
       txtMatchNew: ref(''),
       chbPublishedNew: ref(false),
@@ -207,6 +208,7 @@ export default {
   data () {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbyh43MSF1Vz9W3TZ0_9e273B81CtCEk4se3yHj9HCbIvBlfw9g6tHE3d5O8eXW3yIkyog/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
+      URLParticipant: 'https://script.google.com/macros/s/AKfycbz7shs3qaBAxwLyvDH7XZVuqFcX2Yg8mzVxZe8RcO3KWQuFCRKlBSKu5uMSvJTKQOGkDw/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
 
       index: [],
       position: [],
@@ -280,7 +282,10 @@ export default {
       _constPublished.value = _published === 'TRUE'
       _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
-      _constMatchName.value = _match.trim() + ' ' + _datetime.replace(' ', ' - ')
+
+      const _date = _datetime.substr(0, 10)
+      const _time = _datetime.substr(11, 5)
+      _constMatchName.value = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
 
       if (this.IsAdministrator) this.editMatch = true
     },
@@ -302,16 +307,26 @@ export default {
         })
     },
 
-    editMatchSave (_position, _match, _published, _datetime, _annotations) {
-      console.log('editMatchSave: ' + _position + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    editMatchSave (_position, _oldMatch, _match, _published, _datetime, _annotations) {
+      console.log('editMatchSave - Update: ' + _position + ', ' + _oldMatch + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
       const _date = _datetime.substr(0, 10)
       const _time = _datetime.substr(11, 5)
+      const _newMatch = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
+      console.log('editMatchSave - UpdateMatch: ' + _oldMatch + ', ' + _newMatch)
 
       this.$axios(`${this.URLMatch}&func=Update&index=${_position}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';'))}&date=${_date}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
-            this.getTableMatch()
+            this.$axios(`${this.URLParticipant}&func=UpdateMatch&oldMatch=${_oldMatch}&newMatch=${_newMatch}`)
+              .then((res) => {
+                if (res.data === 'Success, requested action completed') {
+                  this.getTableMatch()
+                }
+              })
+              .catch((err) => {
+                console.log(err)
+              })
           }
         })
         .catch((err) => {
