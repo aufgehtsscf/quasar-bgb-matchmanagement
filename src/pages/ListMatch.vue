@@ -141,7 +141,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="delMatch = true" v-if="IsSuperadministrator" />
+            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="IsSuperadministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMatchSave(intPosition, txtMatch, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
           </q-card-actions>

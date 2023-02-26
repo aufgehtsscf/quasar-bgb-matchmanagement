@@ -161,7 +161,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="delParticipant = true" v-if="IsAdministrator && txtParticipantReaction === ''" />
+            <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if="IsAdministrator && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantPosition, txtParticipantParticipant, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === ''" v-close-popup />
           </q-card-actions>
@@ -178,7 +178,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(intParticipantPosition, txtParticipantReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(intParticipantPosition, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -224,7 +224,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="delTicketAssignment = true" v-if="IsAdministrator" />
+            <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(intTicketAssignmentPosition, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
@@ -262,7 +262,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(intTicketAssignmentPosition, txtTicketReaction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(intTicketAssignmentPosition, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -337,6 +337,7 @@ export default {
 
       addParticipant: ref(false),
       editParticipant: ref(false),
+      delParticipant: ref(false),
       share: ref(false),
 
       addTicketAssignment: ref(false),
@@ -681,8 +682,8 @@ export default {
         })
     },
 
-    deleteTicketAssignment (_ticketAssignmentPosition, _reaction, _matchName, _time, _annotationsMatch) {
-      console.log('deleteTicketAssignment: ' + _ticketAssignmentPosition + ', ' + _reaction + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    deleteTicketAssignment (_ticketAssignmentPosition, _matchName, _time, _annotationsMatch) {
+      console.log('deleteTicketAssignment: ' + _ticketAssignmentPosition + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       this.$axios(`${this.URLParticipant}&func=Delete&index=${_ticketAssignmentPosition}`)
         .then((res) => {

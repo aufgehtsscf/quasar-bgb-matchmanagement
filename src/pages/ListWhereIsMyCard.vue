@@ -78,7 +78,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" label="Löschen" color="primary" @click="delWhereIsMyCard = true" v-if="IsAdministrator" />
+            <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intPosition, txtCardHolder, txtDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
           </q-card-actions>
