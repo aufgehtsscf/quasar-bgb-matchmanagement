@@ -158,7 +158,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteMatch(intPosition)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteMatch(intPosition, txtOldMatch, txtDatetime)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -209,6 +209,7 @@ export default {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbyh43MSF1Vz9W3TZ0_9e273B81CtCEk4se3yHj9HCbIvBlfw9g6tHE3d5O8eXW3yIkyog/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
       URLParticipant: 'https://script.google.com/macros/s/AKfycbz7shs3qaBAxwLyvDH7XZVuqFcX2Yg8mzVxZe8RcO3KWQuFCRKlBSKu5uMSvJTKQOGkDw/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
+      URLParticipantArchive: 'https://script.google.com/macros/s/AKfycby__5OEag_-ClbApCv2r8x9Ity4MYBBrrJ7ZD4B2FOeqxSAZD-bB0bUqM4Su91W3NvnPA/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
       index: [],
       position: [],
@@ -319,11 +320,12 @@ export default {
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.$axios(`${this.URLParticipant}&func=UpdateMatch&oldMatch=${_oldMatch}&newMatch=${_newMatch}`)
-              .then((res) => {
-                if (res.data === 'Success, requested action completed') {
+              .then((res2) => {
+                if (res2.data === 'Success, requested action completed') {
                   this.getTableMatch()
                 }
               })
+
               .catch((err) => {
                 console.log(err)
               })
@@ -334,19 +336,51 @@ export default {
         })
     },
 
-    deleteMatch (_position) {
-      console.log('deleteMatch: ' + _position)
+    deleteMatch (_position, _matchToDelete, _datetime) {
+      console.log('deleteMatch: ' + _position + ', ' + _matchToDelete + ', ' + _datetime)
 
-      this.$axios(`${this.URLMatch}&func=Delete&index=${_position}`)
+      const _date = _datetime.substr(0, 10)
+      let _success = false
+
+      this.$axios(`${this.URLParticipant}&func=ReadAll&match=${_matchToDelete}`)
         .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.getTableMatch()
-            this.editMatch = false
+          this.tableParticipant = res.data.split('\n')
+          for (let index = 0; index < this.tableParticipant.length - 1; index++) {
+            const element = this.tableParticipant[index].split(',')
+            setTimeout(200)
+            this.$axios(`${this.URLParticipantArchive}&func=Add&timestamp=${element[1]}&match=${element[2]}&participant=${element[3]}&arrival=${element[4]}&annotations=${element[5]}&action=${element[6]}&reaction=${element[7]}&date=${_date}`)
+              .then((res2) => {
+                if (res2.data === 'Success, requested action completed') { _success = true } else _success = false
+              })
+              .catch((err) => {
+                console.log(err)
+              })
           }
         })
         .catch((err) => {
           console.log(err)
         })
+
+      if (_success) {
+        this.$axios(`${this.URLParticipant}&func=DeleteMatch&match=${_matchToDelete}`)
+          .then((res3) => {
+            if (res3.data === 'Success, requested action completed') {
+              this.$axios(`${this.URLMatch}&func=Delete&index=${_position}`)
+                .then((res4) => {
+                  if (res4.data === 'Success, requested action completed') {
+                    this.getTableMatch()
+                    this.editMatch = false
+                  }
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     }
 
   }
