@@ -141,7 +141,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="IsSuperadministrator" />
+            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMatchSave(intPosition, txtOldMatch, txtMatch, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
           </q-card-actions>
@@ -185,7 +185,6 @@ export default {
   setup () {
     return {
       IsAdministrator: ref(true),
-      IsSuperadministrator: ref(true),
 
       intPosition: ref(_constPosition),
       txtMatch: ref(_constMatch),
