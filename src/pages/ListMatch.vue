@@ -158,7 +158,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteMatch(intPosition, txtOldMatch, txtDatetime)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="archiveMatch(intPosition, txtOldMatch, txtDatetime)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -185,7 +185,7 @@ export default {
   setup () {
     return {
       IsAdministrator: ref(true),
-      IsSuperadministrator: ref(false),
+      IsSuperadministrator: ref(true),
 
       intPosition: ref(_constPosition),
       txtMatch: ref(_constMatch),
@@ -336,22 +336,20 @@ export default {
         })
     },
 
-    deleteMatch (_position, _matchToDelete, _datetime) {
+    async archiveMatch (_position, _matchToDelete, _datetime) {
       console.log('deleteMatch: ' + _position + ', ' + _matchToDelete + ', ' + _datetime)
 
       const _date = _datetime.substr(0, 10)
-      let _success = false
+
+      const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
       this.$axios(`${this.URLParticipant}&func=ReadAll&match=${_matchToDelete}`)
-        .then((res) => {
+        .then(async (res) => {
           this.tableParticipant = res.data.split('\n')
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
             const element = this.tableParticipant[index].split(',')
-            setTimeout(200)
+            await sleep(1000)
             this.$axios(`${this.URLParticipantArchive}&func=Add&timestamp=${element[1]}&match=${element[2]}&participant=${element[3]}&arrival=${element[4]}&annotations=${element[5]}&action=${element[6]}&reaction=${element[7]}&date=${_date}`)
-              .then((res2) => {
-                if (res2.data === 'Success, requested action completed') { _success = true } else _success = false
-              })
               .catch((err) => {
                 console.log(err)
               })
@@ -361,26 +359,28 @@ export default {
           console.log(err)
         })
 
-      if (_success) {
-        this.$axios(`${this.URLParticipant}&func=DeleteMatch&match=${_matchToDelete}`)
-          .then((res3) => {
-            if (res3.data === 'Success, requested action completed') {
-              this.$axios(`${this.URLMatch}&func=Delete&index=${_position}`)
-                .then((res4) => {
-                  if (res4.data === 'Success, requested action completed') {
-                    this.getTableMatch()
-                    this.editMatch = false
-                  }
-                })
-                .catch((err) => {
-                  console.log(err)
-                })
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      }
+      this.deleteMatch(_position, _matchToDelete)
+    },
+
+    deleteMatch (_position, _matchToDelete) {
+      this.$axios(`${this.URLParticipant}&func=DeleteMatch&match=${_matchToDelete}`)
+        .then((res3) => {
+          if (res3.data === 'Success, requested action completed') {
+            this.$axios(`${this.URLMatch}&func=Delete&index=${_position}`)
+              .then((res4) => {
+                if (res4.data === 'Success, requested action completed') {
+                  this.getTableMatch()
+                  this.editMatch = false
+                }
+              })
+              .catch((err) => {
+                console.log(err)
+              })
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
 
   }
