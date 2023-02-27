@@ -24,10 +24,24 @@
       </q-btn-dropdown>
     </div>
 
-    <!-- Match Name -->
-    <div class="q-pa-md" style="max-width: 500px">
-      <q-toolbar class="bg-primary text-white">{{ txtMatchName }}</q-toolbar>
-    </div>
+    <!-- Match Card -->
+    <q-card class="my-card">
+      <q-img src="statics/SCF-Hoffenheim.jpg" v-if="txtMatchName.indexOf('H....') >= 0">
+        <div class="absolute-bottom text-h5 text-center text-black">
+          {{ txtMatchName }}
+        </div>
+      </q-img>
+      <q-img src="statics/SCF-Juventus.jpg" v-if="txtMatchName.indexOf('Juventus') >= 0">
+        <div class="absolute-bottom text-h5 text-center text-black">
+          {{ txtMatchName }}
+        </div>
+      </q-img>
+      <q-img src="statics/Test_Spieltag.jpg" v-if="txtMatchName.indexOf('Test') >= 0">
+        <div class="absolute-bottom text-h5 text-center text-black">
+          {{ txtMatchName }}
+        </div>
+      </q-img>
+    </q-card>
 
     <!-- Share -->
     <div class="q-pa-md" style="max-width: 500px" v-if="IsAdministrator" >
@@ -101,7 +115,6 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input v-model="txtShare" filled type="textarea" rows="35" />
             </div>
-
           </q-card-section>
 
           <q-separator />
@@ -1027,4 +1040,10 @@ export default {
   opacity: 0.2;
   filter: grayscale(100%);
 }
+</style>
+
+<style lang="sass" scoped>
+.my-card
+  width: 100%
+  max-width: 500px
 </style>
