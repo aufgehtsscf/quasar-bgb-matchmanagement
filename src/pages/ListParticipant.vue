@@ -41,6 +41,11 @@
           {{ txtMatchName }}
         </div>
       </q-img>
+      <q-img src="statics/SCF-.jpg" v-if="txtMatchName.indexOf('H....') < 0 && txtMatchName.indexOf('Juventus') < 0 && txtMatchName.indexOf('Test') < 0">
+        <div class="absolute-bottom text-h5 text-center text-black">
+          {{ txtMatchName }}
+        </div>
+      </q-img>
     </q-card>
 
     <!-- Share -->
@@ -340,7 +345,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(true),
+      IsAdministrator: ref(false),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
