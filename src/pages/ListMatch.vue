@@ -184,7 +184,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       intPosition: ref(_constPosition),
       txtMatch: ref(_constMatch),
@@ -196,7 +196,7 @@ export default {
       txtMatchNew: ref(''),
       chbPublishedNew: ref(false),
       txtDatetimeNew: ref(''),
-      txtAnnotationsNew: ref(''),
+      txtAnnotationsNew: ref('<STANDARDTEXT>'),
 
       addMatch: ref(false),
       editMatch: ref(false),

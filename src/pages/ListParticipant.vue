@@ -41,7 +41,32 @@
           {{ txtMatchName }}
         </div>
       </q-img>
-      <q-img src="statics/SCF-.jpg" v-if="txtMatchName.indexOf('H....') < 0 && txtMatchName.indexOf('Juventus') < 0 && txtMatchName.indexOf('Test') < 0">
+      <q-img src="statics/SCF-Hertha.jpg" v-if="txtMatchName.indexOf('Hertha') >= 0">
+        <div class="absolute-bottom text-h5 text-center text-black">
+          {{ txtMatchName }}
+        </div>
+      </q-img>
+      <q-img src="statics/SCF-Bayern.jpg" v-if="txtMatchName.indexOf('Bayern') >= 0">
+        <div class="absolute-bottom text-h5 text-center text-black">
+          {{ txtMatchName }}
+        </div>
+      </q-img>
+      <q-img src="statics/SCF-Schalke.jpg" v-if="txtMatchName.indexOf('Schalke') >= 0">
+        <div class="absolute-bottom text-h5 text-center text-black">
+          {{ txtMatchName }}
+        </div>
+      </q-img>
+      <q-img src="statics/SCF-Leipzig.jpg" v-if="txtMatchName.indexOf('Leipzig') >= 0">
+        <div class="absolute-bottom text-h5 text-center text-black">
+          {{ txtMatchName }}
+        </div>
+      </q-img>
+      <q-img src="statics/SCF-Wolfsburg.jpg" v-if="txtMatchName.indexOf('Wolfsburg') >= 0">
+        <div class="absolute-bottom text-h5 text-center text-black">
+          {{ txtMatchName }}
+        </div>
+      </q-img>
+      <q-img src="statics/SCF-.jpg" v-if="txtMatchName.indexOf('H....') < 0 && txtMatchName.indexOf('Juventus') < 0 && txtMatchName.indexOf('Hertha') < 0 && txtMatchName.indexOf('Bayern') < 0 && txtMatchName.indexOf('Schalke') < 0 && txtMatchName.indexOf('Leipzig') < 0 && txtMatchName.indexOf('Wolfsburg') < 0 && txtMatchName.indexOf('Test') < 0">
         <div class="absolute-bottom text-h5 text-center text-black">
           {{ txtMatchName }}
         </div>
@@ -345,7 +370,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
