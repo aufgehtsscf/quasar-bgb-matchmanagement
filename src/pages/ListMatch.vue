@@ -207,7 +207,7 @@ export default {
   data () {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbyh43MSF1Vz9W3TZ0_9e273B81CtCEk4se3yHj9HCbIvBlfw9g6tHE3d5O8eXW3yIkyog/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
-      URLParticipant: 'https://script.google.com/macros/s/AKfycbz7shs3qaBAxwLyvDH7XZVuqFcX2Yg8mzVxZe8RcO3KWQuFCRKlBSKu5uMSvJTKQOGkDw/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
+      URLParticipant: 'https://script.google.com/macros/s/AKfycbwGqO4HvU8gFHlxV_5VhwRVwcmESTGLhD50O_wqgCOhDfik2FhUYLScUqxUuYaAiuIZjA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
       URLParticipantArchive: 'https://script.google.com/macros/s/AKfycby__5OEag_-ClbApCv2r8x9Ity4MYBBrrJ7ZD4B2FOeqxSAZD-bB0bUqM4Su91W3NvnPA/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
       index: [],

@@ -105,7 +105,7 @@
             <q-item-label overline>{{ participantParticipant[i] }}</q-item-label>
             <q-item-label caption>{{ participantArrival[i] }}</q-item-label>
             <q-item-label caption>{{ participantAnnotations[i] }}</q-item-label>
-            <q-item-label caption v-if="participantReaction[i] !== ''">habe Karte von {{ participantReaction[i] }}</q-item-label>
+            <q-item-label caption v-if="participantReaction[i] !== ''">{{ participantReaction[i] }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -354,7 +354,6 @@ const _constTicketParticipant = ref('')
 const _constTicketArrival = ref('')
 const _constTicketAnnotations = ref('')
 const _constTicketAction = ref('')
-const _constTicketReaction = ref('')
 
 const _constTicketAssignmentGivenElements = []
 const _constTicketAssignmentRequiredElements = []
@@ -403,7 +402,6 @@ export default {
       txtTicketArrival: ref(_constTicketArrival),
       txtTicketAnnotations: ref(_constTicketAnnotations),
       txtTicketAction: ref(_constTicketAction),
-      txtTicketReaction: ref(_constTicketReaction),
 
       txtParticipantNew: ref(''),
       txtArrivalNew: ref(''),
@@ -424,7 +422,8 @@ export default {
   data () {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbyh43MSF1Vz9W3TZ0_9e273B81CtCEk4se3yHj9HCbIvBlfw9g6tHE3d5O8eXW3yIkyog/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
-      URLParticipant: 'https://script.google.com/macros/s/AKfycbz7shs3qaBAxwLyvDH7XZVuqFcX2Yg8mzVxZe8RcO3KWQuFCRKlBSKu5uMSvJTKQOGkDw/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
+      URLParticipant: 'https://script.google.com/macros/s/AKfycbwGqO4HvU8gFHlxV_5VhwRVwcmESTGLhD50O_wqgCOhDfik2FhUYLScUqxUuYaAiuIZjA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
+      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbxvZGxE36y7SOsB3ebFVPDlz4C3HYROautgYqbLE5aO1eD7JVWNBqD-49JsP182OAV_/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
 
       matchIndex: [],
       matchPosition: [],
@@ -464,7 +463,11 @@ export default {
 
       ticketAssignedIndex: [],
       ticketAssignedPosition: [],
-      ticketAssignedParticipant: []
+      ticketAssignedParticipant: [],
+
+      whereIsMyCardCardHolder: [],
+      whereIsMyCardDiscounted: [],
+      whereIsMyCardWhoHasTheCard: []
     }
   },
 
@@ -534,10 +537,13 @@ export default {
       this.loadReloadData(_constMatchName.value, _time, _annotationsMatch)
     },
 
-    loadReloadData (_matchName, _time, _annotationsMatch) {
+    async loadReloadData (_matchName, _time, _annotationsMatch) {
       console.log('loadReloadData: ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       this.setArrivalElements(_time)
+      this.getTableWhereIsMyCard()
+      const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+      await sleep(500)
       this.getTableParticipant(_matchName, _time, _annotationsMatch)
       this.getTableTicket(_matchName)
       this.getTableTicketGiven(_matchName)
@@ -560,9 +566,9 @@ export default {
       _constParticipantAnnotations.value = _annotations
       _constParticipantAction.value = _action
       if (_reaction !== '') {
-        _constParticipantReaction.value = 'habe Karte von ' + _reaction
-      } else {
         _constParticipantReaction.value = _reaction
+      } else {
+        _constParticipantReaction.value = ''
       }
 
       this.editParticipant = true
@@ -623,13 +629,11 @@ export default {
       _constTicketAnnotations.value = _annotations
       _constTicketAction.value = _action
       if (_reaction !== '') {
-        _constTicketReaction.value = 'habe Karte von ' + _participant
         _constTicketAssignmentGiven.value = _participant
         _constTicketAssignmentRequired.value = _reaction
         this.editTicketAssignment = false
         this.editTicketAssigned = true
       } else {
-        _constTicketReaction.value = ''
         _constTicketAssignmentRequired.value = ''
         _constTicketAssignmentGiven.value = ''
         this.editTicketAssignment = true
@@ -661,6 +665,8 @@ export default {
           _ticketAssignmentRequiredPosition = this.ticketRequiredPosition[index]
         }
       }
+
+      console.log(this.URLParticipant + '&func=UpdateTicketRequired&index=' + _ticketAssignmentRequiredPosition + '&action=bin dabei&reaction=' + _ticketAssignmentGiven)
       this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&index=${_ticketAssignmentRequiredPosition}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
@@ -799,7 +805,19 @@ export default {
                   this.participantAction[index + 1] = element[index2]
                   break
                 case 7:
-                  this.participantReaction[index + 1] = element[index2]
+                  this.participantReaction[index + 1] = ''
+                  if (element[index2] !== '') {
+                    this.participantReaction[index + 1] = 'habe Karte von ' + element[index2]
+
+                    for (let index3 = 1; index3 < this.whereIsMyCardCardHolder.length; index3++) {
+                      const element3 = this.whereIsMyCardCardHolder[index3]
+
+                      if (element3 === element[index2]) {
+                        this.participantReaction[index + 1] = this.participantReaction[index + 1].trim() + ' (Karte bei ' + this.whereIsMyCardWhoHasTheCard[index3] + ')'
+                        break
+                      }
+                    }
+                  }
                   break
                 default:
                   break
@@ -988,6 +1006,39 @@ export default {
                   break
                 case 3:
                   this.ticketAssignedParticipant[index + 1] = element[index2]
+                  break
+                default:
+                  break
+              }
+            }
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    getTableWhereIsMyCard () {
+      this.whereIsMyCardCardHolder = []
+      this.whereIsMyCardDiscounted = []
+      this.whereIsMyCardWhoHasTheCard = []
+
+      console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
+      this.$axios(`${this.URLWhereIsMyCard}&func=Read&cardholder=`)
+        .then((res) => {
+          this.tableWhereIsMyCard = res.data.split('\n')
+          for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
+            const element = this.tableWhereIsMyCard[index].split(',')
+            for (let index2 = 0; index2 < element.length; index2++) {
+              switch (index2) {
+                case 2:
+                  this.whereIsMyCardCardHolder[index + 1] = element[index2]
+                  break
+                case 3:
+                  this.whereIsMyCardDiscounted[index + 1] = element[index2]
+                  break
+                case 4:
+                  this.whereIsMyCardWhoHasTheCard[index + 1] = element[index2]
                   break
                 default:
                   break

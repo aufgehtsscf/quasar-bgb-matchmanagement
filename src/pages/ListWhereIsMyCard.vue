@@ -138,7 +138,7 @@ export default {
 
   data () {
     return {
-      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbx3lJiQMsu9KNp7WgXYO4FX-5nPjeEpP7f2SmFgZ8ZZ2f944rghYctGxUMiNVZZ7Jn2/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
+      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbxvZGxE36y7SOsB3ebFVPDlz4C3HYROautgYqbLE5aO1eD7JVWNBqD-49JsP182OAV_/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
 
       index: [],
       position: [],
@@ -158,8 +158,8 @@ export default {
 
   methods: {
     getTableWhereIsMyCard () {
-      console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read')
-      this.$axios(`${this.URLWhereIsMyCard}&func=Read`)
+      console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
+      this.$axios(`${this.URLWhereIsMyCard}&func=Read&cardholder=`)
         .then((res) => {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
