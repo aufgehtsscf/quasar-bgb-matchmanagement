@@ -650,6 +650,7 @@ export default {
 
         if (element === _ticketAssignmentGiven) {
           _ticketAssignmentGivenPosition = this.ticketGivenPosition[index]
+          break
         }
       }
       this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&index=${_ticketAssignmentGivenPosition}&reaction=${_ticketAssignmentRequired}`)
@@ -663,6 +664,7 @@ export default {
 
         if (element === _ticketAssignmentRequired) {
           _ticketAssignmentRequiredPosition = this.ticketRequiredPosition[index]
+          break
         }
       }
 
@@ -687,6 +689,7 @@ export default {
 
         if (element === _ticketAssignedGiven) {
           _ticketAssignedGivenPosition = this.ticketAssignedPosition[index]
+          break
         }
       }
       this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&index=${_ticketAssignedGivenPosition}&reaction=`)
@@ -700,6 +703,7 @@ export default {
 
         if (element === _ticketAssignedRequired) {
           _ticketAssignedRequiredPosition = this.ticketAssignedPosition[index]
+          break
         }
       }
       this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&index=${_ticketAssignedRequiredPosition}&action=brauche Karte&reaction=`)
