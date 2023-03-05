@@ -369,7 +369,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
@@ -553,7 +553,7 @@ export default {
 
     setTextShare (_matchName) {
       _constShare.value = _matchName + '\n\nAnwesend (Ankunft):\n' + _constParticipantList.value
-      _constShare.value += '\nKarte weitergeben oder bedarf (Karte hat dabei):\n' + _constTicketList.value
+      _constShare.value += '\nKarte weitergeben oder bedarf:\n' + _constTicketList.value
       _constShare.value += '\n' + _constAnnotationsMatch.value
       this.share = true
     },
@@ -821,6 +821,7 @@ export default {
                         break
                       }
                     }
+                    this.participantListElement[index] += ', ' + this.participantReaction[index + 1]
                   }
                   break
                 default:
@@ -889,10 +890,13 @@ export default {
                   if (this.ticketAction[index + 1] === 'meine Karte ist frei') {
                     this.ticketListElement[index] = this.ticketParticipant[index + 1]
                     if (this.ticketReaction[index + 1] === '') {
-                      this.ticketListElement[index] += ' an ??? (' + this.ticketAnnotations[index + 1] + ')'
+                      this.ticketListElement[index] += ' an ???'
                     } else {
-                      this.ticketListElement[index] += ' an ' + this.ticketReaction[index + 1] + ' (' + this.ticketAnnotations[index + 1] + ')'
+                      this.ticketListElement[index] += ' an ' + this.ticketReaction[index + 1]
                     }
+                  }
+                  if (this.ticketAnnotations[index + 1] !== '') {
+                    this.ticketListElement[index] += ' (' + this.ticketAnnotations[index + 1] + ')'
                   }
                   break
                 default:

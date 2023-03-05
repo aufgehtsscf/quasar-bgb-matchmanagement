@@ -119,7 +119,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       intPosition: ref(_constPosition),
       txtCardHolder: ref(_constCardHolder),

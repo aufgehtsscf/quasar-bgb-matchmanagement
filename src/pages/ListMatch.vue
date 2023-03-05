@@ -184,7 +184,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       intPosition: ref(_constPosition),
       txtMatch: ref(_constMatch),
