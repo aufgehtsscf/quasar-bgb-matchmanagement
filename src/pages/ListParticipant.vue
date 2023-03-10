@@ -91,7 +91,7 @@
       <!-- Participant area (Titel) -->
       <div class="q-pa-md" style="max-width: 470px">
         <q-toolbar class="bg-primary text-white">
-          <q-toolbar-title class="text-overline">Anwesend (Ankunft)</q-toolbar-title>
+          <q-toolbar-title class="text-overline">Anwesend ({{ txtNumberOfParticipants }} Personen)</q-toolbar-title>
           <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" />
         </q-toolbar>
       </div>
@@ -341,6 +341,7 @@ const _constAnnotationsMatch = ref('')
 const _constDate = ref('')
 const _constMatchName = ref('')
 const _constArrivalElements = []
+const _constNumberOfParticipants = ref('')
 
 const _constParticipantPosition = ref('')
 const _constParticipantParticipant = ref('')
@@ -376,6 +377,7 @@ export default {
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
       cbxArrivalOptions: ref(_constArrivalElements),
+      txtNumberOfParticipants: ref(_constNumberOfParticipants),
 
       addParticipant: ref(false),
       editParticipant: ref(false),
@@ -552,7 +554,7 @@ export default {
     },
 
     setTextShare (_matchName) {
-      _constShare.value = _matchName + '\n\nAnwesend (Ankunft):\n' + _constParticipantList.value
+      _constShare.value = _matchName + '\n\nAnwesend (' + _constNumberOfParticipants.value + ' Personen):\n' + _constParticipantList.value
       _constShare.value += '\nKarte weitergeben oder bedarf:\n' + _constTicketList.value
       _constShare.value += '\n' + _constAnnotationsMatch.value
       this.share = true
@@ -771,7 +773,8 @@ export default {
       this.$axios(`${this.URLParticipant}&func=${readFunction}&match=${_matchName}`)
         .then((res) => {
           this.tableParticipant = res.data.split('\n')
-          for (let index = 0; index < this.tableParticipant.length - 1; index++) {
+          _constNumberOfParticipants.value = this.tableParticipant.length - 1
+          for (let index = 0; index < _constNumberOfParticipants.value; index++) {
             const element = this.tableParticipant[index].split(',')
             for (let index2 = 0; index2 < element.length; index2++) {
               switch (index2) {
