@@ -370,7 +370,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
@@ -581,7 +581,7 @@ export default {
 
       if (_action !== 'bin dabei') _arrival = ''
 
-      this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}&reaction=`)
+      this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}&reaction=`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.loadReloadData(_matchName, _time, _annotationsMatch)
@@ -597,7 +597,7 @@ export default {
 
       if (_action !== 'bin dabei') _arrival = ''
 
-      this.$axios(`${this.URLParticipant}&func=Update&index=${_participantPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
+      this.$axios(`${this.URLParticipant}&func=Update&index=${_participantPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.loadReloadData(_matchName, _time, _annotationsMatch)
@@ -725,7 +725,7 @@ export default {
 
       if (_action !== 'bin dabei') _arrival = ''
 
-      this.$axios(`${this.URLParticipant}&func=Update&index=${_ticketAssignmentPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';'))}&action=${_action}`)
+      this.$axios(`${this.URLParticipant}&func=Update&index=${_ticketAssignmentPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssignment = false
@@ -803,9 +803,9 @@ export default {
                   }
                   break
                 case 5:
-                  this.participantAnnotations[index + 1] = element[index2].replace(/§§§/g, '\n').trim()
+                  this.participantAnnotations[index + 1] = element[index2].replace(/<br>/g, '\n').trim()
                   if (this.participantAnnotations[index + 1] !== '') {
-                    this.participantListElement[index] += ' (' + this.participantAnnotations[index + 1] + ')'
+                    this.participantListElement[index] += ' (' + this.participantAnnotations[index + 1].replace(/\n/g, ' / ') + ')'
                   }
                   break
                 case 6:
@@ -838,7 +838,7 @@ export default {
           }
 
           _constAnnotationsMatchOriginal.value = _annotationsMatch
-          _constAnnotationsMatch.value = _annotationsMatch.replace(/§§§/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substr(0, 2) - 2) + ':' + _time.substr(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
+          _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substr(0, 2) - 2) + ':' + _time.substr(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
 
           _constParticipantList.value = ''
           this.participantListElement.forEach(element => {
@@ -880,7 +880,7 @@ export default {
                   this.ticketArrival[index + 1] = element[index2]
                   break
                 case 5:
-                  this.ticketAnnotations[index + 1] = element[index2].replace(/§§§/g, '\n').trim()
+                  this.ticketAnnotations[index + 1] = element[index2].replace(/<br>/g, '\n').trim()
                   break
                 case 6:
                   this.ticketAction[index + 1] = element[index2]

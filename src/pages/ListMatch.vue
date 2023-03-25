@@ -184,7 +184,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       intPosition: ref(_constPosition),
       txtMatch: ref(_constMatch),
@@ -258,7 +258,7 @@ export default {
                   this.time[index + 1] = element[index2].substr(0, 5)
                   break
                 case 5:
-                  this.annotations[index + 1] = element[index2].replace(/§§§/g, ' / ')
+                  this.annotations[index + 1] = element[index2].replace(/<br>/g, '\n')
                   break
                 case 6:
                   this.date[index + 1] = element[index2]
@@ -296,7 +296,7 @@ export default {
       const _date = _datetime.substr(0, 10)
       const _time = _datetime.substr(11, 5)
 
-      this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';'))}&date=${_date}`)
+      this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.getTableMatch()
@@ -315,7 +315,7 @@ export default {
       const _newMatch = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
       console.log('editMatchSave - UpdateMatch: ' + _oldMatch + ', ' + _newMatch)
 
-      this.$axios(`${this.URLMatch}&func=Update&index=${_position}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';'))}&date=${_date}`)
+      this.$axios(`${this.URLMatch}&func=Update&index=${_position}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.$axios(`${this.URLParticipant}&func=UpdateMatch&oldMatch=${_oldMatch}&newMatch=${_newMatch}`)
