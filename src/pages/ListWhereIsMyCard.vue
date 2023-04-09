@@ -17,7 +17,7 @@
         <q-item clickable v-ripple @click="onWhereIsMyCardClick(position[i], cardHolder[i], discounted[i], whoHasTheCard[i])" v-if="i > 0">
           <q-item-section>
             <q-item-label overline>Inhaber: {{ cardHolder[i] }}</q-item-label>
-            <q-item-label caption>Ermäßigt: {{ textDiscounted[i] }}</q-item-label>
+            <q-item-label caption>Kind: {{ textDiscounted[i] }}</q-item-label>
             <q-item-label caption>Wer hat die Karte: {{ whoHasTheCard[i] }}</q-item-label>
           </q-item-section>
         </q-item>
@@ -40,7 +40,7 @@
 
             <div class="q-pt-md">
               <div class="q-gutter-sm">
-                <div><q-checkbox left-label v-model="txtDiscountedNew" label="Ermäßigt" /></div>
+                <div><q-checkbox left-label v-model="txtDiscountedNew" label="Kind" /></div>
               </div>
             </div>
 
@@ -68,7 +68,7 @@
 
             <div class="q-pt-md">
               <div class="q-gutter-sm">
-                <div><q-checkbox left-label v-model="txtDiscounted" label="Ermäßigt" /></div>
+                <div><q-checkbox left-label v-model="txtDiscounted" label="Kind" /></div>
               </div>
             </div>
 
@@ -119,7 +119,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(true),
+      IsAdministrator: ref(false),
 
       intPosition: ref(_constPosition),
       txtCardHolder: ref(_constCardHolder),
