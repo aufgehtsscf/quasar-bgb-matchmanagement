@@ -120,7 +120,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(true),
+      IsAdministrator: ref(false),
 
       intPosition: ref(_constPosition),
       txtCardHolder: ref(_constCardHolder),
@@ -169,7 +169,7 @@ export default {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
             const element = this.tableWhereIsMyCard[index].split(',')
-            this.WhereIsMyCard(element[0], element[2], element[3], element[4])
+            this.setWhereIsMyCardObject(element[0], element[2], element[3], element[4])
           }
           // console.log(this.whereIsMyCardObject)
           // console.log(res.data)
@@ -179,7 +179,7 @@ export default {
         })
     },
 
-    WhereIsMyCard (_position, _cardHolder, _discounted, _whoHasTheCard) {
+    setWhereIsMyCardObject (_position, _cardHolder, _discounted, _whoHasTheCard) {
       // console.log('Function WhereIsMyCard: ' + _position + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
       this.whereIsMyCardObject.push({ position: _position, cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard })
     },

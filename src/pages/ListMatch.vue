@@ -11,15 +11,16 @@
 
     <!-- List of matches -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
-      <q-list dark bordered separator style="max-width: 470px" v-for="i in index"
+      <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in matchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(position[i], match[i], published[i], date[i] + ' ' + time[i], annotations[i])" v-if="i > 0">
+        <q-item clickable v-ripple @click="onMatchClick(match.position, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
           <q-item-section>
-            <q-item-label overline>{{ match[i] }}</q-item-label>
-            <q-item-label caption>{{ date[i] }} - {{ time[i] }}</q-item-label>
-            <q-item-label caption>{{ textPublished[i] }}</q-item-label>
-            <q-item-label caption>{{ annotations[i] }}</q-item-label>
+            <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
+            <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
+            <q-item-label caption v-if="match.published === 'TRUE'">Publiziert: Ja</q-item-label>
+            <q-item-label caption v-if="match.published === 'FALSE'">Publiziert: Nein</q-item-label>
+            <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -210,14 +211,16 @@ export default {
       URLParticipant: 'https://script.google.com/macros/s/AKfycbwGqO4HvU8gFHlxV_5VhwRVwcmESTGLhD50O_wqgCOhDfik2FhUYLScUqxUuYaAiuIZjA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
       URLParticipantArchive: 'https://script.google.com/macros/s/AKfycby__5OEag_-ClbApCv2r8x9Ity4MYBBrrJ7ZD4B2FOeqxSAZD-bB0bUqM4Su91W3NvnPA/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
-      index: [],
-      position: [],
-      match: [],
-      published: [],
-      textPublished: [],
-      time: [],
-      annotations: [],
-      date: []
+      matchObject: [
+        {
+          position: 0,
+          match: '',
+          published: '',
+          time: '',
+          annotations: '',
+          date: ''
+        }
+      ]
     }
   },
 
@@ -230,6 +233,8 @@ export default {
 
   methods: {
     getTableMatch () {
+      this.matchObject = []
+
       const publishedParam = this.IsAdministrator ? '' : 'TRUE'
       console.log('URLMatch: ' + this.URLMatch + '&func=Read&published=' + publishedParam)
       this.$axios(`${this.URLMatch}&func=Read&published=${publishedParam}`)
@@ -237,42 +242,19 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            for (let index2 = 0; index2 < element.length; index2++) {
-              switch (index2) {
-                case 0:
-                  this.index[index + 1] = index + 1
-                  this.position[index + 1] = element[index2]
-                  break
-                case 2:
-                  this.match[index + 1] = element[index2]
-                  break
-                case 3:
-                  this.published[index + 1] = element[index2]
-                  if (element[index2] === 'TRUE') {
-                    this.textPublished[index + 1] = 'Aktiv'
-                  } else {
-                    this.textPublished[index + 1] = 'Inaktiv'
-                  }
-                  break
-                case 4:
-                  this.time[index + 1] = element[index2].substr(0, 5)
-                  break
-                case 5:
-                  this.annotations[index + 1] = element[index2].replace(/<br>/g, '\n')
-                  break
-                case 6:
-                  this.date[index + 1] = element[index2]
-                  break
-                default:
-                  break
-              }
-            }
+            this.setMatchObject(element[0], element[2], element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6])
           }
+          // console.log(this.matchObject)
           // console.log(res.data)
         })
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    setMatchObject (_position, _match, _published, _time, _annotations, _date) {
+      // console.log('Function setMatchObject: ' + _position + ', ' + _match + ', ' + _published + ', ' + _time + ', ' + _annotations + ', ' + _date)
+      this.matchObject.push({ position: _position, match: _match, published: _published, time: _time, annotations: _annotations, date: _date })
     },
 
     onMatchClick (_position, _match, _published, _datetime, _annotations) {
