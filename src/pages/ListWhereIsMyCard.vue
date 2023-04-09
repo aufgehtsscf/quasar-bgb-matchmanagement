@@ -11,14 +11,15 @@
 
     <!-- List of WhereIsMyCards -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
-      <q-list dark bordered separator style="max-width: 470px" v-for="i in index"
+      <q-list dark bordered separator style="max-width: 470px" v-for="(card, i) in whereIsMyCardObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onWhereIsMyCardClick(position[i], cardHolder[i], discounted[i], whoHasTheCard[i])" v-if="i > 0">
+        <q-item clickable v-ripple @click="onWhereIsMyCardClick(card.position, card.cardHolder, card.discounted, card.whoHasTheCard)">
           <q-item-section>
-            <q-item-label overline>Inhaber: {{ cardHolder[i] }}</q-item-label>
-            <q-item-label caption>Kind: {{ textDiscounted[i] }}</q-item-label>
-            <q-item-label caption>Wer hat die Karte: {{ whoHasTheCard[i] }}</q-item-label>
+            <q-item-label overline>Inhaber: {{ card.cardHolder }}</q-item-label>
+            <q-item-label caption v-if="card.discounted === 'TRUE'">Kind: Ja</q-item-label>
+            <q-item-label caption v-if="card.discounted === 'FALSE'">Kind: Nein</q-item-label>
+            <q-item-label caption>Wer hat die Karte: {{ card.whoHasTheCard }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -68,7 +69,7 @@
 
             <div class="q-pt-md">
               <div class="q-gutter-sm">
-                <div><q-checkbox left-label v-model="txtDiscounted" label="Kind" /></div>
+                <div><q-checkbox left-label v-model="boolDiscounted" label="Kind" /></div>
               </div>
             </div>
 
@@ -80,7 +81,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intPosition, txtCardHolder, txtDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intPosition, txtCardHolder, boolDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -119,11 +120,11 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       intPosition: ref(_constPosition),
       txtCardHolder: ref(_constCardHolder),
-      txtDiscounted: ref(_constDiscounted),
+      boolDiscounted: ref(_constDiscounted),
       txtWhoHasTheCard: ref(_constWhoHasTheCard),
 
       txtCardHolderNew: ref(''),
@@ -140,12 +141,14 @@ export default {
     return {
       URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbxvZGxE36y7SOsB3ebFVPDlz4C3HYROautgYqbLE5aO1eD7JVWNBqD-49JsP182OAV_/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
 
-      index: [],
-      position: [],
-      cardHolder: [],
-      discounted: [],
-      textDiscounted: [],
-      whoHasTheCard: []
+      whereIsMyCardObject: [
+        {
+          position: 0,
+          cardHolder: '',
+          discounted: '',
+          whoHasTheCard: ''
+        }
+      ]
     }
   },
 
@@ -158,42 +161,27 @@ export default {
 
   methods: {
     getTableWhereIsMyCard () {
+      this.whereIsMyCardObject = []
+
       console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
       this.$axios(`${this.URLWhereIsMyCard}&func=Read&cardholder=`)
         .then((res) => {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
             const element = this.tableWhereIsMyCard[index].split(',')
-            for (let index2 = 0; index2 < element.length; index2++) {
-              switch (index2) {
-                case 0:
-                  this.index[index + 1] = index + 1
-                  this.position[index + 1] = element[index2]
-                  break
-                case 2:
-                  this.cardHolder[index + 1] = element[index2]
-                  break
-                case 3:
-                  this.discounted[index + 1] = element[index2]
-                  if (element[index2] === 'TRUE') {
-                    this.textDiscounted[index + 1] = 'Ja'
-                  } else {
-                    this.textDiscounted[index + 1] = 'Nein'
-                  }
-                  break
-                case 4:
-                  this.whoHasTheCard[index + 1] = element[index2]
-                  break
-                default:
-                  break
-              }
-            }
+            this.WhereIsMyCard(element[0], element[2], element[3], element[4])
           }
+          // console.log(this.whereIsMyCardObject)
           // console.log(res.data)
         })
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    WhereIsMyCard (_position, _cardHolder, _discounted, _whoHasTheCard) {
+      // console.log('Function WhereIsMyCard: ' + _position + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
+      this.whereIsMyCardObject.push({ position: _position, cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard })
     },
 
     onWhereIsMyCardClick (_position, _cardHolder, _discounted, _whoHasTheCard) {
@@ -220,8 +208,8 @@ export default {
         })
     },
 
-    editWhereIsMyCardSave (_position, _cardHolder, _discounted, _whoHasTheCard, _annotations) {
-      console.log('editWhereIsMyCardSave: ' + _position + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard + ', ' + _annotations)
+    editWhereIsMyCardSave (_position, _cardHolder, _discounted, _whoHasTheCard) {
+      console.log('editWhereIsMyCardSave: ' + _position + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
 
       this.$axios(`${this.URLWhereIsMyCard}&func=Update&index=${_position}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
         .then((res) => {
