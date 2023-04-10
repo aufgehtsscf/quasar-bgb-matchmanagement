@@ -185,7 +185,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(true),
+      IsAdministrator: ref(false),
 
       txtMatchId: ref(_constMatchId),
       txtMatch: ref(_constMatch),
@@ -207,7 +207,7 @@ export default {
 
   data () {
     return {
-      URLMatch: 'https://script.google.com/macros/s/AKfycbzWyK25Wf0wFvjK5yxWNbk5P_nvCgmSmRapHKfOykEQvxz4D6DHhwMazfX8zH1Gx5jmlA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
+      URLMatch: 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
       URLParticipant: 'https://script.google.com/macros/s/AKfycbwGqO4HvU8gFHlxV_5VhwRVwcmESTGLhD50O_wqgCOhDfik2FhUYLScUqxUuYaAiuIZjA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
       URLParticipantArchive: 'https://script.google.com/macros/s/AKfycby__5OEag_-ClbApCv2r8x9Ity4MYBBrrJ7ZD4B2FOeqxSAZD-bB0bUqM4Su91W3NvnPA/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
