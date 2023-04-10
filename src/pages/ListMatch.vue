@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in matchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(match.position, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
+        <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
           <q-item-section>
             <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
             <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
@@ -144,7 +144,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intPosition, txtOldMatch, txtMatch, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtOldMatch, txtMatch, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -159,7 +159,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="archiveMatch(intPosition, txtOldMatch, txtDatetime)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="archiveMatch(txtMatchId, txtOldMatch, txtDatetime)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -173,7 +173,7 @@
 <script>
 import { ref } from 'vue'
 
-const _constPosition = ref('')
+const _constMatchId = ref('')
 const _constMatch = ref('')
 const _constPublished = ref(false)
 const _constDatetime = ref('')
@@ -185,9 +185,9 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
-      intPosition: ref(_constPosition),
+      txtMatchId: ref(_constMatchId),
       txtMatch: ref(_constMatch),
       chbPublished: ref(_constPublished),
       txtDatetime: ref(_constDatetime),
@@ -207,18 +207,18 @@ export default {
 
   data () {
     return {
-      URLMatch: 'https://script.google.com/macros/s/AKfycbyh43MSF1Vz9W3TZ0_9e273B81CtCEk4se3yHj9HCbIvBlfw9g6tHE3d5O8eXW3yIkyog/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
+      URLMatch: 'https://script.google.com/macros/s/AKfycbyhwnxrAkZhd1R98vomA6m9KqGa5aBja4khmTFIzRKwCWFH6lCx8O61VCf1kmi6Wrfdnw/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
       URLParticipant: 'https://script.google.com/macros/s/AKfycbwGqO4HvU8gFHlxV_5VhwRVwcmESTGLhD50O_wqgCOhDfik2FhUYLScUqxUuYaAiuIZjA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
       URLParticipantArchive: 'https://script.google.com/macros/s/AKfycby__5OEag_-ClbApCv2r8x9Ity4MYBBrrJ7ZD4B2FOeqxSAZD-bB0bUqM4Su91W3NvnPA/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
       matchObject: [
         {
-          position: 0,
           match: '',
           published: '',
           time: '',
           annotations: '',
-          date: ''
+          date: '',
+          matchId: ''
         }
       ]
     }
@@ -242,7 +242,7 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[0], element[2], element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6])
+            this.setMatchObject(element[2], element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
           }
           // console.log(this.matchObject)
           // console.log(res.data)
@@ -252,14 +252,14 @@ export default {
         })
     },
 
-    setMatchObject (_position, _match, _published, _time, _annotations, _date) {
-      // console.log('Function setMatchObject: ' + _position + ', ' + _match + ', ' + _published + ', ' + _time + ', ' + _annotations + ', ' + _date)
-      this.matchObject.push({ position: _position, match: _match, published: _published, time: _time, annotations: _annotations, date: _date })
+    setMatchObject (_match, _published, _time, _annotations, _date, _matchId) {
+      console.log('Function setMatchObject: ' + _match + ', ' + _published + ', ' + _time + ', ' + _annotations + ', ' + _date + ', ' + _matchId)
+      this.matchObject.push({ match: _match, published: _published, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
     },
 
-    onMatchClick (_position, _match, _published, _datetime, _annotations) {
-      console.log('Clicked on an Match: ' + _position + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
-      _constPosition.value = _position
+    onMatchClick (_matchId, _match, _published, _datetime, _annotations) {
+      console.log('Clicked on an Match: ' + _matchId + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+      _constMatchId.value = _matchId
       _constMatch.value = _match
       _constPublished.value = _published === 'TRUE'
       _constDatetime.value = _datetime
@@ -289,15 +289,15 @@ export default {
         })
     },
 
-    editMatchSave (_position, _oldMatch, _match, _published, _datetime, _annotations) {
-      console.log('editMatchSave - Update: ' + _position + ', ' + _oldMatch + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    editMatchSave (_matchId, _oldMatch, _match, _published, _datetime, _annotations) {
+      console.log('editMatchSave - Update: ' + _matchId + ', ' + _oldMatch + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
       const _date = _datetime.substr(0, 10)
       const _time = _datetime.substr(11, 5)
       const _newMatch = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
       console.log('editMatchSave - UpdateMatch: ' + _oldMatch + ', ' + _newMatch)
 
-      this.$axios(`${this.URLMatch}&func=Update&index=${_position}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+      this.$axios(`${this.URLMatch}&func=Update&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.$axios(`${this.URLParticipant}&func=UpdateMatch&oldMatch=${_oldMatch}&newMatch=${_newMatch}`)
@@ -317,8 +317,8 @@ export default {
         })
     },
 
-    async archiveMatch (_position, _matchToDelete, _datetime) {
-      console.log('deleteMatch: ' + _position + ', ' + _matchToDelete + ', ' + _datetime)
+    async archiveMatch (_matchId, _matchToDelete, _datetime) {
+      console.log('deleteMatch: ' + _matchId + ', ' + _matchToDelete + ', ' + _datetime)
 
       const _date = _datetime.substr(0, 10)
 
@@ -340,14 +340,14 @@ export default {
           console.log(err)
         })
 
-      this.deleteMatch(_position, _matchToDelete)
+      this.deleteMatch(_matchId, _matchToDelete)
     },
 
-    deleteMatch (_position, _matchToDelete) {
+    deleteMatch (_matchId, _matchToDelete) {
       this.$axios(`${this.URLParticipant}&func=DeleteMatch&match=${_matchToDelete}`)
         .then((res3) => {
           if (res3.data === 'Success, requested action completed') {
-            this.$axios(`${this.URLMatch}&func=Delete&index=${_position}`)
+            this.$axios(`${this.URLMatch}&func=Delete&matchId=${_matchId}`)
               .then((res4) => {
                 if (res4.data === 'Success, requested action completed') {
                   this.getTableMatch()
