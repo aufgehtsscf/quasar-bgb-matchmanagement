@@ -764,44 +764,44 @@ export default {
             this.setParticipantObject(element[2], element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
           }
 
+          _constParticipantList.value = ''
+          this.participantObject.forEach(participant => {
+            _constParticipantList.value += participant.participant
+
+            _constParticipantList.value += ' (' + participant.arrival + ')'
+            if (participant.arrival !== '') {
+              if (parseInt(participant.arrival.substr(0, 2)) === parseInt(_time.substr(0, 2) - 2) &&
+                  participant.arrival.substr(3, 2) === _time.substr(3, 2)) {
+                if (this.reservation !== '') {
+                  this.reservation += ', '
+                }
+                this.reservation += participant.participant.trim()
+              }
+            }
+
+            if (participant.annotations !== '') {
+              _constParticipantList.value += ' (' + participant.annotations.replace(/\n/g, ' / ') + ')'
+            }
+
+            if (participant.reaction !== '') {
+              this.whereIsMyCardObject.forEach(card => {
+                if (card.cardHolder === participant.reaction) {
+                  participant.reaction = participant.reaction.trim() + ' (Karte bei ' + card.whoHasTheCard + ')'
+                }
+              })
+              participant.reaction = 'habe Karte von ' + participant.reaction
+              _constParticipantList.value += ', ' + participant.reaction
+            }
+
+            _constParticipantList.value += '\n'
+          })
+
           if (this.reservation !== '') {
             this.reservation += ','
           }
 
           _constAnnotationsMatchOriginal.value = _annotationsMatch
           _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substr(0, 2) - 2) + ':' + _time.substr(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
-
-          _constParticipantList.value = ''
-          this.participantObject.forEach(element => {
-            _constParticipantList.value += element.participant
-
-            _constParticipantList.value += ' (' + element.arrival.substr(0, 5) + ')'
-            if (parseInt(element.arrival.substr(0, 2)) === parseInt(_time.substr(0, 2) - 2) &&
-                  element.arrival.substr(3, 2) === _time.substr(3, 2)) {
-              if (this.reservation !== '') {
-                this.reservation += ', '
-              }
-              this.reservation += element.participant.trim()
-            } else {
-              this.reservation += ''
-            }
-
-            if (element.annotations !== '') {
-              _constParticipantList.value += ' (' + element.annotations.replace(/\n/g, ' / ') + ')'
-            }
-
-            if (element.reaction !== '') {
-              this.whereIsMyCardObject.forEach(card => {
-                if (card.cardHolder === element.reaction) {
-                  element.reaction = element.reaction.trim() + ' (Karte bei ' + card.whoHasTheCard + ')'
-                }
-              })
-              element.reaction = 'habe Karte von ' + element.reaction
-              _constParticipantList.value += ', ' + element.reaction
-            }
-
-            _constParticipantList.value += '\n'
-          })
         })
         .catch((err) => {
           console.log(err)
@@ -809,6 +809,7 @@ export default {
     },
 
     setParticipantObject (_match, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
+      // console.log('setParticipantObject: ' + _match + ',' + _participant + ',' + _arrival + ',' + _annotations + ',' + _action + ',' + _reaction + ',' + _participantId)
       this.participantObject.push({ match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction, participantId: _participantId })
     },
 
