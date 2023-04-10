@@ -126,7 +126,7 @@
             <q-item-label overline v-if="ticket.ticketAction === 'brauche Karte'">??? an {{ ticket.ticketParticipant }}</q-item-label>
             <q-item-label overline v-if="ticket.ticketAction === 'meine Karte ist frei' && ticket.ticketReaction === ''">{{ ticket.ticketParticipant }} an ???</q-item-label>
             <q-item-label overline v-if="ticket.ticketAction === 'meine Karte ist frei' && ticket.ticketReaction !== ''">{{ ticket.ticketParticipant }} an {{ ticket.ticketReaction }}</q-item-label>
-            <q-item-label caption>{{ ticket.annotations }}</q-item-label>
+            <q-item-label caption>{{ ticket.ticketAnnotations }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
