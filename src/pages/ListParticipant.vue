@@ -118,13 +118,15 @@
       </div>
 
       <!-- List of ticket assignments -->
-      <q-list dark bordered separator style="max-width: 470px" v-for="i in ticketIndex"
+      <q-list dark bordered separator style="max-width: 470px" v-for="(ticket, i) in ticketObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onTicketAssignmentClick(ticketPosition[i], ticketParticipant[i], ticketArrival[i], ticketAnnotations[i], ticketAction[i], ticketReaction[i])" v-if="i > 0">
+        <q-item clickable v-ripple @click="onTicketAssignmentClick(ticket.ticketParticipantId, ticket.ticketParticipant, ticket.ticketArrival, ticket.ticketAnnotations, ticket.ticketAction, ticket.ticketReaction)">
           <q-item-section>
-            <q-item-label overline>{{ ticket[i] }}</q-item-label>
-            <q-item-label caption>{{ ticketAnnotations[i] }}</q-item-label>
+            <q-item-label overline v-if="ticket.ticketAction === 'brauche Karte'">??? an {{ ticket.ticketParticipant }}</q-item-label>
+            <q-item-label overline v-if="ticket.ticketAction === 'meine Karte ist frei' && ticket.ticketReaction === ''">{{ ticket.ticketParticipant }} an ???</q-item-label>
+            <q-item-label overline v-if="ticket.ticketAction === 'meine Karte ist frei' && ticket.ticketReaction !== ''">{{ ticket.ticketParticipant }} an {{ ticket.ticketReaction }}</q-item-label>
+            <q-item-label caption>{{ ticket.annotations }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -268,7 +270,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(intTicketAssignmentPosition, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -304,7 +306,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(intTicketAssignmentPosition, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(txtTicketParticipantId, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -349,7 +351,7 @@ const _constParticipantAnnotations = ref('')
 const _constParticipantAction = ref('')
 const _constParticipantReaction = ref('')
 
-const _constTicketPosition = ref('')
+const _constTicketParticipantId = ref('')
 const _constTicketParticipant = ref('')
 const _constTicketArrival = ref('')
 const _constTicketAnnotations = ref('')
@@ -398,7 +400,7 @@ export default {
 
       cbxActionOptions: ['bin dabei', 'brauche Karte', 'meine Karte ist frei'],
 
-      intTicketAssignmentPosition: ref(_constTicketPosition),
+      txtTicketParticipantId: ref(_constTicketParticipantId),
       txtTicketParticipant: ref(_constTicketParticipant),
       txtTicketArrival: ref(_constTicketArrival),
       txtTicketAnnotations: ref(_constTicketAnnotations),
@@ -449,15 +451,15 @@ export default {
       ],
       reservation: '',
 
-      ticketIndex: [],
-      ticketPosition: [],
-      ticket: [],
-      ticketParticipant: [],
-      ticketListElement: [],
-      ticketArrival: [],
-      ticketAnnotations: [],
-      ticketAction: [],
-      ticketReaction: [],
+      ticketObject: [
+        {
+          ticketParticipant: '',
+          ticketArrival: '',
+          ticketAnnotations: '',
+          ticketAction: '',
+          ticketReaction: '',
+          ticketParticipantId: ''
+        }],
 
       ticketGivenIndex: [],
       ticketGivenPosition: [],
@@ -616,9 +618,9 @@ export default {
         })
     },
 
-    onTicketAssignmentClick (_ticketPosition, _participant, _arrival, _annotations, _action, _reaction) {
-      console.log('Clicked on ticket assignment: ' + _ticketPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
-      _constTicketPosition.value = _ticketPosition
+    onTicketAssignmentClick (_ticketParticipantId, _participant, _arrival, _annotations, _action, _reaction) {
+      console.log('Clicked on ticket assignment: ' + _ticketParticipantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
+      _constTicketParticipantId.value = _ticketParticipantId
       _constTicketParticipant.value = _participant
       _constTicketArrival.value = _arrival
       _constTicketAnnotations.value = _annotations
@@ -713,12 +715,12 @@ export default {
         })
     },
 
-    editTicketAssignmentSave (_ticketAssignmentPosition, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      console.log('editTicketAssignmentSave: ' + _ticketAssignmentPosition + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    editTicketAssignmentSave (_ticketParticipantId, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
+      console.log('editTicketAssignmentSave: ' + _ticketParticipantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_action !== 'bin dabei') _arrival = ''
 
-      this.$axios(`${this.URLParticipant}&func=Update&participantId=${_ticketAssignmentPosition}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
+      this.$axios(`${this.URLParticipant}&func=Update&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssignment = false
@@ -730,10 +732,10 @@ export default {
         })
     },
 
-    deleteTicketAssignment (_ticketAssignmentPosition, _matchName, _time, _annotationsMatch) {
-      console.log('deleteTicketAssignment: ' + _ticketAssignmentPosition + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    deleteTicketAssignment (_ticketParticipantId, _matchName, _time, _annotationsMatch) {
+      console.log('deleteTicketAssignment: ' + _ticketParticipantId + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
-      this.$axios(`${this.URLParticipant}&func=Delete&participantId=${_ticketAssignmentPosition}`)
+      this.$axios(`${this.URLParticipant}&func=Delete&participantId=${_ticketParticipantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssignment = false
@@ -780,7 +782,7 @@ export default {
             }
 
             if (participant.annotations !== '') {
-              _constParticipantList.value += ' (' + participant.annotations.replace(/\n/g, ' / ') + ')'
+              _constParticipantList.value += ' (' + participant.annotations.trim().replace(/\n/g, ' / ') + ')'
             }
 
             if (participant.reaction !== '') {
@@ -789,8 +791,8 @@ export default {
                   participant.reaction = participant.reaction.trim() + ' (Karte bei ' + card.whoHasTheCard + ')'
                 }
               })
-              participant.reaction = 'habe Karte von ' + participant.reaction
-              _constParticipantList.value += ', ' + participant.reaction
+              participant.reaction = 'habe Karte von ' + participant.reaction.trim()
+              _constParticipantList.value += ', ' + participant.reaction.trim()
             }
 
             _constParticipantList.value += '\n'
@@ -814,15 +816,7 @@ export default {
     },
 
     getTableTicket (_matchName) {
-      this.ticketIndex = []
-      this.ticketPosition = []
-      this.ticket = []
-      this.ticketParticipant = []
-      this.ticketListElement = []
-      this.ticketArrival = []
-      this.ticketAnnotations = []
-      this.ticketAction = []
-      this.ticketReaction = []
+      this.ticketObject = []
 
       console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTickets&match=' + _matchName)
       this.$axios(`${this.URLParticipant}&func=ReadTickets&match=${_matchName}`)
@@ -830,65 +824,40 @@ export default {
           this.tableTicket = res.data.split('\n')
           for (let index = 0; index < this.tableTicket.length - 1; index++) {
             const element = this.tableTicket[index].split(',')
-            for (let index2 = 0; index2 < element.length; index2++) {
-              switch (index2) {
-                case 0:
-                  this.ticketIndex[index + 1] = index + 1
-                  this.ticketPosition[index + 1] = element[index2]
-                  break
-                case 3:
-                  this.ticketParticipant[index + 1] = element[index2]
-                  break
-                case 4:
-                  this.ticketArrival[index + 1] = element[index2]
-                  break
-                case 5:
-                  this.ticketAnnotations[index + 1] = element[index2].replace(/<br>/g, '\n').trim()
-                  break
-                case 6:
-                  this.ticketAction[index + 1] = element[index2]
-                  if (this.ticketAction[index + 1] === 'brauche Karte') {
-                    this.ticketListElement[index] = '??? an ' + this.ticketParticipant[index + 1] + ' (' + this.ticketAnnotations[index + 1] + ')'
-                  }
-                  break
-                case 7:
-                  this.ticketReaction[index + 1] = element[index2]
-                  if (this.ticketAction[index + 1] === 'meine Karte ist frei') {
-                    this.ticketListElement[index] = this.ticketParticipant[index + 1]
-                    if (this.ticketReaction[index + 1] === '') {
-                      this.ticketListElement[index] += ' an ???'
-                    } else {
-                      this.ticketListElement[index] += ' an ' + this.ticketReaction[index + 1]
-                    }
-                  }
-                  if (this.ticketAnnotations[index + 1] !== '') {
-                    this.ticketListElement[index] += ' (' + this.ticketAnnotations[index + 1] + ')'
-                  }
-                  break
-                default:
-                  break
-              }
-
-              if (this.ticketAction[index + 1] === 'brauche Karte') {
-                this.ticket[index + 1] = '??? an ' + this.ticketParticipant[index + 1]
-              } else {
-                if (this.ticketAction[index + 1] === 'meine Karte ist frei') {
-                  if (this.ticketReaction[index + 1] !== '') {
-                    this.ticket[index + 1] = this.ticketParticipant[index + 1] + ' an ' + this.ticketReaction[index + 1]
-                  } else { this.ticket[index + 1] = this.ticketParticipant[index + 1] + ' an ???' }
-                }
-              }
-            }
+            this.setTicketObject(element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
           }
 
           _constTicketList.value = ''
-          this.ticketListElement.forEach(element => {
-            _constTicketList.value += element + '\n'
+          this.ticketObject.forEach(ticket => {
+            if (ticket.ticketAction === 'brauche Karte') {
+              _constTicketList.value += '??? an ' + ticket.ticketParticipant.trim()
+            }
+
+            if (ticket.ticketAction === 'meine Karte ist frei') {
+              _constTicketList.value += ticket.ticketParticipant.trim()
+
+              if (ticket.ticketReaction === '') {
+                _constTicketList.value += ' an ???'
+              } else {
+                _constTicketList.value += ' an ' + ticket.ticketReaction.trim()
+              }
+            }
+
+            if (ticket.ticketAnnotations !== '') {
+              _constTicketList.value += ' (' + ticket.ticketAnnotations.trim() + ')'
+            }
+
+            _constTicketList.value += '\n'
           })
         })
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    setTicketObject (_participant, _arrival, _annotations, _action, _reaction, _participantId) {
+      // console.log('setTicketObject: ' + _participant + ',' + _arrival + ',' + _annotations + ',' + _action + ',' + _reaction + ',' + _participantId)
+      this.ticketObject.push({ ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction, ticketParticipantId: _participantId })
     },
 
     getTableTicketGiven (_matchName) {
