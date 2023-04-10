@@ -207,7 +207,7 @@ export default {
 
   data () {
     return {
-      URLMatch: 'https://script.google.com/macros/s/AKfycbyhwnxrAkZhd1R98vomA6m9KqGa5aBja4khmTFIzRKwCWFH6lCx8O61VCf1kmi6Wrfdnw/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
+      URLMatch: 'https://script.google.com/macros/s/AKfycbzWyK25Wf0wFvjK5yxWNbk5P_nvCgmSmRapHKfOykEQvxz4D6DHhwMazfX8zH1Gx5jmlA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
       URLParticipant: 'https://script.google.com/macros/s/AKfycbwGqO4HvU8gFHlxV_5VhwRVwcmESTGLhD50O_wqgCOhDfik2FhUYLScUqxUuYaAiuIZjA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
       URLParticipantArchive: 'https://script.google.com/macros/s/AKfycby__5OEag_-ClbApCv2r8x9Ity4MYBBrrJ7ZD4B2FOeqxSAZD-bB0bUqM4Su91W3NvnPA/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
@@ -253,7 +253,7 @@ export default {
     },
 
     setMatchObject (_match, _published, _time, _annotations, _date, _matchId) {
-      console.log('Function setMatchObject: ' + _match + ', ' + _published + ', ' + _time + ', ' + _annotations + ', ' + _date + ', ' + _matchId)
+      // console.log('Function setMatchObject: ' + _match + ', ' + _published + ', ' + _time + ', ' + _annotations + ', ' + _date + ', ' + _matchId)
       this.matchObject.push({ match: _match, published: _published, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
     },
 
@@ -347,6 +347,7 @@ export default {
       this.$axios(`${this.URLParticipant}&func=DeleteMatch&match=${_matchToDelete}`)
         .then((res3) => {
           if (res3.data === 'Success, requested action completed') {
+            // console.log(this.URLMatch + '&func=Delete&matchId=' + _matchId)
             this.$axios(`${this.URLMatch}&func=Delete&matchId=${_matchId}`)
               .then((res4) => {
                 if (res4.data === 'Success, requested action completed') {
