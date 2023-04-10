@@ -208,8 +208,8 @@ export default {
   data () {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
-      URLParticipant: 'https://script.google.com/macros/s/AKfycbwGqO4HvU8gFHlxV_5VhwRVwcmESTGLhD50O_wqgCOhDfik2FhUYLScUqxUuYaAiuIZjA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
-      URLParticipantArchive: 'https://script.google.com/macros/s/AKfycby__5OEag_-ClbApCv2r8x9Ity4MYBBrrJ7ZD4B2FOeqxSAZD-bB0bUqM4Su91W3NvnPA/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
+      URLParticipant: 'https://script.google.com/macros/s/AKfycbz2PqyRf6et-Ju8JREOQJle1uxlABUhso--yKwIvGtJWt0AscZOSLfstyOSVX1fV3rvSw/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
+      URLParticipantArchive: 'https://script.google.com/macros/s/AKfycbwqh5vulxjx6grOz9AllJMOtt6U3x1UWBwn9BOeB3HkjagbLNtW2AwQu_lxuBNwOMqgAQ/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
       matchObject: [
         {
@@ -328,7 +328,7 @@ export default {
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
             const element = this.tableParticipant[index].split(',')
             await sleep(1000)
-            this.$axios(`${this.URLParticipantArchive}&func=Add&timestamp=${element[1]}&match=${element[2]}&participant=${element[3]}&arrival=${element[4]}&annotations=${element[5]}&action=${element[6]}&reaction=${element[7]}&date=${_date}`)
+            this.$axios(`${this.URLParticipantArchive}&func=Add&timestamp=${element[1]}&match=${element[2]}&participant=${element[3]}&arrival=${element[4]}&annotations=${element[5]}&action=${element[6]}&reaction=${element[7]}&date=${_date}&participant=${element[8]}`)
               .catch((err) => {
                 console.log(err)
               })
