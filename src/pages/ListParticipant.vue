@@ -459,19 +459,29 @@ export default {
           ticketAction: '',
           ticketReaction: '',
           ticketParticipantId: ''
-        }],
+        }
+      ],
 
-      ticketGivenIndex: [],
-      ticketGivenPosition: [],
-      ticketGivenParticipant: [],
+      ticketGivenObject: [
+        {
+          ticketGivenParticipant: '',
+          ticketGivenParticipantId: ''
+        }
+      ],
 
-      ticketRequiredIndex: [],
-      ticketRequiredPosition: [],
-      ticketRequiredParticipant: [],
+      ticketRequiredObject: [
+        {
+          ticketRequiredParticipant: '',
+          ticketRequiredParticipantId: ''
+        }
+      ],
 
-      ticketAssignedIndex: [],
-      ticketAssignedPosition: [],
-      ticketAssignedParticipant: [],
+      ticketAssignedObject: [
+        {
+          ticketAssignedParticipant: '',
+          ticketAssignedParticipantId: ''
+        }
+      ],
 
       whereIsMyCardObject: [
         {
@@ -641,32 +651,28 @@ export default {
     addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchName, _time, _annotationsMatch) {
       console.log('addTicketAssignmentSave: ' + _ticketAssignmentGiven + ', ' + _ticketAssignmentRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
-      let _ticketAssignmentGivenPosition = 0
-      for (let index = 1; index < this.ticketGivenParticipant.length; index++) {
-        const element = this.ticketGivenParticipant[index]
-
-        if (element === _ticketAssignmentGiven) {
-          _ticketAssignmentGivenPosition = this.ticketGivenPosition[index]
-          break
+      let _ticketGivenParticipantId = ''
+      this.ticketGivenObject.forEach(ticketGiven => {
+        if (_ticketAssignmentGiven === ticketGiven.ticketGivenParticipant) {
+          _ticketGivenParticipantId = ticketGiven.ticketGivenParticipantId
         }
-      }
-      this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketAssignmentGivenPosition}&reaction=${_ticketAssignmentRequired}`)
+      })
+
+      // console.log(this.URLParticipant + '&func=UpdateTicketGiven&participantId=' + _ticketGivenParticipantId + '&reaction=' + _ticketAssignmentGiven)
+      this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketGivenParticipantId}&reaction=${_ticketAssignmentRequired}`)
         .catch((err) => {
           console.log(err)
         })
 
-      let _ticketAssignmentRequiredPosition = 0
-      for (let index = 1; index < this.ticketRequiredParticipant.length; index++) {
-        const element = this.ticketRequiredParticipant[index]
-
-        if (element === _ticketAssignmentRequired) {
-          _ticketAssignmentRequiredPosition = this.ticketRequiredPosition[index]
-          break
+      let _ticketRequiredParticipantId = ''
+      this.ticketRequiredObject.forEach(ticketRequired => {
+        if (_ticketAssignmentRequired === ticketRequired.ticketRequiredParticipant) {
+          _ticketRequiredParticipantId = ticketRequired.ticketRequiredParticipantId
         }
-      }
+      })
 
-      console.log(this.URLParticipant + '&func=UpdateTicketRequired&participantId=' + _ticketAssignmentRequiredPosition + '&action=bin dabei&reaction=' + _ticketAssignmentGiven)
-      this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketAssignmentRequiredPosition}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
+      // console.log(this.URLParticipant + '&func=UpdateTicketRequired&participantId=' + _ticketRequiredParticipantId + '&action=bin dabei&reaction=' + _ticketAssignmentGiven)
+      this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.loadReloadData(_matchName, _time, _annotationsMatch)
@@ -680,30 +686,26 @@ export default {
     deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchName, _time, _annotationsMatch) {
       console.log('deleteTicketAssigned: ' + _ticketAssignedGiven + ', ' + _ticketAssignedRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
-      let _ticketAssignedGivenPosition = 0
-      for (let index = 1; index < this.ticketAssignedParticipant.length; index++) {
-        const element = this.ticketAssignedParticipant[index]
-
-        if (element === _ticketAssignedGiven) {
-          _ticketAssignedGivenPosition = this.ticketAssignedPosition[index]
-          break
+      let _ticketAssignedGivenParticipantId = ''
+      this.ticketAssignedObject.forEach(ticketAssignedGiven => {
+        if (_ticketAssignedGiven === ticketAssignedGiven.ticketAssignedParticipant) {
+          _ticketAssignedGivenParticipantId = ticketAssignedGiven.ticketAssignedParticipantId
         }
-      }
-      this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketAssignedGivenPosition}&reaction=`)
+      })
+
+      this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketAssignedGivenParticipantId}&reaction=`)
         .catch((err) => {
           console.log(err)
         })
 
-      let _ticketAssignedRequiredPosition = 0
-      for (let index = 1; index < this.ticketAssignedParticipant.length; index++) {
-        const element = this.ticketAssignedParticipant[index]
-
-        if (element === _ticketAssignedRequired) {
-          _ticketAssignedRequiredPosition = this.ticketAssignedPosition[index]
-          break
+      let _ticketAssignedRequiredParticipantId = ''
+      this.ticketAssignedObject.forEach(ticketAssignedRequired => {
+        if (_ticketAssignedRequired === ticketAssignedRequired.ticketAssignedParticipant) {
+          _ticketAssignedRequiredParticipantId = ticketAssignedRequired.ticketAssignedParticipantId
         }
-      }
-      this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketAssignedRequiredPosition}&action=brauche Karte&reaction=`)
+      })
+
+      this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketAssignedRequiredParticipantId}&action=brauche Karte&reaction=`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssigned = false
@@ -768,7 +770,7 @@ export default {
 
           _constParticipantList.value = ''
           this.participantObject.forEach(participant => {
-            _constParticipantList.value += participant.participant
+            _constParticipantList.value += participant.participant.trim()
 
             _constParticipantList.value += ' (' + participant.arrival + ')'
             if (participant.arrival !== '') {
@@ -861,9 +863,7 @@ export default {
     },
 
     getTableTicketGiven (_matchName) {
-      this.ticketGivenIndex = []
-      this.ticketGivenPosition = []
-      this.ticketGivenParticipant = []
+      this.ticketGivenObject = []
 
       console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsGiven&match=' + _matchName)
       this.$axios(`${this.URLParticipant}&func=ReadTicketsGiven&match=${_matchName}`)
@@ -871,34 +871,27 @@ export default {
           this.tableTicket = res.data.split('\n')
           for (let index = 0; index < this.tableTicket.length - 1; index++) {
             const element = this.tableTicket[index].split(',')
-            for (let index2 = 0; index2 < element.length; index2++) {
-              switch (index2) {
-                case 0:
-                  this.ticketGivenIndex[index + 1] = index + 1
-                  this.ticketGivenPosition[index + 1] = element[index2]
-                  break
-                case 3:
-                  this.ticketGivenParticipant[index + 1] = element[index2]
-                  break
-                default:
-                  break
-              }
-            }
+            this.setTicketGivenObject(element[3], element[8])
           }
+
           _constTicketAssignmentGivenElements.length = 0
-          for (let index = 1; index < this.ticketGivenParticipant.length; index++) {
-            _constTicketAssignmentGivenElements[index - 1] = this.ticketGivenParticipant[index]
-          }
+          let i = 0
+          this.ticketGivenObject.forEach(ticketGiven => {
+            _constTicketAssignmentGivenElements[i] = ticketGiven.ticketGivenParticipant
+            i++
+          })
         })
         .catch((err) => {
           console.log(err)
         })
     },
 
+    setTicketGivenObject (_participant, _participantId) {
+      this.ticketGivenObject.push({ ticketGivenParticipant: _participant, ticketGivenParticipantId: _participantId })
+    },
+
     getTableTicketRequired (_matchName) {
-      this.ticketRequiredIndex = []
-      this.ticketRequiredPosition = []
-      this.ticketRequiredParticipant = []
+      this.ticketRequiredObject = []
 
       console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsRequired&match=' + _matchName)
       this.$axios(`${this.URLParticipant}&func=ReadTicketsRequired&match=${_matchName}`)
@@ -906,34 +899,27 @@ export default {
           this.tableTicket = res.data.split('\n')
           for (let index = 0; index < this.tableTicket.length - 1; index++) {
             const element = this.tableTicket[index].split(',')
-            for (let index2 = 0; index2 < element.length; index2++) {
-              switch (index2) {
-                case 0:
-                  this.ticketRequiredIndex[index + 1] = index + 1
-                  this.ticketRequiredPosition[index + 1] = element[index2]
-                  break
-                case 3:
-                  this.ticketRequiredParticipant[index + 1] = element[index2]
-                  break
-                default:
-                  break
-              }
-            }
+            this.setTicketRequiredObject(element[3], element[8])
           }
+
           _constTicketAssignmentRequiredElements.length = 0
-          for (let index = 1; index < this.ticketRequiredParticipant.length; index++) {
-            _constTicketAssignmentRequiredElements[index - 1] = this.ticketRequiredParticipant[index]
-          }
+          let i = 0
+          this.ticketRequiredObject.forEach(ticketRequired => {
+            _constTicketAssignmentRequiredElements[i] = ticketRequired.ticketRequiredParticipant
+            i++
+          })
         })
         .catch((err) => {
           console.log(err)
         })
     },
 
+    setTicketRequiredObject (_participant, _participantId) {
+      this.ticketRequiredObject.push({ ticketRequiredParticipant: _participant, ticketRequiredParticipantId: _participantId })
+    },
+
     getTableTicketAssigned (_matchName) {
-      this.ticketAssignedIndex = []
-      this.ticketAssignedPosition = []
-      this.ticketAssignedParticipant = []
+      this.ticketAssignedObject = []
 
       console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsAssigned&match=' + _matchName)
       this.$axios(`${this.URLParticipant}&func=ReadTicketsAssigned&match=${_matchName}`)
@@ -941,24 +927,16 @@ export default {
           this.tableTicket = res.data.split('\n')
           for (let index = 0; index < this.tableTicket.length - 1; index++) {
             const element = this.tableTicket[index].split(',')
-            for (let index2 = 0; index2 < element.length; index2++) {
-              switch (index2) {
-                case 0:
-                  this.ticketAssignedIndex[index + 1] = index + 1
-                  this.ticketAssignedPosition[index + 1] = element[index2]
-                  break
-                case 3:
-                  this.ticketAssignedParticipant[index + 1] = element[index2]
-                  break
-                default:
-                  break
-              }
-            }
+            this.setTicketAssignedObject(element[3], element[8])
           }
         })
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    setTicketAssignedObject (_participant, _participantId) {
+      this.ticketAssignedObject.push({ ticketAssignedParticipant: _participant, ticketAssignedParticipantId: _participantId })
     },
 
     getTableWhereIsMyCard () {
