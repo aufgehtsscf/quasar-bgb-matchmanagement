@@ -245,7 +245,6 @@ export default {
             this.setMatchObject(element[2], element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
           }
           // console.log(this.matchObject)
-          // console.log(res.data)
         })
         .catch((err) => {
           console.log(err)
@@ -253,7 +252,6 @@ export default {
     },
 
     setMatchObject (_match, _published, _time, _annotations, _date, _matchId) {
-      // console.log('Function setMatchObject: ' + _match + ', ' + _published + ', ' + _time + ', ' + _annotations + ', ' + _date + ', ' + _matchId)
       this.matchObject.push({ match: _match, published: _published, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
     },
 

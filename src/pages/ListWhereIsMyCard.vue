@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(card, i) in whereIsMyCardObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onWhereIsMyCardClick(card.position, card.cardHolder, card.discounted, card.whoHasTheCard)">
+        <q-item clickable v-ripple @click="onWhereIsMyCardClick(card.cardHolderId, card.cardHolder, card.discounted, card.whoHasTheCard)">
           <q-item-section>
             <q-item-label overline>Inhaber: {{ card.cardHolder }}</q-item-label>
             <q-item-label caption v-if="card.discounted === 'TRUE'">Kind: Ja</q-item-label>
@@ -81,7 +81,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intPosition, txtCardHolder, boolDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(txtCardHolderId, txtCardHolder, boolDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -96,7 +96,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteWhereIsMyCard(intPosition)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteWhereIsMyCard(txtCardHolderId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -110,7 +110,7 @@
 <script>
 import { ref } from 'vue'
 
-const _constPosition = ref('')
+const _constHolderId = ref('')
 const _constCardHolder = ref('')
 const _constDiscounted = ref('')
 const _constWhoHasTheCard = ref('')
@@ -120,9 +120,9 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
-      intPosition: ref(_constPosition),
+      txtCardHolderId: ref(_constHolderId),
       txtCardHolder: ref(_constCardHolder),
       boolDiscounted: ref(_constDiscounted),
       txtWhoHasTheCard: ref(_constWhoHasTheCard),
@@ -139,14 +139,14 @@ export default {
 
   data () {
     return {
-      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbxvZGxE36y7SOsB3ebFVPDlz4C3HYROautgYqbLE5aO1eD7JVWNBqD-49JsP182OAV_/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
+      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbzlc-2httq6jMOsqbGIQmE6oAXNcWpLRZmGckDWQ6DqFoGQgHD-C1BkennQGntzAkJj/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
 
       whereIsMyCardObject: [
         {
-          position: 0,
           cardHolder: '',
           discounted: '',
-          whoHasTheCard: ''
+          whoHasTheCard: '',
+          cardHolderId: ''
         }
       ]
     }
@@ -169,24 +169,22 @@ export default {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
             const element = this.tableWhereIsMyCard[index].split(',')
-            this.setWhereIsMyCardObject(element[0], element[2], element[3], element[4])
+            this.setWhereIsMyCardObject(element[2], element[3], element[4], element[5])
           }
-          // console.log(this.whereIsMyCardObject)
-          // console.log(res.data)
+          console.log(this.whereIsMyCardObject)
         })
         .catch((err) => {
           console.log(err)
         })
     },
 
-    setWhereIsMyCardObject (_position, _cardHolder, _discounted, _whoHasTheCard) {
-      // console.log('Function WhereIsMyCard: ' + _position + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
-      this.whereIsMyCardObject.push({ position: _position, cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard })
+    setWhereIsMyCardObject (_cardHolder, _discounted, _whoHasTheCard, _cardHolderId) {
+      this.whereIsMyCardObject.push({ cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard, cardHolderId: _cardHolderId })
     },
 
-    onWhereIsMyCardClick (_position, _cardHolder, _discounted, _whoHasTheCard) {
-      console.log('Clicked on WhereIsMyCard: ' + _position + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
-      _constPosition.value = _position
+    onWhereIsMyCardClick (_cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
+      console.log('Clicked on WhereIsMyCard: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
+      _constHolderId.value = _cardHolderId
       _constCardHolder.value = _cardHolder
       _constDiscounted.value = _discounted === 'TRUE'
       _constWhoHasTheCard.value = _whoHasTheCard
@@ -208,10 +206,10 @@ export default {
         })
     },
 
-    editWhereIsMyCardSave (_position, _cardHolder, _discounted, _whoHasTheCard) {
-      console.log('editWhereIsMyCardSave: ' + _position + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
+    editWhereIsMyCardSave (_cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
+      console.log('editWhereIsMyCardSave: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
 
-      this.$axios(`${this.URLWhereIsMyCard}&func=Update&index=${_position}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+      this.$axios(`${this.URLWhereIsMyCard}&func=Update&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.getTableWhereIsMyCard()
@@ -222,10 +220,10 @@ export default {
         })
     },
 
-    deleteWhereIsMyCard (_position) {
-      console.log('deleteWhereIsMyCard: ' + _position)
+    deleteWhereIsMyCard (_cardHolderId) {
+      console.log('deleteWhereIsMyCard: ' + _cardHolderId)
 
-      this.$axios(`${this.URLWhereIsMyCard}&func=Delete&index=${_position}`)
+      this.$axios(`${this.URLWhereIsMyCard}&func=Delete&cardholderId=${_cardHolderId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.getTableWhereIsMyCard()

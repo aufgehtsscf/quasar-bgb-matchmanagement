@@ -423,9 +423,9 @@ export default {
 
   data () {
     return {
-      URLMatch: 'https://script.google.com/macros/s/AKfycbyh43MSF1Vz9W3TZ0_9e273B81CtCEk4se3yHj9HCbIvBlfw9g6tHE3d5O8eXW3yIkyog/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
+      URLMatch: 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
       URLParticipant: 'https://script.google.com/macros/s/AKfycbwGqO4HvU8gFHlxV_5VhwRVwcmESTGLhD50O_wqgCOhDfik2FhUYLScUqxUuYaAiuIZjA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
-      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbxvZGxE36y7SOsB3ebFVPDlz4C3HYROautgYqbLE5aO1eD7JVWNBqD-49JsP182OAV_/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
+      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbzlc-2httq6jMOsqbGIQmE6oAXNcWpLRZmGckDWQ6DqFoGQgHD-C1BkennQGntzAkJj/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
 
       matchIndex: [],
       matchPosition: [],
