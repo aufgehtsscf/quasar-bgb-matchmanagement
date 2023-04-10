@@ -371,7 +371,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
