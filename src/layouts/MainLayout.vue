@@ -74,7 +74,7 @@
         />
       </q-scroll-area>
 
-      <q-img class="absolute-top" src="statics/BGB.jpg" style="height: 192px">
+      <q-img class="absolute-top" src="statics/BGB_Logo.jpg" style="height: 182px">
       </q-img>
     </q-drawer>
 
