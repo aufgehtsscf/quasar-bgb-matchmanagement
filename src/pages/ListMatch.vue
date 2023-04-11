@@ -89,6 +89,20 @@
         </q-card>
       </q-dialog>
 
+      <!-- Show match exists -->
+      <q-dialog v-model="showMatchExists" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="pan_tool" color="primary" text-color="white" />
+            <span class="q-ml-sm">Dieses Spiel besteht bereits!</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Schliessen" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <!-- Edit match -->
       <q-dialog v-model="editMatch" persistent>
         <q-card style="min-width: 350px">
@@ -185,7 +199,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchId: ref(_constMatchId),
       txtMatch: ref(_constMatch),
@@ -200,6 +214,7 @@ export default {
       txtAnnotationsNew: ref('<STANDARDTEXT>'),
 
       addMatch: ref(false),
+      showMatchExists: ref(false),
       editMatch: ref(false),
       delMatch: ref(false)
     }
@@ -273,18 +288,24 @@ export default {
     addMatchSave (_match, _published, _datetime, _annotations) {
       console.log('addMatchSave: ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      const _date = _datetime.substr(0, 10)
-      const _time = _datetime.substr(11, 5)
+      const _matches = this.matchObject.map(el => el.match)
+      const _matchExists = _matches.includes(_match)
+      if (_matchExists) {
+        this.showMatchExists = true
+      } else {
+        const _date = _datetime.substr(0, 10)
+        const _time = _datetime.substr(11, 5)
 
-      this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
-        .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.getTableMatch()
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+        this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.getTableMatch()
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     },
 
     editMatchSave (_matchId, _oldMatch, _match, _published, _datetime, _annotations) {

@@ -29,7 +29,7 @@
     <div class="q-pa-md q-gutter-sm">
 
       <!-- Start Dialogs WhereIsMyCard -->
-      <!-- Add WhereIsMyCard -->
+      <!-- Add whereIsMyCard -->
       <q-dialog v-model="addWhereIsMyCard" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
@@ -57,7 +57,7 @@
         </q-card>
       </q-dialog>
 
-      <!-- Show WhereIsMyCard exists -->
+      <!-- Show whereIsMyCard exists -->
       <q-dialog v-model="showWhereIsMyCardExists" persistent>
         <q-card>
           <q-card-section class="row items-center">
@@ -71,7 +71,7 @@
         </q-card>
       </q-dialog>
 
-      <!-- Edit WhereIsMyCard -->
+      <!-- Edit whereIsMyCard -->
       <q-dialog v-model="editWhereIsMyCard" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
