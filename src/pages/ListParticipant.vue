@@ -183,6 +183,20 @@
         </q-card>
       </q-dialog>
 
+      <!-- Show participant exists -->
+      <q-dialog v-model="showParticipantExists" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="pan_tool" color="primary" text-color="white" />
+            <span class="q-ml-sm">Diese Teilnahme besteht bereits!</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Schliessen" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <!-- Edit participant -->
       <q-dialog v-model="editParticipant" persistent>
         <q-card style="min-width: 350px">
@@ -191,8 +205,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="false" v-if="txtParticipantReaction === ''" />
-            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="true" v-if="txtParticipantReaction !== ''" />
+            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="true" />
             <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="false" v-if="txtParticipantReaction === ''" />
             <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== ''" />
             <q-select v-model="txtParticipantArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtParticipantAction === 'bin dabei'" />
@@ -381,6 +394,7 @@ export default {
       txtNumberOfParticipants: ref(_constNumberOfParticipants),
 
       addParticipant: ref(false),
+      showParticipantExists: ref(false),
       editParticipant: ref(false),
       delParticipant: ref(false),
       share: ref(false),
@@ -586,15 +600,21 @@ export default {
 
       if (_action !== 'bin dabei') _arrival = ''
 
-      this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}&reaction=`)
-        .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.loadReloadData(_matchName, _time, _annotationsMatch)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      const _participants = this.participantObject.map(el => el.participant)
+      const _participantExists = _participants.includes(_participant)
+      if (_participantExists) {
+        this.showParticipantExists = true
+      } else {
+        this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}&reaction=`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.loadReloadData(_matchName, _time, _annotationsMatch)
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     },
 
     editParticipantSave (_participantId, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
