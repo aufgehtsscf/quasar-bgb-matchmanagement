@@ -49,7 +49,7 @@
         <q-btn flat>
           {{ txtTime }}
         </q-btn>
-        <q-btn flat color="primary">
+        <q-btn flat>
           {{ txtMatchName }}
         </q-btn>
       </q-card-actions>
