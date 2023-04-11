@@ -57,6 +57,20 @@
         </q-card>
       </q-dialog>
 
+      <!-- Show WhereIsMyCard exists -->
+      <q-dialog v-model="showWhereIsMyCardExists" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="pan_tool" color="primary" text-color="white" />
+            <span class="q-ml-sm">Dieser Inhaber besteht bereits!</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Schliessen" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <!-- Edit WhereIsMyCard -->
       <q-dialog v-model="editWhereIsMyCard" persistent>
         <q-card style="min-width: 350px">
@@ -65,7 +79,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolder" autofocus label="Inhaber" />
+            <q-input dense v-model="txtCardHolder" autofocus label="Inhaber" :readonly="true" />
 
             <div class="q-pt-md">
               <div class="q-gutter-sm">
@@ -120,7 +134,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtCardHolderId: ref(_constHolderId),
       txtCardHolder: ref(_constCardHolder),
@@ -132,6 +146,7 @@ export default {
       txtWhoHasTheCardNew: ref(''),
 
       addWhereIsMyCard: ref(false),
+      showWhereIsMyCardExists: ref(false),
       editWhereIsMyCard: ref(false),
       delWhereIsMyCard: ref(false)
     }
@@ -195,15 +210,21 @@ export default {
     addWhereIsMyCardSave (_cardHolder, _discounted, _whoHasTheCard) {
       console.log('addWhereIsMyCardSave: ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
 
-      this.$axios(`${this.URLWhereIsMyCard}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
-        .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.getTableWhereIsMyCard()
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
+      const _cardHolderExists = _cardHolders.includes(_cardHolder)
+      if (_cardHolderExists) {
+        this.showWhereIsMyCardExists = true
+      } else {
+        this.$axios(`${this.URLWhereIsMyCard}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.getTableWhereIsMyCard()
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     },
 
     editWhereIsMyCardSave (_cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
