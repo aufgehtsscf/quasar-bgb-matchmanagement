@@ -652,7 +652,7 @@ export default {
       console.log('addTicketAssignmentSave: ' + _ticketAssignmentGiven + ', ' + _ticketAssignmentRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       const _ticketGivenParticipantId = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenParticipantId
-      if (_ticketGivenParticipantId.length > 0) {
+      if (typeof _ticketGivenParticipantId !== 'undefined') {
         console.log(this.URLParticipant + '&func=UpdateTicketGiven&participantId=' + _ticketGivenParticipantId + '&reaction=' + _ticketAssignmentGiven)
         this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketGivenParticipantId}&reaction=${_ticketAssignmentRequired}`)
           .catch((err) => {
@@ -660,7 +660,7 @@ export default {
           })
 
         const _ticketRequiredParticipantId = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredParticipantId
-        if (_ticketRequiredParticipantId.length > 0) {
+        if (typeof _ticketRequiredParticipantId !== 'undefined') {
           console.log(this.URLParticipant + '&func=UpdateTicketRequired&participantId=' + _ticketRequiredParticipantId + '&action=bin dabei&reaction=' + _ticketAssignmentGiven)
           this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
             .then((res) => {
@@ -679,7 +679,7 @@ export default {
       console.log('deleteTicketAssigned: ' + _ticketAssignedGiven + ', ' + _ticketAssignedRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       const _ticketAssignedGivenParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedParticipantId
-      if (_ticketAssignedGivenParticipantId.length > 0) {
+      if (typeof _ticketAssignedGivenParticipantId !== 'undefined') {
         console.log(this.URLParticipant + '&func=UpdateTicketGiven&participantId=' + _ticketAssignedGivenParticipantId + '&reaction=')
         this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketAssignedGivenParticipantId}&reaction=`)
           .catch((err) => {
@@ -687,7 +687,7 @@ export default {
           })
 
         const _ticketAssignedRequiredParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedParticipantId
-        if (_ticketAssignedRequiredParticipantId.length > 0) {
+        if (typeof _ticketAssignedRequiredParticipantId !== 'undefined') {
           console.log(this.URLParticipant + '&func=UpdateTicketRequired&participantId=' + _ticketAssignedRequiredParticipantId + '&action=brauche Karte&reaction=')
           this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketAssignedRequiredParticipantId}&action=brauche Karte&reaction=`)
             .then((res) => {
@@ -775,7 +775,7 @@ export default {
 
             if (participant.reaction !== '') {
               const _whoHasTheCard = this.whereIsMyCardObject.find(el => el.cardHolder === participant.reaction)?.whoHasTheCard
-              if (_whoHasTheCard.length > 0) {
+              if (typeof _whoHasTheCard !== 'undefined') {
                 participant.reaction = participant.reaction.trim() + ' (Karte bei ' + _whoHasTheCard + ')'
               }
               participant.reaction = 'habe Karte von ' + participant.reaction.trim()
@@ -865,7 +865,7 @@ export default {
             _constTicketAssignmentGivenElements[i] = ticketGiven.ticketGivenParticipant
             i++
           })
-          console.log('_constTicketAssignmentGivenElements: ' + _constTicketAssignmentGivenElements)
+          // console.log('_constTicketAssignmentGivenElements: ' + _constTicketAssignmentGivenElements)
         })
         .catch((err) => {
           console.log(err)
@@ -894,7 +894,7 @@ export default {
             _constTicketAssignmentRequiredElements[i] = ticketRequired.ticketRequiredParticipant
             i++
           })
-          console.log('_constTicketAssignmentRequiredElements: ' + _constTicketAssignmentRequiredElements)
+          // console.log('_constTicketAssignmentRequiredElements: ' + _constTicketAssignmentRequiredElements)
         })
         .catch((err) => {
           console.log(err)
