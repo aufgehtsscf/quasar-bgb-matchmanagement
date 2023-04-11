@@ -23,6 +23,38 @@
       </q-btn-dropdown>
     </div>
 
+    <q-card class="my-card2" style="max-width: 500px">
+      <q-card-section horizontal>
+        <q-img
+          class="col-5"
+          src="statics/Freiburg.png"
+        />
+        <q-card-section>
+          <div class="absolute-center text-h6 text-center text-black">
+            VS.&nbsp;
+        </div>
+        </q-card-section>
+        <q-img
+          src="statics/Test.png"
+        />
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-actions>
+        <q-btn flat round icon="event" />
+        <q-btn flat>
+          23.04.2023
+        </q-btn>
+        <q-btn flat>
+          {{ txtTime }}
+        </q-btn>
+        <q-btn flat color="primary">
+          {{ txtMatchName }}
+        </q-btn>
+      </q-card-actions>
+    </q-card>
+
     <!-- Match Card -->
     <q-card class="my-card">
       <q-img src="statics/SCF-Hoffenheim.jpg" v-if="txtMatchName.indexOf('H....') >= 0">
