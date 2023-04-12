@@ -158,7 +158,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtOldMatch, txtMatch, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtOldMatchName, txtMatch, txtMatchOld, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -173,7 +173,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="archiveMatch(txtMatchId, txtOldMatch, txtDatetime)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="archiveMatch(txtMatchId, txtOldMatchName, txtDatetime)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -203,10 +203,11 @@ export default {
 
       txtMatchId: ref(_constMatchId),
       txtMatch: ref(_constMatch),
+      txtMatchOld: ref(_constMatch),
       chbPublished: ref(_constPublished),
       txtDatetime: ref(_constDatetime),
       txtAnnotations: ref(_constAnnotations),
-      txtOldMatch: ref(_constMatchName),
+      txtOldMatchName: ref(_constMatchName),
 
       txtMatchNew: ref(''),
       chbPublishedNew: ref(false),
@@ -224,7 +225,7 @@ export default {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
       URLParticipant: 'https://script.google.com/macros/s/AKfycbz2PqyRf6et-Ju8JREOQJle1uxlABUhso--yKwIvGtJWt0AscZOSLfstyOSVX1fV3rvSw/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
-      URLParticipantArchive: 'https://script.google.com/macros/s/AKfycbwqh5vulxjx6grOz9AllJMOtt6U3x1UWBwn9BOeB3HkjagbLNtW2AwQu_lxuBNwOMqgAQ/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
+      URLParticipantArchive: 'https://script.google.com/macros/s/AKfycbwGMRJJxESVRfDyA6hWi76oNCRR6Ovq7dwhmcBCVht9UMdef9KEz70U9o8l9XzvgzFy2w/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
       matchObject: [
         {
@@ -308,32 +309,38 @@ export default {
       }
     },
 
-    editMatchSave (_matchId, _oldMatch, _match, _published, _datetime, _annotations) {
-      console.log('editMatchSave - Update: ' + _matchId + ', ' + _oldMatch + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    editMatchSave (_matchId, _oldMatchName, _match, _matchOld, _published, _datetime, _annotations) {
+      console.log('editMatchSave - Update: ' + _matchId + ', ' + _oldMatchName + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      const _date = _datetime.substr(0, 10)
-      const _time = _datetime.substr(11, 5)
-      const _newMatch = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
-      console.log('editMatchSave - UpdateMatch: ' + _oldMatch + ', ' + _newMatch)
+      const _matches = this.matchObject.map(el => el.match)
+      const _matchExists = _matches.includes(_match) && _match !== _matchOld
+      if (_matchExists) {
+        this.showMatchExists = true
+      } else {
+        const _date = _datetime.substr(0, 10)
+        const _time = _datetime.substr(11, 5)
+        const _newMatch = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
+        console.log('editMatchSave - UpdateMatch: ' + _oldMatchName + ', ' + _newMatch)
 
-      this.$axios(`${this.URLMatch}&func=Update&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
-        .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.$axios(`${this.URLParticipant}&func=UpdateMatch&oldMatch=${_oldMatch}&newMatch=${_newMatch}`)
-              .then((res2) => {
-                if (res2.data === 'Success, requested action completed') {
-                  this.getTableMatch()
-                }
-              })
+        this.$axios(`${this.URLMatch}&func=Update&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.$axios(`${this.URLParticipant}&func=UpdateMatch&oldMatch=${_oldMatchName}&newMatch=${_newMatch}`)
+                .then((res2) => {
+                  if (res2.data === 'Success, requested action completed') {
+                    this.getTableMatch()
+                  }
+                })
 
-              .catch((err) => {
-                console.log(err)
-              })
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+                .catch((err) => {
+                  console.log(err)
+                })
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     },
 
     async archiveMatch (_matchId, _matchToDelete, _datetime) {

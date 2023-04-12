@@ -79,7 +79,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolder" autofocus label="Inhaber" :readonly="true" />
+            <q-input dense v-model="txtCardHolder" autofocus label="Inhaber" />
 
             <div class="q-pt-md">
               <div class="q-gutter-sm">
@@ -95,7 +95,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(txtCardHolderId, txtCardHolder, boolDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(txtCardHolderId, txtCardHolder, txtCardHolderOld, boolDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -138,6 +138,7 @@ export default {
 
       txtCardHolderId: ref(_constHolderId),
       txtCardHolder: ref(_constCardHolder),
+      txtCardHolderOld: ref(_constCardHolder),
       boolDiscounted: ref(_constDiscounted),
       txtWhoHasTheCard: ref(_constWhoHasTheCard),
 
@@ -227,18 +228,24 @@ export default {
       }
     },
 
-    editWhereIsMyCardSave (_cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
-      console.log('editWhereIsMyCardSave: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
+    editWhereIsMyCardSave (_cardHolderId, _cardHolder, _cardHolderOld, _discounted, _whoHasTheCard) {
+      console.log('editWhereIsMyCardSave: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _cardHolderOld + ', ' + _discounted + ', ' + _whoHasTheCard)
 
-      this.$axios(`${this.URLWhereIsMyCard}&func=Update&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
-        .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.getTableWhereIsMyCard()
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
+      const _cardHolderExists = _cardHolders.includes(_cardHolder) && _cardHolder !== _cardHolderOld
+      if (_cardHolderExists) {
+        this.showWhereIsMyCardExists = true
+      } else {
+        this.$axios(`${this.URLWhereIsMyCard}&func=Update&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.getTableWhereIsMyCard()
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     },
 
     deleteWhereIsMyCard (_cardHolderId) {
