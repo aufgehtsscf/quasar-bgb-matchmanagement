@@ -225,7 +225,7 @@ export default {
   data () {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
-      URLParticipant: 'https://script.google.com/macros/s/AKfycbz2PqyRf6et-Ju8JREOQJle1uxlABUhso--yKwIvGtJWt0AscZOSLfstyOSVX1fV3rvSw/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
+      URLParticipant: 'https://script.google.com/macros/s/AKfycbw-M4-eonzTFqvGIkA6GAwrgAPttc9Oghqg1aJGIQNqXohHiA61NvrA-GUPUDDrLhgz/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
       URLParticipantArchive: 'https://script.google.com/macros/s/AKfycbwNroj1OzLNOOHRWFdNmaiN8bpKnJqBf3Lbm6firEaWPJo1wstm7Nsh9J3oAJox1lSt7w/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
       matchObject: [

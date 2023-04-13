@@ -13,7 +13,7 @@
         <q-list v-for="(match, i) in matchObject"
           :key="i"
           v-ripple>
-          <q-item clickable v-close-popup @click="onMatchClick(match.match, match.time, match.annotations, match.date)">
+          <q-item clickable v-close-popup @click="onMatchClick(match.match, match.matchId, match.time, match.annotations, match.date)">
             <q-item-section>
               <q-item-label>{{ match.match }}</q-item-label>
               <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
@@ -155,7 +155,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -198,7 +198,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if="IsAdministrator && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -213,7 +213,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(txtParticipantId, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(txtParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -236,7 +236,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addTicketAssignmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketAssignmentGiven === '' || txtTicketAssignmentRequired === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addTicketAssignmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketAssignmentGiven === '' || txtTicketAssignmentRequired === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -261,7 +261,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -297,7 +297,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(txtTicketParticipantId, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(txtTicketParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -312,7 +312,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssigned(txtTicketAssignedGiven, txtTicketAssignedRequired, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssigned(txtTicketAssignedGiven, txtTicketAssignedRequired, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -332,6 +332,7 @@ const _constAnnotationsMatchOriginal = ref('')
 const _constAnnotationsMatch = ref('')
 const _constDate = ref('')
 const _constMatchName = ref('')
+const _constMatchId = ref('')
 const _constArrivalElements = []
 const _constNumberOfParticipants = ref('')
 
@@ -367,6 +368,7 @@ export default {
       IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
+      txtMatchId: ref(_constMatchId),
       txtTime: ref(_constTime),
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
@@ -421,7 +423,7 @@ export default {
   data () {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
-      URLParticipant: 'https://script.google.com/macros/s/AKfycbz2PqyRf6et-Ju8JREOQJle1uxlABUhso--yKwIvGtJWt0AscZOSLfstyOSVX1fV3rvSw/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
+      URLParticipant: 'https://script.google.com/macros/s/AKfycbw-M4-eonzTFqvGIkA6GAwrgAPttc9Oghqg1aJGIQNqXohHiA61NvrA-GUPUDDrLhgz/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
       URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbzlc-2httq6jMOsqbGIQmE6oAXNcWpLRZmGckDWQ6DqFoGQgHD-C1BkennQGntzAkJj/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
 
       matchObject: [
@@ -557,6 +559,7 @@ export default {
       this.matchObject = []
 
       let nextMatch = ''
+      let nextMatchId = ''
       let nextTime = ''
       let nextAnnotations = ''
       let nextDate = ''
@@ -573,9 +576,10 @@ export default {
               nextTime = element[4].substr(0, 5)
               nextAnnotations = element[5].replace(/<br>/g, '\n')
               nextDate = element[6]
+              nextMatchId = element[7]
             }
           }
-          this.onMatchClick(nextMatch, nextTime, nextAnnotations, nextDate)
+          this.onMatchClick(nextMatch, nextMatchId, nextTime, nextAnnotations, nextDate)
         })
         .catch((err) => {
           console.log(err)
@@ -586,28 +590,29 @@ export default {
       this.matchObject.push({ match: _match, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
     },
 
-    onMatchClick (_match, _time, _annotationsMatch, _date) {
-      // console.log('onMatchClick: ' + _match + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
+    onMatchClick (_match, _matchId, _time, _annotationsMatch, _date) {
+      // console.log('onMatchClick: ' + _match + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
       _constMatch.value = _match
       _constTime.value = _time
       _constDate.value = _date
       _constMatchName.value = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
+      _constMatchId.value = _matchId
 
-      this.loadReloadData(_constMatchName.value, _time, _annotationsMatch)
+      this.loadReloadData(_matchId, _time, _annotationsMatch)
     },
 
-    async loadReloadData (_matchName, _time, _annotationsMatch) {
-      // console.log('loadReloadData: ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    async loadReloadData (_matchId, _time, _annotationsMatch) {
+      // console.log('loadReloadData: ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
 
       this.setArrivalElements(_time)
       this.getTableWhereIsMyCard()
       const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
       await sleep(500)
-      this.getTableParticipant(_matchName, _time, _annotationsMatch)
-      this.getTableTicket(_matchName)
-      this.getTableTicketGiven(_matchName)
-      this.getTableTicketRequired(_matchName)
-      this.getTableTicketAssigned(_matchName)
+      this.getTableParticipant(_matchId, _time, _annotationsMatch)
+      this.getTableTicket(_matchId)
+      this.getTableTicketGiven(_matchId)
+      this.getTableTicketRequired(_matchId)
+      this.getTableTicketAssigned(_matchId)
     },
 
     setTextShare (_matchName) {
@@ -634,8 +639,8 @@ export default {
       this.editParticipant = true
     },
 
-    addParticipantSave (_participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      // console.log('addParticipantSave: ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    addParticipantSave (_participant, _arrival, _annotations, _action, _matchName, _matchId, _time, _annotationsMatch) {
+      // console.log('addParticipantSave: ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_action !== 'bin dabei') _arrival = ''
 
@@ -644,10 +649,10 @@ export default {
       if (_participantExists) {
         this.showParticipantExists = true
       } else {
-        this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}&reaction=`)
+        this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}&reaction=&matchId=${_matchId}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
-              this.loadReloadData(_matchName, _time, _annotationsMatch)
+              this.loadReloadData(_matchId, _time, _annotationsMatch)
             }
           })
           .catch((err) => {
@@ -656,8 +661,8 @@ export default {
       }
     },
 
-    editParticipantSave (_participantId, _participant, _participantOld, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      // console.log('editParticipantSave: ' + _participantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    editParticipantSave (_participantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
+      // console.log('editParticipantSave: ' + _participantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_action !== 'bin dabei') _arrival = ''
 
@@ -669,7 +674,7 @@ export default {
         this.$axios(`${this.URLParticipant}&func=Update&participantId=${_participantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
-              this.loadReloadData(_matchName, _time, _annotationsMatch)
+              this.loadReloadData(_matchId, _time, _annotationsMatch)
             }
           })
           .catch((err) => {
@@ -678,14 +683,14 @@ export default {
       }
     },
 
-    deleteParticipant (_participantId, _matchName, _time, _annotationsMatch) {
-      // console.log('deleteParticipant: ' + _participantId + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    deleteParticipant (_participantId, _matchId, _time, _annotationsMatch) {
+      // console.log('deleteParticipant: ' + _participantId + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
 
       this.$axios(`${this.URLParticipant}&func=Delete&participantId=${_participantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editParticipant = false
-            this.loadReloadData(_matchName, _time, _annotationsMatch)
+            this.loadReloadData(_matchId, _time, _annotationsMatch)
           }
         })
         .catch((err) => {
@@ -714,8 +719,8 @@ export default {
       }
     },
 
-    addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchName, _time, _annotationsMatch) {
-      // console.log('addTicketAssignmentSave: ' + _ticketAssignmentGiven + ', ' + _ticketAssignmentRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchId, _time, _annotationsMatch) {
+      // console.log('addTicketAssignmentSave: ' + _ticketAssignmentGiven + ', ' + _ticketAssignmentRequired + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
 
       const _ticketGivenParticipantId = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenParticipantId
       if (typeof _ticketGivenParticipantId !== 'undefined') {
@@ -731,7 +736,7 @@ export default {
           this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
             .then((res) => {
               if (res.data === 'Success, requested action completed') {
-                this.loadReloadData(_matchName, _time, _annotationsMatch)
+                this.loadReloadData(_matchId, _time, _annotationsMatch)
               }
             })
             .catch((err) => {
@@ -741,8 +746,8 @@ export default {
       }
     },
 
-    deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchName, _time, _annotationsMatch) {
-      // console.log('deleteTicketAssigned: ' + _ticketAssignedGiven + ', ' + _ticketAssignedRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchId, _time, _annotationsMatch) {
+      // console.log('deleteTicketAssigned: ' + _ticketAssignedGiven + ', ' + _ticketAssignedRequired + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
 
       const _ticketAssignedGivenParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedParticipantId
       if (typeof _ticketAssignedGivenParticipantId !== 'undefined') {
@@ -759,7 +764,7 @@ export default {
             .then((res) => {
               if (res.data === 'Success, requested action completed') {
                 this.editTicketAssigned = false
-                this.loadReloadData(_matchName, _time, _annotationsMatch)
+                this.loadReloadData(_matchId, _time, _annotationsMatch)
               }
             })
             .catch((err) => {
@@ -769,8 +774,8 @@ export default {
       }
     },
 
-    editTicketAssignmentSave (_ticketParticipantId, _participant, _participantOld, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      // console.log('editTicketAssignmentSave: ' + _ticketParticipantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    editTicketAssignmentSave (_ticketParticipantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
+      // console.log('editTicketAssignmentSave: ' + _ticketParticipantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_action !== 'bin dabei') _arrival = ''
 
@@ -783,7 +788,7 @@ export default {
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.editTicketAssignment = false
-              this.loadReloadData(_matchName, _time, _annotationsMatch)
+              this.loadReloadData(_matchId, _time, _annotationsMatch)
             }
           })
           .catch((err) => {
@@ -792,14 +797,14 @@ export default {
       }
     },
 
-    deleteTicketAssignment (_ticketParticipantId, _matchName, _time, _annotationsMatch) {
-      // console.log('deleteTicketAssignment: ' + _ticketParticipantId + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    deleteTicketAssignment (_ticketParticipantId, _matchId, _time, _annotationsMatch) {
+      // console.log('deleteTicketAssignment: ' + _ticketParticipantId + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
 
       this.$axios(`${this.URLParticipant}&func=Delete&participantId=${_ticketParticipantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssignment = false
-            this.loadReloadData(_matchName, _time, _annotationsMatch)
+            this.loadReloadData(_matchId, _time, _annotationsMatch)
           }
         })
         .catch((err) => {
@@ -807,7 +812,7 @@ export default {
         })
     },
 
-    getTableParticipant (_matchName, _time, _annotationsMatch) {
+    getTableParticipant (_matchId, _time, _annotationsMatch) {
       this.participantObject = []
       this.reservation = ''
 
@@ -816,8 +821,8 @@ export default {
         readFunction = 'ReadAdmin'
       }
 
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadAdmin&match=' + _matchName)
-      this.$axios(`${this.URLParticipant}&func=${readFunction}&match=${_matchName}`)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadAdmin&matchId=' + _matchId)
+      this.$axios(`${this.URLParticipant}&func=${readFunction}&matchId=${_matchId}`)
         .then((res) => {
           this.tableParticipant = res.data.split('\n')
           _constNumberOfParticipants.value = this.tableParticipant.length - 1
@@ -874,11 +879,11 @@ export default {
       this.participantObject.push({ match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction, participantId: _participantId })
     },
 
-    getTableTicket (_matchName) {
+    getTableTicket (_matchId) {
       this.ticketObject = []
 
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTickets&match=' + _matchName)
-      this.$axios(`${this.URLParticipant}&func=ReadTickets&match=${_matchName}`)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTickets&matchId=' + _matchId)
+      this.$axios(`${this.URLParticipant}&func=ReadTickets&matchId=${_matchId}`)
         .then((res) => {
           this.tableTicket = res.data.split('\n')
           for (let index = 0; index < this.tableTicket.length - 1; index++) {
@@ -919,11 +924,11 @@ export default {
       this.ticketObject.push({ ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction, ticketParticipantId: _participantId })
     },
 
-    getTableTicketGiven (_matchName) {
+    getTableTicketGiven (_matchId) {
       this.ticketGivenObject = []
 
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsGiven&match=' + _matchName)
-      this.$axios(`${this.URLParticipant}&func=ReadTicketsGiven&match=${_matchName}`)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsGiven&matchId=' + _matchId)
+      this.$axios(`${this.URLParticipant}&func=ReadTicketsGiven&matchId=${_matchId}`)
         .then((res) => {
           this.tableTicket = res.data.split('\n')
           for (let index = 0; index < this.tableTicket.length - 1; index++) {
@@ -948,11 +953,11 @@ export default {
       this.ticketGivenObject.push({ ticketGivenParticipant: _participant, ticketGivenParticipantId: _participantId })
     },
 
-    getTableTicketRequired (_matchName) {
+    getTableTicketRequired (_matchId) {
       this.ticketRequiredObject = []
 
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsRequired&match=' + _matchName)
-      this.$axios(`${this.URLParticipant}&func=ReadTicketsRequired&match=${_matchName}`)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsRequired&matchId=' + _matchId)
+      this.$axios(`${this.URLParticipant}&func=ReadTicketsRequired&matchId=${_matchId}`)
         .then((res) => {
           this.tableTicket = res.data.split('\n')
           for (let index = 0; index < this.tableTicket.length - 1; index++) {
@@ -977,11 +982,11 @@ export default {
       this.ticketRequiredObject.push({ ticketRequiredParticipant: _participant, ticketRequiredParticipantId: _participantId })
     },
 
-    getTableTicketAssigned (_matchName) {
+    getTableTicketAssigned (_matchId) {
       this.ticketAssignedObject = []
 
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsAssigned&match=' + _matchName)
-      this.$axios(`${this.URLParticipant}&func=ReadTicketsAssigned&match=${_matchName}`)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsAssigned&matchId=' + _matchId)
+      this.$axios(`${this.URLParticipant}&func=ReadTicketsAssigned&matchId=${_matchId}`)
         .then((res) => {
           this.tableTicket = res.data.split('\n')
           for (let index = 0; index < this.tableTicket.length - 1; index++) {
