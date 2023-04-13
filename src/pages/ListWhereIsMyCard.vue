@@ -126,6 +126,7 @@ import { ref } from 'vue'
 
 const _constHolderId = ref('')
 const _constCardHolder = ref('')
+const _constCardHolderOld = ref('')
 const _constDiscounted = ref('')
 const _constWhoHasTheCard = ref('')
 
@@ -134,11 +135,11 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtCardHolderId: ref(_constHolderId),
       txtCardHolder: ref(_constCardHolder),
-      txtCardHolderOld: ref(_constCardHolder),
+      txtCardHolderOld: ref(_constCardHolderOld),
       boolDiscounted: ref(_constDiscounted),
       txtWhoHasTheCard: ref(_constWhoHasTheCard),
 
@@ -202,6 +203,7 @@ export default {
       console.log('Clicked on WhereIsMyCard: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
       _constHolderId.value = _cardHolderId
       _constCardHolder.value = _cardHolder
+      _constCardHolderOld.value = _cardHolder
       _constDiscounted.value = _discounted === 'TRUE'
       _constWhoHasTheCard.value = _whoHasTheCard
 

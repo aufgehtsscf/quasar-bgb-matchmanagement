@@ -23,11 +23,12 @@
       </q-btn-dropdown>
     </div>
 
-    <q-card class="my-card2" style="max-width: 500px">
+    <!-- Match Card -->
+    <q-card class="my-card" style="max-width: 500px">
       <q-card-section horizontal>
         <q-img
           class="col-5"
-          src="{{ txtMatchName }}"
+          :src="getImageHomeTeam()"
         />
         <q-card-section>
           <div class="absolute-center text-h6 text-center text-black">
@@ -35,66 +36,17 @@
         </div>
         </q-card-section>
         <q-img
-          src="{{ txtMatchName }}"
+          :src="getImageAwayTeam()"
         />
       </q-card-section>
 
       <q-separator />
 
-      <q-card-actions>
-        <q-btn flat>
+      <q-card-actions align="center">
+        <q-btn flat class="text-h5 text-center text-black">
           {{ txtMatchName }}
         </q-btn>
       </q-card-actions>
-    </q-card>
-
-    <!-- Match Card -->
-    <q-card class="my-card">
-      <q-img src="statics/SCF-Hoffenheim.jpg" v-if="txtMatchName.indexOf('H....') >= 0">
-        <div class="absolute-bottom text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </div>
-      </q-img>
-      <q-img src="statics/SCF-Juventus.jpg" v-if="txtMatchName.indexOf('Juventus') >= 0">
-        <div class="absolute-bottom text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </div>
-      </q-img>
-      <q-img src="statics/Test_Spieltag.jpg" v-if="txtMatchName.indexOf('Test') >= 0">
-        <div class="absolute-bottom text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </div>
-      </q-img>
-      <q-img src="statics/SCF-Hertha.jpg" v-if="txtMatchName.indexOf('Hertha') >= 0">
-        <div class="absolute-bottom text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </div>
-      </q-img>
-      <q-img src="statics/SCF-Bayern.jpg" v-if="txtMatchName.indexOf('Bayern') >= 0">
-        <div class="absolute-bottom text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </div>
-      </q-img>
-      <q-img src="statics/SCF-Schalke.jpg" v-if="txtMatchName.indexOf('Schalke') >= 0">
-        <div class="absolute-bottom text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </div>
-      </q-img>
-      <q-img src="statics/SCF-Leipzig.jpg" v-if="txtMatchName.indexOf('Leipzig') >= 0">
-        <div class="absolute-bottom text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </div>
-      </q-img>
-      <q-img src="statics/SCF-Wolfsburg.jpg" v-if="txtMatchName.indexOf('Wolfsburg') >= 0">
-        <div class="absolute-bottom text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </div>
-      </q-img>
-      <q-img src="statics/SCF-.jpg" v-if="txtMatchName.indexOf('H....') < 0 && txtMatchName.indexOf('Juventus') < 0 && txtMatchName.indexOf('Hertha') < 0 && txtMatchName.indexOf('Bayern') < 0 && txtMatchName.indexOf('Schalke') < 0 && txtMatchName.indexOf('Leipzig') < 0 && txtMatchName.indexOf('Wolfsburg') < 0 && txtMatchName.indexOf('Test') < 0">
-        <div class="absolute-bottom text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </div>
-      </q-img>
     </q-card>
 
     <!-- Share -->
@@ -230,7 +182,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="true" v-if="txtParticipantReaction !== ''" />
+            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="false" v-if="txtParticipantReaction === ''" />
             <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="true" v-if="txtParticipantReaction !== ''" />
             <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="false" v-if="txtParticipantReaction === ''" />
             <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== ''" />
@@ -309,7 +261,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchName, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -385,6 +337,7 @@ const _constNumberOfParticipants = ref('')
 
 const _constParticipantId = ref('')
 const _constParticipantParticipant = ref('')
+const _constParticipantParticipantOld = ref('')
 const _constParticipantArrival = ref('')
 const _constParticipantAnnotations = ref('')
 const _constParticipantAction = ref('')
@@ -392,6 +345,7 @@ const _constParticipantReaction = ref('')
 
 const _constTicketParticipantId = ref('')
 const _constTicketParticipant = ref('')
+const _constTicketParticipantOld = ref('')
 const _constTicketArrival = ref('')
 const _constTicketAnnotations = ref('')
 const _constTicketAction = ref('')
@@ -410,7 +364,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
@@ -433,7 +387,7 @@ export default {
 
       txtParticipantId: ref(_constParticipantId),
       txtParticipantParticipant: ref(_constParticipantParticipant),
-      txtParticipantParticipantOld: ref(_constParticipantParticipant),
+      txtParticipantParticipantOld: ref(_constParticipantParticipantOld),
       txtParticipantArrival: ref(_constParticipantArrival),
       txtParticipantAnnotations: ref(_constParticipantAnnotations),
       txtParticipantAction: ref(_constParticipantAction),
@@ -443,6 +397,7 @@ export default {
 
       txtTicketParticipantId: ref(_constTicketParticipantId),
       txtTicketParticipant: ref(_constTicketParticipant),
+      txtTicketParticipantOld: ref(_constTicketParticipantOld),
       txtTicketArrival: ref(_constTicketArrival),
       txtTicketAnnotations: ref(_constTicketAnnotations),
       txtTicketAction: ref(_constTicketAction),
@@ -542,6 +497,54 @@ export default {
   },
 
   methods: {
+    getImageHomeTeam: function () {
+      if (this.txtMatchName.toLowerCase().indexOf('fest') >= 0) return 'statics/Event.png'
+      if (this.txtMatchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
+      return 'statics/Freiburg.png'
+    },
+
+    getImageAwayTeam: function () {
+      if (this.txtMatchName.toLowerCase().indexOf('arminia') >= 0) return 'statics/Arminia.png'
+      if (this.txtMatchName.toLowerCase().indexOf('augsburg') >= 0) return 'statics/Augsburg.png'
+      if (this.txtMatchName.toLowerCase().indexOf('leverkusen') >= 0) return 'statics/Bayer_Leverkusen.png'
+      if (this.txtMatchName.toLowerCase().indexOf('bayern') >= 0 && this.txtMatchName.toLowerCase().indexOf('münchen') >= 0) return 'statics/Bayern_München.png'
+      if (this.txtMatchName.toLowerCase().indexOf('bochum') >= 0) return 'statics/Bochum.png'
+      if (this.txtMatchName.toLowerCase().indexOf('dortmund') >= 0) return 'statics/Borussia_Dortmund.png'
+      if (this.txtMatchName.toLowerCase().indexOf('gladbach') >= 0) return 'statics/Borussia_Mönchengladbach.png'
+      if (this.txtMatchName.toLowerCase().indexOf('darmstadt') >= 0) return 'statics/Darmstadt.png'
+      if (this.txtMatchName.toLowerCase().indexOf('braunschweig') >= 0) return 'statics/Eintracht_Braunschweig.png'
+      if (this.txtMatchName.toLowerCase().indexOf('frankfurt') >= 0) return 'statics/Eintracht_Frankfurt.png'
+      if (this.txtMatchName.toLowerCase().indexOf('fortuna_') >= 0 && this.txtMatchName.toLowerCase().indexOf('düsseldorf') >= 0) return 'statics/Fortuna_Düsseldorf.png'
+      if (this.txtMatchName.toLowerCase().indexOf('greuther') >= 0 && this.txtMatchName.toLowerCase().indexOf('fürth') >= 0) return 'statics/Greuther_Fürth.png'
+      if (this.txtMatchName.toLowerCase().indexOf('hamburg') >= 0 && this.txtMatchName.toLowerCase().indexOf('hsv') >= 0) return 'statics/Hamburger_SV.png'
+      if (this.txtMatchName.toLowerCase().indexOf('hannover') >= 0) return 'statics/Hannover.png'
+      if (this.txtMatchName.toLowerCase().indexOf('hansa') >= 0 && this.txtMatchName.toLowerCase().indexOf('rostock') >= 0) return 'statics/Hansa_Rostock.png'
+      if (this.txtMatchName.toLowerCase().indexOf('heidenheim') >= 0) return 'statics/Heidenheim.png'
+      if (this.txtMatchName.toLowerCase().indexOf('hertha') >= 0) return 'statics/Hertha.png'
+      if (this.txtMatchName.toLowerCase().indexOf('hoffenheim') >= 0) return 'statics/Hoffenheim.png'
+      if (this.txtMatchName.toLowerCase().indexOf('holstein') >= 0) return 'statics/Holstein.png'
+      if (this.txtMatchName.toLowerCase().indexOf('jahn') >= 0 && this.txtMatchName.toLowerCase().indexOf('regensburg') >= 0) return 'statics/Jahn_Regensburg.png'
+      if (this.txtMatchName.toLowerCase().indexOf('fck') >= 0 && this.txtMatchName.toLowerCase().indexOf('kaiserslautern') >= 0) return 'statics/Kaiserslautern.png'
+      if (this.txtMatchName.toLowerCase().indexOf('ksc') >= 0 && this.txtMatchName.toLowerCase().indexOf('karlsruher') >= 0) return 'statics/Karlsruher.png'
+      if (this.txtMatchName.toLowerCase().indexOf('köln') >= 0) return 'statics/Köln.png'
+      if (this.txtMatchName.toLowerCase().indexOf('leipzig') >= 0) return 'statics/Leipzig.png'
+      if (this.txtMatchName.toLowerCase().indexOf('magdeburg') >= 0) return 'statics/Magdeburg.png'
+      if (this.txtMatchName.toLowerCase().indexOf('mainz') >= 0) return 'statics/Mainz.png'
+      if (this.txtMatchName.toLowerCase().indexOf('nürnberg') >= 0) return 'statics/Nürnberg.png'
+      if (this.txtMatchName.toLowerCase().indexOf('paderborn') >= 0) return 'statics/Paderborn.png'
+      if (this.txtMatchName.toLowerCase().indexOf('sandhausen') >= 0) return 'statics/Sandhausen.png'
+      if (this.txtMatchName.toLowerCase().indexOf('schalke') >= 0) return 'statics/Schalke.png'
+      if (this.txtMatchName.toLowerCase().indexOf('pauli') >= 0) return 'statics/St._Pauli.png'
+      if (this.txtMatchName.toLowerCase().indexOf('stuttgart') >= 0) return 'statics/Stuttgart.png'
+      if (this.txtMatchName.toLowerCase().indexOf('union') >= 0) return 'statics/Union_Berlin.png'
+      if (this.txtMatchName.toLowerCase().indexOf('werder') >= 0 && this.txtMatchName.toLowerCase().indexOf('bremen') >= 0) return 'statics/Werder_Bremen.png'
+      if (this.txtMatchName.toLowerCase().indexOf('wolfsburg') >= 0) return 'statics/Wolfsburg.png'
+
+      if (this.txtMatchName.toLowerCase().indexOf('fest') >= 0) return 'statics/Event.png'
+      if (this.txtMatchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
+      return 'statics/QuestionMark.png'
+    },
+
     getTableMatch () {
       this.matchObject = []
 
@@ -610,6 +613,7 @@ export default {
       console.log('Clicked on Participant: ' + _participantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
       _constParticipantId.value = _participantId
       _constParticipantParticipant.value = _participant
+      _constParticipantParticipantOld.value = _participant
       _constParticipantArrival.value = _arrival
       _constParticipantAnnotations.value = _annotations
       _constParticipantAction.value = _action
@@ -685,6 +689,7 @@ export default {
       console.log('Clicked on ticket assignment: ' + _ticketParticipantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
       _constTicketParticipantId.value = _ticketParticipantId
       _constTicketParticipant.value = _participant
+      _constTicketParticipantOld.value = _participant
       _constTicketArrival.value = _arrival
       _constTicketAnnotations.value = _annotations
       _constTicketAction.value = _action
@@ -756,21 +761,27 @@ export default {
       }
     },
 
-    editTicketAssignmentSave (_ticketParticipantId, _participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      console.log('editTicketAssignmentSave: ' + _ticketParticipantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+    editTicketAssignmentSave (_ticketParticipantId, _participant, _participantOld, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
+      console.log('editTicketAssignmentSave: ' + _ticketParticipantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_action !== 'bin dabei') _arrival = ''
 
-      this.$axios(`${this.URLParticipant}&func=Update&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
-        .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.editTicketAssignment = false
-            this.loadReloadData(_matchName, _time, _annotationsMatch)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      const _participants = this.ticketObject.map(el => el.ticketParticipant)
+      const _participantExists = _participants.includes(_participant) && _participant !== _participantOld
+      if (_participantExists) {
+        this.showParticipantExists = true
+      } else {
+        this.$axios(`${this.URLParticipant}&func=Update&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.editTicketAssignment = false
+              this.loadReloadData(_matchName, _time, _annotationsMatch)
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      }
     },
 
     deleteTicketAssignment (_ticketParticipantId, _matchName, _time, _annotationsMatch) {

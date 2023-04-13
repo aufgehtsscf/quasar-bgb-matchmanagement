@@ -189,6 +189,7 @@ import { ref } from 'vue'
 
 const _constMatchId = ref('')
 const _constMatch = ref('')
+const _constMatchOld = ref('')
 const _constPublished = ref(false)
 const _constDatetime = ref('')
 const _constAnnotations = ref('')
@@ -199,11 +200,11 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchId: ref(_constMatchId),
       txtMatch: ref(_constMatch),
-      txtMatchOld: ref(_constMatch),
+      txtMatchOld: ref(_constMatchOld),
       chbPublished: ref(_constPublished),
       txtDatetime: ref(_constDatetime),
       txtAnnotations: ref(_constAnnotations),
@@ -275,6 +276,7 @@ export default {
       console.log('Clicked on an Match: ' + _matchId + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
       _constMatchId.value = _matchId
       _constMatch.value = _match
+      _constMatchOld.value = _match
       _constPublished.value = _published === 'TRUE'
       _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
