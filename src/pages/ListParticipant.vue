@@ -364,7 +364,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
       txtTime: ref(_constTime),
@@ -497,7 +497,7 @@ export default {
   },
 
   methods: {
-    getImageHomeTeam: function () {
+    getImageHomeTeam () {
       if (this.txtMatchName.toLowerCase().indexOf('fest') >= 0 ||
           this.txtMatchName.toLowerCase().indexOf('party') >= 0 ||
           this.txtMatchName.toLowerCase().indexOf('anlass') >= 0 ||
@@ -507,7 +507,7 @@ export default {
       return 'statics/Freiburg.png'
     },
 
-    getImageAwayTeam: function () {
+    getImageAwayTeam () {
       if (this.txtMatchName.toLowerCase().indexOf('arminia') >= 0) return 'statics/Arminia.png'
       if (this.txtMatchName.toLowerCase().indexOf('augsburg') >= 0) return 'statics/Augsburg.png'
       if (this.txtMatchName.toLowerCase().indexOf('leverkusen') >= 0) return 'statics/Bayer_Leverkusen.png'
