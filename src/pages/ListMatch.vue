@@ -253,7 +253,7 @@ export default {
       this.matchObject = []
 
       const publishedParam = this.IsAdministrator ? '' : 'TRUE'
-      console.log('URLMatch: ' + this.URLMatch + '&func=Read&published=' + publishedParam)
+      // console.log('URLMatch: ' + this.URLMatch + '&func=Read&published=' + publishedParam)
       this.$axios(`${this.URLMatch}&func=Read&published=${publishedParam}`)
         .then((res) => {
           this.tableMatch = res.data.split('\n')
@@ -261,7 +261,6 @@ export default {
             const element = this.tableMatch[index].split(',')
             this.setMatchObject(element[2], element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
           }
-          // console.log(this.matchObject)
         })
         .catch((err) => {
           console.log(err)
@@ -273,7 +272,7 @@ export default {
     },
 
     onMatchClick (_matchId, _match, _published, _datetime, _annotations) {
-      console.log('Clicked on an Match: ' + _matchId + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+      // console.log('Clicked on an Match: ' + _matchId + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
       _constMatchId.value = _matchId
       _constMatch.value = _match
       _constMatchOld.value = _match
@@ -289,7 +288,7 @@ export default {
     },
 
     addMatchSave (_match, _published, _datetime, _annotations) {
-      console.log('addMatchSave: ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+      // console.log('addMatchSave: ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
       const _matches = this.matchObject.map(el => el.match)
       const _matchExists = _matches.includes(_match)
@@ -312,7 +311,7 @@ export default {
     },
 
     editMatchSave (_matchId, _oldMatchName, _match, _matchOld, _published, _datetime, _annotations) {
-      console.log('editMatchSave - Update: ' + _matchId + ', ' + _oldMatchName + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+      // console.log('editMatchSave - Update: ' + _matchId + ', ' + _oldMatchName + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
       const _matches = this.matchObject.map(el => el.match)
       const _matchExists = _matches.includes(_match) && _match !== _matchOld
@@ -322,8 +321,8 @@ export default {
         const _date = _datetime.substr(0, 10)
         const _time = _datetime.substr(11, 5)
         const _newMatch = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
-        console.log('editMatchSave - UpdateMatch: ' + _oldMatchName + ', ' + _newMatch)
 
+        // console.log('editMatchSave - UpdateMatch: ' + _oldMatchName + ', ' + _newMatch)
         this.$axios(`${this.URLMatch}&func=Update&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
@@ -333,7 +332,6 @@ export default {
                     this.getTableMatch()
                   }
                 })
-
                 .catch((err) => {
                   console.log(err)
                 })
@@ -346,7 +344,7 @@ export default {
     },
 
     async archiveMatch (_matchId, _matchToDelete, _datetime) {
-      console.log('deleteMatch: ' + _matchId + ', ' + _matchToDelete + ', ' + _datetime)
+      // console.log('deleteMatch: ' + _matchId + ', ' + _matchToDelete + ', ' + _datetime)
 
       const _date = _datetime.substr(0, 10)
 

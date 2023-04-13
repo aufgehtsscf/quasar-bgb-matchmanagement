@@ -30,7 +30,7 @@
           class="col-5"
           :src="getImageHomeTeam()"
         />
-        <q-card-section>
+        <q-card-section v-if="getImageHomeTeam() !== getImageAwayTeam()">
           <div class="absolute-center text-h6 text-center text-black">
             VS.&nbsp;
         </div>
@@ -498,7 +498,11 @@ export default {
 
   methods: {
     getImageHomeTeam: function () {
-      if (this.txtMatchName.toLowerCase().indexOf('fest') >= 0) return 'statics/Event.png'
+      if (this.txtMatchName.toLowerCase().indexOf('fest') >= 0 ||
+          this.txtMatchName.toLowerCase().indexOf('party') >= 0 ||
+          this.txtMatchName.toLowerCase().indexOf('anlass') >= 0 ||
+          this.txtMatchName.toLowerCase().indexOf('geburtstag') >= 0 ||
+          this.txtMatchName.toLowerCase().indexOf('event') >= 0) return 'statics/Event.png'
       if (this.txtMatchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
       return 'statics/Freiburg.png'
     },
@@ -507,25 +511,25 @@ export default {
       if (this.txtMatchName.toLowerCase().indexOf('arminia') >= 0) return 'statics/Arminia.png'
       if (this.txtMatchName.toLowerCase().indexOf('augsburg') >= 0) return 'statics/Augsburg.png'
       if (this.txtMatchName.toLowerCase().indexOf('leverkusen') >= 0) return 'statics/Bayer_Leverkusen.png'
-      if (this.txtMatchName.toLowerCase().indexOf('bayern') >= 0 && this.txtMatchName.toLowerCase().indexOf('münchen') >= 0) return 'statics/Bayern_München.png'
+      if (this.txtMatchName.toLowerCase().indexOf('bayern') >= 0 || this.txtMatchName.toLowerCase().indexOf('münchen') >= 0) return 'statics/Bayern_München.png'
       if (this.txtMatchName.toLowerCase().indexOf('bochum') >= 0) return 'statics/Bochum.png'
       if (this.txtMatchName.toLowerCase().indexOf('dortmund') >= 0) return 'statics/Borussia_Dortmund.png'
       if (this.txtMatchName.toLowerCase().indexOf('gladbach') >= 0) return 'statics/Borussia_Mönchengladbach.png'
       if (this.txtMatchName.toLowerCase().indexOf('darmstadt') >= 0) return 'statics/Darmstadt.png'
       if (this.txtMatchName.toLowerCase().indexOf('braunschweig') >= 0) return 'statics/Eintracht_Braunschweig.png'
       if (this.txtMatchName.toLowerCase().indexOf('frankfurt') >= 0) return 'statics/Eintracht_Frankfurt.png'
-      if (this.txtMatchName.toLowerCase().indexOf('fortuna_') >= 0 && this.txtMatchName.toLowerCase().indexOf('düsseldorf') >= 0) return 'statics/Fortuna_Düsseldorf.png'
-      if (this.txtMatchName.toLowerCase().indexOf('greuther') >= 0 && this.txtMatchName.toLowerCase().indexOf('fürth') >= 0) return 'statics/Greuther_Fürth.png'
-      if (this.txtMatchName.toLowerCase().indexOf('hamburg') >= 0 && this.txtMatchName.toLowerCase().indexOf('hsv') >= 0) return 'statics/Hamburger_SV.png'
+      if (this.txtMatchName.toLowerCase().indexOf('fortuna') >= 0 || this.txtMatchName.toLowerCase().indexOf('düsseldorf') >= 0) return 'statics/Fortuna_Düsseldorf.png'
+      if (this.txtMatchName.toLowerCase().indexOf('greuther') >= 0 || this.txtMatchName.toLowerCase().indexOf('fürth') >= 0) return 'statics/Greuther_Fürth.png'
+      if (this.txtMatchName.toLowerCase().indexOf('hamburg') >= 0 || this.txtMatchName.toLowerCase().indexOf('hsv') >= 0) return 'statics/Hamburger_SV.png'
       if (this.txtMatchName.toLowerCase().indexOf('hannover') >= 0) return 'statics/Hannover.png'
-      if (this.txtMatchName.toLowerCase().indexOf('hansa') >= 0 && this.txtMatchName.toLowerCase().indexOf('rostock') >= 0) return 'statics/Hansa_Rostock.png'
+      if (this.txtMatchName.toLowerCase().indexOf('hansa') >= 0 || this.txtMatchName.toLowerCase().indexOf('rostock') >= 0) return 'statics/Hansa_Rostock.png'
       if (this.txtMatchName.toLowerCase().indexOf('heidenheim') >= 0) return 'statics/Heidenheim.png'
       if (this.txtMatchName.toLowerCase().indexOf('hertha') >= 0) return 'statics/Hertha.png'
       if (this.txtMatchName.toLowerCase().indexOf('hoffenheim') >= 0) return 'statics/Hoffenheim.png'
       if (this.txtMatchName.toLowerCase().indexOf('holstein') >= 0) return 'statics/Holstein.png'
-      if (this.txtMatchName.toLowerCase().indexOf('jahn') >= 0 && this.txtMatchName.toLowerCase().indexOf('regensburg') >= 0) return 'statics/Jahn_Regensburg.png'
-      if (this.txtMatchName.toLowerCase().indexOf('fck') >= 0 && this.txtMatchName.toLowerCase().indexOf('kaiserslautern') >= 0) return 'statics/Kaiserslautern.png'
-      if (this.txtMatchName.toLowerCase().indexOf('ksc') >= 0 && this.txtMatchName.toLowerCase().indexOf('karlsruher') >= 0) return 'statics/Karlsruher.png'
+      if (this.txtMatchName.toLowerCase().indexOf('jahn') >= 0 || this.txtMatchName.toLowerCase().indexOf('regensburg') >= 0) return 'statics/Jahn_Regensburg.png'
+      if (this.txtMatchName.toLowerCase().indexOf('fck') >= 0 || this.txtMatchName.toLowerCase().indexOf('kaiserslautern') >= 0) return 'statics/Kaiserslautern.png'
+      if (this.txtMatchName.toLowerCase().indexOf('ksc') >= 0 || this.txtMatchName.toLowerCase().indexOf('karlsruher') >= 0) return 'statics/Karlsruher.png'
       if (this.txtMatchName.toLowerCase().indexOf('köln') >= 0) return 'statics/Köln.png'
       if (this.txtMatchName.toLowerCase().indexOf('leipzig') >= 0) return 'statics/Leipzig.png'
       if (this.txtMatchName.toLowerCase().indexOf('magdeburg') >= 0) return 'statics/Magdeburg.png'
@@ -535,12 +539,16 @@ export default {
       if (this.txtMatchName.toLowerCase().indexOf('sandhausen') >= 0) return 'statics/Sandhausen.png'
       if (this.txtMatchName.toLowerCase().indexOf('schalke') >= 0) return 'statics/Schalke.png'
       if (this.txtMatchName.toLowerCase().indexOf('pauli') >= 0) return 'statics/St._Pauli.png'
-      if (this.txtMatchName.toLowerCase().indexOf('stuttgart') >= 0) return 'statics/Stuttgart.png'
+      if (this.txtMatchName.toLowerCase().indexOf('vfb') >= 0 || this.txtMatchName.toLowerCase().indexOf('stuttgart') >= 0) return 'statics/Stuttgart.png'
       if (this.txtMatchName.toLowerCase().indexOf('union') >= 0) return 'statics/Union_Berlin.png'
-      if (this.txtMatchName.toLowerCase().indexOf('werder') >= 0 && this.txtMatchName.toLowerCase().indexOf('bremen') >= 0) return 'statics/Werder_Bremen.png'
+      if (this.txtMatchName.toLowerCase().indexOf('werder') >= 0 || this.txtMatchName.toLowerCase().indexOf('bremen') >= 0) return 'statics/Werder_Bremen.png'
       if (this.txtMatchName.toLowerCase().indexOf('wolfsburg') >= 0) return 'statics/Wolfsburg.png'
 
-      if (this.txtMatchName.toLowerCase().indexOf('fest') >= 0) return 'statics/Event.png'
+      if (this.txtMatchName.toLowerCase().indexOf('fest') >= 0 ||
+          this.txtMatchName.toLowerCase().indexOf('party') >= 0 ||
+          this.txtMatchName.toLowerCase().indexOf('anlass') >= 0 ||
+          this.txtMatchName.toLowerCase().indexOf('geburtstag') >= 0 ||
+          this.txtMatchName.toLowerCase().indexOf('event') >= 0) return 'statics/Event.png'
       if (this.txtMatchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
       return 'statics/QuestionMark.png'
     },
@@ -553,7 +561,7 @@ export default {
       let nextAnnotations = ''
       let nextDate = ''
 
-      console.log('URLMatch: ' + this.URLMatch + '&func=Read&published=TRUE')
+      // console.log('URLMatch: ' + this.URLMatch + '&func=Read&published=TRUE')
       this.$axios(`${this.URLMatch}&func=Read&published=TRUE`)
         .then((res) => {
           this.tableMatch = res.data.split('\n')
@@ -579,7 +587,7 @@ export default {
     },
 
     onMatchClick (_match, _time, _annotationsMatch, _date) {
-      console.log('onMatchClick: ' + _match + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
+      // console.log('onMatchClick: ' + _match + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
       _constMatch.value = _match
       _constTime.value = _time
       _constDate.value = _date
@@ -589,7 +597,7 @@ export default {
     },
 
     async loadReloadData (_matchName, _time, _annotationsMatch) {
-      console.log('loadReloadData: ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+      // console.log('loadReloadData: ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       this.setArrivalElements(_time)
       this.getTableWhereIsMyCard()
@@ -610,7 +618,7 @@ export default {
     },
 
     onParticipantClick (_participantId, _participant, _arrival, _annotations, _action, _reaction) {
-      console.log('Clicked on Participant: ' + _participantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
+      // console.log('Clicked on Participant: ' + _participantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
       _constParticipantId.value = _participantId
       _constParticipantParticipant.value = _participant
       _constParticipantParticipantOld.value = _participant
@@ -627,7 +635,7 @@ export default {
     },
 
     addParticipantSave (_participant, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      console.log('addParticipantSave: ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+      // console.log('addParticipantSave: ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_action !== 'bin dabei') _arrival = ''
 
@@ -649,7 +657,7 @@ export default {
     },
 
     editParticipantSave (_participantId, _participant, _participantOld, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      console.log('editParticipantSave: ' + _participantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+      // console.log('editParticipantSave: ' + _participantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_action !== 'bin dabei') _arrival = ''
 
@@ -671,7 +679,7 @@ export default {
     },
 
     deleteParticipant (_participantId, _matchName, _time, _annotationsMatch) {
-      console.log('deleteParticipant: ' + _participantId + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+      // console.log('deleteParticipant: ' + _participantId + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       this.$axios(`${this.URLParticipant}&func=Delete&participantId=${_participantId}`)
         .then((res) => {
@@ -686,7 +694,7 @@ export default {
     },
 
     onTicketAssignmentClick (_ticketParticipantId, _participant, _arrival, _annotations, _action, _reaction) {
-      console.log('Clicked on ticket assignment: ' + _ticketParticipantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
+      // console.log('Clicked on ticket assignment: ' + _ticketParticipantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
       _constTicketParticipantId.value = _ticketParticipantId
       _constTicketParticipant.value = _participant
       _constTicketParticipantOld.value = _participant
@@ -707,11 +715,11 @@ export default {
     },
 
     addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchName, _time, _annotationsMatch) {
-      console.log('addTicketAssignmentSave: ' + _ticketAssignmentGiven + ', ' + _ticketAssignmentRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+      // console.log('addTicketAssignmentSave: ' + _ticketAssignmentGiven + ', ' + _ticketAssignmentRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       const _ticketGivenParticipantId = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenParticipantId
       if (typeof _ticketGivenParticipantId !== 'undefined') {
-        console.log(this.URLParticipant + '&func=UpdateTicketGiven&participantId=' + _ticketGivenParticipantId + '&reaction=' + _ticketAssignmentGiven)
+        // console.log(this.URLParticipant + '&func=UpdateTicketGiven&participantId=' + _ticketGivenParticipantId + '&reaction=' + _ticketAssignmentGiven)
         this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketGivenParticipantId}&reaction=${_ticketAssignmentRequired}`)
           .catch((err) => {
             console.log(err)
@@ -719,7 +727,7 @@ export default {
 
         const _ticketRequiredParticipantId = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredParticipantId
         if (typeof _ticketRequiredParticipantId !== 'undefined') {
-          console.log(this.URLParticipant + '&func=UpdateTicketRequired&participantId=' + _ticketRequiredParticipantId + '&action=bin dabei&reaction=' + _ticketAssignmentGiven)
+          // console.log(this.URLParticipant + '&func=UpdateTicketRequired&participantId=' + _ticketRequiredParticipantId + '&action=bin dabei&reaction=' + _ticketAssignmentGiven)
           this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
             .then((res) => {
               if (res.data === 'Success, requested action completed') {
@@ -734,11 +742,11 @@ export default {
     },
 
     deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchName, _time, _annotationsMatch) {
-      console.log('deleteTicketAssigned: ' + _ticketAssignedGiven + ', ' + _ticketAssignedRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+      // console.log('deleteTicketAssigned: ' + _ticketAssignedGiven + ', ' + _ticketAssignedRequired + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       const _ticketAssignedGivenParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedParticipantId
       if (typeof _ticketAssignedGivenParticipantId !== 'undefined') {
-        console.log(this.URLParticipant + '&func=UpdateTicketGiven&participantId=' + _ticketAssignedGivenParticipantId + '&reaction=')
+        // console.log(this.URLParticipant + '&func=UpdateTicketGiven&participantId=' + _ticketAssignedGivenParticipantId + '&reaction=')
         this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketAssignedGivenParticipantId}&reaction=`)
           .catch((err) => {
             console.log(err)
@@ -746,7 +754,7 @@ export default {
 
         const _ticketAssignedRequiredParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedParticipantId
         if (typeof _ticketAssignedRequiredParticipantId !== 'undefined') {
-          console.log(this.URLParticipant + '&func=UpdateTicketRequired&participantId=' + _ticketAssignedRequiredParticipantId + '&action=brauche Karte&reaction=')
+          // console.log(this.URLParticipant + '&func=UpdateTicketRequired&participantId=' + _ticketAssignedRequiredParticipantId + '&action=brauche Karte&reaction=')
           this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketAssignedRequiredParticipantId}&action=brauche Karte&reaction=`)
             .then((res) => {
               if (res.data === 'Success, requested action completed') {
@@ -762,7 +770,7 @@ export default {
     },
 
     editTicketAssignmentSave (_ticketParticipantId, _participant, _participantOld, _arrival, _annotations, _action, _matchName, _time, _annotationsMatch) {
-      console.log('editTicketAssignmentSave: ' + _ticketParticipantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+      // console.log('editTicketAssignmentSave: ' + _ticketParticipantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       if (_action !== 'bin dabei') _arrival = ''
 
@@ -785,7 +793,7 @@ export default {
     },
 
     deleteTicketAssignment (_ticketParticipantId, _matchName, _time, _annotationsMatch) {
-      console.log('deleteTicketAssignment: ' + _ticketParticipantId + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
+      // console.log('deleteTicketAssignment: ' + _ticketParticipantId + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch)
 
       this.$axios(`${this.URLParticipant}&func=Delete&participantId=${_ticketParticipantId}`)
         .then((res) => {
@@ -808,7 +816,7 @@ export default {
         readFunction = 'ReadAdmin'
       }
 
-      console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadAdmin&match=' + _matchName)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadAdmin&match=' + _matchName)
       this.$axios(`${this.URLParticipant}&func=${readFunction}&match=${_matchName}`)
         .then((res) => {
           this.tableParticipant = res.data.split('\n')
@@ -869,7 +877,7 @@ export default {
     getTableTicket (_matchName) {
       this.ticketObject = []
 
-      console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTickets&match=' + _matchName)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTickets&match=' + _matchName)
       this.$axios(`${this.URLParticipant}&func=ReadTickets&match=${_matchName}`)
         .then((res) => {
           this.tableTicket = res.data.split('\n')
@@ -914,7 +922,7 @@ export default {
     getTableTicketGiven (_matchName) {
       this.ticketGivenObject = []
 
-      console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsGiven&match=' + _matchName)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsGiven&match=' + _matchName)
       this.$axios(`${this.URLParticipant}&func=ReadTicketsGiven&match=${_matchName}`)
         .then((res) => {
           this.tableTicket = res.data.split('\n')
@@ -943,7 +951,7 @@ export default {
     getTableTicketRequired (_matchName) {
       this.ticketRequiredObject = []
 
-      console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsRequired&match=' + _matchName)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsRequired&match=' + _matchName)
       this.$axios(`${this.URLParticipant}&func=ReadTicketsRequired&match=${_matchName}`)
         .then((res) => {
           this.tableTicket = res.data.split('\n')
@@ -972,7 +980,7 @@ export default {
     getTableTicketAssigned (_matchName) {
       this.ticketAssignedObject = []
 
-      console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsAssigned&match=' + _matchName)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsAssigned&match=' + _matchName)
       this.$axios(`${this.URLParticipant}&func=ReadTicketsAssigned&match=${_matchName}`)
         .then((res) => {
           this.tableTicket = res.data.split('\n')
@@ -993,7 +1001,7 @@ export default {
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
 
-      console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
+      // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
       this.$axios(`${this.URLWhereIsMyCard}&func=Read&cardholder=`)
         .then((res) => {
           this.tableWhereIsMyCard = res.data.split('\n')

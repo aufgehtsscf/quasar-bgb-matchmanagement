@@ -180,7 +180,7 @@ export default {
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
 
-      console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
+      // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
       this.$axios(`${this.URLWhereIsMyCard}&func=Read&cardholder=`)
         .then((res) => {
           this.tableWhereIsMyCard = res.data.split('\n')
@@ -188,7 +188,6 @@ export default {
             const element = this.tableWhereIsMyCard[index].split(',')
             this.setWhereIsMyCardObject(element[2], element[3], element[4], element[5])
           }
-          console.log(this.whereIsMyCardObject)
         })
         .catch((err) => {
           console.log(err)
@@ -200,7 +199,7 @@ export default {
     },
 
     onWhereIsMyCardClick (_cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
-      console.log('Clicked on WhereIsMyCard: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
+      // console.log('Clicked on WhereIsMyCard: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
       _constHolderId.value = _cardHolderId
       _constCardHolder.value = _cardHolder
       _constCardHolderOld.value = _cardHolder
@@ -211,7 +210,7 @@ export default {
     },
 
     addWhereIsMyCardSave (_cardHolder, _discounted, _whoHasTheCard) {
-      console.log('addWhereIsMyCardSave: ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
+      // console.log('addWhereIsMyCardSave: ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
 
       const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
       const _cardHolderExists = _cardHolders.includes(_cardHolder)
@@ -231,7 +230,7 @@ export default {
     },
 
     editWhereIsMyCardSave (_cardHolderId, _cardHolder, _cardHolderOld, _discounted, _whoHasTheCard) {
-      console.log('editWhereIsMyCardSave: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _cardHolderOld + ', ' + _discounted + ', ' + _whoHasTheCard)
+      // console.log('editWhereIsMyCardSave: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _cardHolderOld + ', ' + _discounted + ', ' + _whoHasTheCard)
 
       const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
       const _cardHolderExists = _cardHolders.includes(_cardHolder) && _cardHolder !== _cardHolderOld
@@ -251,7 +250,7 @@ export default {
     },
 
     deleteWhereIsMyCard (_cardHolderId) {
-      console.log('deleteWhereIsMyCard: ' + _cardHolderId)
+      // console.log('deleteWhereIsMyCard: ' + _cardHolderId)
 
       this.$axios(`${this.URLWhereIsMyCard}&func=Delete&cardholderId=${_cardHolderId}`)
         .then((res) => {
