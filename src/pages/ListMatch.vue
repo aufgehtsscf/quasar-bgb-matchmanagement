@@ -158,7 +158,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtOldMatchName, txtMatch, txtMatchOld, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtMatch, txtMatchOld, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -173,7 +173,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="archiveMatch(txtMatchId, txtOldMatchName, txtDatetime)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="archiveMatch(txtMatchId, txtDatetime)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -193,7 +193,6 @@ const _constMatchOld = ref('')
 const _constPublished = ref(false)
 const _constDatetime = ref('')
 const _constAnnotations = ref('')
-const _constMatchName = ref('')
 
 export default {
   name: 'ListMatch',
@@ -208,7 +207,6 @@ export default {
       chbPublished: ref(_constPublished),
       txtDatetime: ref(_constDatetime),
       txtAnnotations: ref(_constAnnotations),
-      txtOldMatchName: ref(_constMatchName),
 
       txtMatchNew: ref(''),
       chbPublishedNew: ref(false),
@@ -225,7 +223,7 @@ export default {
   data () {
     return {
       URLMatch: 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
-      URLParticipant: 'https://script.google.com/macros/s/AKfycbw-M4-eonzTFqvGIkA6GAwrgAPttc9Oghqg1aJGIQNqXohHiA61NvrA-GUPUDDrLhgz/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
+      URLParticipant: 'https://script.google.com/macros/s/AKfycbxyY9YZjWtnDPLQCWrO_j7YmfPFRRu6VHmqMgN1oS5bHL1nXoPyc3LrRBMDH0V-tDszuA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
       URLParticipantArchive: 'https://script.google.com/macros/s/AKfycbwNroj1OzLNOOHRWFdNmaiN8bpKnJqBf3Lbm6firEaWPJo1wstm7Nsh9J3oAJox1lSt7w/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
 
       matchObject: [
@@ -280,10 +278,6 @@ export default {
       _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
 
-      const _date = _datetime.substr(0, 10)
-      const _time = _datetime.substr(11, 5)
-      _constMatchName.value = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
-
       if (this.IsAdministrator) this.editMatch = true
     },
 
@@ -310,8 +304,8 @@ export default {
       }
     },
 
-    editMatchSave (_matchId, _oldMatchName, _match, _matchOld, _published, _datetime, _annotations) {
-      // console.log('editMatchSave - Update: ' + _matchId + ', ' + _oldMatchName + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    editMatchSave (_matchId, _match, _matchOld, _published, _datetime, _annotations) {
+      // console.log('editMatchSave - Update: ' + _matchId + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
       const _matches = this.matchObject.map(el => el.match)
       const _matchExists = _matches.includes(_match) && _match !== _matchOld
@@ -322,11 +316,11 @@ export default {
         const _time = _datetime.substr(11, 5)
         const _newMatch = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
 
-        // console.log('editMatchSave - UpdateMatch: ' + _oldMatchName + ', ' + _newMatch)
         this.$axios(`${this.URLMatch}&func=Update&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
-              this.$axios(`${this.URLParticipant}&func=UpdateMatch&oldMatch=${_oldMatchName}&newMatch=${_newMatch}`)
+              // console.log('editMatchSave - UpdateMatch: ' + _matchId + ', ' + _newMatch)
+              this.$axios(`${this.URLParticipant}&func=UpdateMatch&matchId=${_matchId}&newMatch=${_newMatch}`)
                 .then((res2) => {
                   if (res2.data === 'Success, requested action completed') {
                     this.getTableMatch()
@@ -343,14 +337,14 @@ export default {
       }
     },
 
-    async archiveMatch (_matchId, _matchToDelete, _datetime) {
-      // console.log('deleteMatch: ' + _matchId + ', ' + _matchToDelete + ', ' + _datetime)
+    async archiveMatch (_matchId, _datetime) {
+      // console.log('deleteMatch: ' + _matchId + ', ' + _datetime)
 
       const _date = _datetime.substr(0, 10)
 
       const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
-      this.$axios(`${this.URLParticipant}&func=ReadAll&match=${_matchToDelete}`)
+      this.$axios(`${this.URLParticipant}&func=ReadAll&matchId=${_matchId}`)
         .then(async (res) => {
           this.tableParticipant = res.data.split('\n')
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
@@ -366,11 +360,11 @@ export default {
           console.log(err)
         })
 
-      this.deleteMatch(_matchId, _matchToDelete)
+      this.deleteMatch(_matchId)
     },
 
-    deleteMatch (_matchId, _matchToDelete) {
-      this.$axios(`${this.URLParticipant}&func=DeleteMatch&match=${_matchToDelete}`)
+    deleteMatch (_matchId) {
+      this.$axios(`${this.URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
         .then((res3) => {
           if (res3.data === 'Success, requested action completed') {
             // console.log(this.URLMatch + '&func=Delete&matchId=' + _matchId)
