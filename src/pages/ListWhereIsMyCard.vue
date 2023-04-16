@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import { URLWhereIsMyCard } from 'src/boot/axios'
+import { URLWhereIsMyCard, hasAvatar, getAvatar } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constHolderId = ref('')
@@ -152,7 +152,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtCardHolderId: ref(_constHolderId),
       txtCardHolder: ref(_constCardHolder),
@@ -174,6 +174,8 @@ export default {
   data () {
     return {
       URLWhereIsMyCard,
+      hasAvatar,
+      getAvatar,
 
       whereIsMyCardObject: [
         {
@@ -194,19 +196,6 @@ export default {
   },
 
   methods: {
-    hasAvatar (_participant) {
-      if (_participant === 'Bolze' ||
-          _participant === 'Blado') {
-        return true
-      }
-      return false
-    },
-
-    getAvatar (_participant) {
-      if (_participant === 'Bolze') return 'statics/avatars/Bolze.png'
-      if (_participant === 'Blado') return 'statics/avatars/Blado.png'
-    },
-
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
 
