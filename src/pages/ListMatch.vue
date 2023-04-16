@@ -210,7 +210,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(true),
+      IsAdministrator: ref(false),
 
       txtMatchId: ref(_constMatchId),
       txtMatch: ref(_constMatch),
