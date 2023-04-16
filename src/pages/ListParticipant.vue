@@ -78,13 +78,13 @@
         v-ripple>
         <q-item clickable v-ripple @click="onParticipantClick(participant.participantId, participant.participant, participant.arrival, participant.annotations, participant.action, participant.reaction)">
           <q-item-section avatar>
-            <q-avatar color="blue" text-color="white">
+            <q-avatar size="70px" color="deep-orange-10" text-color="white" v-if="!hasAvatar(participant.participant)">
               {{ participant.participant.substring(0, 1) }}
-              <q-badge floating color="teal">reserviert</q-badge>
+              <q-badge floating color="teal" v-if="isReservation(participant.arrival, txtTime)">reserviert</q-badge>
             </q-avatar>
-            <q-avatar>
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
-              <q-badge floating color="teal">reserviert</q-badge>
+            <q-avatar size="70px" v-if="hasAvatar(participant.participant)">
+              <img :src="getAvatar()">
+              <q-badge floating color="teal" v-if="isReservation(participant.arrival, txtTime)">reserviert</q-badge>
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -566,6 +566,25 @@ export default {
       return 'statics/QuestionMark.png'
     },
 
+    hasAvatar (_participant) {
+      if (_participant === 'Maddeis') {
+        return true
+      }
+      return false
+    },
+
+    getAvatar () {
+      return 'statics/Freiburg.png'
+    },
+
+    isReservation (_participantArrival, _matchTime) {
+      if (_participantArrival !== '') {
+        if (parseInt(_participantArrival.substring(0, 2)) === parseInt(_matchTime.substring(0, 2) - 2) &&
+        _participantArrival.substring(3, 2) === _matchTime.substring(3, 2)) { return true } else { return false }
+      }
+      return false
+    },
+
     getTableMatch () {
       this.matchObject = []
 
@@ -847,14 +866,11 @@ export default {
             _constParticipantList.value += participant.participant.trim()
 
             _constParticipantList.value += ' (' + participant.arrival + ')'
-            if (participant.arrival !== '') {
-              if (parseInt(participant.arrival.substring(0, 2)) === parseInt(_time.substring(0, 2) - 2) &&
-                  participant.arrival.substring(3, 2) === _time.substring(3, 2)) {
-                if (this.reservation !== '') {
-                  this.reservation += ', '
-                }
-                this.reservation += participant.participant.trim()
+            if (this.isReservation(participant.arrival, _time)) {
+              if (this.reservation !== '') {
+                this.reservation += ', '
               }
+              this.reservation += participant.participant.trim()
             }
 
             if (participant.annotations !== '') {
