@@ -28,15 +28,15 @@
       <q-card-section horizontal>
         <q-img
           class="col-5"
-          :src="getImageHomeTeam()"
+          :src="getImageHomeTeam(txtMatchName)"
         />
-        <q-card-section v-if="getImageHomeTeam() !== getImageAwayTeam()">
+        <q-card-section v-if="getImageHomeTeam(txtMatchName) !== getImageAwayTeam(txtMatchName)">
           <div class="absolute-center text-h6 text-center text-black">
             VS.&nbsp;
         </div>
         </q-card-section>
         <q-img
-          :src="getImageAwayTeam()"
+          :src="getImageAwayTeam(txtMatchName)"
         />
       </q-card-section>
 
@@ -78,7 +78,7 @@
         v-ripple>
         <q-item clickable v-ripple @click="onParticipantClick(participant.participantId, participant.participant, participant.arrival, participant.annotations, participant.action, participant.reaction)">
           <q-item-section avatar>
-            <q-avatar size="70px" color="deep-orange-10" text-color="white" v-if="!hasAvatar(participant.participant)">
+            <q-avatar size="70px" color="deep-orange-14" text-color="white" v-if="!hasAvatar(participant.participant)">
               {{ participant.participant.substring(0, 1) }}
               <q-badge floating color="teal" v-if="isReservation(participant.arrival, txtTime)">reserviert</q-badge>
             </q-avatar>
@@ -376,7 +376,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(true),
+      IsAdministrator: ref(false),
 
       txtMatchName: ref(_constMatchName),
       txtMatchId: ref(_constMatchId),
@@ -510,59 +510,59 @@ export default {
   },
 
   methods: {
-    getImageHomeTeam () {
-      if (this.txtMatchName.toLowerCase().indexOf('fest') >= 0 ||
-          this.txtMatchName.toLowerCase().indexOf('party') >= 0 ||
-          this.txtMatchName.toLowerCase().indexOf('anlass') >= 0 ||
-          this.txtMatchName.toLowerCase().indexOf('geburtstag') >= 0 ||
-          this.txtMatchName.toLowerCase().indexOf('event') >= 0) return 'statics/Event.png'
-      if (this.txtMatchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
+    getImageHomeTeam (_matchName) {
+      if (_matchName.toLowerCase().indexOf('fest') >= 0 ||
+          _matchName.toLowerCase().indexOf('party') >= 0 ||
+          _matchName.toLowerCase().indexOf('anlass') >= 0 ||
+          _matchName.toLowerCase().indexOf('geburtstag') >= 0 ||
+          _matchName.toLowerCase().indexOf('event') >= 0) return 'statics/Event.png'
+      if (_matchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
       return 'statics/Freiburg.png'
     },
 
-    getImageAwayTeam () {
-      if (this.txtMatchName.toLowerCase().indexOf('arminia') >= 0) return 'statics/Arminia.png'
-      if (this.txtMatchName.toLowerCase().indexOf('augsburg') >= 0) return 'statics/Augsburg.png'
-      if (this.txtMatchName.toLowerCase().indexOf('leverkusen') >= 0) return 'statics/Bayer_Leverkusen.png'
-      if (this.txtMatchName.toLowerCase().indexOf('bayern') >= 0 || this.txtMatchName.toLowerCase().indexOf('münchen') >= 0) return 'statics/Bayern_München.png'
-      if (this.txtMatchName.toLowerCase().indexOf('bochum') >= 0) return 'statics/Bochum.png'
-      if (this.txtMatchName.toLowerCase().indexOf('dortmund') >= 0) return 'statics/Borussia_Dortmund.png'
-      if (this.txtMatchName.toLowerCase().indexOf('gladbach') >= 0) return 'statics/Borussia_Mönchengladbach.png'
-      if (this.txtMatchName.toLowerCase().indexOf('darmstadt') >= 0) return 'statics/Darmstadt.png'
-      if (this.txtMatchName.toLowerCase().indexOf('braunschweig') >= 0) return 'statics/Eintracht_Braunschweig.png'
-      if (this.txtMatchName.toLowerCase().indexOf('frankfurt') >= 0) return 'statics/Eintracht_Frankfurt.png'
-      if (this.txtMatchName.toLowerCase().indexOf('fortuna') >= 0 || this.txtMatchName.toLowerCase().indexOf('düsseldorf') >= 0) return 'statics/Fortuna_Düsseldorf.png'
-      if (this.txtMatchName.toLowerCase().indexOf('greuther') >= 0 || this.txtMatchName.toLowerCase().indexOf('fürth') >= 0) return 'statics/Greuther_Fürth.png'
-      if (this.txtMatchName.toLowerCase().indexOf('hamburg') >= 0 || this.txtMatchName.toLowerCase().indexOf('hsv') >= 0) return 'statics/Hamburger_SV.png'
-      if (this.txtMatchName.toLowerCase().indexOf('hannover') >= 0) return 'statics/Hannover.png'
-      if (this.txtMatchName.toLowerCase().indexOf('hansa') >= 0 || this.txtMatchName.toLowerCase().indexOf('rostock') >= 0) return 'statics/Hansa_Rostock.png'
-      if (this.txtMatchName.toLowerCase().indexOf('heidenheim') >= 0) return 'statics/Heidenheim.png'
-      if (this.txtMatchName.toLowerCase().indexOf('hertha') >= 0) return 'statics/Hertha.png'
-      if (this.txtMatchName.toLowerCase().indexOf('hoffenheim') >= 0) return 'statics/Hoffenheim.png'
-      if (this.txtMatchName.toLowerCase().indexOf('holstein') >= 0) return 'statics/Holstein.png'
-      if (this.txtMatchName.toLowerCase().indexOf('jahn') >= 0 || this.txtMatchName.toLowerCase().indexOf('regensburg') >= 0) return 'statics/Jahn_Regensburg.png'
-      if (this.txtMatchName.toLowerCase().indexOf('fck') >= 0 || this.txtMatchName.toLowerCase().indexOf('kaiserslautern') >= 0) return 'statics/Kaiserslautern.png'
-      if (this.txtMatchName.toLowerCase().indexOf('ksc') >= 0 || this.txtMatchName.toLowerCase().indexOf('karlsruher') >= 0) return 'statics/Karlsruher.png'
-      if (this.txtMatchName.toLowerCase().indexOf('köln') >= 0) return 'statics/Köln.png'
-      if (this.txtMatchName.toLowerCase().indexOf('leipzig') >= 0) return 'statics/Leipzig.png'
-      if (this.txtMatchName.toLowerCase().indexOf('magdeburg') >= 0) return 'statics/Magdeburg.png'
-      if (this.txtMatchName.toLowerCase().indexOf('mainz') >= 0) return 'statics/Mainz.png'
-      if (this.txtMatchName.toLowerCase().indexOf('nürnberg') >= 0) return 'statics/Nürnberg.png'
-      if (this.txtMatchName.toLowerCase().indexOf('paderborn') >= 0) return 'statics/Paderborn.png'
-      if (this.txtMatchName.toLowerCase().indexOf('sandhausen') >= 0) return 'statics/Sandhausen.png'
-      if (this.txtMatchName.toLowerCase().indexOf('schalke') >= 0) return 'statics/Schalke.png'
-      if (this.txtMatchName.toLowerCase().indexOf('pauli') >= 0) return 'statics/St._Pauli.png'
-      if (this.txtMatchName.toLowerCase().indexOf('vfb') >= 0 || this.txtMatchName.toLowerCase().indexOf('stuttgart') >= 0) return 'statics/Stuttgart.png'
-      if (this.txtMatchName.toLowerCase().indexOf('union') >= 0) return 'statics/Union_Berlin.png'
-      if (this.txtMatchName.toLowerCase().indexOf('werder') >= 0 || this.txtMatchName.toLowerCase().indexOf('bremen') >= 0) return 'statics/Werder_Bremen.png'
-      if (this.txtMatchName.toLowerCase().indexOf('wolfsburg') >= 0) return 'statics/Wolfsburg.png'
+    getImageAwayTeam (_matchName) {
+      if (_matchName.toLowerCase().indexOf('arminia') >= 0) return 'statics/Arminia.png'
+      if (_matchName.toLowerCase().indexOf('augsburg') >= 0) return 'statics/Augsburg.png'
+      if (_matchName.toLowerCase().indexOf('leverkusen') >= 0) return 'statics/Bayer_Leverkusen.png'
+      if (_matchName.toLowerCase().indexOf('bayern') >= 0 || _matchName.toLowerCase().indexOf('münchen') >= 0) return 'statics/Bayern_München.png'
+      if (_matchName.toLowerCase().indexOf('bochum') >= 0) return 'statics/Bochum.png'
+      if (_matchName.toLowerCase().indexOf('dortmund') >= 0) return 'statics/Borussia_Dortmund.png'
+      if (_matchName.toLowerCase().indexOf('gladbach') >= 0) return 'statics/Borussia_Mönchengladbach.png'
+      if (_matchName.toLowerCase().indexOf('darmstadt') >= 0) return 'statics/Darmstadt.png'
+      if (_matchName.toLowerCase().indexOf('braunschweig') >= 0) return 'statics/Eintracht_Braunschweig.png'
+      if (_matchName.toLowerCase().indexOf('frankfurt') >= 0) return 'statics/Eintracht_Frankfurt.png'
+      if (_matchName.toLowerCase().indexOf('fortuna') >= 0 || _matchName.toLowerCase().indexOf('düsseldorf') >= 0) return 'statics/Fortuna_Düsseldorf.png'
+      if (_matchName.toLowerCase().indexOf('greuther') >= 0 || _matchName.toLowerCase().indexOf('fürth') >= 0) return 'statics/Greuther_Fürth.png'
+      if (_matchName.toLowerCase().indexOf('hamburg') >= 0 || _matchName.toLowerCase().indexOf('hsv') >= 0) return 'statics/Hamburger_SV.png'
+      if (_matchName.toLowerCase().indexOf('hannover') >= 0) return 'statics/Hannover.png'
+      if (_matchName.toLowerCase().indexOf('hansa') >= 0 || _matchName.toLowerCase().indexOf('rostock') >= 0) return 'statics/Hansa_Rostock.png'
+      if (_matchName.toLowerCase().indexOf('heidenheim') >= 0) return 'statics/Heidenheim.png'
+      if (_matchName.toLowerCase().indexOf('hertha') >= 0) return 'statics/Hertha.png'
+      if (_matchName.toLowerCase().indexOf('hoffenheim') >= 0) return 'statics/Hoffenheim.png'
+      if (_matchName.toLowerCase().indexOf('holstein') >= 0) return 'statics/Holstein.png'
+      if (_matchName.toLowerCase().indexOf('jahn') >= 0 || _matchName.toLowerCase().indexOf('regensburg') >= 0) return 'statics/Jahn_Regensburg.png'
+      if (_matchName.toLowerCase().indexOf('fck') >= 0 || _matchName.toLowerCase().indexOf('kaiserslautern') >= 0) return 'statics/Kaiserslautern.png'
+      if (_matchName.toLowerCase().indexOf('ksc') >= 0 || _matchName.toLowerCase().indexOf('karlsruher') >= 0) return 'statics/Karlsruher.png'
+      if (_matchName.toLowerCase().indexOf('köln') >= 0) return 'statics/Köln.png'
+      if (_matchName.toLowerCase().indexOf('leipzig') >= 0) return 'statics/Leipzig.png'
+      if (_matchName.toLowerCase().indexOf('magdeburg') >= 0) return 'statics/Magdeburg.png'
+      if (_matchName.toLowerCase().indexOf('mainz') >= 0) return 'statics/Mainz.png'
+      if (_matchName.toLowerCase().indexOf('nürnberg') >= 0) return 'statics/Nürnberg.png'
+      if (_matchName.toLowerCase().indexOf('paderborn') >= 0) return 'statics/Paderborn.png'
+      if (_matchName.toLowerCase().indexOf('sandhausen') >= 0) return 'statics/Sandhausen.png'
+      if (_matchName.toLowerCase().indexOf('schalke') >= 0) return 'statics/Schalke.png'
+      if (_matchName.toLowerCase().indexOf('pauli') >= 0) return 'statics/St._Pauli.png'
+      if (_matchName.toLowerCase().indexOf('vfb') >= 0 || _matchName.toLowerCase().indexOf('stuttgart') >= 0) return 'statics/Stuttgart.png'
+      if (_matchName.toLowerCase().indexOf('union') >= 0) return 'statics/Union_Berlin.png'
+      if (_matchName.toLowerCase().indexOf('werder') >= 0 || _matchName.toLowerCase().indexOf('bremen') >= 0) return 'statics/Werder_Bremen.png'
+      if (_matchName.toLowerCase().indexOf('wolfsburg') >= 0) return 'statics/Wolfsburg.png'
 
-      if (this.txtMatchName.toLowerCase().indexOf('fest') >= 0 ||
-          this.txtMatchName.toLowerCase().indexOf('party') >= 0 ||
-          this.txtMatchName.toLowerCase().indexOf('anlass') >= 0 ||
-          this.txtMatchName.toLowerCase().indexOf('geburtstag') >= 0 ||
-          this.txtMatchName.toLowerCase().indexOf('event') >= 0) return 'statics/Event.png'
-      if (this.txtMatchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
+      if (_matchName.toLowerCase().indexOf('fest') >= 0 ||
+          _matchName.toLowerCase().indexOf('party') >= 0 ||
+          _matchName.toLowerCase().indexOf('anlass') >= 0 ||
+          _matchName.toLowerCase().indexOf('geburtstag') >= 0 ||
+          _matchName.toLowerCase().indexOf('event') >= 0) return 'statics/Event.png'
+      if (_matchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
       return 'statics/QuestionMark.png'
     },
 
@@ -580,7 +580,7 @@ export default {
     isReservation (_participantArrival, _matchTime) {
       if (_participantArrival !== '') {
         if (parseInt(_participantArrival.substring(0, 2)) === parseInt(_matchTime.substring(0, 2) - 2) &&
-        _participantArrival.substring(3, 2) === _matchTime.substring(3, 2)) { return true } else { return false }
+        _participantArrival.substring(3, 5) === _matchTime.substring(3, 5)) { return true } else { return false }
       }
       return false
     },
@@ -894,7 +894,7 @@ export default {
           }
 
           _constAnnotationsMatchOriginal.value = _annotationsMatch
-          _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substring(0, 2) - 2) + ':' + _time.substring(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
+          _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substring(0, 2) - 2) + ':' + _time.substring(3, 5) + '): ' + this.reservation + ' die Fahne und die Socken')
         })
         .catch((err) => {
           console.log(err)
@@ -1053,7 +1053,7 @@ export default {
 
     setArrivalElements (_time) {
       const hour = _time.substring(0, 2)
-      const minute = _time.substring(3, 2)
+      const minute = _time.substring(3, 5)
       const minuteInterval = 15
       _constArrivalElements[1] = ''
 

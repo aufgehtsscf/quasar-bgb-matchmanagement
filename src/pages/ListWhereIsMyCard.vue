@@ -15,6 +15,22 @@
         :key="i"
         v-ripple>
         <q-item clickable v-ripple @click="onWhereIsMyCardClick(card.cardHolderId, card.cardHolder, card.discounted, card.whoHasTheCard)">
+          <q-item-section avatar>
+            <q-avatar size="50px" color="lime-10" text-color="white" v-if="!hasAvatar(card.cardHolder)">
+              {{ card.cardHolder.substring(0, 1) }}
+            </q-avatar>
+            <q-avatar size="50px" v-if="hasAvatar(card.cardHolder)">
+              <img :src="getAvatar()">
+            </q-avatar>
+          </q-item-section>
+          <q-item-section avatar>
+            <q-avatar size="50px" color="green-10" text-color="white" v-if="!hasAvatar(card.whoHasTheCard)">
+              {{ card.whoHasTheCard.substring(0, 1) }}
+            </q-avatar>
+            <q-avatar size="50px" v-if="hasAvatar(card.whoHasTheCard)">
+              <img :src="getAvatar()">
+            </q-avatar>
+          </q-item-section>
           <q-item-section>
             <q-item-label overline>Inhaber: {{ card.cardHolder }}</q-item-label>
             <q-item-label caption v-if="card.discounted === 'TRUE'">Kind: Ja</q-item-label>
@@ -136,7 +152,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(true),
+      IsAdministrator: ref(false),
 
       txtCardHolderId: ref(_constHolderId),
       txtCardHolder: ref(_constCardHolder),
@@ -178,6 +194,18 @@ export default {
   },
 
   methods: {
+
+    hasAvatar (_cardHolder) {
+      if (_cardHolder === 'Maddeis') {
+        return true
+      }
+      return false
+    },
+
+    getAvatar () {
+      return 'statics/Freiburg.png'
+    },
+
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
 

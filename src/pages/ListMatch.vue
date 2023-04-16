@@ -15,6 +15,16 @@
         :key="i"
         v-ripple>
         <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
+          <q-item-section avatar>
+            <q-avatar size="90px">
+              <img :src="getImageHomeTeam(match.match)">
+            </q-avatar>
+          </q-item-section>
+          <q-item-section avatar>
+            <q-avatar size="90px">
+              <img :src="getImageAwayTeam(match.match)">
+            </q-avatar>
+          </q-item-section>
           <q-item-section>
             <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
             <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
@@ -200,7 +210,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(true),
+      IsAdministrator: ref(false),
 
       txtMatchId: ref(_constMatchId),
       txtMatch: ref(_constMatch),
@@ -248,6 +258,62 @@ export default {
   },
 
   methods: {
+    getImageHomeTeam (_matchName) {
+      if (_matchName.toLowerCase().indexOf('fest') >= 0 ||
+          _matchName.toLowerCase().indexOf('party') >= 0 ||
+          _matchName.toLowerCase().indexOf('anlass') >= 0 ||
+          _matchName.toLowerCase().indexOf('geburtstag') >= 0 ||
+          _matchName.toLowerCase().indexOf('event') >= 0) return 'statics/Event.png'
+      if (_matchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
+      return 'statics/Freiburg.png'
+    },
+
+    getImageAwayTeam (_matchName) {
+      if (_matchName.toLowerCase().indexOf('arminia') >= 0) return 'statics/Arminia.png'
+      if (_matchName.toLowerCase().indexOf('augsburg') >= 0) return 'statics/Augsburg.png'
+      if (_matchName.toLowerCase().indexOf('leverkusen') >= 0) return 'statics/Bayer_Leverkusen.png'
+      if (_matchName.toLowerCase().indexOf('bayern') >= 0 || _matchName.toLowerCase().indexOf('münchen') >= 0) return 'statics/Bayern_München.png'
+      if (_matchName.toLowerCase().indexOf('bochum') >= 0) return 'statics/Bochum.png'
+      if (_matchName.toLowerCase().indexOf('dortmund') >= 0) return 'statics/Borussia_Dortmund.png'
+      if (_matchName.toLowerCase().indexOf('gladbach') >= 0) return 'statics/Borussia_Mönchengladbach.png'
+      if (_matchName.toLowerCase().indexOf('darmstadt') >= 0) return 'statics/Darmstadt.png'
+      if (_matchName.toLowerCase().indexOf('braunschweig') >= 0) return 'statics/Eintracht_Braunschweig.png'
+      if (_matchName.toLowerCase().indexOf('frankfurt') >= 0) return 'statics/Eintracht_Frankfurt.png'
+      if (_matchName.toLowerCase().indexOf('fortuna') >= 0 || _matchName.toLowerCase().indexOf('düsseldorf') >= 0) return 'statics/Fortuna_Düsseldorf.png'
+      if (_matchName.toLowerCase().indexOf('greuther') >= 0 || _matchName.toLowerCase().indexOf('fürth') >= 0) return 'statics/Greuther_Fürth.png'
+      if (_matchName.toLowerCase().indexOf('hamburg') >= 0 || _matchName.toLowerCase().indexOf('hsv') >= 0) return 'statics/Hamburger_SV.png'
+      if (_matchName.toLowerCase().indexOf('hannover') >= 0) return 'statics/Hannover.png'
+      if (_matchName.toLowerCase().indexOf('hansa') >= 0 || _matchName.toLowerCase().indexOf('rostock') >= 0) return 'statics/Hansa_Rostock.png'
+      if (_matchName.toLowerCase().indexOf('heidenheim') >= 0) return 'statics/Heidenheim.png'
+      if (_matchName.toLowerCase().indexOf('hertha') >= 0) return 'statics/Hertha.png'
+      if (_matchName.toLowerCase().indexOf('hoffenheim') >= 0) return 'statics/Hoffenheim.png'
+      if (_matchName.toLowerCase().indexOf('holstein') >= 0) return 'statics/Holstein.png'
+      if (_matchName.toLowerCase().indexOf('jahn') >= 0 || _matchName.toLowerCase().indexOf('regensburg') >= 0) return 'statics/Jahn_Regensburg.png'
+      if (_matchName.toLowerCase().indexOf('fck') >= 0 || _matchName.toLowerCase().indexOf('kaiserslautern') >= 0) return 'statics/Kaiserslautern.png'
+      if (_matchName.toLowerCase().indexOf('ksc') >= 0 || _matchName.toLowerCase().indexOf('karlsruher') >= 0) return 'statics/Karlsruher.png'
+      if (_matchName.toLowerCase().indexOf('köln') >= 0) return 'statics/Köln.png'
+      if (_matchName.toLowerCase().indexOf('leipzig') >= 0) return 'statics/Leipzig.png'
+      if (_matchName.toLowerCase().indexOf('magdeburg') >= 0) return 'statics/Magdeburg.png'
+      if (_matchName.toLowerCase().indexOf('mainz') >= 0) return 'statics/Mainz.png'
+      if (_matchName.toLowerCase().indexOf('nürnberg') >= 0) return 'statics/Nürnberg.png'
+      if (_matchName.toLowerCase().indexOf('paderborn') >= 0) return 'statics/Paderborn.png'
+      if (_matchName.toLowerCase().indexOf('sandhausen') >= 0) return 'statics/Sandhausen.png'
+      if (_matchName.toLowerCase().indexOf('schalke') >= 0) return 'statics/Schalke.png'
+      if (_matchName.toLowerCase().indexOf('pauli') >= 0) return 'statics/St._Pauli.png'
+      if (_matchName.toLowerCase().indexOf('vfb') >= 0 || _matchName.toLowerCase().indexOf('stuttgart') >= 0) return 'statics/Stuttgart.png'
+      if (_matchName.toLowerCase().indexOf('union') >= 0) return 'statics/Union_Berlin.png'
+      if (_matchName.toLowerCase().indexOf('werder') >= 0 || _matchName.toLowerCase().indexOf('bremen') >= 0) return 'statics/Werder_Bremen.png'
+      if (_matchName.toLowerCase().indexOf('wolfsburg') >= 0) return 'statics/Wolfsburg.png'
+
+      if (_matchName.toLowerCase().indexOf('fest') >= 0 ||
+          _matchName.toLowerCase().indexOf('party') >= 0 ||
+          _matchName.toLowerCase().indexOf('anlass') >= 0 ||
+          _matchName.toLowerCase().indexOf('geburtstag') >= 0 ||
+          _matchName.toLowerCase().indexOf('event') >= 0) return 'statics/Event.png'
+      if (_matchName.toLowerCase().indexOf('test') >= 0) return 'statics/Test.png'
+      return 'statics/QuestionMark.png'
+    },
+
     getTableMatch () {
       this.matchObject = []
 
