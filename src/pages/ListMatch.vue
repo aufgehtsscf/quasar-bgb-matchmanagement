@@ -16,12 +16,12 @@
         v-ripple>
         <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
           <q-item-section avatar>
-            <q-avatar size="90px">
+            <q-avatar size="50px">
               <img :src="getImageHomeTeam(match.match)">
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
-            <q-avatar size="90px">
+            <q-avatar size="50px">
               <img :src="getImageAwayTeam(match.match)">
             </q-avatar>
           </q-item-section>
