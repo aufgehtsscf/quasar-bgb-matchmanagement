@@ -77,6 +77,16 @@
         :key="i"
         v-ripple>
         <q-item clickable v-ripple @click="onParticipantClick(participant.participantId, participant.participant, participant.arrival, participant.annotations, participant.action, participant.reaction)">
+          <q-item-section avatar>
+            <q-avatar color="blue" text-color="white">
+              {{ participant.participant.substring(0, 1) }}
+              <q-badge floating color="teal">reserviert</q-badge>
+            </q-avatar>
+            <q-avatar>
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+              <q-badge floating color="teal">reserviert</q-badge>
+            </q-avatar>
+          </q-item-section>
           <q-item-section>
             <q-item-label overline>{{ participant.participant }}</q-item-label>
             <q-item-label caption>{{ participant.arrival }}</q-item-label>
@@ -324,6 +334,7 @@
 </template>
 
 <script>
+import { URLMatch, URLParticipant, URLWhereIsMyCard } from 'src/boot/axios'
 import { ref } from 'vue'
 
 const _constMatch = ref('')
@@ -422,9 +433,9 @@ export default {
 
   data () {
     return {
-      URLMatch: 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
-      URLParticipant: 'https://script.google.com/macros/s/AKfycbxyY9YZjWtnDPLQCWrO_j7YmfPFRRu6VHmqMgN1oS5bHL1nXoPyc3LrRBMDH0V-tDszuA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
-      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbzlc-2httq6jMOsqbGIQmE6oAXNcWpLRZmGckDWQ6DqFoGQgHD-C1BkennQGntzAkJj/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
+      URLMatch,
+      URLParticipant,
+      URLWhereIsMyCard,
 
       matchObject: [
         {
@@ -570,10 +581,10 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[2], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
+            this.setMatchObject(element[2], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
             if (index === 0) {
               nextMatch = element[2]
-              nextTime = element[4].substr(0, 5)
+              nextTime = element[4].substring(0, 5)
               nextAnnotations = element[5].replace(/<br>/g, '\n')
               nextDate = element[6]
               nextMatchId = element[7]
@@ -595,7 +606,7 @@ export default {
       _constMatch.value = _match
       _constTime.value = _time
       _constDate.value = _date
-      _constMatchName.value = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
+      _constMatchName.value = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 2) + ' - ' + _time.substring(0, 5)
       _constMatchId.value = _matchId
 
       this.loadReloadData(_matchId, _time, _annotationsMatch)
@@ -828,7 +839,7 @@ export default {
           _constNumberOfParticipants.value = this.tableParticipant.length - 1
           for (let index = 0; index < _constNumberOfParticipants.value; index++) {
             const element = this.tableParticipant[index].split(',')
-            this.setParticipantObject(element[2], element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
+            this.setParticipantObject(element[2], element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
           }
 
           _constParticipantList.value = ''
@@ -837,8 +848,8 @@ export default {
 
             _constParticipantList.value += ' (' + participant.arrival + ')'
             if (participant.arrival !== '') {
-              if (parseInt(participant.arrival.substr(0, 2)) === parseInt(_time.substr(0, 2) - 2) &&
-                  participant.arrival.substr(3, 2) === _time.substr(3, 2)) {
+              if (parseInt(participant.arrival.substring(0, 2)) === parseInt(_time.substring(0, 2) - 2) &&
+                  participant.arrival.substring(3, 2) === _time.substring(3, 2)) {
                 if (this.reservation !== '') {
                   this.reservation += ', '
                 }
@@ -867,7 +878,7 @@ export default {
           }
 
           _constAnnotationsMatchOriginal.value = _annotationsMatch
-          _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substr(0, 2) - 2) + ':' + _time.substr(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
+          _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substring(0, 2) - 2) + ':' + _time.substring(3, 2) + '): ' + this.reservation + ' die Fahne und die Socken')
         })
         .catch((err) => {
           console.log(err)
@@ -888,7 +899,7 @@ export default {
           this.tableTicket = res.data.split('\n')
           for (let index = 0; index < this.tableTicket.length - 1; index++) {
             const element = this.tableTicket[index].split(',')
-            this.setTicketObject(element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
+            this.setTicketObject(element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
           }
 
           _constTicketList.value = ''
@@ -1025,8 +1036,8 @@ export default {
     },
 
     setArrivalElements (_time) {
-      const hour = _time.substr(0, 2)
-      const minute = _time.substr(3, 2)
+      const hour = _time.substring(0, 2)
+      const minute = _time.substring(3, 2)
       const minuteInterval = 15
       _constArrivalElements[1] = ''
 

@@ -185,6 +185,7 @@
 </template>
 
 <script>
+import { URLMatch, URLParticipant, URLParticipantArchive } from 'src/boot/axios'
 import { ref } from 'vue'
 
 const _constMatchId = ref('')
@@ -222,9 +223,9 @@ export default {
 
   data () {
     return {
-      URLMatch: 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match',
-      URLParticipant: 'https://script.google.com/macros/s/AKfycbxyY9YZjWtnDPLQCWrO_j7YmfPFRRu6VHmqMgN1oS5bHL1nXoPyc3LrRBMDH0V-tDszuA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant',
-      URLParticipantArchive: 'https://script.google.com/macros/s/AKfycbwNroj1OzLNOOHRWFdNmaiN8bpKnJqBf3Lbm6firEaWPJo1wstm7Nsh9J3oAJox1lSt7w/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive',
+      URLMatch,
+      URLParticipant,
+      URLParticipantArchive,
 
       matchObject: [
         {
@@ -257,7 +258,7 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[2], element[3], element[4].substr(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
+            this.setMatchObject(element[2], element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
           }
         })
         .catch((err) => {
@@ -289,8 +290,8 @@ export default {
       if (_matchExists) {
         this.showMatchExists = true
       } else {
-        const _date = _datetime.substr(0, 10)
-        const _time = _datetime.substr(11, 5)
+        const _date = _datetime.substring(0, 10)
+        const _time = _datetime.substring(11, 5)
 
         this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
@@ -312,9 +313,9 @@ export default {
       if (_matchExists) {
         this.showMatchExists = true
       } else {
-        const _date = _datetime.substr(0, 10)
-        const _time = _datetime.substr(11, 5)
-        const _newMatch = _match.trim() + ' ' + _date.substr(0, 6) + _date.substr(8, 2) + ' - ' + _time.substr(0, 5)
+        const _date = _datetime.substring(0, 10)
+        const _time = _datetime.substring(11, 5)
+        const _newMatch = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 2) + ' - ' + _time.substring(0, 5)
 
         this.$axios(`${this.URLMatch}&func=Update&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
@@ -340,7 +341,7 @@ export default {
     async archiveMatch (_matchId, _datetime) {
       // console.log('deleteMatch: ' + _matchId + ', ' + _datetime)
 
-      const _date = _datetime.substr(0, 10)
+      const _date = _datetime.substring(0, 10)
 
       const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 

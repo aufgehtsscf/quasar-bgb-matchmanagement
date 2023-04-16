@@ -122,6 +122,7 @@
 </template>
 
 <script>
+import { URLWhereIsMyCard } from 'src/boot/axios'
 import { ref } from 'vue'
 
 const _constHolderId = ref('')
@@ -156,7 +157,7 @@ export default {
 
   data () {
     return {
-      URLWhereIsMyCard: 'https://script.google.com/macros/s/AKfycbzlc-2httq6jMOsqbGIQmE6oAXNcWpLRZmGckDWQ6DqFoGQgHD-C1BkennQGntzAkJj/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard',
+      URLWhereIsMyCard,
 
       whereIsMyCardObject: [
         {
