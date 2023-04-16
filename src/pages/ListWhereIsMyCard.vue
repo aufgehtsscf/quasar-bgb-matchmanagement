@@ -20,7 +20,7 @@
               {{ card.cardHolder.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="hasAvatar(card.cardHolder)">
-              <img :src="getAvatar()">
+              <img :src="getAvatar(card.cardHolder)">
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
@@ -28,7 +28,7 @@
               {{ card.whoHasTheCard.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="hasAvatar(card.whoHasTheCard)">
-              <img :src="getAvatar()">
+              <img :src="getAvatar(card.whoHasTheCard)">
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -194,16 +194,15 @@ export default {
   },
 
   methods: {
-
     hasAvatar (_cardHolder) {
-      if (_cardHolder === 'Maddeis') {
+      if (_cardHolder === 'Bolze') {
         return true
       }
       return false
     },
 
-    getAvatar () {
-      return 'statics/Freiburg.png'
+    getAvatar (_cardHolder) {
+      if (_cardHolder === 'Bolze') return 'statics/avatars/Bolze.png'
     },
 
     getTableWhereIsMyCard () {
