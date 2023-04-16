@@ -315,7 +315,7 @@ export default {
       } else {
         const _date = _datetime.substring(0, 10)
         const _time = _datetime.substring(11, 5)
-        const _newMatch = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 2) + ' - ' + _time.substring(0, 5)
+        const _newMatch = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
 
         this.$axios(`${this.URLMatch}&func=Update&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {

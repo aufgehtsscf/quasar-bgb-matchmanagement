@@ -625,7 +625,7 @@ export default {
       _constMatch.value = _match
       _constTime.value = _time
       _constDate.value = _date
-      _constMatchName.value = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 2) + ' - ' + _time.substring(0, 5)
+      _constMatchName.value = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
       _constMatchId.value = _matchId
 
       this.loadReloadData(_matchId, _time, _annotationsMatch)
