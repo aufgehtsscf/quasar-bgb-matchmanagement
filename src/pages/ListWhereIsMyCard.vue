@@ -194,15 +194,17 @@ export default {
   },
 
   methods: {
-    hasAvatar (_cardHolder) {
-      if (_cardHolder === 'Bolze') {
+    hasAvatar (_participant) {
+      if (_participant === 'Bolze' ||
+          _participant === 'Blado') {
         return true
       }
       return false
     },
 
-    getAvatar (_cardHolder) {
-      if (_cardHolder === 'Bolze') return 'statics/avatars/Bolze.png'
+    getAvatar (_participant) {
+      if (_participant === 'Bolze') return 'statics/avatars/Bolze.png'
+      if (_participant === 'Blado') return 'statics/avatars/Blado.png'
     },
 
     getTableWhereIsMyCard () {

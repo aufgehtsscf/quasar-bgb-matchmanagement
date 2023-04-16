@@ -567,7 +567,8 @@ export default {
     },
 
     hasAvatar (_participant) {
-      if (_participant === 'Bolze') {
+      if (_participant === 'Bolze' ||
+          _participant === 'Blado') {
         return true
       }
       return false
@@ -575,6 +576,7 @@ export default {
 
     getAvatar (_participant) {
       if (_participant === 'Bolze') return 'statics/avatars/Bolze.png'
+      if (_participant === 'Blado') return 'statics/avatars/Blado.png'
     },
 
     isReservation (_participantArrival, _matchTime) {
