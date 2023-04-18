@@ -77,6 +77,7 @@ export { URLMatch }
 export { URLParticipant }
 export { URLParticipantArchive }
 export { URLWhereIsMyCard }
+export { URLMember }
 export { hasAvatar }
 export { getAvatar }
 export { getImageHomeTeam }

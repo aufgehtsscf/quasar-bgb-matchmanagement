@@ -1,41 +1,32 @@
 <template>
   <q-page>
 
-    <!-- WhereIsMyCard area (Titel) -->
+    <!-- Member area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>Wer hat meine Karte</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addWhereIsMyCard = true" />
+        <q-toolbar-title>Mitglieder</q-toolbar-title>
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMember = true" />
       </q-toolbar>
     </div>
 
-    <!-- List of WhereIsMyCards -->
+    <!-- List of Members -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
-      <q-list dark bordered separator style="max-width: 470px" v-for="(card, i) in whereIsMyCardObject"
+      <q-list dark bordered separator style="max-width: 470px" v-for="(member, i) in memberObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onWhereIsMyCardClick(card.cardHolderId, card.cardHolder, card.discounted, card.whoHasTheCard)">
+        <q-item clickable v-ripple @click="onMemberClick(member.memberId, member.member, member.avatarAvailable)">
           <q-item-section avatar>
-            <q-avatar size="50px" color="lime-10" text-color="white" v-if="!hasAvatar(card.cardHolder)">
-              {{ card.cardHolder.substring(0, 1) }}
+            <q-avatar size="50px" color="lime-10" text-color="white" v-if="!hasAvatar(member.member)">
+              {{ member.member.substring(0, 1) }}
             </q-avatar>
-            <q-avatar size="50px" v-if="hasAvatar(card.cardHolder)">
-              <img :src="getAvatar(card.cardHolder)">
-            </q-avatar>
-          </q-item-section>
-          <q-item-section avatar>
-            <q-avatar size="50px" color="green-10" text-color="white" v-if="!hasAvatar(card.whoHasTheCard)">
-              {{ card.whoHasTheCard.substring(0, 1) }}
-            </q-avatar>
-            <q-avatar size="50px" v-if="hasAvatar(card.whoHasTheCard)">
-              <img :src="getAvatar(card.whoHasTheCard)">
+            <q-avatar size="50px" v-if="hasAvatar(member.member)">
+              <img :src="getAvatar(member.member)">
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label overline>Inhaber: {{ card.cardHolder }}</q-item-label>
-            <q-item-label caption v-if="card.discounted === 'TRUE'">Kind: Ja</q-item-label>
-            <q-item-label caption v-if="card.discounted === 'FALSE'">Kind: Nein</q-item-label>
-            <q-item-label caption>Wer hat die Karte: {{ card.whoHasTheCard }}</q-item-label>
+            <q-item-label overline>Mitglied: {{ member.member }}</q-item-label>
+            <q-item-label caption v-if="member.avatarAvailable === 'TRUE'">Avatar: Ja</q-item-label>
+            <q-item-label caption v-if="member.avatarAvailable === 'FALSE'">Avatar: Nein</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -44,41 +35,39 @@
     <!-- Dialogs -->
     <div class="q-pa-md q-gutter-sm">
 
-      <!-- Start Dialogs WhereIsMyCard -->
-      <!-- Add whereIsMyCard -->
-      <q-dialog v-model="addWhereIsMyCard" persistent>
+      <!-- Start Dialogs Member -->
+      <!-- Add Member -->
+      <q-dialog v-model="addMember" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Karte erfassen</div>
+            <div class="text-h6">Member erfassen</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolderNew" autofocus label="Inhaber" />
+            <q-input dense v-model="txtMemberNew" autofocus label="Mitglied" />
 
             <div class="q-pt-md">
               <div class="q-gutter-sm">
-                <div><q-checkbox left-label v-model="txtDiscountedNew" label="Kind" /></div>
+                <div><q-checkbox left-label v-model="txtAvatarAvailableNew" label="Avatar" /></div>
               </div>
             </div>
-
-            <q-input dense v-model="txtWhoHasTheCardNew" autofocus label="Wer hat die Karte" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addWhereIsMyCardSave(txtCardHolderNew, txtDiscountedNew, txtWhoHasTheCardNew)" :disable="txtCardHolderNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, txtAvatarAvailableNew)" :disable="txtMemberNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
 
-      <!-- Show whereIsMyCard exists -->
-      <q-dialog v-model="showWhereIsMyCardExists" persistent>
+      <!-- Show Member exists -->
+      <q-dialog v-model="showMemberExists" persistent>
         <q-card>
           <q-card-section class="row items-center">
             <q-avatar icon="pan_tool" color="primary" text-color="white" />
-            <span class="q-ml-sm">Dieser Inhaber besteht bereits!</span>
+            <span class="q-ml-sm">Dieses Mitglied besteht bereits!</span>
           </q-card-section>
 
           <q-card-actions align="right">
@@ -87,37 +76,35 @@
         </q-card>
       </q-dialog>
 
-      <!-- Edit whereIsMyCard -->
-      <q-dialog v-model="editWhereIsMyCard" persistent>
+      <!-- Edit Member -->
+      <q-dialog v-model="editMember" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
             <div class="text-h6">Karte ändern</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolder" autofocus label="Inhaber" />
+            <q-input dense v-model="txtMember" autofocus label="Mitglied" />
 
             <div class="q-pt-md">
               <div class="q-gutter-sm">
-                <div><q-checkbox left-label v-model="boolDiscounted" label="Kind" /></div>
+                <div><q-checkbox left-label v-model="boolAvatarAvailable" label="Avatar" /></div>
               </div>
             </div>
-
-            <q-input dense v-model="txtWhoHasTheCard" autofocus label="Wer hat die Karte" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="IsAdministrator" />
+            <q-btn icon="delete" color="primary" @click="delMember = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(txtCardHolderId, txtCardHolder, txtCardHolderOld, boolDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, boolAvatarAvailable)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
 
-      <!-- Delete WhereIsMyCard -->
-      <q-dialog v-model="delWhereIsMyCard" persistent>
+      <!-- Delete Member -->
+      <q-dialog v-model="delMember" persistent>
         <q-card>
           <q-card-section class="row items-center">
             <q-avatar icon="delete" color="primary" text-color="white" />
@@ -126,11 +113,11 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteWhereIsMyCard(txtCardHolderId)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteMember(txtMemberId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- End Dialogs WhereIsMyCard -->
+      <!-- End Dialogs Member -->
     </div>
 
     <q-img src="statics/BGB.jpg" class="header-image absolute-top" />
@@ -138,51 +125,47 @@
 </template>
 
 <script>
-import { URLWhereIsMyCard, hasAvatar, getAvatar } from 'src/boot/utils.js'
+import { URLMember, hasAvatar, getAvatar } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constHolderId = ref('')
-const _constCardHolder = ref('')
-const _constCardHolderOld = ref('')
-const _constDiscounted = ref('')
-const _constWhoHasTheCard = ref('')
+const _constMember = ref('')
+const _constMemberOld = ref('')
+const _constAvatarAvailable = ref('')
 
 export default {
-  name: 'ListWhoHasTheCard',
+  name: 'ListMember',
 
   setup () {
     return {
       IsAdministrator: ref(false),
 
-      txtCardHolderId: ref(_constHolderId),
-      txtCardHolder: ref(_constCardHolder),
-      txtCardHolderOld: ref(_constCardHolderOld),
-      boolDiscounted: ref(_constDiscounted),
-      txtWhoHasTheCard: ref(_constWhoHasTheCard),
+      txtMemberId: ref(_constHolderId),
+      txtMember: ref(_constMember),
+      txtMemberOld: ref(_constMemberOld),
+      boolAvatarAvailable: ref(_constAvatarAvailable),
 
-      txtCardHolderNew: ref(''),
-      txtDiscountedNew: ref(false),
-      txtWhoHasTheCardNew: ref(''),
+      txtMemberNew: ref(''),
+      txtAvatarAvailableNew: ref(false),
 
-      addWhereIsMyCard: ref(false),
-      showWhereIsMyCardExists: ref(false),
-      editWhereIsMyCard: ref(false),
-      delWhereIsMyCard: ref(false)
+      addMember: ref(false),
+      showMemberExists: ref(false),
+      editMember: ref(false),
+      delMember: ref(false)
     }
   },
 
   data () {
     return {
-      URLWhereIsMyCard,
+      URLMember,
       hasAvatar,
       getAvatar,
 
-      whereIsMyCardObject: [
+      memberObject: [
         {
-          cardHolder: '',
-          discounted: '',
-          whoHasTheCard: '',
-          cardHolderId: ''
+          memberId: '',
+          member: '',
+          avatarAvailable: ''
         }
       ]
     }
@@ -192,20 +175,20 @@ export default {
   },
 
   mounted () {
-    this.getTableWhereIsMyCard()
+    this.getTableMember()
   },
 
   methods: {
-    getTableWhereIsMyCard () {
-      this.whereIsMyCardObject = []
+    getTableMember () {
+      this.memberObject = []
 
-      // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
-      this.$axios(`${this.URLWhereIsMyCard}&func=Read&cardholder=`)
+      // console.log('URLMember: ' + this.URLMember + '&func=Read&member=')
+      this.$axios(`${this.URLMember}&func=Read&member=`)
         .then((res) => {
-          this.tableWhereIsMyCard = res.data.split('\n')
-          for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
-            const element = this.tableWhereIsMyCard[index].split(',')
-            this.setWhereIsMyCardObject(element[2], element[3], element[4], element[5])
+          this.tableMember = res.data.split('\n')
+          for (let index = 0; index < this.tableMember.length - 1; index++) {
+            const element = this.tableMember[index].split(',')
+            this.setMemberObject(element[1], element[3], element[4])
           }
         })
         .catch((err) => {
@@ -213,33 +196,32 @@ export default {
         })
     },
 
-    setWhereIsMyCardObject (_cardHolder, _discounted, _whoHasTheCard, _cardHolderId) {
-      this.whereIsMyCardObject.push({ cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard, cardHolderId: _cardHolderId })
+    setMemberObject (_memberId, _member, _avatarAvailable) {
+      this.memberObject.push({ memberId: _memberId, member: _member, avatarAvailable: _avatarAvailable })
     },
 
-    onWhereIsMyCardClick (_cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
-      // console.log('Clicked on WhereIsMyCard: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
-      _constHolderId.value = _cardHolderId
-      _constCardHolder.value = _cardHolder
-      _constCardHolderOld.value = _cardHolder
-      _constDiscounted.value = _discounted === 'TRUE'
-      _constWhoHasTheCard.value = _whoHasTheCard
+    onMemberClick (_memberId, _member, _avatarAvailable) {
+      // console.log('Clicked on Member: ' + _memberId + ', ' + _member + ', ' + _avatarAvailable)
+      _constHolderId.value = _memberId
+      _constMember.value = _member
+      _constMemberOld.value = _member
+      _constAvatarAvailable.value = _avatarAvailable === 'TRUE'
 
-      this.editWhereIsMyCard = true
+      this.editMember = true
     },
 
-    addWhereIsMyCardSave (_cardHolder, _discounted, _whoHasTheCard) {
-      // console.log('addWhereIsMyCardSave: ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
+    addMemberSave (_member, _avatarAvailable) {
+      // console.log('addMemberSave: ' + _member + ', ' + _avatarAvailable)
 
-      const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
-      const _cardHolderExists = _cardHolders.includes(_cardHolder)
-      if (_cardHolderExists) {
-        this.showWhereIsMyCardExists = true
+      const _members = this.memberObject.map(el => el.member)
+      const _memberExists = _members.includes(_member)
+      if (_memberExists) {
+        this.showMemberExists = true
       } else {
-        this.$axios(`${this.URLWhereIsMyCard}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+        this.$axios(`${this.URLMember}&func=Add&member=${encodeURI(_member.replace(',', ' '))}&avatarAvailable=${_avatarAvailable}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
-              this.getTableWhereIsMyCard()
+              this.getTableMember()
             }
           })
           .catch((err) => {
@@ -248,18 +230,18 @@ export default {
       }
     },
 
-    editWhereIsMyCardSave (_cardHolderId, _cardHolder, _cardHolderOld, _discounted, _whoHasTheCard) {
-      // console.log('editWhereIsMyCardSave: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _cardHolderOld + ', ' + _discounted + ', ' + _whoHasTheCard)
+    editMemberSave (_memberId, _member, _memberOld, _avatarAvailable) {
+      // console.log('editMemberSave: ' + _memberId + ', ' + _member + ', ' + _memberOld + ', ' + _avatarAvailable)
 
-      const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
-      const _cardHolderExists = _cardHolders.includes(_cardHolder) && _cardHolder !== _cardHolderOld
-      if (_cardHolderExists) {
-        this.showWhereIsMyCardExists = true
+      const _members = this.memberObject.map(el => el.member)
+      const _memberExists = _members.includes(_member) && _member !== _memberOld
+      if (_memberExists) {
+        this.showMemberExists = true
       } else {
-        this.$axios(`${this.URLWhereIsMyCard}&func=Update&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+        this.$axios(`${this.URLMember}&func=Update&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatarAvailable=${_avatarAvailable}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
-              this.getTableWhereIsMyCard()
+              this.getTableMember()
             }
           })
           .catch((err) => {
@@ -268,14 +250,14 @@ export default {
       }
     },
 
-    deleteWhereIsMyCard (_cardHolderId) {
-      // console.log('deleteWhereIsMyCard: ' + _cardHolderId)
+    deleteMember (_memberId) {
+      // console.log('deleteMember: ' + _memberId)
 
-      this.$axios(`${this.URLWhereIsMyCard}&func=Delete&cardholderId=${_cardHolderId}`)
+      this.$axios(`${this.URLMember}&func=Delete&memberId=${_memberId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
-            this.getTableWhereIsMyCard()
-            this.editWhereIsMyCard = false
+            this.getTableMember()
+            this.editMember = false
           }
         })
         .catch((err) => {
