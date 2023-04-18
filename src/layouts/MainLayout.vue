@@ -36,7 +36,6 @@
             <q-item-section avatar>
               <q-icon name="home" />
             </q-item-section>
-
             <q-item-section> Home </q-item-section>
           </q-item>
 
@@ -44,7 +43,6 @@
             <q-item-section avatar>
               <q-icon name="star" />
             </q-item-section>
-
             <q-item-section> Spiele </q-item-section>
           </q-item>
 
@@ -52,15 +50,20 @@
             <q-item-section avatar>
               <q-icon name="credit_card" />
             </q-item-section>
-
             <q-item-section> Wer hat meine Karte </q-item-section>
+          </q-item>
+
+          <q-item to="/member" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="person" />
+            </q-item-section>
+            <q-item-section> Mitglieder </q-item-section>
           </q-item>
 
           <q-item to="/order" exact clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="shopping_cart" />
             </q-item-section>
-
             <q-item-section> Bestellungen </q-item-section>
           </q-item>
         </q-list>
