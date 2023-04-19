@@ -40,24 +40,31 @@
       <q-dialog v-model="addMember" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Member erfassen</div>
+            <div class="text-h6">Mitglied erfassen</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtMemberNew" autofocus label="Mitglied" />
 
-            <div class="q-pt-md">
-              <div class="q-gutter-sm">
-                <div><q-checkbox left-label v-model="txtAvatarAvailableNew" label="Avatar" /></div>
-              </div>
-            </div>
+            <br />
+
+            <q-file
+              style="max-width: 300px"
+              v-model="filePng"
+              rounded
+              outlined
+              label="PNG file only"
+              accept=".png"
+              :filter="checkFileType"
+              @rejected="onRejected"
+            />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, txtAvatarAvailableNew)" :disable="txtMemberNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, filePng)" :disable="txtMemberNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -80,17 +87,24 @@
       <q-dialog v-model="editMember" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Karte ändern</div>
+            <div class="text-h6">Mitglied ändern</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtMember" autofocus label="Mitglied" />
 
-            <div class="q-pt-md">
-              <div class="q-gutter-sm">
-                <div><q-checkbox left-label v-model="boolAvatarAvailable" label="Avatar" /></div>
-              </div>
-            </div>
+            <br />
+
+            <q-file
+              style="max-width: 300px"
+              v-model="filePng"
+              rounded
+              outlined
+              label="PNG file only"
+              accept=".png"
+              :filter="checkFileType"
+              @rejected="onRejected"
+            />
           </q-card-section>
 
           <q-separator />
@@ -98,7 +112,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMember = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, boolAvatarAvailable)" :disable="txtMember === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, filePng)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -125,6 +139,7 @@
 </template>
 
 <script>
+import useQuasar from 'quasar/src/composables/use-quasar.js'
 import { URLMember, hasAvatar, getAvatar } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
@@ -137,8 +152,25 @@ export default {
   name: 'ListMember',
 
   setup () {
+    const $q = useQuasar()
+
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
+
+      filePng: ref(null),
+
+      checkFileType (files) {
+        return files.filter(file => file.type === 'image/png')
+      },
+
+      onRejected () {
+        // Notify plugin needs to be installed
+        // https://quasar.dev/quasar-plugins/notify#Installation
+        $q.notify({
+          type: 'negative',
+          message: 'Bitte lade eine PNG-Datei hoch!'
+        })
+      },
 
       txtMemberId: ref(_constHolderId),
       txtMember: ref(_constMember),

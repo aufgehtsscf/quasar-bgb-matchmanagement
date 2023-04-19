@@ -376,7 +376,7 @@ export default {
 
   setup () {
     return {
-      IsAdministrator: ref(false),
+      IsAdministrator: ref(true),
 
       txtMatchName: ref(_constMatchName),
       txtMatchId: ref(_constMatchId),
@@ -511,6 +511,7 @@ export default {
 
   mounted () {
     this.getTableMatch()
+    this.getTableWhereIsMyCard()
   },
 
   methods: {
@@ -568,13 +569,9 @@ export default {
       this.loadReloadData(_matchId, _time, _annotationsMatch)
     },
 
-    async loadReloadData (_matchId, _time, _annotationsMatch) {
+    loadReloadData (_matchId, _time, _annotationsMatch) {
       // console.log('loadReloadData: ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
-
       this.setArrivalElements(_time)
-      this.getTableWhereIsMyCard()
-      const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-      await sleep(500)
       this.getTableParticipant(_matchId, _time, _annotationsMatch)
       this.getTableTicket(_matchId)
       this.getTableTicketGiven(_matchId)
