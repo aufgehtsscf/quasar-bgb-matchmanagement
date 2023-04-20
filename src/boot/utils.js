@@ -2,7 +2,7 @@ const URLMatch = 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pW
 const URLParticipant = 'https://script.google.com/macros/s/AKfycbxyY9YZjWtnDPLQCWrO_j7YmfPFRRu6VHmqMgN1oS5bHL1nXoPyc3LrRBMDH0V-tDszuA/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant'
 const URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbwNroj1OzLNOOHRWFdNmaiN8bpKnJqBf3Lbm6firEaWPJo1wstm7Nsh9J3oAJox1lSt7w/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive'
 const URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbzlc-2httq6jMOsqbGIQmE6oAXNcWpLRZmGckDWQ6DqFoGQgHD-C1BkennQGntzAkJj/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard'
-const URLMember = 'https://script.google.com/macros/s/AKfycbwHy4AqpKn_mqkBmHumQ5xqa1JqeFLVmGb9KeoG4uzbBETGu6mPQpH4OfOW9kDgCkwM/exec?ID=198Khh4kc4jyL77VSYtFZ2JNjbv_OW7B4Q5Kfq7QH6wc&SH=BGB-Member'
+const URLMember = 'https://script.google.com/macros/s/AKfycbw4j7IraS0vVT6PK08o6B8ypb1S9WoDzd21qbEAiuhz5-_2WujOEqhXV9jsxlrM3_ir/exec?ID=198Khh4kc4jyL77VSYtFZ2JNjbv_OW7B4Q5Kfq7QH6wc&SH=BGB-Member'
 
 const hasAvatar = function (_participant) {
   if (_participant === 'Bolze' ||
