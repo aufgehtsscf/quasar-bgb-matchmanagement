@@ -73,20 +73,6 @@
         </q-card>
       </q-dialog>
 
-      <!-- Show whereIsMyCard exists -->
-      <q-dialog v-model="showWhereIsMyCardExists" persistent>
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="pan_tool" color="primary" text-color="white" />
-            <span class="q-ml-sm">Dieser Inhaber besteht bereits!</span>
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="Schliessen" color="primary" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-
       <!-- Edit whereIsMyCard -->
       <q-dialog v-model="editWhereIsMyCard" persistent>
         <q-card style="min-width: 350px">
@@ -138,6 +124,7 @@
 </template>
 
 <script>
+import useQuasar from 'quasar/src/composables/use-quasar.js'
 import { URLWhereIsMyCard, hasAvatar, getAvatar } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
@@ -151,6 +138,8 @@ export default {
   name: 'ListWhoHasTheCard',
 
   setup () {
+    const $q = useQuasar()
+
     return {
       IsAdministrator: ref(true),
 
@@ -164,8 +153,14 @@ export default {
       txtDiscountedNew: ref(false),
       txtWhoHasTheCardNew: ref(''),
 
+      onCardHolderAlreadyExists () {
+        $q.notify({
+          type: 'negative',
+          message: 'Dieser Inhaber besteht bereits!'
+        })
+      },
+
       addWhereIsMyCard: ref(false),
-      showWhereIsMyCardExists: ref(false),
       editWhereIsMyCard: ref(false),
       delWhereIsMyCard: ref(false)
     }
@@ -234,7 +229,7 @@ export default {
       const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
       const _cardHolderExists = _cardHolders.includes(_cardHolder)
       if (_cardHolderExists) {
-        this.showWhereIsMyCardExists = true
+        this.onCardHolderAlreadyExists()
       } else {
         this.$axios(`${this.URLWhereIsMyCard}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
           .then((res) => {
@@ -254,7 +249,7 @@ export default {
       const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
       const _cardHolderExists = _cardHolders.includes(_cardHolder) && _cardHolder !== _cardHolderOld
       if (_cardHolderExists) {
-        this.showWhereIsMyCardExists = true
+        this.onCardHolderAlreadyExists()
       } else {
         this.$axios(`${this.URLWhereIsMyCard}&func=Update&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
           .then((res) => {

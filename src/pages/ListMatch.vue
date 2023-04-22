@@ -99,20 +99,6 @@
         </q-card>
       </q-dialog>
 
-      <!-- Show match exists -->
-      <q-dialog v-model="showMatchExists" persistent>
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="pan_tool" color="primary" text-color="white" />
-            <span class="q-ml-sm">Dieses Spiel besteht bereits!</span>
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="Schliessen" color="primary" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-
       <!-- Edit match -->
       <q-dialog v-model="editMatch" persistent>
         <q-card style="min-width: 350px">
@@ -195,6 +181,7 @@
 </template>
 
 <script>
+import useQuasar from 'quasar/src/composables/use-quasar.js'
 import { URLMatch, URLParticipant, URLParticipantArchive, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
@@ -209,6 +196,8 @@ export default {
   name: 'ListMatch',
 
   setup () {
+    const $q = useQuasar()
+
     return {
       IsAdministrator: ref(true),
 
@@ -224,8 +213,14 @@ export default {
       txtDatetimeNew: ref(''),
       txtAnnotationsNew: ref('<STANDARDTEXT>'),
 
+      onMatchAlreadyExists () {
+        $q.notify({
+          type: 'negative',
+          message: 'Dieses Spiel besteht bereits!'
+        })
+      },
+
       addMatch: ref(false),
-      showMatchExists: ref(false),
       editMatch: ref(false),
       delMatch: ref(false)
     }
@@ -300,7 +295,7 @@ export default {
       const _matches = this.matchObject.map(el => el.match)
       const _matchExists = _matches.includes(_match)
       if (_matchExists) {
-        this.showMatchExists = true
+        this.onMatchAlreadyExists()
       } else {
         const _date = _datetime.substring(0, 10)
         const _time = _datetime.substring(11, 5)
@@ -323,7 +318,7 @@ export default {
       const _matches = this.matchObject.map(el => el.match)
       const _matchExists = _matches.includes(_match) && _match !== _matchOld
       if (_matchExists) {
-        this.showMatchExists = true
+        this.onMatchAlreadyExists()
       } else {
         const _date = _datetime.substring(0, 10)
         const _time = _datetime.substring(11, 5)

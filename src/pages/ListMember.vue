@@ -163,7 +163,6 @@ export default {
       },
 
       addMember: ref(false),
-      showMemberExists: ref(false),
       editMember: ref(false),
       delMember: ref(false)
     }
