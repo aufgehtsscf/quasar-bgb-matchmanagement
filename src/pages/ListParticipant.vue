@@ -73,25 +73,25 @@
       </div>
 
       <!-- List of participants -->
-      <q-list dark bordered separator style="max-width: 470px" v-for="(participant, i) in participantObject"
+      <q-list dark bordered separator style="max-width: 470px" v-for="(participant, i) in presentParticipantObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onParticipantClick(participant.participantId, participant.participant, participant.arrival, participant.annotations, participant.action, participant.reaction)">
+        <q-item clickable v-ripple @click="onParticipantClick(participant.presentParticipantParticipantId, participant.presentParticipantParticipant, participant.presentParticipantArrival, participant.presentParticipantAnnotations, participant.presentParticipantAction, participant.presentParticipantReaction)">
           <q-item-section avatar>
-            <q-avatar size="70px" color="deep-orange-14" text-color="white" v-if="!hasAvatar(participant.participant)">
-              {{ participant.participant.substring(0, 1) }}
-              <q-badge floating color="teal" v-if="isReservation(participant.arrival, txtTime)">reserviert</q-badge>
+            <q-avatar size="70px" color="deep-orange-14" text-color="white" v-if="!hasAvatar(participant.presentParticipantParticipant)">
+              {{ participant.presentParticipantParticipant.substring(0, 1) }}
+              <q-badge floating color="teal" v-if="isReservation(participant.presentParticipantArrival, txtTime)">reserviert</q-badge>
             </q-avatar>
-            <q-avatar size="70px" v-if="hasAvatar(participant.participant)">
-              <img :src="getAvatar(participant.participant)">
-              <q-badge floating color="teal" v-if="isReservation(participant.arrival, txtTime)">reserviert</q-badge>
+            <q-avatar size="70px" v-if="hasAvatar(participant.presentParticipantParticipant)">
+              <img :src="getAvatar(participant.presentParticipantParticipant)">
+              <q-badge floating color="teal" v-if="isReservation(participant.presentParticipantArrival, txtTime)">reserviert</q-badge>
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label overline>{{ participant.participant }}</q-item-label>
-            <q-item-label caption>{{ participant.arrival }}</q-item-label>
-            <q-item-label caption>{{ participant.annotations }}</q-item-label>
-            <q-item-label caption v-if="participant.reaction !== ''">{{ participant.reaction }}</q-item-label>
+            <q-item-label overline>{{ participant.presentParticipantParticipant }}</q-item-label>
+            <q-item-label caption>{{ participant.presentParticipantArrival }}</q-item-label>
+            <q-item-label caption>{{ participant.presentParticipantAnnotations }}</q-item-label>
+            <q-item-label caption v-if="participant.presentParticipantReaction !== ''">{{ participant.presentParticipantReaction }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -448,6 +448,8 @@ export default {
 
       participantObject: [
         {
+          row: '',
+          timestamp: '',
           match: '',
           participant: '',
           arrival: '',
@@ -459,8 +461,22 @@ export default {
       ],
       reservation: '',
 
+      presentParticipantObject: [
+        {
+          presentParticipantRow: '',
+          presentParticipantMatch: '',
+          presentParticipantParticipant: '',
+          presentParticipantArrival: '',
+          presentParticipantAnnotations: '',
+          presentParticipantAction: '',
+          presentParticipantReaction: '',
+          presentParticipantParticipantId: ''
+        }
+      ],
+
       ticketObject: [
         {
+          ticketRow: '',
           ticketParticipant: '',
           ticketArrival: '',
           ticketAnnotations: '',
@@ -472,6 +488,7 @@ export default {
 
       ticketGivenObject: [
         {
+          ticketGivenRow: '',
           ticketGivenParticipant: '',
           ticketGivenParticipantId: ''
         }
@@ -479,6 +496,7 @@ export default {
 
       ticketRequiredObject: [
         {
+          ticketRequiredRow: '',
           ticketRequiredParticipant: '',
           ticketRequiredParticipantId: ''
         }
@@ -486,6 +504,7 @@ export default {
 
       ticketAssignedObject: [
         {
+          ticketAssignedRow: '',
           ticketAssignedParticipant: '',
           ticketAssignedParticipantId: ''
         }
@@ -568,7 +587,6 @@ export default {
       // console.log('loadReloadData: ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
       this.setArrivalElements(_time)
       this.getTableParticipant(_matchId, _time, _annotationsMatch)
-      this.getTableTicket(_matchId)
       this.getTableTicketGiven(_matchId)
       this.getTableTicketRequired(_matchId)
       this.getTableTicketAssigned(_matchId)
@@ -773,111 +791,109 @@ export default {
 
     getTableParticipant (_matchId, _time, _annotationsMatch) {
       this.participantObject = []
-      this.reservation = ''
 
-      let readFunction = 'Read'
-      if (this.IsAdministrator) {
-        readFunction = 'ReadAdmin'
-      }
-
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadAdmin&matchId=' + _matchId)
-      this.$axios(`${this.URLParticipant}&func=${readFunction}&matchId=${_matchId}`)
+      // console.log('URLParticipant: ' + this.URLParticipant + '&func=Read&matchId=' + _matchId)
+      this.$axios(`${this.URLParticipant}&func=Read&matchId=${_matchId}`)
         .then((res) => {
           this.tableParticipant = res.data.split('\n')
-          _constNumberOfParticipants.value = this.tableParticipant.length - 1
-          for (let index = 0; index < _constNumberOfParticipants.value; index++) {
+          for (let index = 0; index < this.tableParticipant.length - 1; index++) {
             const element = this.tableParticipant[index].split(',')
-            this.setParticipantObject(element[2], element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
+            this.setParticipantObject(element[0], element[1], element[2], element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
           }
 
-          _constParticipantList.value = ''
-          this.participantObject.forEach(participant => {
-            _constParticipantList.value += participant.participant.trim()
-
-            _constParticipantList.value += ' (' + participant.arrival + ')'
-            if (this.isReservation(participant.arrival, _time)) {
-              if (this.reservation !== '') {
-                this.reservation += ', '
-              }
-              this.reservation += participant.participant.trim()
-            }
-
-            if (participant.annotations !== '') {
-              _constParticipantList.value += ' (' + participant.annotations.trim().replace(/\n/g, ' / ') + ')'
-            }
-
-            if (participant.reaction !== '') {
-              const _whoHasTheCard = this.whereIsMyCardObject.find(el => el.cardHolder === participant.reaction)?.whoHasTheCard
-              if (typeof _whoHasTheCard !== 'undefined') {
-                participant.reaction = participant.reaction.trim() + ' (Karte bei ' + _whoHasTheCard + ')'
-              }
-              participant.reaction = 'habe Karte von ' + participant.reaction.trim()
-              _constParticipantList.value += ', ' + participant.reaction.trim()
-            }
-
-            _constParticipantList.value += '\n'
+          // Sort array of objects
+          this.participantObject.sort(function (a, b) {
+            return a.arrival - b.arrival
+          })
+          this.participantObject.sort(function (a, b) {
+            return a.timestamp - b.timestamp
           })
 
-          if (this.reservation !== '') {
-            this.reservation += ','
-          }
-
-          _constAnnotationsMatchOriginal.value = _annotationsMatch
-          _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substring(0, 2) - 2) + ':' + _time.substring(3, 5) + '): ' + this.reservation + ' die Fahne und die Socken')
+          this.getTablePresentParticipant(_matchId, _time, _annotationsMatch)
+          this.getTableTicket()
         })
         .catch((err) => {
           console.log(err)
         })
     },
 
-    setParticipantObject (_match, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
-      // console.log('setParticipantObject: ' + _match + ',' + _participant + ',' + _arrival + ',' + _annotations + ',' + _action + ',' + _reaction + ',' + _participantId)
-      this.participantObject.push({ match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction, participantId: _participantId })
+    setParticipantObject (_row, _timestamp, _match, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
+      this.participantObject.push({ row: _row, timestamp: _timestamp, match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction, participantId: _participantId })
     },
 
-    getTableTicket (_matchId) {
+    getTablePresentParticipant (_matchId, _time, _annotationsMatch) {
+      this.presentParticipantObject = []
+      this.reservation = ''
+
+      this.participantObject.forEach(el => {
+        if (el.action === 'bin dabei') {
+          this.setPresentParticipantObject(el.row, el.match, el.participant, el.arrival, el.annotations, el.action, el.reaction, el.participantId)
+        }
+      })
+
+      _constNumberOfParticipants.value = this.presentParticipantObject.length
+      _constParticipantList.value = ''
+      this.presentParticipantObject.forEach(el => {
+        _constParticipantList.value += el.presentParticipantParticipant.trim()
+
+        _constParticipantList.value += ' (' + el.presentParticipantArrival + ')'
+        if (this.isReservation(el.presentParticipantArrival, _time)) {
+          if (this.reservation !== '') this.reservation += ', '
+          this.reservation += el.presentParticipantParticipant.trim()
+        }
+
+        if (el.presentParticipantAnnotations !== '') _constParticipantList.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')'
+
+        if (el.presentParticipantReaction !== '') {
+          const _whoHasTheCard = this.whereIsMyCardObject.find(el2 => el2.cardHolder === el.presentParticipantReaction)?.whoHasTheCard
+          if (typeof _whoHasTheCard !== 'undefined') {
+            el.presentParticipantReaction = el.presentParticipantReaction.trim() + ' (Karte bei ' + _whoHasTheCard + ')'
+          }
+          el.presentParticipantReaction = 'habe Karte von ' + el.presentParticipantReaction.trim()
+          _constParticipantList.value += ', ' + el.presentParticipantReaction.trim()
+        }
+
+        _constParticipantList.value += '\n'
+      })
+
+      if (this.reservation !== '') this.reservation += ','
+
+      _constAnnotationsMatchOriginal.value = _annotationsMatch
+      _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substring(0, 2) - 2) + ':' + _time.substring(3, 5) + '): ' + this.reservation + ' die Fahne und die Socken')
+    },
+
+    setPresentParticipantObject (_row, _match, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
+      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction, presentParticipantParticipantId: _participantId })
+    },
+
+    getTableTicket () {
       this.ticketObject = []
 
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTickets&matchId=' + _matchId)
-      this.$axios(`${this.URLParticipant}&func=ReadTickets&matchId=${_matchId}`)
-        .then((res) => {
-          this.tableTicket = res.data.split('\n')
-          for (let index = 0; index < this.tableTicket.length - 1; index++) {
-            const element = this.tableTicket[index].split(',')
-            this.setTicketObject(element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
-          }
+      this.participantObject.forEach(el => {
+        if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) {
+          this.setTicketObject(el.row, el.participant, el.arrival, el.annotations, el.action, el.reaction, el.participantId)
+        }
+      })
 
-          _constTicketList.value = ''
-          this.ticketObject.forEach(ticket => {
-            if (ticket.ticketAction === 'brauche Karte') {
-              _constTicketList.value += '??? an ' + ticket.ticketParticipant.trim()
-            }
+      _constTicketList.value = ''
+      this.ticketObject.forEach(el => {
+        if (el.ticketAction === 'brauche Karte') _constTicketList.value += '??? an ' + el.ticketParticipant.trim()
 
-            if (ticket.ticketAction === 'meine Karte ist frei') {
-              _constTicketList.value += ticket.ticketParticipant.trim()
+        if (el.ticketAction === 'meine Karte ist frei') {
+          _constTicketList.value += el.ticketParticipant.trim()
 
-              if (ticket.ticketReaction === '') {
-                _constTicketList.value += ' an ???'
-              } else {
-                _constTicketList.value += ' an ' + ticket.ticketReaction.trim()
-              }
-            }
+          if (el.ticketReaction === '') _constTicketList.value += ' an ???'
+          else _constTicketList.value += ' an ' + el.ticketReaction.trim()
+        }
 
-            if (ticket.ticketAnnotations !== '') {
-              _constTicketList.value += ' (' + ticket.ticketAnnotations.trim() + ')'
-            }
+        if (el.ticketAnnotations !== '') _constTicketList.value += ' (' + el.ticketAnnotations.trim() + ')'
+      })
 
-            _constTicketList.value += '\n'
-          })
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      _constTicketList.value += '\n'
     },
 
-    setTicketObject (_participant, _arrival, _annotations, _action, _reaction, _participantId) {
-      // console.log('setTicketObject: ' + _participant + ',' + _arrival + ',' + _annotations + ',' + _action + ',' + _reaction + ',' + _participantId)
-      this.ticketObject.push({ ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction, ticketParticipantId: _participantId })
+    setTicketObject (_row, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
+      this.ticketObject.push({ ticketRow: _row, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction, ticketParticipantId: _participantId })
     },
 
     getTableTicketGiven (_matchId) {
