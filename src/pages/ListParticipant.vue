@@ -32,7 +32,7 @@
         />
         <q-card-section v-if="getImageHomeTeam(txtMatchName) !== getImageAwayTeam(txtMatchName)">
           <div class="absolute-center text-h6 text-center text-black">
-            VS.&nbsp;
+            VS&nbsp;
         </div>
         </q-card-section>
         <q-img
@@ -321,7 +321,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { URLMatch, URLParticipant, URLWhereIsMyCard, hasAvatar, getAvatar, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
+import { IsAdministrator, URLMatch, URLParticipant, URLWhereIsMyCard, hasAvatar, getAvatar, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatch = ref('')
@@ -365,8 +365,6 @@ export default {
     const $q = useQuasar()
 
     return {
-      IsAdministrator: ref(true),
-
       txtMatchName: ref(_constMatchName),
       txtMatchId: ref(_constMatchId),
       txtTime: ref(_constTime),
@@ -428,6 +426,7 @@ export default {
 
   data () {
     return {
+      IsAdministrator,
       URLMatch,
       URLParticipant,
       URLWhereIsMyCard,
@@ -504,7 +503,6 @@ export default {
 
       ticketAssignedObject: [
         {
-          ticketAssignedRow: '',
           ticketAssignedParticipant: '',
           ticketAssignedParticipantId: ''
         }
@@ -587,9 +585,6 @@ export default {
       // console.log('loadReloadData: ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
       this.setArrivalElements(_time)
       this.getTableParticipant(_matchId, _time, _annotationsMatch)
-      this.getTableTicketGiven(_matchId)
-      this.getTableTicketRequired(_matchId)
-      this.getTableTicketAssigned(_matchId)
     },
 
     setTextShare (_matchName) {
@@ -683,6 +678,9 @@ export default {
       _constTicketArrival.value = _arrival
       _constTicketAnnotations.value = _annotations
       _constTicketAction.value = _action
+
+      this.getTableTicketAssignment()
+
       if (_reaction !== '') {
         _constTicketAssignmentGiven.value = _participant
         _constTicketAssignmentRequired.value = _reaction
@@ -896,79 +894,40 @@ export default {
       this.ticketObject.push({ ticketRow: _row, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction, ticketParticipantId: _participantId })
     },
 
-    getTableTicketGiven (_matchId) {
+    getTableTicketAssignment () {
       this.ticketGivenObject = []
-
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsGiven&matchId=' + _matchId)
-      this.$axios(`${this.URLParticipant}&func=ReadTicketsGiven&matchId=${_matchId}`)
-        .then((res) => {
-          this.tableTicket = res.data.split('\n')
-          for (let index = 0; index < this.tableTicket.length - 1; index++) {
-            const element = this.tableTicket[index].split(',')
-            this.setTicketGivenObject(element[3], element[8])
-          }
-
-          _constTicketAssignmentGivenElements.length = 0
-          let i = 0
-          this.ticketGivenObject.forEach(ticketGiven => {
-            _constTicketAssignmentGivenElements[i] = ticketGiven.ticketGivenParticipant
-            i++
-          })
-          // console.log('_constTicketAssignmentGivenElements: ' + _constTicketAssignmentGivenElements)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
-
-    setTicketGivenObject (_participant, _participantId) {
-      this.ticketGivenObject.push({ ticketGivenParticipant: _participant, ticketGivenParticipantId: _participantId })
-    },
-
-    getTableTicketRequired (_matchId) {
       this.ticketRequiredObject = []
-
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsRequired&matchId=' + _matchId)
-      this.$axios(`${this.URLParticipant}&func=ReadTicketsRequired&matchId=${_matchId}`)
-        .then((res) => {
-          this.tableTicket = res.data.split('\n')
-          for (let index = 0; index < this.tableTicket.length - 1; index++) {
-            const element = this.tableTicket[index].split(',')
-            this.setTicketRequiredObject(element[3], element[8])
-          }
-
-          _constTicketAssignmentRequiredElements.length = 0
-          let i = 0
-          this.ticketRequiredObject.forEach(ticketRequired => {
-            _constTicketAssignmentRequiredElements[i] = ticketRequired.ticketRequiredParticipant
-            i++
-          })
-          // console.log('_constTicketAssignmentRequiredElements: ' + _constTicketAssignmentRequiredElements)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
-
-    setTicketRequiredObject (_participant, _participantId) {
-      this.ticketRequiredObject.push({ ticketRequiredParticipant: _participant, ticketRequiredParticipantId: _participantId })
-    },
-
-    getTableTicketAssigned (_matchId) {
       this.ticketAssignedObject = []
 
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=ReadTicketsAssigned&matchId=' + _matchId)
-      this.$axios(`${this.URLParticipant}&func=ReadTicketsAssigned&matchId=${_matchId}`)
-        .then((res) => {
-          this.tableTicket = res.data.split('\n')
-          for (let index = 0; index < this.tableTicket.length - 1; index++) {
-            const element = this.tableTicket[index].split(',')
-            this.setTicketAssignedObject(element[3], element[8])
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      this.participantObject.forEach(el => {
+        if (el.action === 'meine Karte ist frei' && el.reaction === '') this.setTicketGivenObject(el.row, el.participant, el.participantId)
+
+        if (el.action === 'brauche Karte' && el.reaction === '') this.setTicketRequiredObject(el.row, el.participant, el.participantId)
+
+        if (el.reaction !== '') this.setTicketAssignedObject(el.participant, el.participantId)
+      })
+
+      _constTicketAssignmentGivenElements.length = 0
+      let i = 0
+      this.ticketGivenObject.forEach(ticketGiven => {
+        _constTicketAssignmentGivenElements[i] = ticketGiven.ticketGivenParticipant
+        i++
+      })
+
+      _constTicketAssignmentRequiredElements.length = 0
+      let j = 0
+      this.ticketRequiredObject.forEach(ticketRequired => {
+        _constTicketAssignmentRequiredElements[j] = ticketRequired.ticketRequiredParticipant
+        j++
+      })
+    },
+
+    setTicketGivenObject (_row, _participant, _participantId) {
+      this.ticketGivenObject.push({ ticketGivenRow: _row, ticketGivenParticipant: _participant, ticketGivenParticipantId: _participantId })
+    },
+
+    setTicketRequiredObject (_row, _participant, _participantId) {
+      this.ticketRequiredObject.push({ ticketRequiredRow: _row, ticketRequiredParticipant: _participant, ticketRequiredParticipantId: _participantId })
     },
 
     setTicketAssignedObject (_participant, _participantId) {

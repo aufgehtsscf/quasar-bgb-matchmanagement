@@ -125,7 +125,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { URLWhereIsMyCard, hasAvatar, getAvatar } from 'src/boot/utils.js'
+import { IsAdministrator, URLWhereIsMyCard, hasAvatar, getAvatar } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constHolderId = ref('')
@@ -141,8 +141,6 @@ export default {
     const $q = useQuasar()
 
     return {
-      IsAdministrator: ref(true),
-
       txtCardHolderId: ref(_constHolderId),
       txtCardHolder: ref(_constCardHolder),
       txtCardHolderOld: ref(_constCardHolderOld),
@@ -168,6 +166,7 @@ export default {
 
   data () {
     return {
+      IsAdministrator,
       URLWhereIsMyCard,
       hasAvatar,
       getAvatar,

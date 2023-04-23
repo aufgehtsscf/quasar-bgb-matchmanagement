@@ -123,7 +123,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { URLMember, hasAvatar, getAvatar } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, hasAvatar, getAvatar } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constHolderId = ref('')
@@ -138,8 +138,6 @@ export default {
     const $q = useQuasar()
 
     return {
-      IsAdministrator: ref(true),
-
       txtMemberId: ref(_constHolderId),
       txtMember: ref(_constMember),
       txtMemberOld: ref(_constMemberOld),
@@ -170,6 +168,7 @@ export default {
 
   data () {
     return {
+      IsAdministrator,
       URLMember,
       hasAvatar,
       getAvatar,

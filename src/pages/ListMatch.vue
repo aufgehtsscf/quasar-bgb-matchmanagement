@@ -182,7 +182,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { URLMatch, URLParticipant, URLParticipantArchive, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
+import { IsAdministrator, URLMatch, URLParticipant, URLParticipantArchive, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchId = ref('')
@@ -199,8 +199,6 @@ export default {
     const $q = useQuasar()
 
     return {
-      IsAdministrator: ref(true),
-
       txtMatchId: ref(_constMatchId),
       txtMatch: ref(_constMatch),
       txtMatchOld: ref(_constMatchOld),
@@ -228,6 +226,7 @@ export default {
 
   data () {
     return {
+      IsAdministrator,
       URLMatch,
       URLParticipant,
       URLParticipantArchive,
@@ -352,7 +351,7 @@ export default {
 
       const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
-      this.$axios(`${this.URLParticipant}&func=ReadAll&matchId=${_matchId}`)
+      this.$axios(`${this.URLParticipant}&func=Read&matchId=${_matchId}`)
         .then(async (res) => {
           this.tableParticipant = res.data.split('\n')
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
