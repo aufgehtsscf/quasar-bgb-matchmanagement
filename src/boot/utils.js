@@ -1,6 +1,6 @@
 const IsAdministrator = true
 
-const URLMatch = 'https://script.google.com/macros/s/AKfycbysBv-GIg2N_vpj7n1L3pWiK1WC0EC1bUfJCmv7kBXHfdPKxtbJg8bQyNJKFDkekGEDeA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match'
+const URLMatch = 'https://script.google.com/macros/s/AKfycbyA-lmGrg5UYOjIYtZiYvvFfVUkObfmWC_3LFb8Dj33DibiKBpZZhWqyLCAmfFg9Ya3wA/exec?ID=1znyBnIzqghCeRImZ8fSVGB_gR6TESuqep20YbUhkhSU&SH=BGB-Match'
 const URLParticipant = 'https://script.google.com/macros/s/AKfycbz9P85sBeNMq2hw2obPAhUYbm6-P3FRDbU_3F2tTUzmJ2KFU3WzvVN30Ge6DWvWzo8S/exec?ID=1HCZKuGO-dmNJwrEsFyN2acvnE-WMHabBW8jWdhO4ggI&SH=BGB-Participant'
 const URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbwNroj1OzLNOOHRWFdNmaiN8bpKnJqBf3Lbm6firEaWPJo1wstm7Nsh9J3oAJox1lSt7w/exec?ID=1fjnXO0Fsrj03Da8CDaBSClheSrE9Qr6VMNWzL-JQR7s&SH=BGB-ParticipantArchive'
 const URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbzlc-2httq6jMOsqbGIQmE6oAXNcWpLRZmGckDWQ6DqFoGQgHD-C1BkennQGntzAkJj/exec?ID=1AA2nnIb886xaBjpSaxwf2JNtujKnJc4xSVR-ChRGs2U&SH=BGB-WhereIsMyCard'

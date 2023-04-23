@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in matchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
+        <q-item clickable v-ripple @click="onMatchClick(match.row, match.matchId, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
           <q-item-section avatar>
             <q-avatar size="50px">
               <img :src="getImageHomeTeam(match.match)">
@@ -154,7 +154,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtMatch, txtMatchOld, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtMatch, txtMatchOld, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -169,7 +169,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="archiveMatch(txtMatchId, txtDatetime)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="archiveMatch(intMatchRow, txtMatchId, txtDatetime)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -185,6 +185,7 @@ import useQuasar from 'quasar/src/composables/use-quasar.js'
 import { IsAdministrator, URLMatch, URLParticipant, URLParticipantArchive, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
+const _constMatchRow = ref(0)
 const _constMatchId = ref('')
 const _constMatch = ref('')
 const _constMatchOld = ref('')
@@ -199,6 +200,7 @@ export default {
     const $q = useQuasar()
 
     return {
+      intMatchRow: ref(_constMatchRow),
       txtMatchId: ref(_constMatchId),
       txtMatch: ref(_constMatch),
       txtMatchOld: ref(_constMatchOld),
@@ -235,6 +237,7 @@ export default {
 
       matchObject: [
         {
+          row: '',
           match: '',
           published: '',
           time: '',
@@ -264,20 +267,34 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[2], element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
+            this.setMatchObject(element[0], element[2], element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
           }
+
+          // Sort array of objects
+          this.matchObject.sort(function (a, b) {
+            let dateA = a.date
+            dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
+
+            let dateB = b.date
+            dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
+
+            if (dateA > dateB) return 1
+            if (dateA < dateB) return -1
+            return 0
+          })
         })
         .catch((err) => {
           console.log(err)
         })
     },
 
-    setMatchObject (_match, _published, _time, _annotations, _date, _matchId) {
-      this.matchObject.push({ match: _match, published: _published, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
+    setMatchObject (_row, _match, _published, _time, _annotations, _date, _matchId) {
+      this.matchObject.push({ row: parseInt(_row) + 1, match: _match, published: _published, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
     },
 
-    onMatchClick (_matchId, _match, _published, _datetime, _annotations) {
-      // console.log('Clicked on an Match: ' + _matchId + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    onMatchClick (_row, _matchId, _match, _published, _datetime, _annotations) {
+      // console.log('Clicked on an Match: ' + _row + ', ' + _matchId + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+      _constMatchRow.value = _row
       _constMatchId.value = _matchId
       _constMatch.value = _match
       _constMatchOld.value = _match
@@ -297,7 +314,7 @@ export default {
         this.onMatchAlreadyExists()
       } else {
         const _date = _datetime.substring(0, 10)
-        const _time = _datetime.substring(11, 5)
+        const _time = _datetime.substring(11, 16)
 
         this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
@@ -311,8 +328,8 @@ export default {
       }
     },
 
-    editMatchSave (_matchId, _match, _matchOld, _published, _datetime, _annotations) {
-      // console.log('editMatchSave - Update: ' + _matchId + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    editMatchSave (_row, _matchId, _match, _matchOld, _published, _datetime, _annotations) {
+      console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
       const _matches = this.matchObject.map(el => el.match)
       const _matchExists = _matches.includes(_match) && _match !== _matchOld
@@ -320,10 +337,10 @@ export default {
         this.onMatchAlreadyExists()
       } else {
         const _date = _datetime.substring(0, 10)
-        const _time = _datetime.substring(11, 5)
-        const _newMatch = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
+        const _time = _datetime.substring(11, 16)
+        const _newMatch = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
 
-        this.$axios(`${this.URLMatch}&func=Update&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios(`${this.URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               // console.log('editMatchSave - UpdateMatch: ' + _matchId + ', ' + _newMatch)
@@ -344,8 +361,8 @@ export default {
       }
     },
 
-    async archiveMatch (_matchId, _datetime) {
-      // console.log('deleteMatch: ' + _matchId + ', ' + _datetime)
+    async archiveMatch (_row, _matchId, _datetime) {
+      // console.log('deleteMatch: ' + _row + ', ' + _matchId + ', ' + _datetime)
 
       const _date = _datetime.substring(0, 10)
 
@@ -367,15 +384,15 @@ export default {
           console.log(err)
         })
 
-      this.deleteMatch(_matchId)
+      this.deleteMatch(_row, _matchId)
     },
 
-    deleteMatch (_matchId) {
+    deleteMatch (_row, _matchId) {
       this.$axios(`${this.URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
         .then((res3) => {
           if (res3.data === 'Success, requested action completed') {
-            // console.log(this.URLMatch + '&func=Delete&matchId=' + _matchId)
-            this.$axios(`${this.URLMatch}&func=Delete&matchId=${_matchId}`)
+            // console.log(this.URLMatch + '&func=Delete&row=' + _row + '&matchId=' + _matchId)
+            this.$axios(`${this.URLMatch}&func=Delete&row=${_row}&matchId=${_matchId}`)
               .then((res4) => {
                 if (res4.data === 'Success, requested action completed') {
                   this.getTableMatch()
