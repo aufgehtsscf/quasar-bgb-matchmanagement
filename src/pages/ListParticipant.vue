@@ -805,9 +805,7 @@ export default {
           //   return a.timestamp - b.timestamp
           // })
 
-          this.getTablePresentParticipant(_matchId, _time, _annotationsMatch)
-          this.getTableTicket()
-          this.getTableTicketAssignment()
+          this.fillObjects(_matchId, _time, _annotationsMatch)
         })
         .catch((err) => {
           console.log(err)
@@ -818,14 +816,25 @@ export default {
       this.participantObject.push({ row: _row, timestamp: _timestamp, match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction, participantId: _participantId })
     },
 
-    getTablePresentParticipant (_matchId, _time, _annotationsMatch) {
+    fillObjects (_matchId, _time, _annotationsMatch) {
       this.presentParticipantObject = []
+      this.ticketObject = []
+      this.ticketGivenObject = []
+      this.ticketRequiredObject = []
+      this.ticketAssignedObject = []
+
       this.reservation = ''
 
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') {
-          this.setPresentParticipantObject(el.row, el.match, el.participant, el.arrival, el.annotations, el.action, el.reaction, el.participantId)
-        }
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.match, el.participant, el.arrival, el.annotations, el.action, el.reaction, el.participantId)
+
+        if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.row, el.participant, el.arrival, el.annotations, el.action, el.reaction, el.participantId)
+
+        if (el.action === 'meine Karte ist frei' && el.reaction === '') this.setTicketGivenObject(el.row, el.participant, el.participantId)
+
+        if (el.action === 'brauche Karte' && el.reaction === '') this.setTicketRequiredObject(el.row, el.participant, el.participantId)
+
+        if (el.reaction !== '') this.setTicketAssignedObject(el.participant, el.participantId)
       })
 
       _constNumberOfParticipants.value = this.presentParticipantObject.length
@@ -857,20 +866,6 @@ export default {
 
       _constAnnotationsMatchOriginal.value = _annotationsMatch
       _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substring(0, 2) - 2) + ':' + _time.substring(3, 5) + '): ' + this.reservation + ' die Fahne und die Socken')
-    },
-
-    setPresentParticipantObject (_row, _match, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
-      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction, presentParticipantParticipantId: _participantId })
-    },
-
-    getTableTicket () {
-      this.ticketObject = []
-
-      this.participantObject.forEach(el => {
-        if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) {
-          this.setTicketObject(el.row, el.participant, el.arrival, el.annotations, el.action, el.reaction, el.participantId)
-        }
-      })
 
       _constTicketList.value = ''
       this.ticketObject.forEach(el => {
@@ -884,26 +879,8 @@ export default {
         }
 
         if (el.ticketAnnotations !== '') _constTicketList.value += ' (' + el.ticketAnnotations.trim() + ')'
-      })
 
-      _constTicketList.value += '\n'
-    },
-
-    setTicketObject (_row, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
-      this.ticketObject.push({ ticketRow: _row, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction, ticketParticipantId: _participantId })
-    },
-
-    getTableTicketAssignment () {
-      this.ticketGivenObject = []
-      this.ticketRequiredObject = []
-      this.ticketAssignedObject = []
-
-      this.participantObject.forEach(el => {
-        if (el.action === 'meine Karte ist frei' && el.reaction === '') this.setTicketGivenObject(el.row, el.participant, el.participantId)
-
-        if (el.action === 'brauche Karte' && el.reaction === '') this.setTicketRequiredObject(el.row, el.participant, el.participantId)
-
-        if (el.reaction !== '') this.setTicketAssignedObject(el.participant, el.participantId)
+        _constTicketList.value += '\n'
       })
 
       _constTicketAssignmentGivenElements.length = 0
@@ -919,6 +896,14 @@ export default {
         _constTicketAssignmentRequiredElements[j] = ticketRequired.ticketRequiredParticipant
         j++
       })
+    },
+
+    setPresentParticipantObject (_row, _match, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
+      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction, presentParticipantParticipantId: _participantId })
+    },
+
+    setTicketObject (_row, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
+      this.ticketObject.push({ ticketRow: _row, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction, ticketParticipantId: _participantId })
     },
 
     setTicketGivenObject (_row, _participant, _participantId) {
