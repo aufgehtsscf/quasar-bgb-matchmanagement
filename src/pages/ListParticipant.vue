@@ -798,12 +798,17 @@ export default {
           }
 
           // Sort array of objects
-          this.participantObject = this.participantObject.sort(function (a, b) {
-            return a.arrival - b.arrival
+          this.participantObject.sort(function (a, b) {
+            let arrivalA = a.arrival.toLowerCase()
+            if (arrivalA === '') arrivalA = '24:00'
+
+            let arrivalB = b.arrival.toLowerCase()
+            if (arrivalB === '') arrivalB = '24:00'
+
+            if (arrivalA > arrivalB) return 1
+            if (arrivalA < arrivalB) return -1
+            return 0
           })
-          // this.participantObject.sort(function (a, b) {
-          //   return a.timestamp - b.timestamp
-          // })
 
           this.fillObjects(_matchId, _time, _annotationsMatch)
         })
