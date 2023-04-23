@@ -679,8 +679,6 @@ export default {
       _constTicketAnnotations.value = _annotations
       _constTicketAction.value = _action
 
-      this.getTableTicketAssignment()
-
       if (_reaction !== '') {
         _constTicketAssignmentGiven.value = _participant
         _constTicketAssignmentRequired.value = _reaction
@@ -800,15 +798,16 @@ export default {
           }
 
           // Sort array of objects
-          this.participantObject.sort(function (a, b) {
+          this.participantObject = this.participantObject.sort(function (a, b) {
             return a.arrival - b.arrival
           })
-          this.participantObject.sort(function (a, b) {
-            return a.timestamp - b.timestamp
-          })
+          // this.participantObject.sort(function (a, b) {
+          //   return a.timestamp - b.timestamp
+          // })
 
           this.getTablePresentParticipant(_matchId, _time, _annotationsMatch)
           this.getTableTicket()
+          this.getTableTicketAssignment()
         })
         .catch((err) => {
           console.log(err)
