@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(member, i) in memberObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMemberClick(member.memberId, member.member, member.avatarFileName)">
+        <q-item clickable v-ripple @click="onMemberClick(member.row, member.memberId, member.member, member.avatarFileName)">
           <q-item-section avatar>
             <q-avatar size="50px" color="lime-10" text-color="white" v-if="!hasAvatar(member.member)">
               {{ member.member.substring(0, 1) }}
@@ -95,7 +95,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMember = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, fileAvatarFileName)" :disable="txtMember === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld, fileAvatarFileName)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -110,7 +110,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteMember(txtMemberId)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteMember(intMemberRow, txtMemberId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -126,7 +126,8 @@ import useQuasar from 'quasar/src/composables/use-quasar.js'
 import { IsAdministrator, URLMember, hasAvatar, getAvatar } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
-const _constHolderId = ref('')
+const _constMemberRow = ref(0)
+const _constMemberId = ref('')
 const _constMember = ref('')
 const _constMemberOld = ref('')
 const _constAvatarFileName = ref('')
@@ -138,7 +139,8 @@ export default {
     const $q = useQuasar()
 
     return {
-      txtMemberId: ref(_constHolderId),
+      intMemberRow: ref(_constMemberRow),
+      txtMemberId: ref(_constMemberId),
       txtMember: ref(_constMember),
       txtMemberOld: ref(_constMemberOld),
       fileAvatarFileName: ref(_constAvatarFileName),
@@ -175,6 +177,7 @@ export default {
 
       memberObject: [
         {
+          row: '',
           memberId: '',
           member: '',
           avatarFileName: ''
@@ -200,7 +203,7 @@ export default {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
             const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[1], element[3], element[4])
+            this.setMemberObject(element[0], element[1], element[3], element[4])
           }
         })
         .catch((err) => {
@@ -208,13 +211,14 @@ export default {
         })
     },
 
-    setMemberObject (_memberId, _member, _avatarFileName) {
-      this.memberObject.push({ memberId: _memberId, member: _member, avatarFileName: _avatarFileName })
+    setMemberObject (_row, _memberId, _member, _avatarFileName) {
+      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member, avatarFileName: _avatarFileName })
     },
 
-    onMemberClick (_memberId, _member, _avatarFileName) {
-      // console.log('Clicked on Member: ' + _memberId + ', ' + _member + ', ' + _avatarFileName)
-      _constHolderId.value = _memberId
+    onMemberClick (_row, _memberId, _member, _avatarFileName) {
+      // console.log('Clicked on Member: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _avatarFileName)
+      _constMemberRow.value = _row
+      _constMemberId.value = _memberId
       _constMember.value = _member
       _constMemberOld.value = _member
       _constAvatarFileName.value = _avatarFileName
@@ -242,15 +246,15 @@ export default {
       }
     },
 
-    editMemberSave (_memberId, _member, _memberOld, _avatarFileName) {
-      // console.log('editMemberSave: ' + _memberId + ', ' + _member + ', ' + _memberOld + ', ' + _avatarFileName)
+    editMemberSave (_row, _memberId, _member, _memberOld, _avatarFileName) {
+      // console.log('editMemberSave: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _memberOld + ', ' + _avatarFileName)
 
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member) && _member !== _memberOld
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {
-        this.$axios(`${this.URLMember}&func=Update&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatarFileName=${_avatarFileName}`)
+        this.$axios(`${this.URLMember}&func=Update&row=${_row}&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatarFileName=${_avatarFileName}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.getTableMember()
@@ -262,10 +266,10 @@ export default {
       }
     },
 
-    deleteMember (_memberId) {
-      // console.log('deleteMember: ' + _memberId)
+    deleteMember (_row, _memberId) {
+      // console.log('deleteMember: ' + _row + ', ' + _memberId)
 
-      this.$axios(`${this.URLMember}&func=Delete&memberId=${_memberId}`)
+      this.$axios(`${this.URLMember}&func=Delete&row=${_row}&memberId=${_memberId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.getTableMember()

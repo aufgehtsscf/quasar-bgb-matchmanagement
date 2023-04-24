@@ -362,7 +362,7 @@ export default {
     },
 
     async archiveMatch (_row, _matchId, _datetime) {
-      // console.log('deleteMatch: ' + _row + ', ' + _matchId + ', ' + _datetime)
+      // console.log('archiveMatch: ' + _row + ', ' + _matchId + ', ' + _datetime)
 
       const _date = _datetime.substring(0, 10)
 
