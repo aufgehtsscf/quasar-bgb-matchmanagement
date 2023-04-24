@@ -289,7 +289,7 @@ export default {
     },
 
     setMatchObject (_row, _match, _published, _time, _annotations, _date, _matchId) {
-      this.matchObject.push({ row: parseInt(_row) + 1, match: _match, published: _published, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
+      this.matchObject.push({ row: parseInt(_row), match: _match, published: _published, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
     },
 
     onMatchClick (_row, _matchId, _match, _published, _datetime, _annotations) {

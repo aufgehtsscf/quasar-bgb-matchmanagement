@@ -824,7 +824,7 @@ export default {
     },
 
     setParticipantObject (_row, _timestamp, _match, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
-      this.participantObject.push({ row: parseInt(_row) + 1, timestamp: _timestamp, match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction, participantId: _participantId })
+      this.participantObject.push({ row: parseInt(_row), timestamp: _timestamp, match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction, participantId: _participantId })
     },
 
     fillObjects (_matchId, _time, _annotationsMatch) {
