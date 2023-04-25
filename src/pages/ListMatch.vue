@@ -329,7 +329,7 @@ export default {
     },
 
     editMatchSave (_row, _matchId, _match, _matchOld, _published, _datetime, _annotations) {
-      console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+      // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
       const _matches = this.matchObject.map(el => el.match)
       const _matchExists = _matches.includes(_match) && _match !== _matchOld

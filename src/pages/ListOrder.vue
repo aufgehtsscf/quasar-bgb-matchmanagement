@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { IsAdministrator, URLOrder } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constPosition = ref('')
@@ -49,7 +50,8 @@ export default {
 
   data () {
     return {
-      URLOrder: 'https://script.google.com/macros/s/AKfycbyk75viDlIB_I_iDfzB6qRKlDZBgz7UPPDnvemFYPft1OtexeYe21ogbbIz4Ngbszyx8Q/exec?ID=18Nbhx8ESMTLLkMrLu5_e97Za0qo4w9v-wOafXSQShlQ&SH=BGB-Order',
+      IsAdministrator,
+      URLOrder,
 
       index: [],
       position: [],
