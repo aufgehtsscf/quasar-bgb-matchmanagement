@@ -25,7 +25,6 @@
           </q-item-section>
           <q-item-section>
             <q-item-label overline>Mitglied: {{ member.member }}</q-item-label>
-            <q-item-label caption>Dateiname: {{ member.avatarFileName }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -44,25 +43,13 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtMemberNew" autofocus label="Mitglied" />
-
-            <br />
-
-            <q-uploader
-              url="statics/avatars"
-              label="Dein Foto/Avatar"
-              auto-upload
-              accept="image/*"
-              max-file-size="512000"
-              @rejected="onRejected"
-              style="max-width: 350px"
-            />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, fileAvatarFileNameNew)" :disable="txtMemberNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew)" :disable="txtMemberNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -76,18 +63,6 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtMember" autofocus label="Mitglied" />
-
-            <br />
-
-            <q-uploader
-              url="statics/avatars"
-              label="Dein Foto/Avatar"
-              auto-upload
-              accept="image/*"
-              max-file-size="512000"
-              @rejected="onRejected"
-              style="max-width: 350px"
-            />
           </q-card-section>
 
           <q-separator />
@@ -95,7 +70,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMember = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld, fileAvatarFileName)" :disable="txtMember === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -130,7 +105,6 @@ const _constMemberRow = ref(0)
 const _constMemberId = ref('')
 const _constMember = ref('')
 const _constMemberOld = ref('')
-const _constAvatarFileName = ref('')
 
 export default {
   name: 'ListMember',
@@ -143,17 +117,8 @@ export default {
       txtMemberId: ref(_constMemberId),
       txtMember: ref(_constMember),
       txtMemberOld: ref(_constMemberOld),
-      fileAvatarFileName: ref(_constAvatarFileName),
 
       txtMemberNew: ref(''),
-      fileAvatarFileNameNew: ref(null),
-
-      onRejected () {
-        $q.notify({
-          type: 'negative',
-          message: 'Bitte lade eine Bilddatei mit maximal 500K hoch!'
-        })
-      },
 
       onMemberAlreadyExists () {
         $q.notify({
@@ -179,8 +144,7 @@ export default {
         {
           row: '',
           memberId: '',
-          member: '',
-          avatarFileName: ''
+          member: ''
         }
       ]
     }
@@ -203,7 +167,7 @@ export default {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
             const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[0], element[1], element[3], element[4])
+            this.setMemberObject(element[0], element[1], element[3])
           }
         })
         .catch((err) => {
@@ -211,30 +175,29 @@ export default {
         })
     },
 
-    setMemberObject (_row, _memberId, _member, _avatarFileName) {
-      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member, avatarFileName: _avatarFileName })
+    setMemberObject (_row, _memberId, _member) {
+      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member })
     },
 
-    onMemberClick (_row, _memberId, _member, _avatarFileName) {
-      // console.log('Clicked on Member: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _avatarFileName)
+    onMemberClick (_row, _memberId, _member) {
+      // console.log('Clicked on Member: ' + _row + ', ' + _memberId + ', ' + _member)
       _constMemberRow.value = _row
       _constMemberId.value = _memberId
       _constMember.value = _member
       _constMemberOld.value = _member
-      _constAvatarFileName.value = _avatarFileName
 
       this.editMember = true
     },
 
-    addMemberSave (_member, _avatarFileName) {
-      // console.log('addMemberSave: ' + _member + ', ' + _avatarFileName)
+    addMemberSave (_member) {
+      // console.log('addMemberSave: ' + _member)
 
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member)
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {
-        this.$axios(`${this.URLMember}&func=Add&member=${encodeURI(_member.replace(',', ' '))}&avatarFileName=${_avatarFileName}`)
+        this.$axios(`${this.URLMember}&func=Add&member=${encodeURI(_member.replace(',', ' '))}&avatarFileName=`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.getTableMember()
@@ -246,15 +209,15 @@ export default {
       }
     },
 
-    editMemberSave (_row, _memberId, _member, _memberOld, _avatarFileName) {
-      // console.log('editMemberSave: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _memberOld + ', ' + _avatarFileName)
+    editMemberSave (_row, _memberId, _member, _memberOld) {
+      // console.log('editMemberSave: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _memberOld)
 
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member) && _member !== _memberOld
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {
-        this.$axios(`${this.URLMember}&func=Update&row=${_row}&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatarFileName=${_avatarFileName}`)
+        this.$axios(`${this.URLMember}&func=Update&row=${_row}&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatarFileName=`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.getTableMember()

@@ -1,4 +1,4 @@
-const IsAdministrator = true
+const IsAdministrator = false
 
 const URLMatch = 'https://script.google.com/macros/s/AKfycbxgC2OKYp5RVBEr8lS3KPBoF1RY2CTCCkmdz14vhr5S-PNrmdsVqyFYGjsNiT-2Dwgwzw/exec?sh=BGB&'
 const URLParticipant = 'https://script.google.com/macros/s/AKfycbyjRv5Adsc4tJg_OCCNByFlX48ULbmjXVtiD-q2HR3AeZ_w65hjzu-FVMqhUQvrJd19xA/exec?sh=BGB&'
@@ -9,7 +9,9 @@ const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9c
 
 const hasAvatar = function (_participant) {
   if (_participant === 'Bolze' ||
-      _participant === 'Blado') {
+      _participant === 'Blado' ||
+      _participant === 'Pawel' ||
+      _participant === 'Rita') {
     return true
   }
   return false
@@ -18,6 +20,8 @@ const hasAvatar = function (_participant) {
 const getAvatar = function (_participant) {
   if (_participant === 'Bolze') return 'statics/avatars/Bolze.png'
   if (_participant === 'Blado') return 'statics/avatars/Blado.png'
+  if (_participant === 'Pawel') return 'statics/avatars/Pawel.png'
+  if (_participant === 'Rita') return 'statics/avatars/Rita.png'
 }
 
 const getImageHomeTeam = function (_matchName) {
@@ -62,6 +66,7 @@ const getImageAwayTeam = function (_matchName) {
   if (_matchName.toLowerCase().indexOf('sandhausen') >= 0) return 'statics/teams/Sandhausen.png'
   if (_matchName.toLowerCase().indexOf('schalke') >= 0) return 'statics/teams/Schalke.png'
   if (_matchName.toLowerCase().indexOf('pauli') >= 0) return 'statics/teams/St._Pauli.png'
+  if (_matchName.toLowerCase().indexOf('pokal') >= 0) return 'statics/teams/DFB_Pokal.png'
   if (_matchName.toLowerCase().indexOf('vfb') >= 0 || _matchName.toLowerCase().indexOf('stuttgart') >= 0) return 'statics/teams/Stuttgart.png'
   if (_matchName.toLowerCase().indexOf('union') >= 0) return 'statics/teams/Union_Berlin.png'
   if (_matchName.toLowerCase().indexOf('werder') >= 0 || _matchName.toLowerCase().indexOf('bremen') >= 0) return 'statics/teams/Werder_Bremen.png'
