@@ -238,12 +238,12 @@ export default {
       matchObject: [
         {
           row: '',
+          matchId: '',
           match: '',
           published: '',
           time: '',
           annotations: '',
-          date: '',
-          matchId: ''
+          date: ''
         }
       ]
     }
@@ -267,7 +267,7 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[0], element[2], element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
+            this.setMatchObject(element[0], element[1], element[3], element[4], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
           }
 
           // Sort array of objects
@@ -288,8 +288,8 @@ export default {
         })
     },
 
-    setMatchObject (_row, _match, _published, _time, _annotations, _date, _matchId) {
-      this.matchObject.push({ row: parseInt(_row), match: _match, published: _published, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
+    setMatchObject (_row, _matchId, _match, _published, _time, _annotations, _date) {
+      this.matchObject.push({ row: parseInt(_row), matchId: _matchId, match: _match, published: _published, time: _time, annotations: _annotations, date: _date })
     },
 
     onMatchClick (_row, _matchId, _match, _published, _datetime, _annotations) {

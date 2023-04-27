@@ -13,7 +13,7 @@
         <q-list v-for="(match, i) in matchObject"
           :key="i"
           v-ripple>
-          <q-item clickable v-close-popup @click="onMatchClick(match.match, match.matchId, match.time, match.annotations, match.date)">
+          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.match, match.time, match.annotations, match.date)">
             <q-item-section>
               <q-item-label>{{ match.match }}</q-item-label>
               <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
@@ -441,25 +441,25 @@ export default {
 
       matchObject: [
         {
+          matchId: '',
           match: '',
           time: '',
           annotations: '',
-          date: '',
-          matchId: ''
+          date: ''
         }
       ],
 
       participantObject: [
         {
           row: '',
+          participantId: '',
           timestamp: '',
           match: '',
           participant: '',
           arrival: '',
           annotations: '',
           action: '',
-          reaction: '',
-          participantId: ''
+          reaction: ''
         }
       ],
       reservation: '',
@@ -467,49 +467,49 @@ export default {
       presentParticipantObject: [
         {
           presentParticipantRow: '',
+          presentParticipantParticipantId: '',
           presentParticipantMatch: '',
           presentParticipantParticipant: '',
           presentParticipantArrival: '',
           presentParticipantAnnotations: '',
           presentParticipantAction: '',
-          presentParticipantReaction: '',
-          presentParticipantParticipantId: ''
+          presentParticipantReaction: ''
         }
       ],
 
       ticketObject: [
         {
           ticketRow: '',
+          ticketParticipantId: '',
           ticketParticipant: '',
           ticketArrival: '',
           ticketAnnotations: '',
           ticketAction: '',
-          ticketReaction: '',
-          ticketParticipantId: ''
+          ticketReaction: ''
         }
       ],
 
       ticketGivenObject: [
         {
           ticketGivenRow: '',
-          ticketGivenParticipant: '',
-          ticketGivenParticipantId: ''
+          ticketGivenParticipantId: '',
+          ticketGivenParticipant: ''
         }
       ],
 
       ticketRequiredObject: [
         {
           ticketRequiredRow: '',
-          ticketRequiredParticipant: '',
-          ticketRequiredParticipantId: ''
+          ticketRequiredParticipantId: '',
+          ticketRequiredParticipant: ''
         }
       ],
 
       ticketAssignedObject: [
         {
           ticketAssignedRow: '',
-          ticketAssignedParticipant: '',
-          ticketAssignedParticipantId: ''
+          ticketAssignedParticipantId: '',
+          ticketAssignedParticipant: ''
         }
       ],
 
@@ -543,8 +543,8 @@ export default {
     getTableMatch () {
       this.matchObject = []
 
-      let nextMatch = ''
       let nextMatchId = ''
+      let nextMatch = ''
       let nextTime = ''
       let nextAnnotations = ''
       let nextDate = ''
@@ -555,33 +555,33 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[2], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7])
+            this.setMatchObject(element[1], element[3], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
             if (index === 0) {
-              nextMatch = element[2]
-              nextTime = element[4].substring(0, 5)
-              nextAnnotations = element[5].replace(/<br>/g, '\n')
-              nextDate = element[6]
-              nextMatchId = element[7]
+              nextMatchId = element[1]
+              nextMatch = element[3]
+              nextTime = element[5].substring(0, 5)
+              nextAnnotations = element[6].replace(/<br>/g, '\n')
+              nextDate = element[7]
             }
           }
-          this.onMatchClick(nextMatch, nextMatchId, nextTime, nextAnnotations, nextDate)
+          this.onMatchClick(nextMatchId, nextMatch, nextTime, nextAnnotations, nextDate)
         })
         .catch((err) => {
           console.log(err)
         })
     },
 
-    setMatchObject (_match, _time, _annotations, _date, _matchId) {
-      this.matchObject.push({ match: _match, time: _time, annotations: _annotations, date: _date, matchId: _matchId })
+    setMatchObject (_matchId, _match, _time, _annotations, _date) {
+      this.matchObject.push({ matchId: _matchId, match: _match, time: _time, annotations: _annotations, date: _date })
     },
 
-    onMatchClick (_match, _matchId, _time, _annotationsMatch, _date) {
-      // console.log('onMatchClick: ' + _match + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
+    onMatchClick (_matchId, _match, _time, _annotationsMatch, _date) {
+      // console.log('onMatchClick: ' + _matchId + ', ' + _match + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
+      _constMatchId.value = _matchId
       _constMatch.value = _match
       _constTime.value = _time
       _constDate.value = _date
       _constMatchName.value = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
-      _constMatchId.value = _matchId
 
       this.loadReloadData(_matchId, _time, _annotationsMatch)
     },
@@ -800,7 +800,7 @@ export default {
           this.tableParticipant = res.data.split('\n')
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
             const element = this.tableParticipant[index].split(',')
-            this.setParticipantObject(element[0], element[1], element[2], element[3], element[4].substring(0, 5), element[5].replace(/<br>/g, '\n'), element[6], element[7], element[8])
+            this.setParticipantObject(element[0], element[1], element[3], element[4], element[5], element[6].substring(0, 5), element[7].replace(/<br>/g, '\n'), element[8], element[9])
           }
 
           // Sort array of objects
@@ -823,8 +823,8 @@ export default {
         })
     },
 
-    setParticipantObject (_row, _timestamp, _match, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
-      this.participantObject.push({ row: parseInt(_row), timestamp: _timestamp, match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction, participantId: _participantId })
+    setParticipantObject (_row, _participantId, _timestamp, _match, _participant, _arrival, _annotations, _action, _reaction) {
+      this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
     },
 
     fillObjects (_matchId, _time, _annotationsMatch) {
@@ -837,15 +837,15 @@ export default {
       this.reservation = ''
 
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.match, el.participant, el.arrival, el.annotations, el.action, el.reaction, el.participantId)
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.match, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 
-        if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.row, el.participant, el.arrival, el.annotations, el.action, el.reaction, el.participantId)
+        if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.row, el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 
-        if (el.action === 'meine Karte ist frei' && el.reaction === '') this.setTicketGivenObject(el.row, el.participant, el.participantId)
+        if (el.action === 'meine Karte ist frei' && el.reaction === '') this.setTicketGivenObject(el.row, el.participantId, el.participant)
 
-        if (el.action === 'brauche Karte' && el.reaction === '') this.setTicketRequiredObject(el.row, el.participant, el.participantId)
+        if (el.action === 'brauche Karte' && el.reaction === '') this.setTicketRequiredObject(el.row, el.participantId, el.participant)
 
-        if (el.reaction !== '') this.setTicketAssignedObject(el.row, el.participant, el.participantId)
+        if (el.reaction !== '') this.setTicketAssignedObject(el.row, el.participantId, el.participant)
       })
 
       _constNumberOfParticipants.value = this.presentParticipantObject.length
@@ -909,36 +909,36 @@ export default {
       })
     },
 
-    setPresentParticipantObject (_row, _match, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
-      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction, presentParticipantParticipantId: _participantId })
+    setPresentParticipantObject (_row, _participantId, _match, _participant, _arrival, _annotations, _action, _reaction) {
+      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantParticipantId: _participantId, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
     },
 
-    setTicketObject (_row, _participant, _arrival, _annotations, _action, _reaction, _participantId) {
-      this.ticketObject.push({ ticketRow: _row, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction, ticketParticipantId: _participantId })
+    setTicketObject (_row, _participantId, _participant, _arrival, _annotations, _action, _reaction) {
+      this.ticketObject.push({ ticketRow: _row, ticketParticipantId: _participantId, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction })
     },
 
-    setTicketGivenObject (_row, _participant, _participantId) {
-      this.ticketGivenObject.push({ ticketGivenRow: _row, ticketGivenParticipant: _participant, ticketGivenParticipantId: _participantId })
+    setTicketGivenObject (_row, _participantId, _participant) {
+      this.ticketGivenObject.push({ ticketGivenRow: _row, ticketGivenParticipantId: _participantId, ticketGivenParticipant: _participant })
     },
 
-    setTicketRequiredObject (_row, _participant, _participantId) {
-      this.ticketRequiredObject.push({ ticketRequiredRow: _row, ticketRequiredParticipant: _participant, ticketRequiredParticipantId: _participantId })
+    setTicketRequiredObject (_row, _participantId, _participant) {
+      this.ticketRequiredObject.push({ ticketRequiredRow: _row, ticketRequiredParticipantId: _participantId, ticketRequiredParticipant: _participant })
     },
 
-    setTicketAssignedObject (_row, _participant, _participantId) {
-      this.ticketAssignedObject.push({ ticketAssignedRow: _row, ticketAssignedParticipant: _participant, ticketAssignedParticipantId: _participantId })
+    setTicketAssignedObject (_row, _participantId, _participant) {
+      this.ticketAssignedObject.push({ ticketAssignedRow: _row, ticketAssignedParticipantId: _participantId, ticketAssignedParticipant: _participant })
     },
 
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
 
-      // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
-      this.$axios(`${this.URLWhereIsMyCard}&func=Read&cardholder=`)
+      // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read')
+      this.$axios(`${this.URLWhereIsMyCard}&func=Read`)
         .then((res) => {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
             const element = this.tableWhereIsMyCard[index].split(',')
-            this.setWhereIsMyCardObject(element[2], element[3], element[4])
+            this.setWhereIsMyCardObject(element[3], element[4], element[5])
           }
         })
         .catch((err) => {

@@ -24,7 +24,7 @@
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-label overline>Mitglied: {{ member.member }}</q-item-label>
+            <q-item-label overline>{{ member.member }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -161,8 +161,8 @@ export default {
     getTableMember () {
       this.memberObject = []
 
-      // console.log('URLMember: ' + this.URLMember + '&func=Read&member=')
-      this.$axios(`${this.URLMember}&func=Read&member=`)
+      // console.log('URLMember: ' + this.URLMember + '&func=Read')
+      this.$axios(`${this.URLMember}&func=Read`)
         .then((res) => {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {

@@ -1,11 +1,18 @@
-const IsAdministrator = false
+const IsAdministrator = true
+const Client = 'BGB'
 
-const URLMatch = 'https://script.google.com/macros/s/AKfycbxgC2OKYp5RVBEr8lS3KPBoF1RY2CTCCkmdz14vhr5S-PNrmdsVqyFYGjsNiT-2Dwgwzw/exec?sh=BGB&'
-const URLParticipant = 'https://script.google.com/macros/s/AKfycbyjRv5Adsc4tJg_OCCNByFlX48ULbmjXVtiD-q2HR3AeZ_w65hjzu-FVMqhUQvrJd19xA/exec?sh=BGB&'
-const URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbyZqIPBen9h7FrsNb89T6FZn5DB3-NS0c2AFc1Feiy8r0i5sgDDM2rdMTmYMDpUhlzBsg/exec?sh=BGB&'
-const URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbxh56k8Tl-fqkQY_EIje5f46YxN6957oNhHCz5MKT-RJ5JMFL_fVehDvyydhgovm5rP/exec?sh=BGB&'
-const URLMember = 'https://script.google.com/macros/s/AKfycbxIcEksRlg7mOFG32Y9Ut2aqzJj64YKfOb49_FDgIH3hh5z4vE53jcDH5kzJ1fw_IEA/exec?sh=BGB&'
-const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB&'
+let URLMatch = 'https://script.google.com/macros/s/AKfycbykN8AZJ5V6fwH_BZ67riLGf8znBsxfLXzPWMOtr9Rwdor42jNcF7m1UM4XMvVoiF1rbQ/exec'
+let URLParticipant = 'https://script.google.com/macros/s/AKfycbydoX9quJr-aOj7_v3gnt6Ku__u29EnmKIaT6rgyZ3Ow4qzZ9eyu-sMsijteqvZAQox4Q/exec'
+let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbztkmFB9AKk5FaCH9fquMqFXx76pBp9b7ocNMHIcPAMcKcwH4hgOROHsK-1ApfL3APUuQ/exec'
+let URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
+let URLMember = 'https://script.google.com/macros/s/AKfycby6cSt9IlCXATmi31U9w9HJVpvsbXP6zkbIdZiqfaqTvWNa2kYWbezghNq7-ig16nOo/exec'
+const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'
+
+URLMatch += '?sh=' + Client
+URLParticipant += '?sh=' + Client
+URLParticipantArchive += '?sh=' + Client
+URLWhereIsMyCard += '?sh=' + Client
+URLMember += '?sh=' + Client
 
 const hasAvatar = function (_participant) {
   if (_participant === 'Bolze' ||
@@ -82,6 +89,7 @@ const getImageAwayTeam = function (_matchName) {
 }
 
 export { IsAdministrator }
+export { Client }
 export { URLMatch }
 export { URLParticipant }
 export { URLParticipantArchive }

@@ -60,7 +60,7 @@
             <q-item-section> Mitglieder </q-item-section>
           </q-item>
 
-          <q-item to="/order" exact clickable v-ripple>
+          <q-item to="/order" exact clickable v-ripple v-if="Client === 'BGB'">
             <q-item-section avatar>
               <q-icon name="shopping_cart" />
             </q-item-section>
@@ -92,6 +92,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
+import { Client } from 'src/boot/utils.js'
 import { date } from 'quasar'
 
 const linksList = [
@@ -139,6 +140,7 @@ export default defineComponent({
 
     return {
       essentialLinks: linksList,
+      Client,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value

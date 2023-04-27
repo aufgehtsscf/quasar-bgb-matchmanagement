@@ -176,10 +176,10 @@ export default {
       whereIsMyCardObject: [
         {
           row: '',
+          cardHolderId: '',
           cardHolder: '',
           discounted: '',
-          whoHasTheCard: '',
-          cardHolderId: ''
+          whoHasTheCard: ''
         }
       ]
     }
@@ -196,13 +196,13 @@ export default {
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
 
-      // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read&cardholder=')
-      this.$axios(`${this.URLWhereIsMyCard}&func=Read&cardholder=`)
+      // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read')
+      this.$axios(`${this.URLWhereIsMyCard}&func=Read`)
         .then((res) => {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
             const element = this.tableWhereIsMyCard[index].split(',')
-            this.setWhereIsMyCardObject(element[0], element[2], element[3], element[4], element[5])
+            this.setWhereIsMyCardObject(element[0], element[1], element[3], element[4], element[5])
           }
         })
         .catch((err) => {
@@ -210,8 +210,8 @@ export default {
         })
     },
 
-    setWhereIsMyCardObject (_row, _cardHolder, _discounted, _whoHasTheCard, _cardHolderId) {
-      this.whereIsMyCardObject.push({ row: parseInt(_row), cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard, cardHolderId: _cardHolderId })
+    setWhereIsMyCardObject (_row, _cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
+      this.whereIsMyCardObject.push({ row: parseInt(_row), cardHolderId: _cardHolderId, cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard })
     },
 
     onWhereIsMyCardClick (_row, _cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
