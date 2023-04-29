@@ -1,4 +1,4 @@
-const IsAdministrator = false
+const IsAdministrator = true
 const Client = 'BGB'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbykN8AZJ5V6fwH_BZ67riLGf8znBsxfLXzPWMOtr9Rwdor42jNcF7m1UM4XMvVoiF1rbQ/exec'

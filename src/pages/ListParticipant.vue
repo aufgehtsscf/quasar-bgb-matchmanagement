@@ -67,7 +67,7 @@
       <!-- Participant area (Titel) -->
       <div class="q-pa-md" style="max-width: 470px">
         <q-toolbar class="bg-primary text-white">
-          <q-toolbar-title class="text-overline">Anwesend ({{ txtNumberOfParticipants }} Personen)</q-toolbar-title>
+          <q-toolbar-title class="text-overline">Anwesend ({{ intNumberOfParticipants }})</q-toolbar-title>
           <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" />
         </q-toolbar>
       </div>
@@ -99,7 +99,7 @@
       <!-- Ticket assignment area (Titel) -->
       <div class="q-pa-md" style="max-width: 470px">
         <q-toolbar class="bg-primary text-white">
-            <q-toolbar-title class="text-overline">Karte weitergegeben oder bedarf</q-toolbar-title>
+            <q-toolbar-title class="text-overline">Karte weitergeben ({{ intNumberOfTicketsGiven }}) oder bedarf ({{ intNumberOfTicketsRequired }})</q-toolbar-title>
             <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="IsAdministrator" />
         </q-toolbar>
       </div>
@@ -333,6 +333,8 @@ const _constMatchName = ref('')
 const _constMatchId = ref('')
 const _constArrivalElements = []
 const _constNumberOfParticipants = ref('')
+const _constNumberOfTicketsGiven = ref('')
+const _constNumberOfTicketsRequired = ref('')
 
 const _constParticipantRow = ref(0)
 const _constParticipantId = ref('')
@@ -373,7 +375,9 @@ export default {
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
       cbxArrivalOptions: ref(_constArrivalElements),
-      txtNumberOfParticipants: ref(_constNumberOfParticipants),
+      intNumberOfParticipants: ref(_constNumberOfParticipants),
+      intNumberOfTicketsGiven: ref(_constNumberOfTicketsGiven),
+      intNumberOfTicketsRequired: ref(_constNumberOfTicketsRequired),
 
       onParticipantAlreadyExists () {
         $q.notify({
@@ -624,8 +628,8 @@ export default {
     },
 
     setTextShare (_matchName) {
-      _constShare.value = _matchName + '\n\nAnwesend (' + _constNumberOfParticipants.value + ' Personen):\n' + _constParticipantList.value
-      _constShare.value += '\nKarte weitergeben oder bedarf:\n' + _constTicketList.value
+      _constShare.value = _matchName + '\n\nAnwesend (' + _constNumberOfParticipants.value + '):\n' + _constParticipantList.value
+      _constShare.value += '\nKarte weitergeben (' + _constNumberOfTicketsGiven.value + ') oder bedarf (' + _constNumberOfTicketsRequired.value + '):\n' + _constTicketList.value
       _constShare.value += '\n' + _constAnnotationsMatch.value
       this.share = true
     },
@@ -884,6 +888,9 @@ export default {
       })
 
       _constNumberOfParticipants.value = this.presentParticipantObject.length
+      _constNumberOfTicketsGiven.value = this.ticketGivenObject.length
+      _constNumberOfTicketsRequired.value = this.ticketRequiredObject.length
+
       _constParticipantList.value = ''
       this.presentParticipantObject.forEach(el => {
         _constParticipantList.value += el.presentParticipantParticipant.trim()
