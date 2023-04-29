@@ -16,7 +16,7 @@
         v-ripple>
         <q-item clickable v-ripple @click="onMemberClick(member.row, member.memberId, member.member, member.avatar)">
           <q-item-section avatar>
-            <q-avatar size="50px" color="lime-10" text-color="white" v-if="member.avatar === ''">
+            <q-avatar size="50px" color="pink-10" text-color="white" v-if="member.avatar === ''">
               {{ member.member.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="member.avatar !== ''">
@@ -106,7 +106,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, hasAvatar, getAvatar } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, getAvatar } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -148,7 +148,6 @@ export default {
     return {
       IsAdministrator,
       URLMember,
-      hasAvatar,
       getAvatar,
 
       memberObject: [
@@ -179,7 +178,7 @@ export default {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
             const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[0], element[1], element[3], element[4])
+            this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim())
           }
         })
         .catch((err) => {

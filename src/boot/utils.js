@@ -14,16 +14,6 @@ URLParticipantArchive += '?sh=' + Client
 URLWhereIsMyCard += '?sh=' + Client
 URLMember += '?sh=' + Client
 
-const hasAvatar = function (_participant) {
-  if (_participant === 'Bolze' ||
-      _participant === 'Blado' ||
-      _participant === 'Pawel' ||
-      _participant === 'Rita') {
-    return true
-  }
-  return false
-}
-
 const getAvatar = function (_avatar) {
   return 'statics/avatars/' + _avatar + '.png'
 }
@@ -93,7 +83,6 @@ export { URLParticipantArchive }
 export { URLWhereIsMyCard }
 export { URLMember }
 export { URLOrder }
-export { hasAvatar }
 export { getAvatar }
 export { getImageHomeTeam }
 export { getImageAwayTeam }

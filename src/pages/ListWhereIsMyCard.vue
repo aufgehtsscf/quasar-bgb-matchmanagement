@@ -16,19 +16,19 @@
         v-ripple>
         <q-item clickable v-ripple @click="onWhereIsMyCardClick(card.row, card.cardHolderId, card.cardHolder, card.discounted, card.whoHasTheCard)">
           <q-item-section avatar>
-            <q-avatar size="50px" color="lime-10" text-color="white" v-if="!hasAvatar(card.cardHolder)">
+            <q-avatar size="50px" color="lime-10" text-color="white" v-if="card.cardHolderAvatar === ''">
               {{ card.cardHolder.substring(0, 1) }}
             </q-avatar>
-            <q-avatar size="50px" v-if="hasAvatar(card.cardHolder)">
-              <img :src="getAvatar(card.cardHolder)">
+            <q-avatar size="50px" v-if="card.cardHolderAvatar !== ''">
+              <img :src="getAvatar(card.cardHolderAvatar)">
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
-            <q-avatar size="50px" color="green-10" text-color="white" v-if="!hasAvatar(card.whoHasTheCard)">
+            <q-avatar size="50px" color="green-10" text-color="white" v-if="card.whoHasTheCardAvatar === ''">
               {{ card.whoHasTheCard.substring(0, 1) }}
             </q-avatar>
-            <q-avatar size="50px" v-if="hasAvatar(card.whoHasTheCard)">
-              <img :src="getAvatar(card.whoHasTheCard)">
+            <q-avatar size="50px" v-if="card.whoHasTheCardAvatar !== ''">
+              <img :src="getAvatar(card.whoHasTheCardAvatar)">
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -125,7 +125,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLWhereIsMyCard, hasAvatar, getAvatar } from 'src/boot/utils.js'
+import { IsAdministrator, URLWhereIsMyCard, URLMember, getAvatar } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constCardHolderRow = ref(0)
@@ -170,7 +170,7 @@ export default {
     return {
       IsAdministrator,
       URLWhereIsMyCard,
-      hasAvatar,
+      URLMember,
       getAvatar,
 
       whereIsMyCardObject: [
@@ -178,8 +178,17 @@ export default {
           row: '',
           cardHolderId: '',
           cardHolder: '',
+          cardHolderAvatar: '',
           discounted: '',
-          whoHasTheCard: ''
+          whoHasTheCard: '',
+          whoHasTheCardAvatar: ''
+        }
+      ],
+
+      memberObject: [
+        {
+          member: '',
+          avatar: ''
         }
       ]
     }
@@ -189,10 +198,32 @@ export default {
   },
 
   mounted () {
+    this.getTableMember()
     this.getTableWhereIsMyCard()
   },
 
   methods: {
+    getTableMember () {
+      this.memberObject = []
+
+      // console.log('URLMember: ' + this.URLMember + '&func=Read')
+      this.$axios(`${this.URLMember}&func=Read`)
+        .then((res) => {
+          this.tableMember = res.data.split('\n')
+          for (let index = 0; index < this.tableMember.length - 1; index++) {
+            const element = this.tableMember[index].split(',')
+            this.setMemberObject(element[3], element[4])
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    setMemberObject (_member, _avatar) {
+      this.memberObject.push({ member: _member, avatar: _avatar })
+    },
+
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
 
@@ -202,7 +233,14 @@ export default {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
             const element = this.tableWhereIsMyCard[index].split(',')
-            this.setWhereIsMyCardObject(element[0], element[1], element[3], element[4], element[5])
+
+            let _cardHolderAvatar = this.memberObject.find(el => el.member === element[3].trim())?.avatar
+            if (typeof _cardHolderAvatar === 'undefined') _cardHolderAvatar = ''
+
+            let _whoHasTheCardAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
+            if (typeof _whoHasTheCardAvatar === 'undefined') _whoHasTheCardAvatar = ''
+
+            this.setWhereIsMyCardObject(element[0], element[1], element[3].trim(), _cardHolderAvatar, element[4], element[5].trim(), _whoHasTheCardAvatar)
           }
         })
         .catch((err) => {
@@ -210,8 +248,8 @@ export default {
         })
     },
 
-    setWhereIsMyCardObject (_row, _cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
-      this.whereIsMyCardObject.push({ row: parseInt(_row), cardHolderId: _cardHolderId, cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard })
+    setWhereIsMyCardObject (_row, _cardHolderId, _cardHolder, _cardHolderAvatar, _discounted, _whoHasTheCard, _whoHasTheCardAvatar) {
+      this.whereIsMyCardObject.push({ row: parseInt(_row), cardHolderId: _cardHolderId, cardHolder: _cardHolder, cardHolderAvatar: _cardHolderAvatar, discounted: _discounted, whoHasTheCard: _whoHasTheCard, whoHasTheCardAvatar: _whoHasTheCardAvatar })
     },
 
     onWhereIsMyCardClick (_row, _cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {

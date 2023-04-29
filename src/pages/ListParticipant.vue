@@ -78,12 +78,12 @@
         v-ripple>
         <q-item clickable v-ripple @click="onParticipantClick(el.presentParticipantRow, el.presentParticipantParticipantId, el.presentParticipantParticipant, el.presentParticipantArrival, el.presentParticipantAnnotations, el.presentParticipantAction, el.presentParticipantReaction)">
           <q-item-section avatar>
-            <q-avatar size="70px" color="deep-orange-14" text-color="white" v-if="!hasAvatar(el.presentParticipantParticipant)">
+            <q-avatar size="70px" color="deep-orange-14" text-color="white" v-if="el.presentParticipantParticipantAvatar === ''">
               {{ el.presentParticipantParticipant.substring(0, 1) }}
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
             </q-avatar>
-            <q-avatar size="70px" v-if="hasAvatar(el.presentParticipantParticipant)">
-              <img :src="getAvatar(el.presentParticipantParticipant)">
+            <q-avatar size="70px" v-if="el.presentParticipantParticipantAvatar !== ''">
+              <img :src="getAvatar(el.presentParticipantParticipantAvatar)">
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
             </q-avatar>
           </q-item-section>
@@ -321,7 +321,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMatch, URLParticipant, URLWhereIsMyCard, hasAvatar, getAvatar, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
+import { IsAdministrator, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatch = ref('')
@@ -434,7 +434,7 @@ export default {
       URLMatch,
       URLParticipant,
       URLWhereIsMyCard,
-      hasAvatar,
+      URLMember,
       getAvatar,
       getImageHomeTeam,
       getImageAwayTeam,
@@ -456,6 +456,7 @@ export default {
           timestamp: '',
           match: '',
           participant: '',
+          participantAvatar: '',
           arrival: '',
           annotations: '',
           action: '',
@@ -470,6 +471,7 @@ export default {
           presentParticipantParticipantId: '',
           presentParticipantMatch: '',
           presentParticipantParticipant: '',
+          presentParticipantParticipantAvatar: '',
           presentParticipantArrival: '',
           presentParticipantAnnotations: '',
           presentParticipantAction: '',
@@ -519,6 +521,13 @@ export default {
           discounted: '',
           whoHasTheCard: ''
         }
+      ],
+
+      memberObject: [
+        {
+          member: '',
+          avatar: ''
+        }
       ]
     }
   },
@@ -527,6 +536,7 @@ export default {
   },
 
   mounted () {
+    this.getTableMember()
     this.getTableMatch()
     this.getTableWhereIsMyCard()
   },
@@ -538,6 +548,27 @@ export default {
         _participantArrival.substring(3, 5) === _matchTime.substring(3, 5)) { return true } else { return false }
       }
       return false
+    },
+
+    getTableMember () {
+      this.memberObject = []
+
+      // console.log('URLMember: ' + this.URLMember + '&func=Read')
+      this.$axios(`${this.URLMember}&func=Read`)
+        .then((res) => {
+          this.tableMember = res.data.split('\n')
+          for (let index = 0; index < this.tableMember.length - 1; index++) {
+            const element = this.tableMember[index].split(',')
+            this.setMemberObject(element[3], element[4])
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    setMemberObject (_member, _avatar) {
+      this.memberObject.push({ member: _member, avatar: _avatar })
     },
 
     getTableMatch () {
@@ -800,7 +831,11 @@ export default {
           this.tableParticipant = res.data.split('\n')
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
             const element = this.tableParticipant[index].split(',')
-            this.setParticipantObject(element[0], element[1], element[3], element[4], element[5], element[6].substring(0, 5), element[7].replace(/<br>/g, '\n'), element[8], element[9])
+
+            let _participantAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
+            if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
+
+            this.setParticipantObject(element[0], element[1], element[3], element[4], element[5].trim(), _participantAvatar, element[6].substring(0, 5), element[7].replace(/<br>/g, '\n'), element[8], element[9])
           }
 
           // Sort array of objects
@@ -823,8 +858,8 @@ export default {
         })
     },
 
-    setParticipantObject (_row, _participantId, _timestamp, _match, _participant, _arrival, _annotations, _action, _reaction) {
-      this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, match: _match, participant: _participant, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
+    setParticipantObject (_row, _participantId, _timestamp, _match, _participant, _participantAvatar, _arrival, _annotations, _action, _reaction) {
+      this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, match: _match, participant: _participant, participantAvatar: _participantAvatar, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
     },
 
     fillObjects (_matchId, _time, _annotationsMatch) {
@@ -837,7 +872,7 @@ export default {
       this.reservation = ''
 
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.match, el.participant, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.match, el.participant, el.participantAvatar, el.arrival, el.annotations, el.action, el.reaction)
 
         if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.row, el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 
@@ -909,8 +944,8 @@ export default {
       })
     },
 
-    setPresentParticipantObject (_row, _participantId, _match, _participant, _arrival, _annotations, _action, _reaction) {
-      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantParticipantId: _participantId, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
+    setPresentParticipantObject (_row, _participantId, _match, _participant, _participantAvatar, _arrival, _annotations, _action, _reaction) {
+      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantParticipantId: _participantId, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
     },
 
     setTicketObject (_row, _participantId, _participant, _arrival, _annotations, _action, _reaction) {
