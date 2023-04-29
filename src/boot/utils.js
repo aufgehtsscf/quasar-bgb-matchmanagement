@@ -15,7 +15,7 @@ URLWhereIsMyCard += '?sh=' + Client
 URLMember += '?sh=' + Client
 
 const getAvatar = function (_avatar) {
-  return 'statics/avatars/' + _avatar + '.png'
+  return 'statics/avatars/' + Client + '/' + _avatar + '.png'
 }
 
 const getImageHomeTeam = function (_matchName) {
@@ -75,6 +75,60 @@ const getImageAwayTeam = function (_matchName) {
   return 'statics/teams/QuestionMark.png'
 }
 
+const avatarOptions = [
+  { label: 'AbrahamSimpson', value: 'AbrahamSimpson', avatar: 'statics/avatars/collection/AbrahamSimpson.png' },
+  { label: 'Barbara', value: 'Barbara', avatar: 'statics/avatars/collection/Barbara.png' },
+  { label: 'BarneyGumble', value: 'BarneyGumble', avatar: 'statics/avatars/collection/BarneyGumble.png' },
+  { label: 'BartSimpson', value: 'BartSimpson', avatar: 'statics/avatars/collection/BartSimpson.png' },
+  { label: 'Betty', value: 'Betty', avatar: 'statics/avatars/collection/Betty.png' },
+  { label: 'Boy', value: 'Boy', avatar: 'statics/avatars/collection/Boy.png' },
+  { label: 'Charles', value: 'Charles', avatar: 'statics/avatars/collection/Charles.png' },
+  { label: 'CharlesMontgomeryBurns', value: 'CharlesMontgomeryBurns', avatar: 'statics/avatars/collection/CharlesMontgomeryBurns.png' },
+  { label: 'Christopher', value: 'Christopher', avatar: 'statics/avatars/collection/Christopher.png' },
+  { label: 'clancyWiggum', value: 'clancyWiggum', avatar: 'statics/avatars/collection/clancyWiggum.png' },
+  { label: 'Daniel', value: 'Daniel', avatar: 'statics/avatars/collection/Daniel.png' },
+  { label: 'David', value: 'David', avatar: 'statics/avatars/collection/David.png' },
+  { label: 'Donald', value: 'Donald', avatar: 'statics/avatars/collection/Donald.png' },
+  { label: 'Dorothy', value: 'Dorothy', avatar: 'statics/avatars/collection/Dorothy.png' },
+  { label: 'Elizabeth', value: 'Elizabeth', avatar: 'statics/avatars/collection/Elizabeth.png' },
+  { label: 'George', value: 'George', avatar: 'statics/avatars/collection/George.png' },
+  { label: 'Girl', value: 'Girl', avatar: 'statics/avatars/collection/Girl.png' },
+  { label: 'Helen', value: 'Helen', avatar: 'statics/avatars/collection/Helen.png' },
+  { label: 'HelloKitty', value: 'HelloKitty', avatar: 'statics/avatars/collection/HelloKitty.png' },
+  { label: 'HomerSimpson', value: 'HomerSimpson', avatar: 'statics/avatars/collection/HomerSimpson.png' },
+  { label: 'Ironman', value: 'Ironman', avatar: 'statics/avatars/collection/Ironman.png' },
+  { label: 'James', value: 'James', avatar: 'statics/avatars/collection/James.png' },
+  { label: 'Jennifer', value: 'Jennifer', avatar: 'statics/avatars/collection/Jennifer.png' },
+  { label: 'John', value: 'John', avatar: 'statics/avatars/collection/John.png' },
+  { label: 'Joseph', value: 'Joseph', avatar: 'statics/avatars/collection/Joseph.png' },
+  { label: 'Karen', value: 'Karen', avatar: 'statics/avatars/collection/Karen.png' },
+  { label: 'Kenneth', value: 'Kenneth', avatar: 'statics/avatars/collection/Kenneth.png' },
+  { label: 'KrustyTheClown', value: 'KrustyTheClown', avatar: 'statics/avatars/collection/KrustyTheClown.png' },
+  { label: 'Linda', value: 'Linda', avatar: 'statics/avatars/collection/Linda.png' },
+  { label: 'Lisa', value: 'Lisa', avatar: 'statics/avatars/collection/Lisa.png' },
+  { label: 'LisaSimpson', value: 'LisaSimpson', avatar: 'statics/avatars/collection/LisaSimpson.png' },
+  { label: 'MaggieSimpson', value: 'MaggieSimpson', avatar: 'statics/avatars/collection/MaggieSimpson.png' },
+  { label: 'Margaret', value: 'Margaret', avatar: 'statics/avatars/collection/Margaret.png' },
+  { label: 'MargeSimpson', value: 'MargeSimpson', avatar: 'statics/avatars/collection/MargeSimpson.png' },
+  { label: 'Maria', value: 'Maria', avatar: 'statics/avatars/collection/Maria.png' },
+  { label: 'Mark', value: 'Mark', avatar: 'statics/avatars/collection/Mark.png' },
+  { label: 'Mary', value: 'Mary', avatar: 'statics/avatars/collection/Mary.png' },
+  { label: 'Michael', value: 'Michael', avatar: 'statics/avatars/collection/Michael.png' },
+  { label: 'Nancy', value: 'Nancy', avatar: 'statics/avatars/collection/Nancy.png' },
+  { label: 'Patricia', value: 'Patricia', avatar: 'statics/avatars/collection/Patricia.png' },
+  { label: 'Paul', value: 'Paul', avatar: 'statics/avatars/collection/Paul.png' },
+  { label: 'PileOfPoo', value: 'PileOfPoo', avatar: 'statics/avatars/collection/PileOfPoo.png' },
+  { label: 'Quasar', value: 'Quasar', avatar: 'statics/avatars/collection/Quasar.png' },
+  { label: 'Richard', value: 'Richard', avatar: 'statics/avatars/collection/Richard.png' },
+  { label: 'Robert', value: 'Robert', avatar: 'statics/avatars/collection/Robert.png' },
+  { label: 'StanMarsh', value: 'StanMarsh', avatar: 'statics/avatars/collection/StanMarsh.png' },
+  { label: 'Steven', value: 'Steven', avatar: 'statics/avatars/collection/Steven.png' },
+  { label: 'SuperMario', value: 'SuperMario', avatar: 'statics/avatars/collection/SuperMario.png' },
+  { label: 'Susan', value: 'Susan', avatar: 'statics/avatars/collection/Susan.png' },
+  { label: 'Thomas', value: 'Thomas', avatar: 'statics/avatars/collection/Thomas.png' },
+  { label: 'William', value: 'William', avatar: 'statics/avatars/collection/William.png' }
+]
+
 export { IsAdministrator }
 export { Client }
 export { URLMatch }
@@ -86,3 +140,4 @@ export { URLOrder }
 export { getAvatar }
 export { getImageHomeTeam }
 export { getImageAwayTeam }
+export { avatarOptions }

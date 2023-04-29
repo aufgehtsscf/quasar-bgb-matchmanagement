@@ -46,14 +46,33 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtAvatarNew" autofocus label="Avatar" />
+            <q-select
+              filled
+              v-model="txtAvatarNew"
+              :options="avatarOptions"
+              label="Avatar"
+              options-selected-class="text-deep-orange"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section avatar>
+                    <q-avatar size="50px">
+                      <img :src="scope.opt.avatar">
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, txtAvatarNew)" :disable="txtMemberNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, txtAvatarNew.value )" :disable="txtMemberNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -70,7 +89,26 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtAvatar" autofocus label="Avatar" />
+            <q-select
+              filled
+              v-model="txtAvatar"
+              :options="avatarOptions"
+              label="Avatar"
+              options-selected-class="text-deep-orange"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section avatar>
+                    <q-avatar size="50px">
+                      <img :src="scope.opt.avatar">
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-card-section>
 
           <q-separator />
@@ -78,7 +116,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMember = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld, txtAvatar)" :disable="txtMember === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -106,7 +144,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, getAvatar } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, getAvatar, avatarOptions } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -129,7 +167,7 @@ export default {
       txtAvatar: ref(_constAvatar),
 
       txtMemberNew: ref(''),
-      txtAvatarNew: ref(''),
+      txtAvatarNew: ref(null),
 
       onMemberAlreadyExists () {
         $q.notify({
@@ -149,6 +187,7 @@ export default {
       IsAdministrator,
       URLMember,
       getAvatar,
+      avatarOptions,
 
       memberObject: [
         {
