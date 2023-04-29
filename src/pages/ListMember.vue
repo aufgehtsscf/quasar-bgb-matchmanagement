@@ -14,13 +14,13 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(member, i) in memberObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMemberClick(member.row, member.memberId, member.member, member.avatarFileName)">
+        <q-item clickable v-ripple @click="onMemberClick(member.row, member.memberId, member.member, member.avatar)">
           <q-item-section avatar>
-            <q-avatar size="50px" color="lime-10" text-color="white" v-if="!hasAvatar(member.member)">
+            <q-avatar size="50px" color="lime-10" text-color="white" v-if="member.avatar === ''">
               {{ member.member.substring(0, 1) }}
             </q-avatar>
-            <q-avatar size="50px" v-if="hasAvatar(member.member)">
-              <img :src="getAvatar(member.member)">
+            <q-avatar size="50px" v-if="member.avatar !== ''">
+              <img :src="getAvatar(member.avatar)">
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -45,11 +45,15 @@
             <q-input dense v-model="txtMemberNew" autofocus label="Mitglied" />
           </q-card-section>
 
+          <q-card-section class="q-pt-none">
+            <q-input dense v-model="txtAvatarNew" autofocus label="Avatar" />
+          </q-card-section>
+
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew)" :disable="txtMemberNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, txtAvatarNew)" :disable="txtMemberNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -65,12 +69,16 @@
             <q-input dense v-model="txtMember" autofocus label="Mitglied" />
           </q-card-section>
 
+          <q-card-section class="q-pt-none">
+            <q-input dense v-model="txtAvatar" autofocus label="Avatar" />
+          </q-card-section>
+
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMember = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld)" :disable="txtMember === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld, txtAvatar)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -105,6 +113,7 @@ const _constMemberRow = ref(0)
 const _constMemberId = ref('')
 const _constMember = ref('')
 const _constMemberOld = ref('')
+const _constAvatar = ref('')
 
 export default {
   name: 'ListMember',
@@ -117,8 +126,10 @@ export default {
       txtMemberId: ref(_constMemberId),
       txtMember: ref(_constMember),
       txtMemberOld: ref(_constMemberOld),
+      txtAvatar: ref(_constAvatar),
 
       txtMemberNew: ref(''),
+      txtAvatarNew: ref(''),
 
       onMemberAlreadyExists () {
         $q.notify({
@@ -144,7 +155,8 @@ export default {
         {
           row: '',
           memberId: '',
-          member: ''
+          member: '',
+          avatar: ''
         }
       ]
     }
@@ -167,7 +179,7 @@ export default {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
             const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[0], element[1], element[3])
+            this.setMemberObject(element[0], element[1], element[3], element[4])
           }
         })
         .catch((err) => {
@@ -175,29 +187,30 @@ export default {
         })
     },
 
-    setMemberObject (_row, _memberId, _member) {
-      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member })
+    setMemberObject (_row, _memberId, _member, _avatar) {
+      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member, avatar: _avatar })
     },
 
-    onMemberClick (_row, _memberId, _member) {
+    onMemberClick (_row, _memberId, _member, _avatar) {
       // console.log('Clicked on Member: ' + _row + ', ' + _memberId + ', ' + _member)
       _constMemberRow.value = _row
       _constMemberId.value = _memberId
       _constMember.value = _member
       _constMemberOld.value = _member
+      _constAvatar.value = _avatar
 
       this.editMember = true
     },
 
-    addMemberSave (_member) {
-      // console.log('addMemberSave: ' + _member)
+    addMemberSave (_member, _avatar) {
+      // console.log('addMemberSave: ' + _member + ', ' + _avatar)
 
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member)
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {
-        this.$axios(`${this.URLMember}&func=Add&member=${encodeURI(_member.replace(',', ' '))}&avatarFileName=`)
+        this.$axios(`${this.URLMember}&func=Add&member=${encodeURI(_member.replace(',', ' '))}&avatar=${_avatar}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.getTableMember()
@@ -209,15 +222,15 @@ export default {
       }
     },
 
-    editMemberSave (_row, _memberId, _member, _memberOld) {
-      // console.log('editMemberSave: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _memberOld)
+    editMemberSave (_row, _memberId, _member, _memberOld, _avatar) {
+      // console.log('editMemberSave: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _memberOld + ', ' + _avatar)
 
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member) && _member !== _memberOld
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {
-        this.$axios(`${this.URLMember}&func=Update&row=${_row}&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatarFileName=`)
+        this.$axios(`${this.URLMember}&func=Update&row=${_row}&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatar=${_avatar}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.getTableMember()

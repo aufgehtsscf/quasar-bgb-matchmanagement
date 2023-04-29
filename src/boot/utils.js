@@ -1,11 +1,11 @@
-const IsAdministrator = true
+const IsAdministrator = false
 const Client = 'BGB'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbykN8AZJ5V6fwH_BZ67riLGf8znBsxfLXzPWMOtr9Rwdor42jNcF7m1UM4XMvVoiF1rbQ/exec'
 let URLParticipant = 'https://script.google.com/macros/s/AKfycbydoX9quJr-aOj7_v3gnt6Ku__u29EnmKIaT6rgyZ3Ow4qzZ9eyu-sMsijteqvZAQox4Q/exec'
 let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbztkmFB9AKk5FaCH9fquMqFXx76pBp9b7ocNMHIcPAMcKcwH4hgOROHsK-1ApfL3APUuQ/exec'
 let URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
-let URLMember = 'https://script.google.com/macros/s/AKfycby6cSt9IlCXATmi31U9w9HJVpvsbXP6zkbIdZiqfaqTvWNa2kYWbezghNq7-ig16nOo/exec'
+let URLMember = 'https://script.google.com/macros/s/AKfycbxm8IYvc_BGeqsOMVqRtvis8GaKYxfZK_8CK4bLblF9TYVtk8C3P_-qKEpwfT6bZJk/exec'
 const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'
 
 URLMatch += '?sh=' + Client
@@ -24,11 +24,8 @@ const hasAvatar = function (_participant) {
   return false
 }
 
-const getAvatar = function (_participant) {
-  if (_participant === 'Bolze') return 'statics/avatars/Bolze.png'
-  if (_participant === 'Blado') return 'statics/avatars/Blado.png'
-  if (_participant === 'Pawel') return 'statics/avatars/Pawel.png'
-  if (_participant === 'Rita') return 'statics/avatars/Rita.png'
+const getAvatar = function (_avatar) {
+  return 'statics/avatars/' + _avatar + '.png'
 }
 
 const getImageHomeTeam = function (_matchName) {
