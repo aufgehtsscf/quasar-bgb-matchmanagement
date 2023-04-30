@@ -83,7 +83,7 @@
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
             </q-avatar>
             <q-avatar size="70px" v-if="el.presentParticipantParticipantAvatar !== ''">
-              <img :src="getAvatar(el.presentParticipantParticipantAvatar)">
+              <img :src="getAvatar(el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized === 'TRUE')">
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
             </q-avatar>
           </q-item-section>
@@ -461,6 +461,7 @@ export default {
           match: '',
           participant: '',
           participantAvatar: '',
+          _participantAvatarIsCustomized: '',
           arrival: '',
           annotations: '',
           action: '',
@@ -476,6 +477,7 @@ export default {
           presentParticipantMatch: '',
           presentParticipantParticipant: '',
           presentParticipantParticipantAvatar: '',
+          presentParticipantParticipantAvatarIsCustomized: '',
           presentParticipantArrival: '',
           presentParticipantAnnotations: '',
           presentParticipantAction: '',
@@ -530,7 +532,8 @@ export default {
       memberObject: [
         {
           member: '',
-          avatar: ''
+          avatar: '',
+          customized: ''
         }
       ]
     }
@@ -563,7 +566,7 @@ export default {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
             const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[3], element[4])
+            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
           }
         })
         .catch((err) => {
@@ -571,8 +574,8 @@ export default {
         })
     },
 
-    setMemberObject (_member, _avatar) {
-      this.memberObject.push({ member: _member, avatar: _avatar })
+    setMemberObject (_member, _avatar, _customized) {
+      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
     getTableMatch () {
@@ -838,8 +841,10 @@ export default {
 
             let _participantAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
             if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
+            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === element[5].trim())?.customized
+            if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = 'FALSE'
 
-            this.setParticipantObject(element[0], element[1], element[3], element[4], element[5].trim(), _participantAvatar, element[6].substring(0, 5), element[7].replace(/<br>/g, '\n'), element[8], element[9])
+            this.setParticipantObject(element[0], element[1], element[3], element[4], element[5].trim(), _participantAvatar, _participantAvatarIsCustomized, element[6].substring(0, 5), element[7].replace(/<br>/g, '\n'), element[8], element[9])
           }
 
           // Sort array of objects
@@ -862,8 +867,8 @@ export default {
         })
     },
 
-    setParticipantObject (_row, _participantId, _timestamp, _match, _participant, _participantAvatar, _arrival, _annotations, _action, _reaction) {
-      this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, match: _match, participant: _participant, participantAvatar: _participantAvatar, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
+    setParticipantObject (_row, _participantId, _timestamp, _match, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
+      this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, match: _match, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
     },
 
     fillObjects (_matchId, _time, _annotationsMatch) {
@@ -876,7 +881,7 @@ export default {
       this.reservation = ''
 
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.match, el.participant, el.participantAvatar, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.match, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
 
         if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.row, el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 
@@ -951,8 +956,8 @@ export default {
       })
     },
 
-    setPresentParticipantObject (_row, _participantId, _match, _participant, _participantAvatar, _arrival, _annotations, _action, _reaction) {
-      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantParticipantId: _participantId, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
+    setPresentParticipantObject (_row, _participantId, _match, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
+      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantParticipantId: _participantId, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantParticipantAvatarIsCustomized: _participantAvatarIsCustomized, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
     },
 
     setTicketObject (_row, _participantId, _participant, _arrival, _annotations, _action, _reaction) {

@@ -20,7 +20,7 @@
               {{ member.member.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="member.avatar !== ''">
-              <img :src="getAvatar(member.avatar)">
+              <img :src="getAvatar(member.avatar, member.customized === 'TRUE')">
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -194,7 +194,8 @@ export default {
           row: '',
           memberId: '',
           member: '',
-          avatar: ''
+          avatar: '',
+          customized: ''
         }
       ]
     }
@@ -217,7 +218,7 @@ export default {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
             const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim())
+            this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5])
           }
         })
         .catch((err) => {
@@ -225,12 +226,12 @@ export default {
         })
     },
 
-    setMemberObject (_row, _memberId, _member, _avatar) {
-      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member, avatar: _avatar })
+    setMemberObject (_row, _memberId, _member, _avatar, _customized) {
+      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member, avatar: _avatar, customized: _customized })
     },
 
     onMemberClick (_row, _memberId, _member, _avatar) {
-      // console.log('Clicked on Member: ' + _row + ', ' + _memberId + ', ' + _member)
+      // console.log('Clicked on Member: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _avatar)
       _constMemberRow.value = _row
       _constMemberId.value = _memberId
       _constMember.value = _member

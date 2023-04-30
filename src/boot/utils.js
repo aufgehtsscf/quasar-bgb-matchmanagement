@@ -5,7 +5,7 @@ let URLMatch = 'https://script.google.com/macros/s/AKfycbykN8AZJ5V6fwH_BZ67riLGf
 let URLParticipant = 'https://script.google.com/macros/s/AKfycbydoX9quJr-aOj7_v3gnt6Ku__u29EnmKIaT6rgyZ3Ow4qzZ9eyu-sMsijteqvZAQox4Q/exec'
 let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbztkmFB9AKk5FaCH9fquMqFXx76pBp9b7ocNMHIcPAMcKcwH4hgOROHsK-1ApfL3APUuQ/exec'
 let URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
-let URLMember = 'https://script.google.com/macros/s/AKfycbxm8IYvc_BGeqsOMVqRtvis8GaKYxfZK_8CK4bLblF9TYVtk8C3P_-qKEpwfT6bZJk/exec'
+let URLMember = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
 const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'
 
 URLMatch += '?sh=' + Client
@@ -14,8 +14,9 @@ URLParticipantArchive += '?sh=' + Client
 URLWhereIsMyCard += '?sh=' + Client
 URLMember += '?sh=' + Client
 
-const getAvatar = function (_avatar) {
-  return 'statics/avatars/' + Client + '/' + _avatar + '.png'
+const getAvatar = function (_avatar, _customized) {
+  if (_customized) return 'statics/avatars/' + Client + '/' + _avatar + '.png'
+  else return 'statics/avatars/collection/' + _avatar + '.png'
 }
 
 const getImageHomeTeam = function (_matchName) {

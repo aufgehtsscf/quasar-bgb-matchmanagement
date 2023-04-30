@@ -20,7 +20,7 @@
               {{ card.cardHolder.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.cardHolderAvatar !== ''">
-              <img :src="getAvatar(card.cardHolderAvatar)">
+              <img :src="getAvatar(card.cardHolderAvatar, card.cardHolderAvatarIsCustomized === 'TRUE')">
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
@@ -28,7 +28,7 @@
               {{ card.whoHasTheCard.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.whoHasTheCardAvatar !== ''">
-              <img :src="getAvatar(card.whoHasTheCardAvatar)">
+              <img :src="getAvatar(card.whoHasTheCardAvatar, card.whoHasTheCardAvatarIsCustomized === 'TRUE')">
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -179,16 +179,19 @@ export default {
           cardHolderId: '',
           cardHolder: '',
           cardHolderAvatar: '',
+          cardHolderAvatarIsCustomized: '',
           discounted: '',
           whoHasTheCard: '',
-          whoHasTheCardAvatar: ''
+          whoHasTheCardAvatar: '',
+          whoHasTheCardAvatarIsCustomized: ''
         }
       ],
 
       memberObject: [
         {
           member: '',
-          avatar: ''
+          avatar: '',
+          customized: ''
         }
       ]
     }
@@ -212,7 +215,7 @@ export default {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
             const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[3], element[4])
+            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
           }
         })
         .catch((err) => {
@@ -220,8 +223,8 @@ export default {
         })
     },
 
-    setMemberObject (_member, _avatar) {
-      this.memberObject.push({ member: _member, avatar: _avatar })
+    setMemberObject (_member, _avatar, _customized) {
+      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
     getTableWhereIsMyCard () {
@@ -236,11 +239,15 @@ export default {
 
             let _cardHolderAvatar = this.memberObject.find(el => el.member === element[3].trim())?.avatar
             if (typeof _cardHolderAvatar === 'undefined') _cardHolderAvatar = ''
+            let _cardHolderAvatarIsCustomized = this.memberObject.find(el => el.member === element[3].trim())?.customized
+            if (typeof _cardHolderAvatarIsCustomized === 'undefined') _cardHolderAvatarIsCustomized = 'FALSE'
 
             let _whoHasTheCardAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
             if (typeof _whoHasTheCardAvatar === 'undefined') _whoHasTheCardAvatar = ''
+            let _whoHasTheCardAvatarIsCustomized = this.memberObject.find(el => el.member === element[5].trim())?.customized
+            if (typeof _whoHasTheCardAvatarIsCustomized === 'undefined') _whoHasTheCardAvatarIsCustomized = 'FALSE'
 
-            this.setWhereIsMyCardObject(element[0], element[1], element[3].trim(), _cardHolderAvatar, element[4], element[5].trim(), _whoHasTheCardAvatar)
+            this.setWhereIsMyCardObject(element[0], element[1], element[3].trim(), _cardHolderAvatar, _cardHolderAvatarIsCustomized, element[4], element[5].trim(), _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized)
           }
         })
         .catch((err) => {
@@ -248,8 +255,8 @@ export default {
         })
     },
 
-    setWhereIsMyCardObject (_row, _cardHolderId, _cardHolder, _cardHolderAvatar, _discounted, _whoHasTheCard, _whoHasTheCardAvatar) {
-      this.whereIsMyCardObject.push({ row: parseInt(_row), cardHolderId: _cardHolderId, cardHolder: _cardHolder, cardHolderAvatar: _cardHolderAvatar, discounted: _discounted, whoHasTheCard: _whoHasTheCard, whoHasTheCardAvatar: _whoHasTheCardAvatar })
+    setWhereIsMyCardObject (_row, _cardHolderId, _cardHolder, _cardHolderAvatar, _cardHolderAvatarIsCustomized, _discounted, _whoHasTheCard, _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized) {
+      this.whereIsMyCardObject.push({ row: parseInt(_row), cardHolderId: _cardHolderId, cardHolder: _cardHolder, cardHolderAvatar: _cardHolderAvatar, cardHolderAvatarIsCustomized: _cardHolderAvatarIsCustomized, discounted: _discounted, whoHasTheCard: _whoHasTheCard, whoHasTheCardAvatar: _whoHasTheCardAvatar, whoHasTheCardAvatarIsCustomized: _whoHasTheCardAvatarIsCustomized })
     },
 
     onWhereIsMyCardClick (_row, _cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
