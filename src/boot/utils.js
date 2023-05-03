@@ -1,4 +1,4 @@
-const IsAdministrator = false
+const IsAdministrator = true
 const Client = 'BGB'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbykN8AZJ5V6fwH_BZ67riLGf8znBsxfLXzPWMOtr9Rwdor42jNcF7m1UM4XMvVoiF1rbQ/exec'
@@ -82,7 +82,6 @@ const avatarOptions = [
   { label: 'Ariel', value: 'Ariel', avatar: 'statics/avatars/collection/Ariel.png' },
   { label: 'BarneyGumble', value: 'BarneyGumble', avatar: 'statics/avatars/collection/BarneyGumble.png' },
   { label: 'BartSimpson', value: 'BartSimpson', avatar: 'statics/avatars/collection/BartSimpson.png' },
-  { label: 'Charles', value: 'Charles', avatar: 'statics/avatars/collection/Charles.png' },
   { label: 'CharlieBrown', value: 'CharlieBrown', avatar: 'statics/avatars/collection/CharlieBrown.png' },
   { label: 'CharlieChaplin', value: 'CharlieChaplin', avatar: 'statics/avatars/collection/CharlieChaplin.png' },
   { label: 'ClancyWiggum', value: 'ClancyWiggum', avatar: 'statics/avatars/collection/ClancyWiggum.png' },
@@ -120,6 +119,7 @@ const avatarOptions = [
   { label: 'Sally', value: 'Sally', avatar: 'statics/avatars/collection/Sally.png' },
   { label: 'Santa', value: 'Santa', avatar: 'statics/avatars/collection/Santa.png' },
   { label: 'SeaCalf', value: 'SeaCalf', avatar: 'statics/avatars/collection/SeaCalf.png' },
+  { label: 'SnoopDogg', value: 'SnoopDogg', avatar: 'statics/avatars/collection/SnoopDogg.png' },
   { label: 'StanMarsh', value: 'StanMarsh', avatar: 'statics/avatars/collection/StanMarsh.png' },
   { label: 'Sumo', value: 'Sumo', avatar: 'statics/avatars/collection/Sumo.png' },
   { label: 'SuperMario', value: 'SuperMario', avatar: 'statics/avatars/collection/SuperMario.png' },
