@@ -201,7 +201,6 @@ export default {
   },
 
   mounted () {
-    this.getTableMember()
     this.getTableWhereIsMyCard()
   },
 
@@ -228,6 +227,8 @@ export default {
     },
 
     getTableWhereIsMyCard () {
+      this.getTableMember()
+
       this.whereIsMyCardObject = []
 
       // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read')
