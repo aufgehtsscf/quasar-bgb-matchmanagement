@@ -25,7 +25,7 @@
 
   </div>
 
-  <q-img src="statics/BGB.jpg" class="header-image absolute-top" />
+  <q-img src="statics/images/AufGehtsSCF.png" class="header-image absolute-top" />
   </q-page>
 </template>
 

@@ -1,5 +1,5 @@
-const IsAdministrator = false
-const Client = 'BGB'
+const IsAdministrator = true
+const Client = 'TEST'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbykN8AZJ5V6fwH_BZ67riLGf8znBsxfLXzPWMOtr9Rwdor42jNcF7m1UM4XMvVoiF1rbQ/exec'
 let URLParticipant = 'https://script.google.com/macros/s/AKfycbydoX9quJr-aOj7_v3gnt6Ku__u29EnmKIaT6rgyZ3Ow4qzZ9eyu-sMsijteqvZAQox4Q/exec'
@@ -13,6 +13,10 @@ URLParticipant += '?sh=' + Client
 URLParticipantArchive += '?sh=' + Client
 URLWhereIsMyCard += '?sh=' + Client
 URLMember += '?sh=' + Client
+
+const getLogo = function () {
+  return 'statics/images/' + Client + '/Logo.png'
+}
 
 const getAvatar = function (_avatar, _customized) {
   if (_customized) return 'statics/avatars/' + Client + '/' + _avatar + '.png'
@@ -136,6 +140,7 @@ export { URLParticipantArchive }
 export { URLWhereIsMyCard }
 export { URLMember }
 export { URLOrder }
+export { getLogo }
 export { getAvatar }
 export { getImageHomeTeam }
 export { getImageAwayTeam }

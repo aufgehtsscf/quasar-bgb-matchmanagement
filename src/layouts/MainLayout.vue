@@ -15,7 +15,7 @@
         <div class="text-h4">BGB Spieltagsplanung</div>
         <div class="text-subtitle1">{{ todaysDate }}</div>
       </div>
-      <q-img src="statics/BGBLow.jpg" class="header-image absolute-top" />
+      <q-img src="statics/images/AufGehtsSCF.png" class="header-image absolute-top" />
     </q-header>
 
     <q-drawer
@@ -77,7 +77,7 @@
         />
       </q-scroll-area>
 
-      <q-img class="absolute-top" src="statics/BGB_Logo.jpg" style="height: 182px">
+      <q-img class="absolute-top" :src="getLogo()" style="height: 182px">
       </q-img>
     </q-drawer>
 
@@ -92,7 +92,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
-import { Client } from 'src/boot/utils.js'
+import { Client, getLogo } from 'src/boot/utils.js'
 import { date } from 'quasar'
 
 const linksList = [
@@ -141,6 +141,7 @@ export default defineComponent({
     return {
       essentialLinks: linksList,
       Client,
+      getLogo,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
