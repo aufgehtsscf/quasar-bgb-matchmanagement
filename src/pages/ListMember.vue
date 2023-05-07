@@ -18,9 +18,11 @@
           <q-item-section avatar>
             <q-avatar size="50px" color="pink-10" text-color="white" v-if="member.avatar === ''">
               {{ member.member.substring(0, 1) }}
+              <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
             <q-avatar size="50px" v-if="member.avatar !== ''">
               <img :src="getAvatar(member.avatar, member.customized === 'TRUE')">
+              <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -144,7 +146,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, getAvatar, avatarOptions } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, URLParticipantArchive, getAvatar, avatarOptions } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -186,6 +188,7 @@ export default {
     return {
       IsAdministrator,
       URLMember,
+      URLParticipantArchive,
       getAvatar,
       avatarOptions,
 
@@ -195,7 +198,8 @@ export default {
           memberId: '',
           member: '',
           avatar: '',
-          customized: ''
+          customized: '',
+          numberOfParticipations: ''
         }
       ]
     }
@@ -218,7 +222,18 @@ export default {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
             const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5])
+
+            // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadParticipant&participant=' + element[3].trim())
+            let _numberOfParticipations = 0
+            this.$axios(`${this.URLParticipantArchive}&func=ReadParticipant&participant=${element[3].trim()}`)
+              .then((res2) => {
+                this.tableParticipantArchive = res2.data.split('\n')
+                _numberOfParticipations = this.tableParticipantArchive.length - 1
+                this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5], _numberOfParticipations)
+              })
+              .catch((err2) => {
+                console.log(err2)
+              })
           }
         })
         .catch((err) => {
@@ -226,8 +241,18 @@ export default {
         })
     },
 
-    setMemberObject (_row, _memberId, _member, _avatar, _customized) {
-      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member, avatar: _avatar, customized: _customized })
+    setMemberObject (_row, _memberId, _member, _avatar, _customized, _numberOfParticipations) {
+      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member, avatar: _avatar, customized: _customized, numberOfParticipations: _numberOfParticipations })
+
+      // Sort array of objects
+      this.memberObject.sort(function (a, b) {
+        const _numberOfParticipationsA = a.numberOfParticipations
+        const _numberOfParticipationsB = b.numberOfParticipations
+
+        if (_numberOfParticipationsA > _numberOfParticipationsB) return -1
+        if (_numberOfParticipationsA < _numberOfParticipationsB) return 1
+        return 0
+      })
     },
 
     onMemberClick (_row, _memberId, _member, _avatar) {

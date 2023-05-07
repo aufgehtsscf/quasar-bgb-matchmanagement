@@ -1,9 +1,9 @@
-const IsAdministrator = true
+const IsAdministrator = false
 const Client = 'BGB'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbykN8AZJ5V6fwH_BZ67riLGf8znBsxfLXzPWMOtr9Rwdor42jNcF7m1UM4XMvVoiF1rbQ/exec'
 let URLParticipant = 'https://script.google.com/macros/s/AKfycbydoX9quJr-aOj7_v3gnt6Ku__u29EnmKIaT6rgyZ3Ow4qzZ9eyu-sMsijteqvZAQox4Q/exec'
-let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbztkmFB9AKk5FaCH9fquMqFXx76pBp9b7ocNMHIcPAMcKcwH4hgOROHsK-1ApfL3APUuQ/exec'
+let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbyD93iAIzMsxgQSOb4sZZ9gveQQqCDldT7JIwvzqSTUQT4yHHVO5GapSI5NH412E-mOrQ/exec'
 let URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
 let URLMember = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
 const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'

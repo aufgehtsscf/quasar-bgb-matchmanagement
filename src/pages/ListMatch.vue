@@ -269,19 +269,6 @@ export default {
             const element = this.tableMatch[index].split(',')
             this.setMatchObject(element[0], element[1], element[3], element[4], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
           }
-
-          // Sort array of objects
-          this.matchObject.sort(function (a, b) {
-            let dateA = a.date
-            dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
-
-            let dateB = b.date
-            dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
-
-            if (dateA > dateB) return 1
-            if (dateA < dateB) return -1
-            return 0
-          })
         })
         .catch((err) => {
           console.log(err)
@@ -290,6 +277,19 @@ export default {
 
     setMatchObject (_row, _matchId, _match, _published, _time, _annotations, _date) {
       this.matchObject.push({ row: parseInt(_row), matchId: _matchId, match: _match, published: _published, time: _time, annotations: _annotations, date: _date })
+
+      // Sort array of objects
+      this.matchObject.sort(function (a, b) {
+        let dateA = a.date
+        dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
+
+        let dateB = b.date
+        dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
+
+        if (dateA > dateB) return 1
+        if (dateA < dateB) return -1
+        return 0
+      })
     },
 
     onMatchClick (_row, _matchId, _match, _published, _datetime, _annotations) {

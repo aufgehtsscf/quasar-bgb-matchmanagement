@@ -847,19 +847,6 @@ export default {
             this.setParticipantObject(element[0], element[1], element[3], element[4], element[5].trim(), _participantAvatar, _participantAvatarIsCustomized, element[6].substring(0, 5), element[7].replace(/<br>/g, '\n'), element[8], element[9])
           }
 
-          // Sort array of objects
-          this.participantObject.sort(function (a, b) {
-            let arrivalA = a.arrival.toLowerCase()
-            if (arrivalA === '') arrivalA = '24:00'
-
-            let arrivalB = b.arrival.toLowerCase()
-            if (arrivalB === '') arrivalB = '24:00'
-
-            if (arrivalA > arrivalB) return 1
-            if (arrivalA < arrivalB) return -1
-            return 0
-          })
-
           this.fillObjects(_matchId, _time, _annotationsMatch)
         })
         .catch((err) => {
@@ -869,6 +856,19 @@ export default {
 
     setParticipantObject (_row, _participantId, _timestamp, _match, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
       this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, match: _match, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
+
+      // Sort array of objects
+      this.participantObject.sort(function (a, b) {
+        let arrivalA = a.arrival.toLowerCase()
+        if (arrivalA === '') arrivalA = '24:00'
+
+        let arrivalB = b.arrival.toLowerCase()
+        if (arrivalB === '') arrivalB = '24:00'
+
+        if (arrivalA > arrivalB) return 1
+        if (arrivalA < arrivalB) return -1
+        return 0
+      })
     },
 
     fillObjects (_matchId, _time, _annotationsMatch) {
