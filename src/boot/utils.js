@@ -1,9 +1,9 @@
-const IsAdministrator = false
+const IsAdministrator = true
 const Client = 'BGB'
 
-let URLMatch = 'https://script.google.com/macros/s/AKfycbykN8AZJ5V6fwH_BZ67riLGf8znBsxfLXzPWMOtr9Rwdor42jNcF7m1UM4XMvVoiF1rbQ/exec'
+let URLMatch = 'https://script.google.com/macros/s/AKfycbw0S-Itj0LqNCVLJsr9tDKK5xCtBYz_CPw5OEz8lRvcZV99WhThR2LEAEWB-scMeT-xkw/exec'
 let URLParticipant = 'https://script.google.com/macros/s/AKfycbydoX9quJr-aOj7_v3gnt6Ku__u29EnmKIaT6rgyZ3Ow4qzZ9eyu-sMsijteqvZAQox4Q/exec'
-let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbyD93iAIzMsxgQSOb4sZZ9gveQQqCDldT7JIwvzqSTUQT4yHHVO5GapSI5NH412E-mOrQ/exec'
+let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbwziO49Nusr_rqVK3oC4QSEBbEKYKYpOMR844JMrXXOttB039Dt1m0MjaTz5Hzhdjla5g/exec'
 let URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
 let URLMember = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
 const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'
@@ -54,6 +54,7 @@ const getImageAwayTeam = function (_matchName) {
   if (_matchName.toLowerCase().indexOf('hoffenheim') >= 0) return 'statics/teams/Hoffenheim.png'
   if (_matchName.toLowerCase().indexOf('holstein') >= 0) return 'statics/teams/Holstein.png'
   if (_matchName.toLowerCase().indexOf('jahn') >= 0 || _matchName.toLowerCase().indexOf('regensburg') >= 0) return 'statics/teams/Jahn_Regensburg.png'
+  if (_matchName.toLowerCase().indexOf('juve') >= 0 || _matchName.toLowerCase().indexOf('turin') >= 0) return 'statics/teams/Juventus_Turin.png'
   if (_matchName.toLowerCase().indexOf('fck') >= 0 || _matchName.toLowerCase().indexOf('kaiserslautern') >= 0) return 'statics/teams/Kaiserslautern.png'
   if (_matchName.toLowerCase().indexOf('ksc') >= 0 || _matchName.toLowerCase().indexOf('karlsruher') >= 0) return 'statics/teams/Karlsruher.png'
   if (_matchName.toLowerCase().indexOf('köln') >= 0) return 'statics/teams/Köln.png'
@@ -61,6 +62,7 @@ const getImageAwayTeam = function (_matchName) {
   if (_matchName.toLowerCase().indexOf('magdeburg') >= 0) return 'statics/teams/Magdeburg.png'
   if (_matchName.toLowerCase().indexOf('mainz') >= 0) return 'statics/teams/Mainz.png'
   if (_matchName.toLowerCase().indexOf('nürnberg') >= 0) return 'statics/teams/Nürnberg.png'
+  if (_matchName.toLowerCase().indexOf('olympiakos') >= 0 || _matchName.toLowerCase().indexOf('piräus') >= 0) return 'statics/teams/Olympiakos_Piräus.png'
   if (_matchName.toLowerCase().indexOf('paderborn') >= 0) return 'statics/teams/Paderborn.png'
   if (_matchName.toLowerCase().indexOf('sandhausen') >= 0) return 'statics/teams/Sandhausen.png'
   if (_matchName.toLowerCase().indexOf('schalke') >= 0) return 'statics/teams/Schalke.png'

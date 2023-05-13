@@ -1,20 +1,54 @@
 <template>
   <q-page>
 
-    <!-- Match area (Titel) -->
+    <!-- Active matchs area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>Spiele</q-toolbar-title>
+        <q-toolbar-title>Aktuelle Spiele</q-toolbar-title>
         <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true" v-if="IsAdministrator" />
       </q-toolbar>
     </div>
 
-    <!-- List of matches -->
+    <!-- List of active matches -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
-      <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in matchObject"
+      <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in activeMatchObject"
         :key="i"
         v-ripple>
         <q-item clickable v-ripple @click="onMatchClick(match.row, match.matchId, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
+          <q-item-section avatar>
+            <q-avatar size="50px">
+              <img :src="getImageHomeTeam(match.match)">
+            </q-avatar>
+          </q-item-section>
+          <q-item-section avatar>
+            <q-avatar size="50px">
+              <img :src="getImageAwayTeam(match.match)">
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
+            <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
+            <q-item-label caption v-if="match.published === 'TRUE'">Publiziert: Ja</q-item-label>
+            <q-item-label caption v-if="match.published === 'FALSE'">Publiziert: Nein</q-item-label>
+            <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </div>
+
+    <!-- Inactive matchs area (Titel) -->
+    <div class="q-pa-md" style="max-width: 500px">
+      <q-toolbar class="bg-primary text-white">
+        <q-toolbar-title>Vergangene Spiele</q-toolbar-title>
+      </q-toolbar>
+    </div>
+
+    <!-- List of inactive matches -->
+    <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
+      <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in inactiveMatchObject"
+        :key="i"
+        v-ripple>
+        <q-item>
           <q-item-section avatar>
             <q-avatar size="50px">
               <img :src="getImageHomeTeam(match.match)">
@@ -152,19 +186,19 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="IsAdministrator" />
+            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtMatch, txtMatchOld, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
 
-      <!-- Delete match -->
-      <q-dialog v-model="delMatch" persistent>
+      <!-- Archive match -->
+      <q-dialog v-model="arcMatch" persistent>
         <q-card>
           <q-card-section class="row items-center">
-            <q-avatar icon="delete" color="primary" text-color="white" />
-            <span class="q-ml-sm">Datensatz löschen?</span>
+            <q-avatar icon="archive" color="primary" text-color="white" />
+            <span class="q-ml-sm">Spiel archivieren?</span>
           </q-card-section>
 
           <q-card-actions align="right">
@@ -222,7 +256,7 @@ export default {
 
       addMatch: ref(false),
       editMatch: ref(false),
-      delMatch: ref(false)
+      arcMatch: ref(false)
     }
   },
 
@@ -235,7 +269,19 @@ export default {
       getImageHomeTeam,
       getImageAwayTeam,
 
-      matchObject: [
+      activeMatchObject: [
+        {
+          row: '',
+          matchId: '',
+          match: '',
+          published: '',
+          time: '',
+          annotations: '',
+          date: ''
+        }
+      ],
+
+      inactiveMatchObject: [
         {
           row: '',
           matchId: '',
@@ -253,21 +299,22 @@ export default {
   },
 
   mounted () {
-    this.getTableMatch()
+    this.getTableActiveMatch()
+    this.getTableInactiveMatch()
   },
 
   methods: {
-    getTableMatch () {
-      this.matchObject = []
+    getTableActiveMatch () {
+      this.activeMatchObject = []
 
       const publishedParam = this.IsAdministrator ? '' : 'TRUE'
-      // console.log('URLMatch: ' + this.URLMatch + '&func=Read&published=' + publishedParam)
-      this.$axios(`${this.URLMatch}&func=Read&published=${publishedParam}`)
+      // console.log('URLMatch: ' + this.URLMatch + '&func=ReadActive&published=' + publishedParam)
+      this.$axios(`${this.URLMatch}&func=ReadActive&published=${publishedParam}`)
         .then((res) => {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[0], element[1], element[3], element[4], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
+            this.setActiveMatchObject(element[0], element[1], element[3], element[4], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
           }
         })
         .catch((err) => {
@@ -275,11 +322,11 @@ export default {
         })
     },
 
-    setMatchObject (_row, _matchId, _match, _published, _time, _annotations, _date) {
-      this.matchObject.push({ row: parseInt(_row), matchId: _matchId, match: _match, published: _published, time: _time, annotations: _annotations, date: _date })
+    setActiveMatchObject (_row, _matchId, _match, _published, _time, _annotations, _date) {
+      this.activeMatchObject.push({ row: parseInt(_row), matchId: _matchId, match: _match, published: _published, time: _time, annotations: _annotations, date: _date })
 
       // Sort array of objects
-      this.matchObject.sort(function (a, b) {
+      this.activeMatchObject.sort(function (a, b) {
         let dateA = a.date
         dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
 
@@ -308,7 +355,7 @@ export default {
     addMatchSave (_match, _published, _datetime, _annotations) {
       // console.log('addMatchSave: ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      const _matches = this.matchObject.map(el => el.match)
+      const _matches = this.activeMatchObject.map(el => el.match)
       const _matchExists = _matches.includes(_match)
       if (_matchExists) {
         this.onMatchAlreadyExists()
@@ -319,7 +366,7 @@ export default {
         this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
-              this.getTableMatch()
+              this.getTableActiveMatch()
             }
           })
           .catch((err) => {
@@ -331,7 +378,7 @@ export default {
     editMatchSave (_row, _matchId, _match, _matchOld, _published, _datetime, _annotations) {
       // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      const _matches = this.matchObject.map(el => el.match)
+      const _matches = this.activeMatchObject.map(el => el.match)
       const _matchExists = _matches.includes(_match) && _match !== _matchOld
       if (_matchExists) {
         this.onMatchAlreadyExists()
@@ -347,7 +394,7 @@ export default {
               this.$axios(`${this.URLParticipant}&func=UpdateMatch&matchId=${_matchId}&newMatch=${_newMatch}`)
                 .then((res2) => {
                   if (res2.data === 'Success, requested action completed') {
-                    this.getTableMatch()
+                    this.getTableActiveMatch()
                   }
                 })
                 .catch((err) => {
@@ -374,7 +421,7 @@ export default {
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
             const element = this.tableParticipant[index].split(',')
             await sleep(1000)
-            this.$axios(`${this.URLParticipantArchive}&func=Add&timestamp=${element[3]}&match=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
+            this.$axios(`${this.URLParticipantArchive}&func=Add&timestamp=${element[3]}&matchId=${element[2]}&match=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
               .catch((err) => {
                 console.log(err)
               })
@@ -384,18 +431,18 @@ export default {
           console.log(err)
         })
 
-      this.deleteMatch(_row, _matchId)
+      this.inactivateMatch(_row, _matchId)
     },
 
-    deleteMatch (_row, _matchId) {
+    inactivateMatch (_row, _matchId) {
       this.$axios(`${this.URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
         .then((res3) => {
           if (res3.data === 'Success, requested action completed') {
-            // console.log(this.URLMatch + '&func=Delete&row=' + _row + '&matchId=' + _matchId)
-            this.$axios(`${this.URLMatch}&func=Delete&row=${_row}&matchId=${_matchId}`)
+            // console.log(this.URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId)
+            this.$axios(`${this.URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
               .then((res4) => {
                 if (res4.data === 'Success, requested action completed') {
-                  this.getTableMatch()
+                  this.getTableActiveMatch()
                   this.editMatch = false
                 }
               })
@@ -407,6 +454,40 @@ export default {
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    getTableInactiveMatch () {
+      this.inactiveMatchObject = []
+
+      // console.log('URLMatch: ' + this.URLMatch + '&func=ReadInactive')
+      this.$axios(`${this.URLMatch}&func=ReadInactive`)
+        .then((res) => {
+          this.tableMatch = res.data.split('\n')
+          for (let index = 0; index < this.tableMatch.length - 1; index++) {
+            const element = this.tableMatch[index].split(',')
+            this.setInactiveMatchObject(element[0], element[1], element[3], element[4], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    setInactiveMatchObject (_row, _matchId, _match, _published, _time, _annotations, _date) {
+      this.inactiveMatchObject.push({ row: parseInt(_row), matchId: _matchId, match: _match, published: _published, time: _time, annotations: _annotations, date: _date })
+
+      // Sort array of objects
+      this.inactiveMatchObject.sort(function (a, b) {
+        let dateA = a.date
+        dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
+
+        let dateB = b.date
+        dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
+
+        if (dateA > dateB) return 1
+        if (dateA < dateB) return -1
+        return 0
+      })
     }
 
   }
