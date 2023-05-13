@@ -39,7 +39,7 @@
     <!-- Inactive matchs area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>Vergangene Spiele</q-toolbar-title>
+        <q-toolbar-title>Vergangene Spiele ({{ inactiveMatchObject.length }})</q-toolbar-title>
       </q-toolbar>
     </div>
 
@@ -61,10 +61,7 @@
           </q-item-section>
           <q-item-section>
             <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
-            <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
-            <q-item-label caption v-if="match.published === 'TRUE'">Publiziert: Ja</q-item-label>
-            <q-item-label caption v-if="match.published === 'FALSE'">Publiziert: Nein</q-item-label>
-            <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
+            <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -283,12 +280,9 @@ export default {
 
       inactiveMatchObject: [
         {
-          row: '',
           matchId: '',
           match: '',
-          published: '',
           time: '',
-          annotations: '',
           date: ''
         }
       ]
@@ -465,7 +459,7 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setInactiveMatchObject(element[0], element[1], element[3], element[4], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
+            this.setInactiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[7])
           }
         })
         .catch((err) => {
@@ -473,8 +467,8 @@ export default {
         })
     },
 
-    setInactiveMatchObject (_row, _matchId, _match, _published, _time, _annotations, _date) {
-      this.inactiveMatchObject.push({ row: parseInt(_row), matchId: _matchId, match: _match, published: _published, time: _time, annotations: _annotations, date: _date })
+    setInactiveMatchObject (_matchId, _match, _time, _date) {
+      this.inactiveMatchObject.push({ matchId: _matchId, match: _match, time: _time, date: _date })
 
       // Sort array of objects
       this.inactiveMatchObject.sort(function (a, b) {
@@ -484,8 +478,8 @@ export default {
         let dateB = b.date
         dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
 
-        if (dateA > dateB) return 1
-        if (dateA < dateB) return -1
+        if (dateA < dateB) return 1
+        if (dateA > dateB) return -1
         return 0
       })
     }

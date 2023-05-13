@@ -10,7 +10,7 @@
         icon="star"
         label="Spiel auswählen">
 
-        <q-list v-for="(match, i) in matchObject"
+        <q-list v-for="(match, i) in activeMatchObject"
           :key="i"
           v-ripple>
           <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.match, match.time, match.annotations, match.date)">
@@ -67,7 +67,7 @@
       <!-- Participant area (Titel) -->
       <div class="q-pa-md" style="max-width: 470px">
         <q-toolbar class="bg-primary text-white">
-          <q-toolbar-title class="text-overline">Anwesend ({{ intNumberOfParticipants }})</q-toolbar-title>
+          <q-toolbar-title class="text-overline">Anwesend ({{ presentParticipantObject.length }})</q-toolbar-title>
           <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" />
         </q-toolbar>
       </div>
@@ -99,7 +99,7 @@
       <!-- Ticket assignment area (Titel) -->
       <div class="q-pa-md" style="max-width: 470px">
         <q-toolbar class="bg-primary text-white">
-            <q-toolbar-title class="text-overline">Karte weitergeben ({{ intNumberOfTicketsGiven }}) oder bedarf ({{ intNumberOfTicketsRequired }})</q-toolbar-title>
+            <q-toolbar-title class="text-overline">Karte weitergeben ({{ ticketGivenObject.length }}) oder bedarf ({{ ticketRequiredObject.length }})</q-toolbar-title>
             <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="IsAdministrator" />
         </q-toolbar>
       </div>
@@ -332,9 +332,6 @@ const _constDate = ref('')
 const _constMatchName = ref('')
 const _constMatchId = ref('')
 const _constArrivalElements = []
-const _constNumberOfParticipants = ref('')
-const _constNumberOfTicketsGiven = ref('')
-const _constNumberOfTicketsRequired = ref('')
 
 const _constParticipantRow = ref(0)
 const _constParticipantId = ref('')
@@ -375,9 +372,6 @@ export default {
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
       cbxArrivalOptions: ref(_constArrivalElements),
-      intNumberOfParticipants: ref(_constNumberOfParticipants),
-      intNumberOfTicketsGiven: ref(_constNumberOfTicketsGiven),
-      intNumberOfTicketsRequired: ref(_constNumberOfTicketsRequired),
 
       onParticipantAlreadyExists () {
         $q.notify({
@@ -443,7 +437,7 @@ export default {
       getImageHomeTeam,
       getImageAwayTeam,
 
-      matchObject: [
+      activeMatchObject: [
         {
           matchId: '',
           match: '',
@@ -544,7 +538,7 @@ export default {
 
   mounted () {
     this.getTableMember()
-    this.getTableMatch()
+    this.getTableActiveMatch()
     this.getTableWhereIsMyCard()
   },
 
@@ -578,8 +572,8 @@ export default {
       this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
-    getTableMatch () {
-      this.matchObject = []
+    getTableActiveMatch () {
+      this.activeMatchObject = []
 
       let nextMatchId = ''
       let nextMatch = ''
@@ -587,13 +581,13 @@ export default {
       let nextAnnotations = ''
       let nextDate = ''
 
-      // console.log('URLMatch: ' + this.URLMatch + '&func=Read&published=TRUE')
-      this.$axios(`${this.URLMatch}&func=Read&published=TRUE`)
+      // console.log('URLMatch: ' + this.URLMatch + '&func=ReadActive&published=TRUE')
+      this.$axios(`${this.URLMatch}&func=ReadActive&published=TRUE`)
         .then((res) => {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[1], element[3], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
+            this.setActiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
             if (index === 0) {
               nextMatchId = element[1]
               nextMatch = element[3]
@@ -609,8 +603,8 @@ export default {
         })
     },
 
-    setMatchObject (_matchId, _match, _time, _annotations, _date) {
-      this.matchObject.push({ matchId: _matchId, match: _match, time: _time, annotations: _annotations, date: _date })
+    setActiveMatchObject (_matchId, _match, _time, _annotations, _date) {
+      this.activeMatchObject.push({ matchId: _matchId, match: _match, time: _time, annotations: _annotations, date: _date })
     },
 
     onMatchClick (_matchId, _match, _time, _annotationsMatch, _date) {
@@ -631,8 +625,8 @@ export default {
     },
 
     setTextShare (_matchName) {
-      _constShare.value = _matchName + '\n\nAnwesend (' + _constNumberOfParticipants.value + '):\n' + _constParticipantList.value
-      _constShare.value += '\nKarte weitergeben (' + _constNumberOfTicketsGiven.value + ') oder bedarf (' + _constNumberOfTicketsRequired.value + '):\n' + _constTicketList.value
+      _constShare.value = _matchName + '\n\nAnwesend (' + this.presentParticipantObject.length + '):\n' + _constParticipantList.value
+      _constShare.value += '\nKarte weitergeben (' + this.ticketGivenObject.length + ') oder bedarf (' + this.ticketRequiredObject.length + '):\n' + _constTicketList.value
       _constShare.value += '\n' + _constAnnotationsMatch.value
       this.share = true
     },
@@ -891,10 +885,6 @@ export default {
 
         if (el.reaction !== '') this.setTicketAssignedObject(el.row, el.participantId, el.participant)
       })
-
-      _constNumberOfParticipants.value = this.presentParticipantObject.length
-      _constNumberOfTicketsGiven.value = this.ticketGivenObject.length
-      _constNumberOfTicketsRequired.value = this.ticketRequiredObject.length
 
       _constParticipantList.value = ''
       this.presentParticipantObject.forEach(el => {
