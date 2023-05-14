@@ -20,7 +20,10 @@
               <img :src="getImageHomeTeam(match.match)">
             </q-avatar>
           </q-item-section>
-          <q-item-section avatar>
+          <q-item-section avatar v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)">
+            <q-item-label v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)" caption>VS</q-item-label>
+          </q-item-section>
+          <q-item-section avatar v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)">
             <q-avatar size="50px">
               <img :src="getImageAwayTeam(match.match)">
             </q-avatar>
@@ -54,7 +57,10 @@
               <img :src="getImageHomeTeam(match.match)">
             </q-avatar>
           </q-item-section>
-          <q-item-section avatar>
+          <q-item-section avatar v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)">
+            <q-item-label v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)" caption>VS</q-item-label>
+          </q-item-section>
+          <q-item-section avatar v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)">
             <q-avatar size="50px">
               <img :src="getImageAwayTeam(match.match)">
             </q-avatar>
@@ -63,6 +69,7 @@
             <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
             <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
           </q-item-section>
+          <q-badge floating color="teal">{{ match.numberOfParticipants }}</q-badge>
         </q-item>
       </q-list>
     </div>
@@ -283,9 +290,18 @@ export default {
           matchId: '',
           match: '',
           time: '',
-          date: ''
+          date: '',
+          numberOfParticipants: ''
+        }
+      ],
+
+      pariticipantinactiveMatchObject: [
+        {
+          matchId: '',
+          participant: ''
         }
       ]
+
     }
   },
 
@@ -456,10 +472,21 @@ export default {
       // console.log('URLMatch: ' + this.URLMatch + '&func=ReadInactive')
       this.$axios(`${this.URLMatch}&func=ReadInactive`)
         .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setInactiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[7])
+          this.tableInactiveMatch = res.data.split('\n')
+          for (let index = 0; index < this.tableInactiveMatch.length - 1; index++) {
+            const element = this.tableInactiveMatch[index].split(',')
+
+            // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadMatch')
+            let _numberOfParticipants = 0
+            this.$axios(`${this.URLParticipantArchive}&func=ReadMatch&matchId=${element[1]}`)
+              .then((res2) => {
+                this.tableParticipantArchive = res2.data.split('\n')
+                _numberOfParticipants = this.tableParticipantArchive.length - 1
+                this.setInactiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[7], _numberOfParticipants)
+              })
+              .catch((err2) => {
+                console.log(err2)
+              })
           }
         })
         .catch((err) => {
@@ -467,8 +494,8 @@ export default {
         })
     },
 
-    setInactiveMatchObject (_matchId, _match, _time, _date) {
-      this.inactiveMatchObject.push({ matchId: _matchId, match: _match, time: _time, date: _date })
+    setInactiveMatchObject (_matchId, _match, _time, _date, _numberOfParticipants) {
+      this.inactiveMatchObject.push({ matchId: _matchId, match: _match, time: _time, date: _date, numberOfParticipants: _numberOfParticipants })
 
       // Sort array of objects
       this.inactiveMatchObject.sort(function (a, b) {
@@ -482,6 +509,27 @@ export default {
         if (dateA > dateB) return -1
         return 0
       })
+    },
+
+    getTableParticipantInactiveMatch () {
+      this.pariticipantinactiveMatchObject = []
+
+      // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadAllParticipants')
+      this.$axios(`${this.URLParticipantArchive}&func=ReadAllParticipants`)
+        .then((res) => {
+          this.tableMatch = res.data.split('\n')
+          for (let index = 0; index < this.tableMatch.length - 1; index++) {
+            const element = this.tableMatch[index].split(',')
+            this.setParticipantInactiveMatchObject(element[2], element[4].trim())
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    setParticipantInactiveMatchObject (_matchId, _participant) {
+      this.pariticipantinactiveMatchObject.push({ matchId: _matchId, participant: _participant })
     }
 
   }
@@ -489,6 +537,11 @@ export default {
 </script>
 
 <style lang="scss">
+.overlapping {
+  border: 2px solid white;
+  position: absolute
+}
+
 .header-image {
   height: 100%;
   z-index: -1;
