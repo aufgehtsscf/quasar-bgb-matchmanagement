@@ -1,7 +1,7 @@
-const IsAdministrator = false
+const IsAdministrator = true
 const Client = 'BGB'
 
-let URLMatch = 'https://script.google.com/macros/s/AKfycbw0S-Itj0LqNCVLJsr9tDKK5xCtBYz_CPw5OEz8lRvcZV99WhThR2LEAEWB-scMeT-xkw/exec'
+let URLMatch = 'https://script.google.com/macros/s/AKfycby6G40prA42lw-m_3paESdOWZmU_YdiQXheVL0vs0XsZNG2xwwAPnq1Tae-5jZA1D87Iw/exec'
 let URLParticipant = 'https://script.google.com/macros/s/AKfycbydoX9quJr-aOj7_v3gnt6Ku__u29EnmKIaT6rgyZ3Ow4qzZ9eyu-sMsijteqvZAQox4Q/exec'
 let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbwIKgcrnEMe-sQ5WU1BETzRtJCk4odrTMBfNy5_RUv8ZBsN65H87ejNJKGUHX0f40n3eA/exec'
 let URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'

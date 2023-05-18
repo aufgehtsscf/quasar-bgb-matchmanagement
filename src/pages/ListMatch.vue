@@ -295,7 +295,7 @@ export default {
         }
       ],
 
-      pariticipantinactiveMatchObject: [
+      participantInactiveMatchObject: [
         {
           matchId: '',
           participant: ''
@@ -448,8 +448,8 @@ export default {
       this.$axios(`${this.URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
         .then((res3) => {
           if (res3.data === 'Success, requested action completed') {
-            // console.log(this.URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId)
-            this.$axios(`${this.URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
+            // console.log(this.URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId + '&inactivated=TRUE')
+            this.$axios(`${this.URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}&inactivated=TRUE`)
               .then((res4) => {
                 if (res4.data === 'Success, requested action completed') {
                   this.getTableActiveMatch()
@@ -468,6 +468,7 @@ export default {
 
     getTableInactiveMatch () {
       this.inactiveMatchObject = []
+      this.participantInactiveMatchObject = []
 
       // console.log('URLMatch: ' + this.URLMatch + '&func=ReadInactive')
       this.$axios(`${this.URLMatch}&func=ReadInactive`)
@@ -481,6 +482,10 @@ export default {
             this.$axios(`${this.URLParticipantArchive}&func=ReadMatch&matchId=${element[1]}`)
               .then((res2) => {
                 this.tableParticipantArchive = res2.data.split('\n')
+                for (let index2 = 0; index2 < this.tableParticipantArchive.length - 1; index2++) {
+                  const element2 = this.tableParticipantArchive[index2].split(',')
+                  this.setParticipantInactiveMatchObject(element2[2], element2[4].trim())
+                }
                 _numberOfParticipants = this.tableParticipantArchive.length - 1
                 this.setInactiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[7], _numberOfParticipants)
               })
@@ -492,6 +497,10 @@ export default {
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    setParticipantInactiveMatchObject (_matchId, _participant) {
+      this.participantInactiveMatchObject.push({ matchId: _matchId, participant: _participant })
     },
 
     setInactiveMatchObject (_matchId, _match, _time, _date, _numberOfParticipants) {
@@ -509,27 +518,6 @@ export default {
         if (dateA > dateB) return -1
         return 0
       })
-    },
-
-    getTableParticipantInactiveMatch () {
-      this.pariticipantinactiveMatchObject = []
-
-      // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadAllParticipants')
-      this.$axios(`${this.URLParticipantArchive}&func=ReadAllParticipants`)
-        .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setParticipantInactiveMatchObject(element[2], element[4].trim())
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
-
-    setParticipantInactiveMatchObject (_matchId, _participant) {
-      this.pariticipantinactiveMatchObject.push({ matchId: _matchId, participant: _participant })
     }
 
   }

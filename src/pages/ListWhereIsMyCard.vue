@@ -226,8 +226,11 @@ export default {
       this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
-    getTableWhereIsMyCard () {
+    async getTableWhereIsMyCard () {
       this.getTableMember()
+
+      const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+      await sleep(1000)
 
       this.whereIsMyCardObject = []
 
