@@ -19,7 +19,8 @@ const getLogo = function () {
 }
 
 const getAvatar = function (_avatar, _customized) {
-  if (_customized) return 'statics/avatars/' + Client + '/' + _avatar + '.png'
+  if (_avatar === '') return 'statics/avatars/collection/placeholder.png'
+  else if (_customized) return 'statics/avatars/' + Client + '/' + _avatar + '.png'
   else return 'statics/avatars/collection/' + _avatar + '.png'
 }
 

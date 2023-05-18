@@ -1,4 +1,4 @@
-<template>
+  <template>
   <q-page>
 
     <!-- Active matchs area (Titel) -->
@@ -51,7 +51,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in inactiveMatchObject"
         :key="i"
         v-ripple>
-        <q-item>
+        <q-item clickable v-ripple @click="onInactiveMatchClick(match.matchId, match.match, match.date + ' ' + match.time, match.numberOfParticipants)">
           <q-item-section avatar>
             <q-avatar size="50px">
               <img :src="getImageHomeTeam(match.match)">
@@ -153,7 +153,7 @@
               </div>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-input filled v-model="txtDatetime">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
@@ -181,10 +181,9 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-input v-model="txtAnnotations" filled type="textarea" label="Kommentar"/>
             </div>
-
           </q-card-section>
 
           <q-separator />
@@ -193,6 +192,41 @@
             <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtMatch, txtMatchOld, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- Show inactive match -->
+      <q-dialog v-model="showInactiveMatch" persistent>
+        <q-card style="min-width: 750px">
+          <q-card-section>
+            <div class="text-h6">Anzahl Teilnehmer: {{ intInactiveNumberOfParticipants }}</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-input filled v-model="txtInactiveMatch" label="Spiel" :readonly="true" />
+
+            <div class="q-pt-md">
+              <q-input filled v-model="txtInactiveDatetime" label="Wann" :readonly="true" />
+            </div>
+          </q-card-section>
+
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in participantInactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${n * 25}px`"
+            >
+              <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')">
+            </q-avatar>
+          </div>
+
+          <q-separator />
+
+          <q-card-actions class="text-primary" align="right">
+            <q-btn flat label="Abbrechen" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -220,7 +254,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMatch, URLParticipant, URLParticipantArchive, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
+import { IsAdministrator, URLMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
@@ -230,6 +264,10 @@ const _constMatchOld = ref('')
 const _constPublished = ref(false)
 const _constDatetime = ref('')
 const _constAnnotations = ref('')
+
+const _constInactiveMatch = ref('')
+const _constInactiveDatetime = ref('')
+const _constInactiveNumberOfParticipants = ref('')
 
 export default {
   name: 'ListMatch',
@@ -246,6 +284,10 @@ export default {
       txtDatetime: ref(_constDatetime),
       txtAnnotations: ref(_constAnnotations),
 
+      txtInactiveMatch: ref(_constInactiveMatch),
+      txtInactiveDatetime: ref(_constInactiveDatetime),
+      intInactiveNumberOfParticipants: ref(_constInactiveNumberOfParticipants),
+
       txtMatchNew: ref(''),
       chbPublishedNew: ref(false),
       txtDatetimeNew: ref(''),
@@ -260,7 +302,8 @@ export default {
 
       addMatch: ref(false),
       editMatch: ref(false),
-      arcMatch: ref(false)
+      arcMatch: ref(false),
+      showInactiveMatch: ref(false)
     }
   },
 
@@ -270,6 +313,8 @@ export default {
       URLMatch,
       URLParticipant,
       URLParticipantArchive,
+      URLMember,
+      getAvatar,
       getImageHomeTeam,
       getImageAwayTeam,
 
@@ -298,7 +343,17 @@ export default {
       participantInactiveMatchObject: [
         {
           matchId: '',
-          participant: ''
+          participant: '',
+          participantAvatar: '',
+          participantAvatarIsCustomized: ''
+        }
+      ],
+
+      memberObject: [
+        {
+          member: '',
+          avatar: '',
+          customized: ''
         }
       ]
 
@@ -309,6 +364,7 @@ export default {
   },
 
   mounted () {
+    this.getTableMember()
     this.getTableActiveMatch()
     this.getTableInactiveMatch()
   },
@@ -347,6 +403,60 @@ export default {
         if (dateA < dateB) return -1
         return 0
       })
+    },
+
+    onInactiveMatchClick (_matchId, _match, _datetime, _numberOfParticipants) {
+      // console.log('Clicked on an inactive Match: ' + _matchId + ', ' + _match + ', ' + _datetime + ', ' + _numberOfParticipants)
+      _constInactiveMatch.value = _match
+      _constInactiveDatetime.value = _datetime
+      _constInactiveNumberOfParticipants.value = _numberOfParticipants
+
+      this.participantInactiveMatchObject = []
+      // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadMatch')
+      this.$axios(`${this.URLParticipantArchive}&func=ReadMatch&matchId=${_matchId}`)
+        .then((res) => {
+          this.tableParticipantArchive = res.data.split('\n')
+          for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
+            const element = this.tableParticipantArchive[index].split(',')
+
+            let _participantAvatar = this.memberObject.find(el => el.member === element[4].trim())?.avatar
+            if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
+            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === element[4].trim())?.customized
+            if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = 'FALSE'
+
+            this.setParticipantInactiveMatchObject(element[4].trim(), _participantAvatar, _participantAvatarIsCustomized)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+      this.showInactiveMatch = true
+    },
+
+    setParticipantInactiveMatchObject (_participant, _participantAvatar, _participantAvatarIsCustomized) {
+      this.participantInactiveMatchObject.push({ participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized })
+    },
+
+    getTableMember () {
+      this.memberObject = []
+
+      // console.log('URLMember: ' + this.URLMember + '&func=Read')
+      this.$axios(`${this.URLMember}&func=Read`)
+        .then((res) => {
+          this.tableMember = res.data.split('\n')
+          for (let index = 0; index < this.tableMember.length - 1; index++) {
+            const element = this.tableMember[index].split(',')
+            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    setMemberObject (_member, _avatar, _customized) {
+      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
     onMatchClick (_row, _matchId, _match, _published, _datetime, _annotations) {
@@ -468,7 +578,6 @@ export default {
 
     getTableInactiveMatch () {
       this.inactiveMatchObject = []
-      this.participantInactiveMatchObject = []
 
       // console.log('URLMatch: ' + this.URLMatch + '&func=ReadInactive')
       this.$axios(`${this.URLMatch}&func=ReadInactive`)
@@ -477,15 +586,11 @@ export default {
           for (let index = 0; index < this.tableInactiveMatch.length - 1; index++) {
             const element = this.tableInactiveMatch[index].split(',')
 
-            // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadMatch')
             let _numberOfParticipants = 0
+            // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadMatch')
             this.$axios(`${this.URLParticipantArchive}&func=ReadMatch&matchId=${element[1]}`)
               .then((res2) => {
                 this.tableParticipantArchive = res2.data.split('\n')
-                for (let index2 = 0; index2 < this.tableParticipantArchive.length - 1; index2++) {
-                  const element2 = this.tableParticipantArchive[index2].split(',')
-                  this.setParticipantInactiveMatchObject(element2[2], element2[4].trim())
-                }
                 _numberOfParticipants = this.tableParticipantArchive.length - 1
                 this.setInactiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[7], _numberOfParticipants)
               })
@@ -497,10 +602,6 @@ export default {
         .catch((err) => {
           console.log(err)
         })
-    },
-
-    setParticipantInactiveMatchObject (_matchId, _participant) {
-      this.participantInactiveMatchObject.push({ matchId: _matchId, participant: _participant })
     },
 
     setInactiveMatchObject (_matchId, _match, _time, _date, _numberOfParticipants) {
