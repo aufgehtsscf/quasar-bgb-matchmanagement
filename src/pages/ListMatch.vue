@@ -198,7 +198,7 @@
 
       <!-- Show inactive match -->
       <q-dialog v-model="showInactiveMatch" persistent>
-        <q-card style="min-width: 750px">
+        <q-card style="min-width: 350px">
           <q-card-section>
             <div class="text-h6">Anzahl Teilnehmer: {{ intInactiveNumberOfParticipants }}</div>
           </q-card-section>
