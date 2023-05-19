@@ -217,9 +217,33 @@
               :key="n"
               size="40px"
               class="overlapping"
-              :style="`left: ${n * 25}px`"
+              :style="`left: ${n * 32}px`"
             >
-              <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')">
+              <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n <= 9">
+            </q-avatar>
+          </div>
+
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in participantInactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${(n-10) * 32}px`"
+            >
+              <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 9 && n <= 19">
+            </q-avatar>
+          </div>
+
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in participantInactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${(n-20) * 32}px`"
+            >
+              <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19">
             </q-avatar>
           </div>
 
