@@ -113,6 +113,30 @@
             </q-select>
           </q-card-section>
 
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in inactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${n * 32}px`"
+            >
+              <img :src="getImageAwayTeam(el.match)" v-if="n <= 9">
+            </q-avatar>
+          </div>
+
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in inactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${(n - 10) * 32}px`"
+            >
+              <img :src="getImageAwayTeam(el.match)" v-if="n > 9 && n <= 19">
+            </q-avatar>
+          </div>
+
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
@@ -146,7 +170,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, URLParticipantArchive, getAvatar, avatarOptions } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, URLParticipantArchive, getAvatar, avatarOptions, getImageAwayTeam } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -191,6 +215,7 @@ export default {
       URLParticipantArchive,
       getAvatar,
       avatarOptions,
+      getImageAwayTeam,
 
       memberObject: [
         {
@@ -201,7 +226,14 @@ export default {
           customized: '',
           numberOfParticipations: ''
         }
+      ],
+
+      inactiveMatchObject: [
+        {
+          match: ''
+        }
       ]
+
     }
   },
 
@@ -263,7 +295,25 @@ export default {
       _constMemberOld.value = _member
       _constAvatar.value = _avatar
 
+      this.inactiveMatchObject = []
+      // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadParticipant&participant=' + _member)
+      this.$axios(`${this.URLParticipantArchive}&func=ReadParticipant&participant=${_member}`)
+        .then((res) => {
+          this.tableParticipantArchive = res.data.split('\n')
+          for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
+            const element = this.tableParticipantArchive[index].split(',')
+            this.setInactiveMatchObject(element[3].trim())
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
       this.editMember = true
+    },
+
+    setInactiveMatchObject (_match) {
+      this.inactiveMatchObject.push({ match: _match })
     },
 
     addMemberSave (_member, _avatar) {
@@ -326,6 +376,11 @@ export default {
 </script>
 
 <style lang="scss">
+.overlapping {
+  border: 2px solid white;
+  position: absolute
+}
+
 .header-image {
   height: 100%;
   z-index: -1;

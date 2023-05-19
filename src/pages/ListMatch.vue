@@ -229,7 +229,7 @@
               :key="n"
               size="40px"
               class="overlapping"
-              :style="`left: ${(n-10) * 32}px`"
+              :style="`left: ${(n - 10) * 32}px`"
             >
               <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 9 && n <= 19">
             </q-avatar>
@@ -241,7 +241,7 @@
               :key="n"
               size="40px"
               class="overlapping"
-              :style="`left: ${(n-20) * 32}px`"
+              :style="`left: ${(n - 20) * 32}px`"
             >
               <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19">
             </q-avatar>
@@ -366,7 +366,6 @@ export default {
 
       participantInactiveMatchObject: [
         {
-          matchId: '',
           participant: '',
           participantAvatar: '',
           participantAvatarIsCustomized: ''
@@ -436,7 +435,7 @@ export default {
       _constInactiveNumberOfParticipants.value = _numberOfParticipants
 
       this.participantInactiveMatchObject = []
-      // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadMatch')
+      // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadMatch&matchId=' + _matchId)
       this.$axios(`${this.URLParticipantArchive}&func=ReadMatch&matchId=${_matchId}`)
         .then((res) => {
           this.tableParticipantArchive = res.data.split('\n')
