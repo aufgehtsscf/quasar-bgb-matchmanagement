@@ -15,19 +15,26 @@
         :key="i"
         v-ripple>
         <q-item clickable v-ripple @click="onMatchClick(match.row, match.matchId, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
-          <q-item-section avatar>
+          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
             <q-avatar size="50px">
-              <img :src="getImageHomeTeam(match.match)">
+              <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
           </q-item-section>
-          <q-item-section avatar v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)">
-            <q-item-label v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)" caption>VS</q-item-label>
+          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
+            <q-item-label>VS</q-item-label>
           </q-item-section>
-          <q-item-section avatar v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)">
+          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
             <q-avatar size="50px">
-              <img :src="getImageAwayTeam(match.match)">
+              <img :src="getTeamImage(match.awayTeam)">
             </q-avatar>
           </q-item-section>
+
+          <q-item-section v-if="match.homeTeam === '' && match.awayTeam === ''">
+            <q-avatar size="50px">
+              <img :src="getTeamImage(match.match)">
+            </q-avatar>
+          </q-item-section>
+
           <q-item-section>
             <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
             <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
@@ -52,19 +59,26 @@
         :key="i"
         v-ripple>
         <q-item clickable v-ripple @click="onInactiveMatchClick(match.matchId, match.match, match.date + ' ' + match.time, match.numberOfParticipants)">
-          <q-item-section avatar>
+          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
             <q-avatar size="50px">
-              <img :src="getImageHomeTeam(match.match)">
+              <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
           </q-item-section>
-          <q-item-section avatar v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)">
-            <q-item-label v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)" caption>VS</q-item-label>
+          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
+            <q-item-label>VS</q-item-label>
           </q-item-section>
-          <q-item-section avatar v-if="getImageHomeTeam(match.match) !== getImageAwayTeam(match.match)">
+          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
             <q-avatar size="50px">
-              <img :src="getImageAwayTeam(match.match)">
+              <img :src="getTeamImage(match.awayTeam)">
             </q-avatar>
           </q-item-section>
+
+          <q-item-section v-if="match.homeTeam === '' && match.awayTeam === ''">
+            <q-avatar size="50px">
+              <img :src="getTeamImage(match.match)">
+            </q-avatar>
+          </q-item-section>
+
           <q-item-section>
             <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
             <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
@@ -278,7 +292,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
+import { IsAdministrator, URLMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getTeamImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
@@ -339,8 +353,7 @@ export default {
       URLParticipantArchive,
       URLMember,
       getAvatar,
-      getImageHomeTeam,
-      getImageAwayTeam,
+      getTeamImage,
 
       activeMatchObject: [
         {
@@ -350,7 +363,9 @@ export default {
           published: '',
           time: '',
           annotations: '',
-          date: ''
+          date: '',
+          homeTeam: '',
+          awayTeam: ''
         }
       ],
 
@@ -360,7 +375,9 @@ export default {
           match: '',
           time: '',
           date: '',
-          numberOfParticipants: ''
+          numberOfParticipants: '',
+          homeTeam: '',
+          awayTeam: ''
         }
       ],
 
@@ -403,7 +420,7 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[0], element[1], element[3], element[4], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
+            this.setActiveMatchObject(element[0], element[1], element[3], element[4], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7], element[9], element[10])
           }
         })
         .catch((err) => {
@@ -411,8 +428,8 @@ export default {
         })
     },
 
-    setActiveMatchObject (_row, _matchId, _match, _published, _time, _annotations, _date) {
-      this.activeMatchObject.push({ row: parseInt(_row), matchId: _matchId, match: _match, published: _published, time: _time, annotations: _annotations, date: _date })
+    setActiveMatchObject (_row, _matchId, _match, _published, _time, _annotations, _date, _homeTeam, _awayTeam) {
+      this.activeMatchObject.push({ row: parseInt(_row), matchId: _matchId, match: _match, published: _published, time: _time, annotations: _annotations, date: _date, homeTeam: _homeTeam, awayTeam: _awayTeam })
 
       // Sort array of objects
       this.activeMatchObject.sort(function (a, b) {
@@ -615,7 +632,7 @@ export default {
               .then((res2) => {
                 this.tableParticipantArchive = res2.data.split('\n')
                 _numberOfParticipants = this.tableParticipantArchive.length - 1
-                this.setInactiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[7], _numberOfParticipants)
+                this.setInactiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[7], _numberOfParticipants, element[9], element[10])
               })
               .catch((err2) => {
                 console.log(err2)
@@ -627,8 +644,8 @@ export default {
         })
     },
 
-    setInactiveMatchObject (_matchId, _match, _time, _date, _numberOfParticipants) {
-      this.inactiveMatchObject.push({ matchId: _matchId, match: _match, time: _time, date: _date, numberOfParticipants: _numberOfParticipants })
+    setInactiveMatchObject (_matchId, _match, _time, _date, _numberOfParticipants, _homeTeam, _awayTeam) {
+      this.inactiveMatchObject.push({ matchId: _matchId, match: _match, time: _time, date: _date, numberOfParticipants: _numberOfParticipants, homeTeam: _homeTeam, awayTeam: _awayTeam })
 
       // Sort array of objects
       this.inactiveMatchObject.sort(function (a, b) {

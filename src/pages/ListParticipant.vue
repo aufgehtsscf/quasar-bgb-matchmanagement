@@ -25,19 +25,16 @@
 
     <!-- Match Card -->
     <q-card class="my-card" style="max-width: 500px">
-      <q-card-section horizontal>
-        <q-img
-          class="col-5"
-          :src="getImageHomeTeam(txtMatchName)"
-        />
-        <q-card-section v-if="getImageHomeTeam(txtMatchName) !== getImageAwayTeam(txtMatchName)">
-          <div class="absolute-center text-h6 text-center text-black">
-            VS&nbsp;
-        </div>
+      <q-card-section horizontal v-if="txtHomeTeam !== '' && txtAwayTeam !==''">
+        <q-img class="col-5" :src="getTeamImage(txtHomeTeam)"/>
+        <q-card-section>
+          <div class="absolute-center text-h6 text-center text-black">VS&nbsp;</div>
         </q-card-section>
-        <q-img
-          :src="getImageAwayTeam(txtMatchName)"
-        />
+        <q-img :src="getTeamImage(txtAwayTeam)"/>
+      </q-card-section>
+
+      <q-card-section horizontal v-if="txtMatchName !== ''">
+        <q-img :src="getTeamImage(txtMatchName)"/>
       </q-card-section>
 
       <q-separator />
@@ -321,16 +318,16 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, getImageHomeTeam, getImageAwayTeam } from 'src/boot/utils.js'
+import { IsAdministrator, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, getTeamImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
-const _constMatch = ref('')
+const _constHomeTeam = ref('')
+const _constAwayTeam = ref('')
+const _constMatchName = ref('')
+const _constMatchId = ref('')
 const _constTime = ref('')
 const _constAnnotationsMatchOriginal = ref('')
 const _constAnnotationsMatch = ref('')
-const _constDate = ref('')
-const _constMatchName = ref('')
-const _constMatchId = ref('')
 const _constArrivalElements = []
 
 const _constParticipantRow = ref(0)
@@ -366,6 +363,8 @@ export default {
     const $q = useQuasar()
 
     return {
+      txtHomeTeam: ref(_constHomeTeam),
+      txtAwayTeam: ref(_constAwayTeam),
       txtMatchName: ref(_constMatchName),
       txtMatchId: ref(_constMatchId),
       txtTime: ref(_constTime),
@@ -434,8 +433,7 @@ export default {
       URLWhereIsMyCard,
       URLMember,
       getAvatar,
-      getImageHomeTeam,
-      getImageAwayTeam,
+      getTeamImage,
 
       activeMatchObject: [
         {
@@ -610,9 +608,7 @@ export default {
     onMatchClick (_matchId, _match, _time, _annotationsMatch, _date) {
       // console.log('onMatchClick: ' + _matchId + ', ' + _match + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
       _constMatchId.value = _matchId
-      _constMatch.value = _match
       _constTime.value = _time
-      _constDate.value = _date
       _constMatchName.value = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
 
       this.loadReloadData(_matchId, _time, _annotationsMatch)

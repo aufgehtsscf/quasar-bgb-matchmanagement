@@ -1,5 +1,5 @@
 const IsAdministrator = true
-const Client = 'BGB'
+const Client = 'TEST'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbwVxbhtoh4V78VL6GH-uhnpHzz0rpV215KeV8hEQ4Y_mvnE3PWHS6MBpPgBJcu2yaptSA/exec'
 let URLParticipant = 'https://script.google.com/macros/s/AKfycbydoX9quJr-aOj7_v3gnt6Ku__u29EnmKIaT6rgyZ3Ow4qzZ9eyu-sMsijteqvZAQox4Q/exec'
@@ -24,17 +24,7 @@ const getAvatar = function (_avatar, _customized) {
   else return 'statics/avatars/collection/' + _avatar + '.png'
 }
 
-const getImageHomeTeam = function (_matchName) {
-  if (_matchName.toLowerCase().indexOf('fest') >= 0 ||
-      _matchName.toLowerCase().indexOf('party') >= 0 ||
-      _matchName.toLowerCase().indexOf('anlass') >= 0 ||
-      _matchName.toLowerCase().indexOf('geburtstag') >= 0 ||
-      _matchName.toLowerCase().indexOf('event') >= 0) return 'statics/teams/Event.png'
-  if (_matchName.toLowerCase().indexOf('test') >= 0) return 'statics/teams/Test.png'
-  return 'statics/teams/Freiburg.png'
-}
-
-const getImageAwayTeam = function (_matchName) {
+const getTeamImage = function (_matchName) {
   if (_matchName.toLowerCase().indexOf('arminia') >= 0 || _matchName.toLowerCase().indexOf('bielefeld') >= 0) return 'statics/teams/Arminia_Bielefeld.png'
   if (_matchName.toLowerCase().indexOf('augsburg') >= 0) return 'statics/teams/Augsburg.png'
   if (_matchName.toLowerCase().indexOf('leverkusen') >= 0) return 'statics/teams/Bayer_Leverkusen.png'
@@ -67,6 +57,7 @@ const getImageAwayTeam = function (_matchName) {
   if (_matchName.toLowerCase().indexOf('paderborn') >= 0) return 'statics/teams/Paderborn.png'
   if (_matchName.toLowerCase().indexOf('sandhausen') >= 0) return 'statics/teams/Sandhausen.png'
   if (_matchName.toLowerCase().indexOf('schalke') >= 0) return 'statics/teams/Schalke.png'
+  if (_matchName.toLowerCase().indexOf('scf') >= 0 || _matchName.toLowerCase().indexOf('freiburg') >= 0) return 'statics/teams/Schalke.png'
   if (_matchName.toLowerCase().indexOf('pauli') >= 0) return 'statics/teams/St._Pauli.png'
   if (_matchName.toLowerCase().indexOf('pokal') >= 0) return 'statics/teams/DFB_Pokal.png'
   if (_matchName.toLowerCase().indexOf('vfb') >= 0 || _matchName.toLowerCase().indexOf('stuttgart') >= 0) return 'statics/teams/Stuttgart.png'
@@ -145,6 +136,5 @@ export { URLMember }
 export { URLOrder }
 export { getLogo }
 export { getAvatar }
-export { getImageHomeTeam }
-export { getImageAwayTeam }
+export { getTeamImage }
 export { avatarOptions }
