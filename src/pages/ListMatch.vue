@@ -581,8 +581,8 @@ export default {
       this.$axios(`${this.URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
         .then((res3) => {
           if (res3.data === 'Success, requested action completed') {
-            // console.log(this.URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId + '&inactivated=TRUE')
-            this.$axios(`${this.URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}&inactivated=TRUE`)
+            // console.log(this.URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId)
+            this.$axios(`${this.URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
               .then((res4) => {
                 if (res4.data === 'Success, requested action completed') {
                   this.getTableActiveMatch()
