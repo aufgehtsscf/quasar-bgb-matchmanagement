@@ -35,7 +35,7 @@ const getImageHomeTeam = function (_matchName) {
 }
 
 const getImageAwayTeam = function (_matchName) {
-  if (_matchName.toLowerCase().indexOf('arminia') >= 0) return 'statics/teams/Arminia.png'
+  if (_matchName.toLowerCase().indexOf('arminia') >= 0 || _matchName.toLowerCase().indexOf('bielefeld') >= 0) return 'statics/teams/Arminia_Bielefeld.png'
   if (_matchName.toLowerCase().indexOf('augsburg') >= 0) return 'statics/teams/Augsburg.png'
   if (_matchName.toLowerCase().indexOf('leverkusen') >= 0) return 'statics/teams/Bayer_Leverkusen.png'
   if (_matchName.toLowerCase().indexOf('bayern') >= 0 || _matchName.toLowerCase().indexOf('münchen') >= 0) return 'statics/teams/Bayern_München.png'
