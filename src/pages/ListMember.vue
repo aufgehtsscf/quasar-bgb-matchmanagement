@@ -121,7 +121,7 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getTeamImage(el.match)" v-if="n <= 9">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9">
             </q-avatar>
           </div>
 
@@ -133,7 +133,7 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getTeamImage(el.match)" v-if="n > 9 && n <= 19">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19">
             </q-avatar>
           </div>
 
@@ -170,7 +170,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, URLParticipantArchive, getAvatar, avatarOptions, getTeamImage } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, avatarOptions, getTeamImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -213,6 +213,7 @@ export default {
       IsAdministrator,
       URLMember,
       URLParticipantArchive,
+      URLMatch,
       getAvatar,
       avatarOptions,
       getTeamImage,
@@ -230,7 +231,18 @@ export default {
 
       inactiveMatchObject: [
         {
-          match: ''
+          matchName: '',
+          homeTeam: '',
+          awayTeam: ''
+        }
+      ],
+
+      matchObject: [
+        {
+          matchId: '',
+          matchName: '',
+          homeTeam: '',
+          awayTeam: ''
         }
       ]
 
@@ -242,6 +254,7 @@ export default {
 
   mounted () {
     this.getTableMember()
+    this.getTableMatch()
   },
 
   methods: {
@@ -287,6 +300,27 @@ export default {
       })
     },
 
+    getTableMatch () {
+      this.matchObject = []
+
+      // console.log('URLMatch: ' + this.URLMatch + '&func=ReadInactive')
+      this.$axios(`${this.URLMatch}&func=ReadInactive`)
+        .then((res) => {
+          this.tableMatch = res.data.split('\n')
+          for (let index = 0; index < this.tableMatch.length - 1; index++) {
+            const element = this.tableMatch[index].split(',')
+            this.setMatchObject(element[1], element[3].trim(), element[9].trim(), element[10].trim())
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    setMatchObject (_matchId, _matchName, _homeTeam, _awayTeam) {
+      this.matchObject.push({ matchId: _matchId, matchName: _matchName, homeTeam: _homeTeam, awayTeam: _awayTeam })
+    },
+
     onMemberClick (_row, _memberId, _member, _avatar) {
       // console.log('Clicked on Member: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _avatar)
       _constMemberRow.value = _row
@@ -302,7 +336,10 @@ export default {
           this.tableParticipantArchive = res.data.split('\n')
           for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
             const element = this.tableParticipantArchive[index].split(',')
-            this.setInactiveMatchObject(element[3].trim())
+            const _matchName = this.matchObject.find(el => el.matchId === element[2]).matchName
+            const _homeTeam = this.matchObject.find(el => el.matchId === element[2]).homeTeam
+            const _awayTeam = this.matchObject.find(el => el.matchId === element[2]).awayTeam
+            this.setInactiveMatchObject(_matchName, _homeTeam, _awayTeam)
           }
         })
         .catch((err) => {
@@ -312,8 +349,8 @@ export default {
       this.editMember = true
     },
 
-    setInactiveMatchObject (_match) {
-      this.inactiveMatchObject.push({ match: _match })
+    setInactiveMatchObject (_matchName, _homeTeam, _awayTeam) {
+      this.inactiveMatchObject.push({ matchName: _matchName, homeTeam: _homeTeam, awayTeam: _awayTeam })
     },
 
     addMemberSave (_member, _avatar) {

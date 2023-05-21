@@ -13,9 +13,9 @@
         <q-list v-for="(match, i) in activeMatchObject"
           :key="i"
           v-ripple>
-          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.match, match.time, match.annotations, match.date)">
+          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.matchName, match.time, match.annotations, match.date, match.homeTeam, match.awayTeam)">
             <q-item-section>
-              <q-item-label>{{ match.match }}</q-item-label>
+              <q-item-label>{{ match.matchName }}</q-item-label>
               <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
             </q-item-section>
           </q-item>
@@ -33,8 +33,8 @@
         <q-img :src="getTeamImage(txtAwayTeam)"/>
       </q-card-section>
 
-      <q-card-section horizontal v-if="txtMatchName !== ''">
-        <q-img :src="getTeamImage(txtMatchName)"/>
+      <q-card-section horizontal v-if="txtHomeTeam === '' && txtAwayTeam ===''">
+        <q-img :src="getEventImage(txtMatchName)"/>
       </q-card-section>
 
       <q-separator />
@@ -318,7 +318,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, getTeamImage } from 'src/boot/utils.js'
+import { IsAdministrator, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, getTeamImage, getEventImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constHomeTeam = ref('')
@@ -434,14 +434,17 @@ export default {
       URLMember,
       getAvatar,
       getTeamImage,
+      getEventImage,
 
       activeMatchObject: [
         {
           matchId: '',
-          match: '',
+          matchName: '',
           time: '',
           annotations: '',
-          date: ''
+          date: '',
+          homeTeam: '',
+          awayTeam: ''
         }
       ],
 
@@ -450,7 +453,7 @@ export default {
           row: '',
           participantId: '',
           timestamp: '',
-          match: '',
+          matchName: '',
           participant: '',
           participantAvatar: '',
           _participantAvatarIsCustomized: '',
@@ -466,7 +469,7 @@ export default {
         {
           presentParticipantRow: '',
           presentParticipantParticipantId: '',
-          presentParticipantMatch: '',
+          presentParticipantMatchName: '',
           presentParticipantParticipant: '',
           presentParticipantParticipantAvatar: '',
           presentParticipantParticipantAvatarIsCustomized: '',
@@ -573,11 +576,13 @@ export default {
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      let nextMatchId = ''
-      let nextMatch = ''
-      let nextTime = ''
-      let nextAnnotations = ''
-      let nextDate = ''
+      let _nextMatchId = ''
+      let _nextMatchName = ''
+      let _nextTime = ''
+      let _nextAnnotations = ''
+      let _nextDate = ''
+      let _nextHomeTeam = ''
+      let _nextAwayTeam = ''
 
       // console.log('URLMatch: ' + this.URLMatch + '&func=ReadActive&published=TRUE')
       this.$axios(`${this.URLMatch}&func=ReadActive&published=TRUE`)
@@ -585,31 +590,48 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7])
+            this.setActiveMatchObject(element[1], element[3].trim(), element[5].substring(0, 5), element[6].trim().replace(/<br>/g, '\n'), element[7], element[9].trim(), element[10].trim())
             if (index === 0) {
-              nextMatchId = element[1]
-              nextMatch = element[3]
-              nextTime = element[5].substring(0, 5)
-              nextAnnotations = element[6].replace(/<br>/g, '\n')
-              nextDate = element[7]
+              _nextMatchId = element[1]
+              _nextMatchName = element[3].trim()
+              _nextTime = element[5].substring(0, 5)
+              _nextAnnotations = element[6].trim().replace(/<br>/g, '\n')
+              _nextDate = element[7]
+              _nextHomeTeam = element[9].trim()
+              _nextAwayTeam = element[10].trim()
             }
           }
-          this.onMatchClick(nextMatchId, nextMatch, nextTime, nextAnnotations, nextDate)
+          this.onMatchClick(_nextMatchId, _nextMatchName, _nextTime, _nextAnnotations, _nextDate, _nextHomeTeam, _nextAwayTeam)
         })
         .catch((err) => {
           console.log(err)
         })
     },
 
-    setActiveMatchObject (_matchId, _match, _time, _annotations, _date) {
-      this.activeMatchObject.push({ matchId: _matchId, match: _match, time: _time, annotations: _annotations, date: _date })
+    setActiveMatchObject (_matchId, _matchName, _time, _annotations, _date, _homeTeam, _awayTeam) {
+      this.activeMatchObject.push({ matchId: _matchId, matchName: _matchName, time: _time, annotations: _annotations, date: _date, homeTeam: _homeTeam, awayTeam: _awayTeam })
+
+      // Sort array of objects
+      this.activeMatchObject.sort(function (a, b) {
+        let dateA = a.date
+        dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
+
+        let dateB = b.date
+        dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
+
+        if (dateA > dateB) return 1
+        if (dateA < dateB) return -1
+        return 0
+      })
     },
 
-    onMatchClick (_matchId, _match, _time, _annotationsMatch, _date) {
-      // console.log('onMatchClick: ' + _matchId + ', ' + _match + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
+    onMatchClick (_matchId, _matchName, _time, _annotationsMatch, _date, _homeTeam, _awayTeam) {
+      // console.log('onMatchClick: ' + _matchId + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date + ', ' + _homeTeam + ', ' + _awayTeam)
+      _constHomeTeam.value = _homeTeam
+      _constAwayTeam.value = _awayTeam
+      _constMatchName.value = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
       _constMatchId.value = _matchId
       _constTime.value = _time
-      _constMatchName.value = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
 
       this.loadReloadData(_matchId, _time, _annotationsMatch)
     },
@@ -844,8 +866,8 @@ export default {
         })
     },
 
-    setParticipantObject (_row, _participantId, _timestamp, _match, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
-      this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, match: _match, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
+    setParticipantObject (_row, _participantId, _timestamp, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
+      this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, matchName: _matchName, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
 
       // Sort array of objects
       this.participantObject.sort(function (a, b) {
@@ -871,7 +893,7 @@ export default {
       this.reservation = ''
 
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.match, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.matchName, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
 
         if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.row, el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 
@@ -942,8 +964,8 @@ export default {
       })
     },
 
-    setPresentParticipantObject (_row, _participantId, _match, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
-      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantParticipantId: _participantId, presentParticipantMatch: _match, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantParticipantAvatarIsCustomized: _participantAvatarIsCustomized, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
+    setPresentParticipantObject (_row, _participantId, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
+      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantParticipantId: _participantId, presentParticipantMatchName: _matchName, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantParticipantAvatarIsCustomized: _participantAvatarIsCustomized, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
     },
 
     setTicketObject (_row, _participantId, _participant, _arrival, _annotations, _action, _reaction) {

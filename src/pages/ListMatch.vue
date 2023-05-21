@@ -14,29 +14,23 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in activeMatchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(match.row, match.matchId, match.match, match.published, match.date + ' ' + match.time, match.annotations)">
-          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-            <q-avatar size="50px">
+        <q-item clickable v-ripple @click="onMatchClick(match.row, match.matchId, match.matchName, match.published, match.date + ' ' + match.time, match.annotations)">
+            <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
-          </q-item-section>
-          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-            <q-item-label>VS</q-item-label>
-          </q-item-section>
-          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-            <q-avatar size="50px">
+            <q-label v-if="match.homeTeam !== '' && match.awayTeam !== ''">&ThickSpace;</q-label>
+            <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.awayTeam)">
             </q-avatar>
-          </q-item-section>
 
-          <q-item-section v-if="match.homeTeam === '' && match.awayTeam === ''">
-            <q-avatar size="50px">
-              <img :src="getTeamImage(match.match)">
+            <q-avatar size="50px" v-if="match.homeTeam === '' && match.awayTeam === ''">
+              <img :src="getEventImage(match.matchName)">
             </q-avatar>
-          </q-item-section>
+
+            <q-label>&ThickSpace;&ThickSpace;&ThickSpace;</q-label>
 
           <q-item-section>
-            <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
+            <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
             <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
             <q-item-label caption v-if="match.published === 'TRUE'">Publiziert: Ja</q-item-label>
             <q-item-label caption v-if="match.published === 'FALSE'">Publiziert: Nein</q-item-label>
@@ -58,29 +52,23 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in inactiveMatchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onInactiveMatchClick(match.matchId, match.match, match.date + ' ' + match.time, match.numberOfParticipants)">
-          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-            <q-avatar size="50px">
+        <q-item clickable v-ripple @click="onInactiveMatchClick(match.matchId, match.matchName, match.date + ' ' + match.time, match.numberOfParticipants)">
+            <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
-          </q-item-section>
-          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-            <q-item-label>VS</q-item-label>
-          </q-item-section>
-          <q-item-section v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-            <q-avatar size="50px">
+            <q-label v-if="match.homeTeam !== '' && match.awayTeam !== ''">&ThickSpace;</q-label>
+            <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.awayTeam)">
             </q-avatar>
-          </q-item-section>
 
-          <q-item-section v-if="match.homeTeam === '' && match.awayTeam === ''">
-            <q-avatar size="50px">
-              <img :src="getTeamImage(match.match)">
+            <q-avatar size="50px" v-if="match.homeTeam === '' && match.awayTeam === ''">
+              <img :src="getEventImage(match.matchName)">
             </q-avatar>
-          </q-item-section>
+
+            <q-label>&ThickSpace;&ThickSpace;&ThickSpace;</q-label>
 
           <q-item-section>
-            <q-item-label overline>Spiel: {{ match.match }}</q-item-label>
+            <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
             <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
           </q-item-section>
           <q-badge floating color="teal">{{ match.numberOfParticipants }}</q-badge>
@@ -292,7 +280,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getTeamImage } from 'src/boot/utils.js'
+import { IsAdministrator, URLMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getTeamImage, getEventImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
@@ -354,12 +342,13 @@ export default {
       URLMember,
       getAvatar,
       getTeamImage,
+      getEventImage,
 
       activeMatchObject: [
         {
           row: '',
           matchId: '',
-          match: '',
+          matchName: '',
           published: '',
           time: '',
           annotations: '',
@@ -372,7 +361,7 @@ export default {
       inactiveMatchObject: [
         {
           matchId: '',
-          match: '',
+          matchName: '',
           time: '',
           date: '',
           numberOfParticipants: '',
@@ -420,7 +409,7 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[0], element[1], element[3], element[4], element[5].substring(0, 5), element[6].replace(/<br>/g, '\n'), element[7], element[9], element[10])
+            this.setActiveMatchObject(element[0], element[1], element[3].trim(), element[4], element[5].substring(0, 5), element[6].trim().replace(/<br>/g, '\n'), element[7], element[9].trim(), element[10].trim())
           }
         })
         .catch((err) => {
@@ -428,8 +417,8 @@ export default {
         })
     },
 
-    setActiveMatchObject (_row, _matchId, _match, _published, _time, _annotations, _date, _homeTeam, _awayTeam) {
-      this.activeMatchObject.push({ row: parseInt(_row), matchId: _matchId, match: _match, published: _published, time: _time, annotations: _annotations, date: _date, homeTeam: _homeTeam, awayTeam: _awayTeam })
+    setActiveMatchObject (_row, _matchId, _matchName, _published, _time, _annotations, _date, _homeTeam, _awayTeam) {
+      this.activeMatchObject.push({ row: parseInt(_row), matchId: _matchId, matchName: _matchName, published: _published, time: _time, annotations: _annotations, date: _date, homeTeam: _homeTeam, awayTeam: _awayTeam })
 
       // Sort array of objects
       this.activeMatchObject.sort(function (a, b) {
@@ -445,9 +434,9 @@ export default {
       })
     },
 
-    onInactiveMatchClick (_matchId, _match, _datetime, _numberOfParticipants) {
-      // console.log('Clicked on an inactive Match: ' + _matchId + ', ' + _match + ', ' + _datetime + ', ' + _numberOfParticipants)
-      _constInactiveMatch.value = _match
+    onInactiveMatchClick (_matchId, _matchName, _datetime, _numberOfParticipants) {
+      // console.log('Clicked on an inactive Match: ' + _matchId + ', ' + _matchName + ', ' + _datetime + ', ' + _numberOfParticipants)
+      _constInactiveMatch.value = _matchName
       _constInactiveDatetime.value = _datetime
       _constInactiveNumberOfParticipants.value = _numberOfParticipants
 
@@ -499,12 +488,12 @@ export default {
       this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
-    onMatchClick (_row, _matchId, _match, _published, _datetime, _annotations) {
-      // console.log('Clicked on an Match: ' + _row + ', ' + _matchId + ', ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    onMatchClick (_row, _matchId, _matchName, _published, _datetime, _annotations) {
+      // console.log('Clicked on an Match: ' + _row + ', ' + _matchId + ', ' + _matchName + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
       _constMatchRow.value = _row
       _constMatchId.value = _matchId
-      _constMatch.value = _match
-      _constMatchOld.value = _match
+      _constMatch.value = _matchName
+      _constMatchOld.value = _matchName
       _constPublished.value = _published === 'TRUE'
       _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
@@ -512,18 +501,18 @@ export default {
       if (this.IsAdministrator) this.editMatch = true
     },
 
-    addMatchSave (_match, _published, _datetime, _annotations) {
-      // console.log('addMatchSave: ' + _match + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    addMatchSave (_matchName, _published, _datetime, _annotations) {
+      // console.log('addMatchSave: ' + _matchName + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      const _matches = this.activeMatchObject.map(el => el.match)
-      const _matchExists = _matches.includes(_match)
+      const _matches = this.activeMatchObject.map(el => el.matchName)
+      const _matchExists = _matches.includes(_matchName)
       if (_matchExists) {
         this.onMatchAlreadyExists()
       } else {
         const _date = _datetime.substring(0, 10)
         const _time = _datetime.substring(11, 16)
 
-        this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.getTableActiveMatch()
@@ -535,19 +524,19 @@ export default {
       }
     },
 
-    editMatchSave (_row, _matchId, _match, _matchOld, _published, _datetime, _annotations) {
-      // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _match + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    editMatchSave (_row, _matchId, _matchName, _matchOld, _published, _datetime, _annotations) {
+      // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _matchName + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      const _matches = this.activeMatchObject.map(el => el.match)
-      const _matchExists = _matches.includes(_match) && _match !== _matchOld
+      const _matches = this.activeMatchObject.map(el => el.matchName)
+      const _matchExists = _matches.includes(_matchName) && _matchName !== _matchOld
       if (_matchExists) {
         this.onMatchAlreadyExists()
       } else {
         const _date = _datetime.substring(0, 10)
         const _time = _datetime.substring(11, 16)
-        const _newMatch = _match.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
+        const _newMatch = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
 
-        this.$axios(`${this.URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&match=${encodeURI(_match.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios(`${this.URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&match=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               // console.log('editMatchSave - UpdateMatch: ' + _matchId + ', ' + _newMatch)
@@ -644,8 +633,8 @@ export default {
         })
     },
 
-    setInactiveMatchObject (_matchId, _match, _time, _date, _numberOfParticipants, _homeTeam, _awayTeam) {
-      this.inactiveMatchObject.push({ matchId: _matchId, match: _match, time: _time, date: _date, numberOfParticipants: _numberOfParticipants, homeTeam: _homeTeam, awayTeam: _awayTeam })
+    setInactiveMatchObject (_matchId, _matchName, _time, _date, _numberOfParticipants, _homeTeam, _awayTeam) {
+      this.inactiveMatchObject.push({ matchId: _matchId, matchName: _matchName, time: _time, date: _date, numberOfParticipants: _numberOfParticipants, homeTeam: _homeTeam, awayTeam: _awayTeam })
 
       // Sort array of objects
       this.inactiveMatchObject.sort(function (a, b) {
