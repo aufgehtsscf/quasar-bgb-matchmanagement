@@ -121,7 +121,8 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== ''">
+              <img :src="getEventImage(el.matchName)" v-if="n <= 9 && el.awayTeam === ''">
             </q-avatar>
           </div>
 
@@ -133,7 +134,8 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== ''">
+              <img :src="getEventImage(el.matchName)" v-if="n > 9 && n <= 19 && el.awayTeam === ''">
             </q-avatar>
           </div>
 
@@ -170,7 +172,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, avatarOptions, getTeamImage } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, avatarOptions, getTeamImage, getEventImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -217,6 +219,7 @@ export default {
       getAvatar,
       avatarOptions,
       getTeamImage,
+      getEventImage,
 
       memberObject: [
         {
