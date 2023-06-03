@@ -234,18 +234,18 @@ export default {
 
       inactiveMatchObject: [
         {
-          matchName: '',
           homeTeam: '',
-          awayTeam: ''
+          awayTeam: '',
+          matchName: ''
         }
       ],
 
       matchObject: [
         {
           matchId: '',
-          matchName: '',
           homeTeam: '',
-          awayTeam: ''
+          awayTeam: '',
+          matchName: ''
         }
       ]
 
@@ -312,7 +312,7 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[1], element[3].trim(), element[9].trim(), element[10].trim())
+            this.setMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim())
           }
         })
         .catch((err) => {
@@ -320,8 +320,8 @@ export default {
         })
     },
 
-    setMatchObject (_matchId, _matchName, _homeTeam, _awayTeam) {
-      this.matchObject.push({ matchId: _matchId, matchName: _matchName, homeTeam: _homeTeam, awayTeam: _awayTeam })
+    setMatchObject (_matchId, _homeTeam, _awayTeam, _matchName) {
+      this.matchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName })
     },
 
     onMemberClick (_row, _memberId, _member, _avatar) {
@@ -339,10 +339,10 @@ export default {
           this.tableParticipantArchive = res.data.split('\n')
           for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
             const element = this.tableParticipantArchive[index].split(',')
-            const _matchName = this.matchObject.find(el => el.matchId === element[2]).matchName
             const _homeTeam = this.matchObject.find(el => el.matchId === element[2]).homeTeam
             const _awayTeam = this.matchObject.find(el => el.matchId === element[2]).awayTeam
-            this.setInactiveMatchObject(_matchName, _homeTeam, _awayTeam)
+            const _matchName = this.matchObject.find(el => el.matchId === element[2]).matchName
+            this.setInactiveMatchObject(_homeTeam, _awayTeam, _matchName)
           }
         })
         .catch((err) => {
@@ -352,8 +352,8 @@ export default {
       this.editMember = true
     },
 
-    setInactiveMatchObject (_matchName, _homeTeam, _awayTeam) {
-      this.inactiveMatchObject.push({ matchName: _matchName, homeTeam: _homeTeam, awayTeam: _awayTeam })
+    setInactiveMatchObject (_homeTeam, _awayTeam, _matchName) {
+      this.inactiveMatchObject.push({ homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName })
     },
 
     addMemberSave (_member, _avatar) {

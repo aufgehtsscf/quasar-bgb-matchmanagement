@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in activeMatchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(match.row, match.matchId, match.matchName, match.published, match.date + ' ' + match.time, match.annotations)">
+        <q-item clickable v-ripple @click="onMatchClick(match.row, match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.published, match.date + ' ' + match.time, match.annotations)">
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
@@ -84,17 +84,28 @@
       <q-dialog v-model="addMatch" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Spiel erfassen</div>
+            <div class="text-h6">Spiel/Veranstaltung erfassen</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtMatchNew" autofocus label="Spiel" />
+            <q-toggle
+              v-model="tglIsEventNew"
+              color="red"
+              label="Veranstaltung"
+              left-label
+            />
 
-            <div class="q-pt-md">
-              <div class="q-gutter-sm">
-                <div><q-checkbox left-label v-model="chbPublishedNew" label="Publizieren" /></div>
-              </div>
-            </div>
+            <q-input dense v-model="txtHomeTeamNew" autofocus label="Heim" v-if="!tglIsEventNew" />
+            <q-input dense v-model="txtAwayTeamNew" label="Gast" v-if="!tglIsEventNew" />
+            <q-input dense v-model="txtMatchNameNew" label="Spielname" v-if="!tglIsEventNew" />
+            <q-input dense v-model="txtMatchNameNew" label="Veranstaltungsname" v-if="tglIsEventNew" />
+
+            <q-toggle
+              v-model="tglPublishedNew"
+              color="red"
+              label="Publizieren"
+              left-label
+            />
 
             <div class="q-pt-md" style="max-width: 300px">
               <q-input filled v-model="txtDatetimeNew">
@@ -134,7 +145,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtMatchNew, chbPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtMatchNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtMatchNameNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtMatchNameNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -143,17 +154,28 @@
       <q-dialog v-model="editMatch" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Spiel ändern</div>
+            <div class="text-h6">Spiel/Veranstaltung ändern</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtMatch" autofocus label="Spiel" />
+            <q-toggle
+              v-model="tglIsEvent"
+              color="red"
+              label="Veranstaltung"
+              left-label
+            />
 
-            <div class="q-pt-md">
-              <div class="q-gutter-sm">
-                <div><q-checkbox left-label v-model="chbPublished" label="Publizieren" /></div>
-              </div>
-            </div>
+            <q-input dense v-model="txtHomeTeam" autofocus label="Heim" v-if="!tglIsEvent" />
+            <q-input dense v-model="txtAwayTeam"  label="Gast" v-if="!tglIsEvent" />
+            <q-input dense v-model="txtMatchName"  label="Spielname" v-if="!tglIsEvent" />
+            <q-input dense v-model="txtMatchName" label="Veranstaltungsname" v-if="tglIsEvent" />
+
+            <q-toggle
+              v-model="tglPublished"
+              color="red"
+              label="Publizieren"
+              left-label
+            />
 
             <div class="q-pt-md" style="max-width: 350px">
               <q-input filled v-model="txtDatetime">
@@ -193,7 +215,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtMatch, txtMatchOld, chbPublished, txtDatetime, txtAnnotations)" :disable="txtMatch === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam, txtAwayTeam, txtMatchName, txtMatchOld, tglPublished, txtDatetime, txtAnnotations)" :disable="txtMatchName === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -285,8 +307,11 @@ import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
 const _constMatchId = ref('')
-const _constMatch = ref('')
-const _constMatchOld = ref('')
+const _constIsEvent = ref(false)
+const _constHomeTeam = ref('')
+const _constAwayTeam = ref('')
+const _constMatchName = ref('')
+const _constMatchNameOld = ref('')
 const _constPublished = ref(false)
 const _constDatetime = ref('')
 const _constAnnotations = ref('')
@@ -304,9 +329,12 @@ export default {
     return {
       intMatchRow: ref(_constMatchRow),
       txtMatchId: ref(_constMatchId),
-      txtMatch: ref(_constMatch),
-      txtMatchOld: ref(_constMatchOld),
-      chbPublished: ref(_constPublished),
+      tglIsEvent: ref(_constIsEvent),
+      txtHomeTeam: ref(_constHomeTeam),
+      txtAwayTeam: ref(_constAwayTeam),
+      txtMatchName: ref(_constMatchName),
+      txtMatchOld: ref(_constMatchNameOld),
+      tglPublished: ref(_constPublished),
       txtDatetime: ref(_constDatetime),
       txtAnnotations: ref(_constAnnotations),
 
@@ -314,8 +342,11 @@ export default {
       txtInactiveDatetime: ref(_constInactiveDatetime),
       intInactiveNumberOfParticipants: ref(_constInactiveNumberOfParticipants),
 
-      txtMatchNew: ref(''),
-      chbPublishedNew: ref(false),
+      tglIsEventNew: ref(false),
+      txtHomeTeamNew: ref(''),
+      txtAwayTeamNew: ref(''),
+      txtMatchNameNew: ref(''),
+      tglPublishedNew: ref(false),
       txtDatetimeNew: ref(''),
       txtAnnotationsNew: ref('<STANDARDTEXT>'),
 
@@ -348,25 +379,25 @@ export default {
         {
           row: '',
           matchId: '',
+          homeTeam: '',
+          awayTeam: '',
           matchName: '',
           published: '',
           time: '',
           annotations: '',
-          date: '',
-          homeTeam: '',
-          awayTeam: ''
+          date: ''
         }
       ],
 
       inactiveMatchObject: [
         {
           matchId: '',
+          homeTeam: '',
+          awayTeam: '',
           matchName: '',
           time: '',
           date: '',
-          numberOfParticipants: '',
-          homeTeam: '',
-          awayTeam: ''
+          numberOfParticipants: ''
         }
       ],
 
@@ -409,7 +440,7 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[0], element[1], element[3].trim(), element[4], element[5].substring(0, 5), element[6].trim().replace(/<br>/g, '\n'), element[7], element[9].trim(), element[10].trim())
+            this.setActiveMatchObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[6], element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
           }
         })
         .catch((err) => {
@@ -417,8 +448,8 @@ export default {
         })
     },
 
-    setActiveMatchObject (_row, _matchId, _matchName, _published, _time, _annotations, _date, _homeTeam, _awayTeam) {
-      this.activeMatchObject.push({ row: parseInt(_row), matchId: _matchId, matchName: _matchName, published: _published, time: _time, annotations: _annotations, date: _date, homeTeam: _homeTeam, awayTeam: _awayTeam })
+    setActiveMatchObject (_row, _matchId, _homeTeam, _awayTeam, _matchName, _published, _time, _annotations, _date) {
+      this.activeMatchObject.push({ row: parseInt(_row), matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, time: _time, annotations: _annotations, date: _date })
 
       // Sort array of objects
       this.activeMatchObject.sort(function (a, b) {
@@ -488,12 +519,15 @@ export default {
       this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
-    onMatchClick (_row, _matchId, _matchName, _published, _datetime, _annotations) {
-      // console.log('Clicked on an Match: ' + _row + ', ' + _matchId + ', ' + _matchName + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    onMatchClick (_row, _matchId, _homeTeam, _awayTeam, _matchName, _published, _datetime, _annotations) {
+      // console.log('Clicked on an Match: ' + _row + ', ' + _matchId + ', ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
       _constMatchRow.value = _row
       _constMatchId.value = _matchId
-      _constMatch.value = _matchName
-      _constMatchOld.value = _matchName
+      _constIsEvent.value = _homeTeam === '' && _awayTeam === ''
+      _constHomeTeam.value = _homeTeam
+      _constAwayTeam.value = _awayTeam
+      _constMatchName.value = _matchName
+      _constMatchNameOld.value = _matchName
       _constPublished.value = _published === 'TRUE'
       _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
@@ -501,8 +535,8 @@ export default {
       if (this.IsAdministrator) this.editMatch = true
     },
 
-    addMatchSave (_matchName, _published, _datetime, _annotations) {
-      // console.log('addMatchSave: ' + _matchName + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    addMatchSave (_homeTeam, _awayTeam, _matchName, _published, _datetime, _annotations) {
+      // console.log('addMatchSave: ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName)
@@ -512,7 +546,7 @@ export default {
         const _date = _datetime.substring(0, 10)
         const _time = _datetime.substring(11, 16)
 
-        this.$axios(`${this.URLMatch}&func=Add&match=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios(`${this.URLMatch}&func=Add&homeTeam=${encodeURI(_homeTeam.replace(',', ' '))}&awayTeam=${encodeURI(_awayTeam.replace(',', ' '))}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.getTableActiveMatch()
@@ -524,8 +558,8 @@ export default {
       }
     },
 
-    editMatchSave (_row, _matchId, _matchName, _matchOld, _published, _datetime, _annotations) {
-      // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _matchName + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    editMatchSave (_row, _matchId, _homeTeam, _awayTeam, _matchName, _matchOld, _published, _datetime, _annotations) {
+      // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName) && _matchName !== _matchOld
@@ -534,13 +568,13 @@ export default {
       } else {
         const _date = _datetime.substring(0, 10)
         const _time = _datetime.substring(11, 16)
-        const _newMatch = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
+        const _newMatchName = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
 
-        this.$axios(`${this.URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&match=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios(`${this.URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&homeTeam=${encodeURI(_homeTeam.replace(',', ' '))}&awayTeam=${encodeURI(_awayTeam.replace(',', ' '))}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
-              // console.log('editMatchSave - UpdateMatch: ' + _matchId + ', ' + _newMatch)
-              this.$axios(`${this.URLParticipant}&func=UpdateMatch&matchId=${_matchId}&newMatch=${_newMatch}`)
+              // console.log('editMatchSave - UpdateMatch: ' + _matchId + ', ' + _newMatchName)
+              this.$axios(`${this.URLParticipant}&func=UpdateMatch&matchId=${_matchId}&newMatchName=${_newMatchName}`)
                 .then((res2) => {
                   if (res2.data === 'Success, requested action completed') {
                     this.getTableActiveMatch()
@@ -570,7 +604,7 @@ export default {
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
             const element = this.tableParticipant[index].split(',')
             await sleep(1000)
-            this.$axios(`${this.URLParticipantArchive}&func=Add&timestamp=${element[3]}&matchId=${element[2]}&match=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
+            this.$axios(`${this.URLParticipantArchive}&func=Add&timestamp=${element[3]}&matchId=${element[2]}&matchName=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
               .catch((err) => {
                 console.log(err)
               })
@@ -621,7 +655,7 @@ export default {
               .then((res2) => {
                 this.tableParticipantArchive = res2.data.split('\n')
                 _numberOfParticipants = this.tableParticipantArchive.length - 1
-                this.setInactiveMatchObject(element[1], element[3], element[5].substring(0, 5), element[7], _numberOfParticipants, element[9], element[10])
+                this.setInactiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[9], _numberOfParticipants)
               })
               .catch((err2) => {
                 console.log(err2)
@@ -633,7 +667,7 @@ export default {
         })
     },
 
-    setInactiveMatchObject (_matchId, _matchName, _time, _date, _numberOfParticipants, _homeTeam, _awayTeam) {
+    setInactiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _time, _date, _numberOfParticipants) {
       this.inactiveMatchObject.push({ matchId: _matchId, matchName: _matchName, time: _time, date: _date, numberOfParticipants: _numberOfParticipants, homeTeam: _homeTeam, awayTeam: _awayTeam })
 
       // Sort array of objects

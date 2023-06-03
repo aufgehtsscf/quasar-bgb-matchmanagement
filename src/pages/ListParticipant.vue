@@ -13,7 +13,7 @@
         <q-list v-for="(match, i) in activeMatchObject"
           :key="i"
           v-ripple>
-          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.matchName, match.time, match.annotations, match.date, match.homeTeam, match.awayTeam)">
+          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.time, match.annotations, match.date)">
             <q-item-section>
               <q-item-label>{{ match.matchName }}</q-item-label>
               <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
@@ -321,10 +321,10 @@ import useQuasar from 'quasar/src/composables/use-quasar.js'
 import { IsAdministrator, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, getTeamImage, getEventImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
+const _constMatchId = ref('')
 const _constHomeTeam = ref('')
 const _constAwayTeam = ref('')
 const _constMatchName = ref('')
-const _constMatchId = ref('')
 const _constTime = ref('')
 const _constAnnotationsMatchOriginal = ref('')
 const _constAnnotationsMatch = ref('')
@@ -363,10 +363,10 @@ export default {
     const $q = useQuasar()
 
     return {
+      txtMatchId: ref(_constMatchId),
       txtHomeTeam: ref(_constHomeTeam),
       txtAwayTeam: ref(_constAwayTeam),
       txtMatchName: ref(_constMatchName),
-      txtMatchId: ref(_constMatchId),
       txtTime: ref(_constTime),
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
@@ -439,12 +439,12 @@ export default {
       activeMatchObject: [
         {
           matchId: '',
+          homeTeam: '',
+          awayTeam: '',
           matchName: '',
           time: '',
           annotations: '',
-          date: '',
-          homeTeam: '',
-          awayTeam: ''
+          date: ''
         }
       ],
 
@@ -577,12 +577,12 @@ export default {
       this.activeMatchObject = []
 
       let _nextMatchId = ''
+      let _nextHomeTeam = ''
+      let _nextAwayTeam = ''
       let _nextMatchName = ''
       let _nextTime = ''
       let _nextAnnotations = ''
       let _nextDate = ''
-      let _nextHomeTeam = ''
-      let _nextAwayTeam = ''
 
       // console.log('URLMatch: ' + this.URLMatch + '&func=ReadActive&published=TRUE')
       this.$axios(`${this.URLMatch}&func=ReadActive&published=TRUE`)
@@ -590,26 +590,26 @@ export default {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[1], element[3].trim(), element[5].substring(0, 5), element[6].trim().replace(/<br>/g, '\n'), element[7], element[9].trim(), element[10].trim())
+            this.setActiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
             if (index === 0) {
               _nextMatchId = element[1]
-              _nextMatchName = element[3].trim()
-              _nextTime = element[5].substring(0, 5)
-              _nextAnnotations = element[6].trim().replace(/<br>/g, '\n')
-              _nextDate = element[7]
-              _nextHomeTeam = element[9].trim()
-              _nextAwayTeam = element[10].trim()
+              _nextHomeTeam = element[3].trim()
+              _nextAwayTeam = element[4].trim()
+              _nextMatchName = element[5].trim()
+              _nextTime = element[7].substring(0, 5)
+              _nextAnnotations = element[8].trim().replace(/<br>/g, '\n')
+              _nextDate = element[9]
             }
           }
-          this.onMatchClick(_nextMatchId, _nextMatchName, _nextTime, _nextAnnotations, _nextDate, _nextHomeTeam, _nextAwayTeam)
+          this.onMatchClick(_nextMatchId, _nextHomeTeam, _nextAwayTeam, _nextMatchName, _nextTime, _nextAnnotations, _nextDate)
         })
         .catch((err) => {
           console.log(err)
         })
     },
 
-    setActiveMatchObject (_matchId, _matchName, _time, _annotations, _date, _homeTeam, _awayTeam) {
-      this.activeMatchObject.push({ matchId: _matchId, matchName: _matchName, time: _time, annotations: _annotations, date: _date, homeTeam: _homeTeam, awayTeam: _awayTeam })
+    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _time, _annotations, _date) {
+      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, time: _time, annotations: _annotations, date: _date })
 
       // Sort array of objects
       this.activeMatchObject.sort(function (a, b) {
@@ -625,12 +625,12 @@ export default {
       })
     },
 
-    onMatchClick (_matchId, _matchName, _time, _annotationsMatch, _date, _homeTeam, _awayTeam) {
-      // console.log('onMatchClick: ' + _matchId + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date + ', ' + _homeTeam + ', ' + _awayTeam)
+    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _time, _annotationsMatch, _date) {
+      // console.log('onMatchClick: ' + _matchId + ', ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
+      _constMatchId.value = _matchId
       _constHomeTeam.value = _homeTeam
       _constAwayTeam.value = _awayTeam
       _constMatchName.value = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
-      _constMatchId.value = _matchId
       _constTime.value = _time
 
       this.loadReloadData(_matchId, _time, _annotationsMatch)
