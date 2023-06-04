@@ -318,7 +318,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, teamOptions, getTeamImage, getEventImage } from 'src/boot/utils.js'
+import { IsAdministrator, StandardText, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, teamOptions, getTeamImage, getEventImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchId = ref('')
@@ -428,6 +428,7 @@ export default {
   data () {
     return {
       IsAdministrator,
+      StandardText,
       URLMatch,
       URLParticipant,
       URLWhereIsMyCard,
@@ -915,8 +916,10 @@ export default {
 
       if (this.reservation !== '') this.reservation += ','
 
+      const _standardText = StandardText.replace('<HH>', parseInt(_time.substring(0, 2) - 2)).replace('<MM>', _time.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
+
       _constAnnotationsMatchOriginal.value = _annotationsMatch
-      _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', 'Wer reserviert Plätze (' + parseInt(_time.substring(0, 2) - 2) + ':' + _time.substring(3, 5) + '): ' + this.reservation + ' die Fahne und die Socken')
+      _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText)
 
       _constTicketList.value = ''
       this.ticketObject.forEach(el => {

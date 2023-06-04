@@ -1,6 +1,7 @@
-const IsAdministrator = false
+const IsAdministrator = true
 const Client = 'BGB'
 const HomeTeam = 'Freiburg'
+const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
 let URLParticipant = 'https://script.google.com/macros/s/AKfycby5QLG3Ri_vpENUrwSNtyBR3L8j_AR9_ly4eRKwTHSLaCdgFfPmnEuvPEKX085oJEAwlg/exec'
@@ -135,6 +136,7 @@ const avatarOptions = [
 export { IsAdministrator }
 export { Client }
 export { HomeTeam }
+export { StandardText }
 export { URLMatch }
 export { URLParticipant }
 export { URLParticipantArchive }
