@@ -577,14 +577,6 @@ export default {
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      let _nextMatchId = ''
-      let _nextHomeTeam = ''
-      let _nextAwayTeam = ''
-      let _nextMatchName = ''
-      let _nextTime = ''
-      let _nextAnnotations = ''
-      let _nextDate = ''
-
       // console.log('URLMatch: ' + this.URLMatch + '&func=ReadActive&published=TRUE')
       this.$axios(`${this.URLMatch}&func=ReadActive&published=TRUE`)
         .then((res) => {
@@ -592,17 +584,9 @@ export default {
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
             const element = this.tableMatch[index].split(',')
             this.setActiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
-            if (index === 0) {
-              _nextMatchId = element[1]
-              _nextHomeTeam = element[3].trim()
-              _nextAwayTeam = element[4].trim()
-              _nextMatchName = element[5].trim()
-              _nextTime = element[7].substring(0, 5)
-              _nextAnnotations = element[8].trim().replace(/<br>/g, '\n')
-              _nextDate = element[9]
-            }
           }
-          this.onMatchClick(_nextMatchId, _nextHomeTeam, _nextAwayTeam, _nextMatchName, _nextTime, _nextAnnotations, _nextDate)
+
+          this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].time, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
         })
         .catch((err) => {
           console.log(err)
