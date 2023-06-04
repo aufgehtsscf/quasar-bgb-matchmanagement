@@ -1,5 +1,6 @@
 const IsAdministrator = true
 const Client = 'TEST'
+const HomeTeam = 'Freiburg'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
 let URLParticipant = 'https://script.google.com/macros/s/AKfycby5QLG3Ri_vpENUrwSNtyBR3L8j_AR9_ly4eRKwTHSLaCdgFfPmnEuvPEKX085oJEAwlg/exec'
@@ -25,46 +26,11 @@ const getAvatar = function (_avatar, _customized) {
 }
 
 const getTeamImage = function (_team) {
-  if (_team.toLowerCase().indexOf('arminia') >= 0 || _team.toLowerCase().indexOf('bielefeld') >= 0) return 'statics/teams/Arminia_Bielefeld.png'
-  if (_team.toLowerCase().indexOf('augsburg') >= 0) return 'statics/teams/Augsburg.png'
-  if (_team.toLowerCase().indexOf('leverkusen') >= 0) return 'statics/teams/Bayer_Leverkusen.png'
-  if (_team.toLowerCase().indexOf('bayern') >= 0 || _team.toLowerCase().indexOf('münchen') >= 0) return 'statics/teams/Bayern_München.png'
-  if (_team.toLowerCase().indexOf('bochum') >= 0) return 'statics/teams/Bochum.png'
-  if (_team.toLowerCase().indexOf('dortmund') >= 0) return 'statics/teams/Borussia_Dortmund.png'
-  if (_team.toLowerCase().indexOf('gladbach') >= 0) return 'statics/teams/Borussia_Mönchengladbach.png'
-  if (_team.toLowerCase().indexOf('darmstadt') >= 0) return 'statics/teams/Darmstadt.png'
-  if (_team.toLowerCase().indexOf('braunschweig') >= 0) return 'statics/teams/Eintracht_Braunschweig.png'
-  if (_team.toLowerCase().indexOf('frankfurt') >= 0) return 'statics/teams/Eintracht_Frankfurt.png'
-  if (_team.toLowerCase().indexOf('fortuna') >= 0 || _team.toLowerCase().indexOf('düsseldorf') >= 0) return 'statics/teams/Fortuna_Düsseldorf.png'
-  if (_team.toLowerCase().indexOf('greuther') >= 0 || _team.toLowerCase().indexOf('fürth') >= 0) return 'statics/teams/Greuther_Fürth.png'
-  if (_team.toLowerCase().indexOf('hamburg') >= 0 || _team.toLowerCase().indexOf('hsv') >= 0) return 'statics/teams/Hamburger_SV.png'
-  if (_team.toLowerCase().indexOf('hannover') >= 0) return 'statics/teams/Hannover.png'
-  if (_team.toLowerCase().indexOf('hansa') >= 0 || _team.toLowerCase().indexOf('rostock') >= 0) return 'statics/teams/Hansa_Rostock.png'
-  if (_team.toLowerCase().indexOf('heidenheim') >= 0) return 'statics/teams/Heidenheim.png'
-  if (_team.toLowerCase().indexOf('hertha') >= 0) return 'statics/teams/Hertha.png'
-  if (_team.toLowerCase().indexOf('hoffenheim') >= 0) return 'statics/teams/Hoffenheim.png'
-  if (_team.toLowerCase().indexOf('holstein') >= 0) return 'statics/teams/Holstein.png'
-  if (_team.toLowerCase().indexOf('jahn') >= 0 || _team.toLowerCase().indexOf('regensburg') >= 0) return 'statics/teams/Jahn_Regensburg.png'
-  if (_team.toLowerCase().indexOf('juve') >= 0 || _team.toLowerCase().indexOf('turin') >= 0) return 'statics/teams/Juventus_Turin.png'
-  if (_team.toLowerCase().indexOf('fck') >= 0 || _team.toLowerCase().indexOf('kaiserslautern') >= 0) return 'statics/teams/Kaiserslautern.png'
-  if (_team.toLowerCase().indexOf('ksc') >= 0 || _team.toLowerCase().indexOf('karlsruher') >= 0) return 'statics/teams/Karlsruher.png'
-  if (_team.toLowerCase().indexOf('köln') >= 0) return 'statics/teams/Köln.png'
-  if (_team.toLowerCase().indexOf('leipzig') >= 0) return 'statics/teams/Leipzig.png'
-  if (_team.toLowerCase().indexOf('magdeburg') >= 0) return 'statics/teams/Magdeburg.png'
-  if (_team.toLowerCase().indexOf('mainz') >= 0) return 'statics/teams/Mainz.png'
-  if (_team.toLowerCase().indexOf('nürnberg') >= 0) return 'statics/teams/Nürnberg.png'
-  if (_team.toLowerCase().indexOf('olympiakos') >= 0 || _team.toLowerCase().indexOf('piräus') >= 0) return 'statics/teams/Olympiakos_Piräus.png'
-  if (_team.toLowerCase().indexOf('paderborn') >= 0) return 'statics/teams/Paderborn.png'
-  if (_team.toLowerCase().indexOf('sandhausen') >= 0) return 'statics/teams/Sandhausen.png'
-  if (_team.toLowerCase().indexOf('schalke') >= 0) return 'statics/teams/Schalke.png'
-  if (_team.toLowerCase().indexOf('scf') >= 0 || _team.toLowerCase().indexOf('freiburg') >= 0) return 'statics/teams/Freiburg.png'
-  if (_team.toLowerCase().indexOf('pauli') >= 0) return 'statics/teams/St._Pauli.png'
-  if (_team.toLowerCase().indexOf('pokal') >= 0) return 'statics/teams/DFB_Pokal.png'
-  if (_team.toLowerCase().indexOf('vfb') >= 0 || _team.toLowerCase().indexOf('stuttgart') >= 0) return 'statics/teams/Stuttgart.png'
-  if (_team.toLowerCase().indexOf('union') >= 0) return 'statics/teams/Union_Berlin.png'
-  if (_team.toLowerCase().indexOf('werder') >= 0 || _team.toLowerCase().indexOf('bremen') >= 0) return 'statics/teams/Werder_Bremen.png'
-  if (_team.toLowerCase().indexOf('wolfsburg') >= 0) return 'statics/teams/Wolfsburg.png'
-  return 'statics/teams/QuestionMark.png'
+  let teamImage = this.teamOptions.find(el => el.value === _team)?.image
+  if (typeof teamImage === 'undefined') {
+    teamImage = 'statics/teams/QuestionMark.png'
+  }
+  return teamImage
 }
 
 const getEventImage = function (_matchName) {
@@ -72,60 +38,103 @@ const getEventImage = function (_matchName) {
   return 'statics/teams/Event.png'
 }
 
+const teamOptions = [
+  { label: 'Arminia', value: 'Arminia_Bielefeld', image: 'statics/teams/Arminia_Bielefeld.png' },
+  { label: 'Augsburg', value: 'Augsburg', image: 'statics/teams/Augsburg.png' },
+  { label: 'Bayern', value: 'Bayern_München', image: 'statics/teams/Bayern_München.png' },
+  { label: 'Bochum', value: 'Bochum', image: 'statics/teams/Bochum.png' },
+  { label: 'Braunschweig', value: 'Eintracht_Braunschweig', image: 'statics/teams/Eintracht_Braunschweig.png' },
+  { label: 'Darmstadt', value: 'Darmstadt', image: 'statics/teams/Darmstadt.png' },
+  { label: 'DFB Pokal', value: 'DFB_Pokal', image: 'statics/teams/DFB_Pokal.png' },
+  { label: 'Dortmund', value: 'Borussia_Dortmund', image: 'statics/teams/Borussia_Dortmund.png' },
+  { label: 'Frankfurt', value: 'Eintracht_Frankfurt', image: 'statics/teams/Eintracht_Frankfurt.png' },
+  { label: 'Fortuna Düsseldorf', value: 'Fortuna_Düsseldorf', image: 'statics/teams/Fortuna_Düsseldorf.png' },
+  { label: 'Freiburg', value: 'Freiburg', image: 'statics/teams/Freiburg.png' },
+  { label: 'Greuther Fürth', value: 'Greuther_Fürth', image: 'statics/teams/Greuther_Fürth.png' },
+  { label: 'Hamburger SV', value: 'Hamburger_SV', image: 'statics/teams/Hamburger_SV.png' },
+  { label: 'Hannover', value: 'Hannover', image: 'statics/teams/Hannover.png' },
+  { label: 'Hansa Rostock', value: 'Hansa_Rostock', image: 'statics/teams/Hansa_Rostock.png' },
+  { label: 'Heidenheim', value: 'Heidenheim', image: 'statics/teams/Heidenheim.png' },
+  { label: 'Hertha', value: 'Hertha', image: 'statics/teams/Hertha.png' },
+  { label: 'Hoffenheim', value: 'Hoffenheim', image: 'statics/teams/Hoffenheim.png' },
+  { label: 'Holstein', value: 'Holstein', image: 'statics/teams/Holstein.png' },
+  { label: 'Jahn Regensburg', value: 'Jahn_Regensburg', image: 'statics/teams/Jahn_Regensburg.png' },
+  { label: 'Juventus Turin', value: 'Juventus_Turin', image: 'statics/teams/Juventus_Turin.png' },
+  { label: 'Kaiserslautern', value: 'Kaiserslautern', image: 'statics/teams/Kaiserslautern.png' },
+  { label: 'Karlsruher', value: 'Karlsruher', image: 'statics/teams/Karlsruher.png' },
+  { label: 'Köln', value: 'Köln', image: 'statics/teams/Köln.png' },
+  { label: 'Leipzig', value: 'Leipzig', image: 'statics/teams/Leipzig.png' },
+  { label: 'Leverkusen', value: 'Bayer_Leverkusen', image: 'statics/teams/Bayer_Leverkusen.png' },
+  { label: 'Magdeburg', value: 'Magdeburg', image: 'statics/teams/Magdeburg.png' },
+  { label: 'Mainz', value: 'Mainz', image: 'statics/teams/Mainz.png' },
+  { label: 'Mönchengladbach', value: 'Borussia_Mönchengladbach', image: 'statics/teams/Borussia_Mönchengladbach.png' },
+  { label: 'Nürnberg', value: 'Nürnberg', image: 'statics/teams/Nürnberg.png' },
+  { label: 'Olympiakos Piräus', value: 'Olympiakos_Piräus', image: 'statics/teams/Olympiakos_Piräus.png' },
+  { label: 'Paderborn', value: 'Paderborn', image: 'statics/teams/Paderborn.png' },
+  { label: 'Sandhausen', value: 'Sandhausen', image: 'statics/teams/Sandhausen.png' },
+  { label: 'Schalke', value: 'Schalke', image: 'statics/teams/Schalke.png' },
+  { label: 'St. Pauli', value: 'St._Pauli', image: 'statics/teams/St._Pauli.png' },
+  { label: 'Stuttgart', value: 'Stuttgart', image: 'statics/teams/Stuttgart.png' },
+  { label: 'Union Berlin', value: 'Union_Berlin', image: 'statics/teams/Union_Berlin.png' },
+  { label: 'Werder Bremen', value: 'Werder_Bremen', image: 'statics/teams/Werder_Bremen.png' },
+  { label: 'Wolfsburg', value: 'Wolfsburg', image: 'statics/teams/Wolfsburg.png' }
+]
+
 const avatarOptions = [
-  { label: 'AbrahamSimpson', value: 'AbrahamSimpson', avatar: 'statics/avatars/collection/AbrahamSimpson.png' },
+  { label: 'Abraham Simpson', value: 'Abraham_Simpson', avatar: 'statics/avatars/collection/Abraham_Simpson.png' },
   { label: 'Alien', value: 'Alien', avatar: 'statics/avatars/collection/Alien.png' },
   { label: 'Ariel', value: 'Ariel', avatar: 'statics/avatars/collection/Ariel.png' },
-  { label: 'BarneyGumble', value: 'BarneyGumble', avatar: 'statics/avatars/collection/BarneyGumble.png' },
-  { label: 'BartSimpson', value: 'BartSimpson', avatar: 'statics/avatars/collection/BartSimpson.png' },
-  { label: 'CharlieBrown', value: 'CharlieBrown', avatar: 'statics/avatars/collection/CharlieBrown.png' },
-  { label: 'CharlieChaplin', value: 'CharlieChaplin', avatar: 'statics/avatars/collection/CharlieChaplin.png' },
-  { label: 'ClancyWiggum', value: 'ClancyWiggum', avatar: 'statics/avatars/collection/ClancyWiggum.png' },
+  { label: 'Barney Gumble', value: 'Barney_Gumble', avatar: 'statics/avatars/collection/Barney_Gumble.png' },
+  { label: 'Bart Simpson', value: 'Bart_Simpson', avatar: 'statics/avatars/collection/Bart_Simpson.png' },
+  { label: 'Charlie Brown', value: 'Charlie_Brown', avatar: 'statics/avatars/collection/Charlie_Brown.png' },
+  { label: 'Charlie Chaplin', value: 'Charlie_Chaplin', avatar: 'statics/avatars/collection/Charlie_Chaplin.png' },
+  { label: 'Clancy Wiggum', value: 'Clancy_Wiggum', avatar: 'statics/avatars/collection/Clancy_Wiggum.png' },
   { label: 'Cupid', value: 'Cupid', avatar: 'statics/avatars/collection/Cupid.png' },
-  { label: 'DoctorStrange', value: 'DoctorStrange', avatar: 'statics/avatars/collection/DoctorStrange.png' },
-  { label: 'EdSheeran', value: 'EdSheeran', avatar: 'statics/avatars/collection/EdSheeran.png' },
+  { label: 'Doctor Strange', value: 'Doctor_Strange', avatar: 'statics/avatars/collection/Doctor_Strange.png' },
+  { label: 'Ed Sheeran', value: 'Ed_Sheeran', avatar: 'statics/avatars/collection/Ed_Sheeran.png' },
   { label: 'Eeyore', value: 'Eeyore', avatar: 'statics/avatars/collection/Eeyore.png' },
-  { label: 'ElonMusk', value: 'ElonMusk', avatar: 'statics/avatars/collection/ElonMusk.png' },
-  { label: 'FatCat', value: 'FatCat', avatar: 'statics/avatars/collection/FatCat.png' },
-  { label: 'HelloKitty', value: 'HelloKitty', avatar: 'statics/avatars/collection/HelloKitty.png' },
-  { label: 'HomerSimpson', value: 'HomerSimpson', avatar: 'statics/avatars/collection/HomerSimpson.png' },
+  { label: 'Elon Musk', value: 'Elon_Musk', avatar: 'statics/avatars/collection/Elon_Musk.png' },
+  { label: 'Fat Cat', value: 'Fat_Cat', avatar: 'statics/avatars/collection/Fat_Cat.png' },
+  { label: 'Hello Kitty', value: 'Hello_Kitty', avatar: 'statics/avatars/collection/Hello_Kitty.png' },
+  { label: 'Homer Simpson', value: 'Homer_Simpson', avatar: 'statics/avatars/collection/Homer_Simpson.png' },
   { label: 'Ironman', value: 'Ironman', avatar: 'statics/avatars/collection/Ironman.png' },
   { label: 'Jerry', value: 'Jerry', avatar: 'statics/avatars/collection/Jerry.png' },
-  { label: 'JohnLennon', value: 'JohnLennon', avatar: 'statics/avatars/collection/JohnLennon.png' },
+  { label: 'John Lennon', value: 'John_Lennon', avatar: 'statics/avatars/collection/John_Lennon.png' },
   { label: 'Joker', value: 'Joker', avatar: 'statics/avatars/collection/Joker.png' },
-  { label: 'KrustyTheClown', value: 'KrustyTheClown', avatar: 'statics/avatars/collection/KrustyTheClown.png' },
+  { label: 'Krusty The Clown', value: 'Krusty_The_Clown', avatar: 'statics/avatars/collection/Krusty_The_Clown.png' },
   { label: 'Linus', value: 'Linus', avatar: 'statics/avatars/collection/Linus.png' },
-  { label: 'LisaSimpson', value: 'LisaSimpson', avatar: 'statics/avatars/collection/LisaSimpson.png' },
+  { label: 'Lisa Simpson', value: 'Lisa_Simpson', avatar: 'statics/avatars/collection/Lisa_Simpson.png' },
   { label: 'Lucy', value: 'Lucy', avatar: 'statics/avatars/collection/Lucy.png' },
-  { label: 'MaggieSimpson', value: 'MaggieSimpson', avatar: 'statics/avatars/collection/MaggieSimpson.png' },
+  { label: 'Maggie Simpson', value: 'Maggie_Simpson', avatar: 'statics/avatars/collection/Maggie_Simpson.png' },
   { label: 'Marcie', value: 'Marcie', avatar: 'statics/avatars/collection/Marcie.png' },
-  { label: 'MargeSimpson', value: 'MargeSimpson', avatar: 'statics/avatars/collection/MargeSimpson.png' },
+  { label: 'Marge Simpson', value: 'Marge_Simpson', avatar: 'statics/avatars/collection/Marge_Simpson.png' },
   { label: 'Marie', value: 'Marie', avatar: 'statics/avatars/collection/Marie.png' },
-  { label: 'MarilynMonroe', value: 'MarilynMonroe', avatar: 'statics/avatars/collection/MarilynMonroe.png' },
+  { label: 'Marilyn Monroe', value: 'Marilyn_Monroe', avatar: 'statics/avatars/collection/Marilyn_Monroe.png' },
   { label: 'Messi', value: 'Messi', avatar: 'statics/avatars/collection/Messi.png' },
-  { label: 'MichaelJackson', value: 'MichaelJackson', avatar: 'statics/avatars/collection/MichaelJackson.png' },
+  { label: 'Michael Jackson', value: 'Michael_Jackson', avatar: 'statics/avatars/collection/Michael_Jackson.png' },
   { label: 'Mondtor01', value: 'Mondtor01', avatar: 'statics/avatars/collection/Mondtor01.png' },
   { label: 'Mondtor02', value: 'Mondtor02', avatar: 'statics/avatars/collection/Mondtor02.png' },
-  { label: 'MrBeansTeddy', value: 'MrBeansTeddy', avatar: 'statics/avatars/collection/MrBeansTeddy.png' },
-  { label: 'MrBurns', value: 'MrBurns', avatar: 'statics/avatars/collection/MrBurns.png' },
-  { label: 'MsWicket', value: 'MsWicket', avatar: 'statics/avatars/collection/MsWicket.png' },
+  { label: 'Mr Beans Teddy', value: 'Mr_Beans_Teddy', avatar: 'statics/avatars/collection/Mr_Beans_Teddy.png' },
+  { label: 'Mr Burns', value: 'Mr_Burns', avatar: 'statics/avatars/collection/Mr_Burns.png' },
+  { label: 'Ms Wicket', value: 'Ms_Wicket', avatar: 'statics/avatars/collection/Ms_Wicket.png' },
   { label: 'Pelé', value: 'Pelé', avatar: 'statics/avatars/collection/Pelé.png' },
-  { label: 'PeppermintPatty', value: 'PeppermintPatty', avatar: 'statics/avatars/collection/PeppermintPatty.png' },
-  { label: 'PileOfPoo', value: 'PileOfPoo', avatar: 'statics/avatars/collection/PileOfPoo.png' },
+  { label: 'Peppermint Patty', value: 'Peppermint_Patty', avatar: 'statics/avatars/collection/Peppermint_Patty.png' },
+  { label: 'Pile Of Poo', value: 'Pile_Of_Poo', avatar: 'statics/avatars/collection/Pile_Of_Poo.png' },
   { label: 'Sally', value: 'Sally', avatar: 'statics/avatars/collection/Sally.png' },
   { label: 'Santa', value: 'Santa', avatar: 'statics/avatars/collection/Santa.png' },
-  { label: 'SeaCalf', value: 'SeaCalf', avatar: 'statics/avatars/collection/SeaCalf.png' },
-  { label: 'SnoopDogg', value: 'SnoopDogg', avatar: 'statics/avatars/collection/SnoopDogg.png' },
-  { label: 'StanMarsh', value: 'StanMarsh', avatar: 'statics/avatars/collection/StanMarsh.png' },
+  { label: 'Sea Calf', value: 'Sea_Calf', avatar: 'statics/avatars/collection/Sea_Calf.png' },
+  { label: 'Snoop Dogg', value: 'Snoop_Dogg', avatar: 'statics/avatars/collection/Snoop_Dogg.png' },
+  { label: 'Stan Marsh', value: 'Stan_Marsh', avatar: 'statics/avatars/collection/Stan_Marsh.png' },
   { label: 'Sumo', value: 'Sumo', avatar: 'statics/avatars/collection/Sumo.png' },
-  { label: 'SuperMario', value: 'SuperMario', avatar: 'statics/avatars/collection/SuperMario.png' },
+  { label: 'Super Mario', value: 'Super_Mario', avatar: 'statics/avatars/collection/Super_Mario.png' },
   { label: 'Tom', value: 'Tom', avatar: 'statics/avatars/collection/Tom.png' },
-  { label: 'TomKid', value: 'TomKid', avatar: 'statics/avatars/collection/TomKid.png' },
+  { label: 'Tom Kid', value: 'Tom_Kid', avatar: 'statics/avatars/collection/Tom_Kid.png' },
   { label: 'Woodstock', value: 'Woodstock', avatar: 'statics/avatars/collection/Woodstock.png' }
 ]
 
 export { IsAdministrator }
 export { Client }
+export { HomeTeam }
 export { URLMatch }
 export { URLParticipant }
 export { URLParticipantArchive }
@@ -136,4 +145,5 @@ export { getLogo }
 export { getAvatar }
 export { getTeamImage }
 export { getEventImage }
+export { teamOptions }
 export { avatarOptions }

@@ -95,8 +95,51 @@
               left-label
             />
 
-            <q-input dense v-model="txtHomeTeamNew" autofocus label="Heim" v-if="!tglIsEventNew" />
-            <q-input dense v-model="txtAwayTeamNew" label="Gast" v-if="!tglIsEventNew" />
+            <q-select
+              filled
+              v-model="txtHomeTeamNew"
+              :options="teamOptions"
+              autofocus
+              label="Heim"
+              options-selected-class="text-deep-orange"
+              v-if="!tglIsEventNew"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section homeTeam>
+                    <q-avatar size="50px">
+                      <img :src="scope.opt.image">
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
+            <q-select
+              filled
+              v-model="txtAwayTeamNew"
+              :options="teamOptions"
+              label="Gast"
+              options-selected-class="text-deep-orange"
+              v-if="!tglIsEventNew"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section awayTeam>
+                    <q-avatar size="50px">
+                      <img :src="scope.opt.image">
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
             <q-input dense v-model="txtMatchNameNew" label="Spielname" v-if="!tglIsEventNew" />
             <q-input dense v-model="txtMatchNameNew" label="Veranstaltungsname" v-if="tglIsEventNew" />
 
@@ -145,7 +188,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtMatchNameNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtMatchNameNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtMatchNameNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -165,8 +208,51 @@
               left-label
             />
 
-            <q-input dense v-model="txtHomeTeam" autofocus label="Heim" v-if="!tglIsEvent" />
-            <q-input dense v-model="txtAwayTeam"  label="Gast" v-if="!tglIsEvent" />
+            <q-select
+              filled
+              v-model="txtHomeTeam"
+              :options="teamOptions"
+              autofocus
+              label="Heim"
+              options-selected-class="text-deep-orange"
+              v-if="!tglIsEvent"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section homeTeam>
+                    <q-avatar size="50px">
+                      <img :src="scope.opt.image">
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
+            <q-select
+              filled
+              v-model="txtAwayTeam"
+              :options="teamOptions"
+              label="Gast"
+              options-selected-class="text-deep-orange"
+              v-if="!tglIsEvent"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section awayTeam>
+                    <q-avatar size="50px">
+                      <img :src="scope.opt.image">
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+
             <q-input dense v-model="txtMatchName"  label="Spielname" v-if="!tglIsEvent" />
             <q-input dense v-model="txtMatchName" label="Veranstaltungsname" v-if="tglIsEvent" />
 
@@ -215,7 +301,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="IsAdministrator" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam, txtAwayTeam, txtMatchName, txtMatchOld, tglPublished, txtDatetime, txtAnnotations)" :disable="txtMatchName === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglPublished, txtDatetime, txtAnnotations)" :disable="txtMatchName === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -302,12 +388,13 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getTeamImage, getEventImage } from 'src/boot/utils.js'
+import { IsAdministrator, HomeTeam, URLMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, teamOptions, getTeamImage, getEventImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
 const _constMatchId = ref('')
 const _constIsEvent = ref(false)
+const _constHomeTeamNew = ref(HomeTeam)
 const _constHomeTeam = ref('')
 const _constAwayTeam = ref('')
 const _constMatchName = ref('')
@@ -333,7 +420,7 @@ export default {
       txtHomeTeam: ref(_constHomeTeam),
       txtAwayTeam: ref(_constAwayTeam),
       txtMatchName: ref(_constMatchName),
-      txtMatchOld: ref(_constMatchNameOld),
+      txtMatchNameOld: ref(_constMatchNameOld),
       tglPublished: ref(_constPublished),
       txtDatetime: ref(_constDatetime),
       txtAnnotations: ref(_constAnnotations),
@@ -343,7 +430,7 @@ export default {
       intInactiveNumberOfParticipants: ref(_constInactiveNumberOfParticipants),
 
       tglIsEventNew: ref(false),
-      txtHomeTeamNew: ref(''),
+      txtHomeTeamNew: ref(_constHomeTeamNew),
       txtAwayTeamNew: ref(''),
       txtMatchNameNew: ref(''),
       tglPublishedNew: ref(false),
@@ -367,11 +454,13 @@ export default {
   data () {
     return {
       IsAdministrator,
+      HomeTeam,
       URLMatch,
       URLParticipant,
       URLParticipantArchive,
       URLMember,
       getAvatar,
+      teamOptions,
       getTeamImage,
       getEventImage,
 
@@ -538,6 +627,8 @@ export default {
     addMatchSave (_homeTeam, _awayTeam, _matchName, _published, _datetime, _annotations) {
       // console.log('addMatchSave: ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
+      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
+
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName)
       if (_matchExists) {
@@ -546,7 +637,7 @@ export default {
         const _date = _datetime.substring(0, 10)
         const _time = _datetime.substring(11, 16)
 
-        this.$axios(`${this.URLMatch}&func=Add&homeTeam=${encodeURI(_homeTeam.replace(',', ' '))}&awayTeam=${encodeURI(_awayTeam.replace(',', ' '))}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios(`${this.URLMatch}&func=Add&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.getTableActiveMatch()
@@ -558,11 +649,14 @@ export default {
       }
     },
 
-    editMatchSave (_row, _matchId, _homeTeam, _awayTeam, _matchName, _matchOld, _published, _datetime, _annotations) {
-      // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _matchOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    editMatchSave (_row, _matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _published, _datetime, _annotations) {
+      // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _matchNameOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+
+      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeam.value
+      if (typeof _awayTeam === 'undefined') _awayTeam = _constAwayTeam.value
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
-      const _matchExists = _matches.includes(_matchName) && _matchName !== _matchOld
+      const _matchExists = _matches.includes(_matchName) && _matchName !== _matchNameOld
       if (_matchExists) {
         this.onMatchAlreadyExists()
       } else {
@@ -570,7 +664,7 @@ export default {
         const _time = _datetime.substring(11, 16)
         const _newMatchName = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
 
-        this.$axios(`${this.URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&homeTeam=${encodeURI(_homeTeam.replace(',', ' '))}&awayTeam=${encodeURI(_awayTeam.replace(',', ' '))}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios(`${this.URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               // console.log('editMatchSave - UpdateMatch: ' + _matchId + ', ' + _newMatchName)
