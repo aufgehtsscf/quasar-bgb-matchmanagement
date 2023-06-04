@@ -1,5 +1,5 @@
-const IsAdministrator = true
-const Client = 'TEST'
+const IsAdministrator = false
+const Client = 'BGB'
 const HomeTeam = 'Freiburg'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
