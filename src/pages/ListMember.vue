@@ -74,7 +74,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, txtAvatarNew.value )" :disable="txtMemberNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, txtAvatarNew.value)" :disable="txtMemberNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -172,7 +172,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, avatarOptions, getTeamImage, getEventImage } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, avatarOptions, teamOptions, getTeamImage, getEventImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -218,6 +218,7 @@ export default {
       URLMatch,
       getAvatar,
       avatarOptions,
+      teamOptions,
       getTeamImage,
       getEventImage,
 
