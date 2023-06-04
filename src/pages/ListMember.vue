@@ -195,7 +195,7 @@ export default {
       txtAvatar: ref(_constAvatar),
 
       txtMemberNew: ref(''),
-      txtAvatarNew: ref(null),
+      txtAvatarNew: ref(''),
 
       onMemberAlreadyExists () {
         $q.notify({
@@ -379,6 +379,8 @@ export default {
 
     editMemberSave (_row, _memberId, _member, _memberOld, _avatar) {
       // console.log('editMemberSave: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _memberOld + ', ' + _avatar)
+
+      if (typeof _avatar === 'undefined') _avatar = _constAvatar.value
 
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member) && _member !== _memberOld
