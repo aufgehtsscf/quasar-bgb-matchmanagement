@@ -1,5 +1,5 @@
 const IsAdministrator = true
-const Client = 'TEST'
+const Client = 'BGB'
 const HomeTeam = 'Freiburg'
 const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
 
@@ -83,15 +83,7 @@ const teamImages = [
   { label: 'Wolfsburg', value: 'Wolfsburg', image: 'statics/teams/Wolfsburg.png' }
 ]
 
-const teamOptions = [
-  {
-    label: '',
-    value: '',
-    image: ''
-  }
-]
-
-const avatarOptions = [
+const avatarImages = [
   { label: 'Abraham Simpson', value: 'Abraham_Simpson', avatar: 'statics/avatars/collection/Abraham_Simpson.png' },
   { label: 'Alien', value: 'Alien', avatar: 'statics/avatars/collection/Alien.png' },
   { label: 'Ariel', value: 'Ariel', avatar: 'statics/avatars/collection/Ariel.png' },
@@ -159,5 +151,4 @@ export { getAvatar }
 export { getTeamImage }
 export { getEventImage }
 export { teamImages }
-export { teamOptions }
-export { avatarOptions }
+export { avatarImages }

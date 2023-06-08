@@ -51,7 +51,7 @@
             <q-select
               filled
               v-model="txtAvatarNew"
-              :options="avatarOptions"
+              :options="avatarImages"
               label="Avatar"
               options-selected-class="text-deep-orange"
             >
@@ -94,7 +94,7 @@
             <q-select
               filled
               v-model="txtAvatar"
-              :options="avatarOptions"
+              :options="avatarImages"
               label="Avatar"
               options-selected-class="text-deep-orange"
             >
@@ -172,7 +172,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, avatarOptions, teamImages, getTeamImage, getEventImage } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, getTeamImage, getEventImage, teamImages, avatarImages } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -217,10 +217,10 @@ export default {
       URLParticipantArchive,
       URLMatch,
       getAvatar,
-      avatarOptions,
-      teamImages,
       getTeamImage,
       getEventImage,
+      teamImages,
+      avatarImages,
 
       memberObject: [
         {

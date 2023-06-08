@@ -18,7 +18,7 @@
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
-            <q-label v-if="match.homeTeam !== '' && match.awayTeam !== ''">&ThickSpace;</q-label>
+            <q-item-label v-if="match.homeTeam !== '' && match.awayTeam !== ''">&ThickSpace;</q-item-label>
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.awayTeam)">
             </q-avatar>
@@ -27,15 +27,15 @@
               <img :src="getEventImage(match.matchName)">
             </q-avatar>
 
-            <q-label>&ThickSpace;&ThickSpace;&ThickSpace;</q-label>
+            <q-item-label>&ThickSpace;&ThickSpace;&ThickSpace;</q-item-label>
 
-          <q-item-section>
-            <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
-            <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
-            <q-item-label caption v-if="match.published === 'TRUE'">Publiziert: Ja</q-item-label>
-            <q-item-label caption v-if="match.published === 'FALSE'">Publiziert: Nein</q-item-label>
-            <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
-          </q-item-section>
+            <q-item-section>
+              <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
+              <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
+              <q-item-label caption v-if="match.published === 'TRUE'">Publiziert: Ja</q-item-label>
+              <q-item-label caption v-if="match.published === 'FALSE'">Publiziert: Nein</q-item-label>
+              <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
+            </q-item-section>
         </q-item>
       </q-list>
     </div>
@@ -56,7 +56,7 @@
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
-            <q-label v-if="match.homeTeam !== '' && match.awayTeam !== ''">&ThickSpace;</q-label>
+            <q-item-label v-if="match.homeTeam !== '' && match.awayTeam !== ''">&ThickSpace;</q-item-label>
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.awayTeam)">
             </q-avatar>
@@ -65,13 +65,13 @@
               <img :src="getEventImage(match.matchName)">
             </q-avatar>
 
-            <q-label>&ThickSpace;&ThickSpace;&ThickSpace;</q-label>
+            <q-item-label>&ThickSpace;&ThickSpace;&ThickSpace;</q-item-label>
 
-          <q-item-section>
-            <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
-            <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
-          </q-item-section>
-          <q-badge floating color="teal">{{ match.numberOfParticipants }}</q-badge>
+            <q-item-section>
+              <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
+              <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
+            </q-item-section>
+            <q-badge floating color="teal">{{ match.numberOfParticipants }}</q-badge>
         </q-item>
       </q-list>
     </div>
@@ -140,7 +140,7 @@
               </template>
             </q-select>
 
-            <q-input dense v-model="txtMatchNameNew" label="Spielname" v-if="!tglIsEventNew" />
+            <q-input dense v-model="txtMatchNameNew"  @focus="setFieldsForMatchNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname" v-if="!tglIsEventNew" />
             <q-input dense v-model="txtMatchNameNew" label="Veranstaltungsname" v-if="tglIsEventNew" />
 
             <q-toggle
@@ -388,7 +388,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, HomeTeam, URLMatch, URLNextMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getTeamImage, getEventImage, teamImages, teamOptions } from 'src/boot/utils.js'
+import { IsAdministrator, HomeTeam, URLMatch, URLNextMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getTeamImage, getEventImage, teamImages } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
@@ -406,6 +406,9 @@ const _constAnnotations = ref('')
 const _constInactiveMatch = ref('')
 const _constInactiveDatetime = ref('')
 const _constInactiveNumberOfParticipants = ref('')
+
+const _constMatchNameNew = ref('')
+const _constDatetimeNew = ref('')
 
 export default {
   name: 'ListMatch',
@@ -432,9 +435,9 @@ export default {
       tglIsEventNew: ref(false),
       txtHomeTeamNew: ref(_constHomeTeamNew),
       txtAwayTeamNew: ref(''),
-      txtMatchNameNew: ref(''),
+      txtMatchNameNew: ref(_constMatchNameNew),
       tglPublishedNew: ref(false),
-      txtDatetimeNew: ref(''),
+      txtDatetimeNew: ref(_constDatetimeNew),
       txtAnnotationsNew: ref('<STANDARDTEXT>'),
 
       onMatchAlreadyExists () {
@@ -464,7 +467,6 @@ export default {
       getTeamImage,
       getEventImage,
       teamImages,
-      teamOptions,
 
       activeMatchObject: [
         {
@@ -505,6 +507,16 @@ export default {
           member: '',
           avatar: '',
           customized: ''
+        }
+      ],
+
+      teamOptions: [
+        {
+          label: '',
+          value: '',
+          image: '',
+          date: '',
+          time: ''
         }
       ]
 
@@ -625,6 +637,20 @@ export default {
       _constAnnotations.value = _annotations
 
       if (this.IsAdministrator) this.editMatch = true
+    },
+
+    setFieldsForMatchNew (_homeTeam, _awayTeam) {
+      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
+
+      if (typeof _homeTeam !== 'undefined' && typeof _awayTeam !== 'undefined') {
+        const _labelHomeTeam = this.teamOptions.find(el => el.value === _homeTeam)?.label
+        const _labelAwayTeam = this.teamOptions.find(el => el.value === _awayTeam)?.label
+        _constMatchNameNew.value = _labelHomeTeam + ' vs. ' + _labelAwayTeam
+
+        const _date = this.teamOptions.find(el => el.value === _awayTeam)?.date
+        const _time = this.teamOptions.find(el => el.value === _awayTeam)?.time
+        _constDatetimeNew.value = _date + ' ' + _time
+      }
     },
 
     addMatchSave (_homeTeam, _awayTeam, _matchName, _published, _datetime, _annotations) {
@@ -788,7 +814,7 @@ export default {
       let _image = this.teamImages.find(el => el.value === this.HomeTeam)?.image
       this.setTeamOptionsObject(_label, this.HomeTeam, _image)
 
-      console.log('URLNextMatch: ' + this.URLNextMatch + '&func=Read')
+      // console.log('URLNextMatch: ' + this.URLNextMatch + '&func=Read')
       this.$axios(`${this.URLNextMatch}&func=Read`)
         .then((res) => {
           this.tableNextMatch = res.data.split('\n')
@@ -797,7 +823,7 @@ export default {
 
             _label = this.teamImages.find(el => el.value === element[1].trim())?.label
             _image = this.teamImages.find(el => el.value === element[1].trim())?.image
-            this.setTeamOptionsObject(_label, element[1].trim(), _image)
+            this.setTeamOptionsObject(_label, element[1].trim(), _image, element[2], element[3])
           }
         })
         .catch((err) => {
@@ -805,8 +831,8 @@ export default {
         })
     },
 
-    setTeamOptionsObject (_label, _value, _image) {
-      this.teamOptions.push({ label: _label, value: _value, image: _image })
+    setTeamOptionsObject (_label, _value, _image, _date, _time) {
+      this.teamOptions.push({ label: _label, value: _value, image: _image, date: _date, time: _time })
     }
 
   }
