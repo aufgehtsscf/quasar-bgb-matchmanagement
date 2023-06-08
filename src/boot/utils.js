@@ -1,9 +1,10 @@
 const IsAdministrator = true
-const Client = 'BGB'
+const Client = 'TEST'
 const HomeTeam = 'Freiburg'
 const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
 
 let URLMatch = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
+let URLNextMatch = 'https://script.google.com/macros/s/AKfycbzo1RuM5zOC_1kkUBRJB4tbMKZNgVZ65KTGdm76wyBTB9F_FQLFs8vt3Nh16xwDwChOuA/exec'
 let URLParticipant = 'https://script.google.com/macros/s/AKfycby5QLG3Ri_vpENUrwSNtyBR3L8j_AR9_ly4eRKwTHSLaCdgFfPmnEuvPEKX085oJEAwlg/exec'
 let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbwDcHzzr6JqZoENUjRAe1OXY3YCOLsqYMwVbDfdOlYFIjqNJ6lTWuVcYWh_wc99gsv_8A/exec'
 let URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
@@ -11,6 +12,7 @@ let URLMember = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00
 const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'
 
 URLMatch += '?sh=' + Client
+URLNextMatch += '?sh=' + HomeTeam
 URLParticipant += '?sh=' + Client
 URLParticipantArchive += '?sh=' + Client
 URLWhereIsMyCard += '?sh=' + Client
@@ -27,7 +29,7 @@ const getAvatar = function (_avatar, _customized) {
 }
 
 const getTeamImage = function (_team) {
-  let teamImage = this.teamOptions.find(el => el.value === _team)?.image
+  let teamImage = this.teamImages.find(el => el.value === _team)?.image
   if (typeof teamImage === 'undefined') {
     teamImage = 'statics/teams/QuestionMark.png'
   }
@@ -39,7 +41,7 @@ const getEventImage = function (_matchName) {
   return 'statics/teams/Event.png'
 }
 
-const teamOptions = [
+const teamImages = [
   { label: 'Arminia', value: 'Arminia_Bielefeld', image: 'statics/teams/Arminia_Bielefeld.png' },
   { label: 'Augsburg', value: 'Augsburg', image: 'statics/teams/Augsburg.png' },
   { label: 'Bayern', value: 'Bayern_München', image: 'statics/teams/Bayern_München.png' },
@@ -79,6 +81,14 @@ const teamOptions = [
   { label: 'Union Berlin', value: 'Union_Berlin', image: 'statics/teams/Union_Berlin.png' },
   { label: 'Werder Bremen', value: 'Werder_Bremen', image: 'statics/teams/Werder_Bremen.png' },
   { label: 'Wolfsburg', value: 'Wolfsburg', image: 'statics/teams/Wolfsburg.png' }
+]
+
+const teamOptions = [
+  {
+    label: '',
+    value: '',
+    image: ''
+  }
 ]
 
 const avatarOptions = [
@@ -138,6 +148,7 @@ export { Client }
 export { HomeTeam }
 export { StandardText }
 export { URLMatch }
+export { URLNextMatch }
 export { URLParticipant }
 export { URLParticipantArchive }
 export { URLWhereIsMyCard }
@@ -147,5 +158,6 @@ export { getLogo }
 export { getAvatar }
 export { getTeamImage }
 export { getEventImage }
+export { teamImages }
 export { teamOptions }
 export { avatarOptions }

@@ -318,7 +318,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, StandardText, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, teamOptions, getTeamImage, getEventImage } from 'src/boot/utils.js'
+import { IsAdministrator, StandardText, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, teamImages, getTeamImage, getEventImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchId = ref('')
@@ -434,7 +434,7 @@ export default {
       URLWhereIsMyCard,
       URLMember,
       getAvatar,
-      teamOptions,
+      teamImages,
       getTeamImage,
       getEventImage,
 

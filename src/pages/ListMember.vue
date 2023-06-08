@@ -172,7 +172,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, avatarOptions, teamOptions, getTeamImage, getEventImage } from 'src/boot/utils.js'
+import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, avatarOptions, teamImages, getTeamImage, getEventImage } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -218,7 +218,7 @@ export default {
       URLMatch,
       getAvatar,
       avatarOptions,
-      teamOptions,
+      teamImages,
       getTeamImage,
       getEventImage,
 

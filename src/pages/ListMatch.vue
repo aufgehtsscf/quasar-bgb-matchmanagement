@@ -388,7 +388,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, HomeTeam, URLMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, teamOptions, getTeamImage, getEventImage } from 'src/boot/utils.js'
+import { IsAdministrator, HomeTeam, URLMatch, URLNextMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getTeamImage, getEventImage, teamImages, teamOptions } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
@@ -456,13 +456,15 @@ export default {
       IsAdministrator,
       HomeTeam,
       URLMatch,
+      URLNextMatch,
       URLParticipant,
       URLParticipantArchive,
       URLMember,
       getAvatar,
-      teamOptions,
       getTeamImage,
       getEventImage,
+      teamImages,
+      teamOptions,
 
       activeMatchObject: [
         {
@@ -516,6 +518,7 @@ export default {
     this.getTableMember()
     this.getTableActiveMatch()
     this.getTableInactiveMatch()
+    this.getTableNextMatch()
   },
 
   methods: {
@@ -762,7 +765,7 @@ export default {
     },
 
     setInactiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _time, _date, _numberOfParticipants) {
-      this.inactiveMatchObject.push({ matchId: _matchId, matchName: _matchName, time: _time, date: _date, numberOfParticipants: _numberOfParticipants, homeTeam: _homeTeam, awayTeam: _awayTeam })
+      this.inactiveMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, time: _time, date: _date, numberOfParticipants: _numberOfParticipants })
 
       // Sort array of objects
       this.inactiveMatchObject.sort(function (a, b) {
@@ -776,6 +779,34 @@ export default {
         if (dateA > dateB) return -1
         return 0
       })
+    },
+
+    getTableNextMatch () {
+      this.teamOptions = []
+
+      let _label = this.teamImages.find(el => el.value === this.HomeTeam)?.label
+      let _image = this.teamImages.find(el => el.value === this.HomeTeam)?.image
+      this.setTeamOptionsObject(_label, this.HomeTeam, _image)
+
+      console.log('URLNextMatch: ' + this.URLNextMatch + '&func=Read')
+      this.$axios(`${this.URLNextMatch}&func=Read`)
+        .then((res) => {
+          this.tableNextMatch = res.data.split('\n')
+          for (let index = 0; index < this.tableNextMatch.length - 1; index++) {
+            const element = this.tableNextMatch[index].split(',')
+
+            _label = this.teamImages.find(el => el.value === element[1].trim())?.label
+            _image = this.teamImages.find(el => el.value === element[1].trim())?.image
+            this.setTeamOptionsObject(_label, element[1].trim(), _image)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    setTeamOptionsObject (_label, _value, _image) {
+      this.teamOptions.push({ label: _label, value: _value, image: _image })
     }
 
   }
