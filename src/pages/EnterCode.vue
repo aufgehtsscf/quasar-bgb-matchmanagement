@@ -9,14 +9,14 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCode" autofocus label="Code" />
+            <q-input dense v-model="txtAdminCode" autofocus label="Code" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="CheckCode(txtCode)" :disable="txtCode === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="getProperties(txtAdminCode)" :disable="txtAdminCode === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -29,7 +29,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, Client, HomeTeam, StandardText } from 'src/boot/utils.js'
+import { getProperties } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 export default {
@@ -39,7 +39,7 @@ export default {
     const $q = useQuasar()
 
     return {
-      txtCode: ref(''),
+      txtAdminCode: ref(''),
 
       onCardHolderAlreadyExists () {
         $q.notify({
@@ -54,10 +54,7 @@ export default {
 
   data () {
     return {
-      IsAdministrator,
-      Client,
-      HomeTeam,
-      StandardText
+      getProperties
     }
   },
 
@@ -65,25 +62,6 @@ export default {
   },
 
   methods: {
-    CheckCode (_code) {
-      console.log('CheckCode: ' + _code)
-
-      // this.$axios(`${this.URLCode}&func=Check&code=${_code}`)
-      //   .then((res) => {
-      //     this.tableMember = res.data.split('\n')
-      //     for (let index = 0; index < this.tableMember.length - 1; index++) {
-      //       const element = this.tableMember[index].split(',')
-      //       this.IsAdministrator = true,
-      //       this.Client = _code,
-      //       this.HomeTeam = 'Freiburg',
-      //       this.StandardText = null
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.log(err)
-      //   })
-    }
-
   }
 }
 </script>
