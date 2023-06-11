@@ -1,4 +1,4 @@
-const IsAdministrator = true
+const IsAdministrator = false
 const Client = 'BGB'
 const HomeTeam = 'Freiburg'
 const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
