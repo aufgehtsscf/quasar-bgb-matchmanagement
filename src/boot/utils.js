@@ -1,5 +1,5 @@
 let IsAdministrator = true
-let Client = 'TEST'
+let Client = 'BGB'
 let HomeTeam = 'Freiburg'
 let StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
 let Link1 = ''
@@ -111,6 +111,7 @@ const teamImages = [
   { label: 'Mainz', value: 'Mainz', image: 'statics/teams/Mainz.png' },
   { label: 'Mönchengladbach', value: 'Borussia_Mönchengladbach', image: 'statics/teams/Borussia_Mönchengladbach.png' },
   { label: 'Nürnberg', value: 'Nürnberg', image: 'statics/teams/Nürnberg.png' },
+  { label: 'Oberachern', value: 'Oberachern', image: 'statics/teams/Oberachern.png' },
   { label: 'Olympiakos Piräus', value: 'Olympiakos_Piräus', image: 'statics/teams/Olympiakos_Piräus.png' },
   { label: 'Paderborn', value: 'Paderborn', image: 'statics/teams/Paderborn.png' },
   { label: 'Sandhausen', value: 'Sandhausen', image: 'statics/teams/Sandhausen.png' },

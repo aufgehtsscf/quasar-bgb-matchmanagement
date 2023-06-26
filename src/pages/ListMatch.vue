@@ -88,67 +88,74 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-toggle
-              v-model="tglIsEventNew"
-              color="red"
-              label="Veranstaltung"
-              left-label
-            />
 
-            <q-select
-              filled
-              v-model="txtHomeTeamNew"
-              :options="teamOptions"
-              autofocus
-              label="Heim"
-              options-selected-class="text-deep-orange"
-              v-if="!tglIsEventNew"
-            >
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section homeTeam>
-                    <q-avatar size="50px">
-                      <img :src="scope.opt.image">
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-toggle
+                v-model="tglIsEventNew"
+                color="red"
+                label="Veranstaltung"
+                left-label/>
+            </div>
 
-            <q-select
-              filled
-              v-model="txtAwayTeamNew"
-              :options="teamOptions"
-              label="Gast"
-              options-selected-class="text-deep-orange"
-              v-if="!tglIsEventNew"
-            >
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section awayTeam>
-                    <q-avatar size="50px">
-                      <img :src="scope.opt.image">
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-select
+                filled
+                v-model="txtHomeTeamNew"
+                :options="teamOptions"
+                label="Heim"
+                options-selected-class="text-deep-orange"
+                v-if="!tglIsEventNew"
+              >
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section homeTeam>
+                      <q-avatar size="50px">
+                        <img :src="scope.opt.image">
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
 
-            <q-input dense v-model="txtMatchNameNew"  @focus="setFieldsForMatchNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname" v-if="!tglIsEventNew" />
-            <q-input dense v-model="txtMatchNameNew" label="Veranstaltungsname" v-if="tglIsEventNew" />
+              <q-select
+                filled
+                v-model="txtAwayTeamNew"
+                :options="teamOptions"
+                autofocus
+                label="Gast"
+                options-selected-class="text-deep-orange"
+                v-if="!tglIsEventNew"
+              >
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section awayTeam>
+                      <q-avatar size="50px">
+                        <img :src="scope.opt.image">
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
 
-            <q-toggle
-              v-model="tglPublishedNew"
-              color="red"
-              label="Publizieren"
-              left-label
-            />
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-input dense v-model="txtMatchNameNew" @focus="setFieldsForMatchNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname" v-if="!tglIsEventNew" />
+              <q-input dense v-model="txtMatchNameNew" label="Veranstaltungsname" v-if="tglIsEventNew" />
+            </div>
+
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-toggle
+                v-model="tglPublishedNew"
+                color="red"
+                label="Publizieren"
+                left-label/>
+            </div>
 
             <div class="q-pt-md" style="max-width: 300px">
               <q-input filled v-model="txtDatetimeNew">
@@ -201,69 +208,75 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-toggle
-              v-model="tglIsEvent"
-              color="red"
-              label="Veranstaltung"
-              left-label
-            />
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-toggle
+                v-model="tglIsEvent"
+                color="red"
+                label="Veranstaltung"
+                left-label/>
+            </div>
 
-            <q-select
-              filled
-              v-model="txtHomeTeam"
-              :options="teamOptions"
-              autofocus
-              label="Heim"
-              options-selected-class="text-deep-orange"
-              v-if="!tglIsEvent"
-            >
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section homeTeam>
-                    <q-avatar size="50px">
-                      <img :src="scope.opt.image">
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-select
+                filled
+                v-model="txtHomeTeam"
+                :options="teamOptions"
+                autofocus
+                label="Heim"
+                options-selected-class="text-deep-orange"
+                v-if="!tglIsEvent"
+              >
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section homeTeam>
+                      <q-avatar size="50px">
+                        <img :src="scope.opt.image">
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
 
-            <q-select
-              filled
-              v-model="txtAwayTeam"
-              :options="teamOptions"
-              label="Gast"
-              options-selected-class="text-deep-orange"
-              v-if="!tglIsEvent"
-            >
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section awayTeam>
-                    <q-avatar size="50px">
-                      <img :src="scope.opt.image">
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+              <q-select
+                filled
+                v-model="txtAwayTeam"
+                :options="teamOptions"
+                label="Gast"
+                options-selected-class="text-deep-orange"
+                v-if="!tglIsEvent"
+              >
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section awayTeam>
+                      <q-avatar size="50px">
+                        <img :src="scope.opt.image">
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
 
-            <q-input dense v-model="txtMatchName"  label="Spielname" v-if="!tglIsEvent" />
-            <q-input dense v-model="txtMatchName" label="Veranstaltungsname" v-if="tglIsEvent" />
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-input dense v-model="txtMatchName"  label="Spielname" v-if="!tglIsEvent" />
+              <q-input dense v-model="txtMatchName" label="Veranstaltungsname" v-if="tglIsEvent" />
+            </div>
 
-            <q-toggle
-              v-model="tglPublished"
-              color="red"
-              label="Publizieren"
-              left-label
-            />
+            <div class="q-pt-md" style="max-width: 300px">
+              <q-toggle
+                v-model="tglPublished"
+                color="red"
+                label="Publizieren"
+                left-label/>
+            </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md" style="max-width: 300px">
               <q-input filled v-model="txtDatetime">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
@@ -291,7 +304,7 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md" style="max-width: 300px">
               <q-input v-model="txtAnnotations" filled type="textarea" label="Kommentar"/>
             </div>
           </q-card-section>
