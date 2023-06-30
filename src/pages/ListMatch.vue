@@ -660,8 +660,13 @@ export default {
         const _labelAwayTeam = this.teamOptions.find(el => el.value === _awayTeam)?.label
         _constMatchNameNew.value = _labelHomeTeam + ' vs. ' + _labelAwayTeam
 
-        const _date = this.teamOptions.find(el => el.value === _awayTeam)?.date
-        const _time = this.teamOptions.find(el => el.value === _awayTeam)?.time
+        let _date = this.teamOptions.find(el => el.value === _awayTeam)?.date
+        let _time = this.teamOptions.find(el => el.value === _awayTeam)?.time
+
+        if (typeof _date === 'undefined' && typeof _time === 'undefined') {
+          _date = this.teamOptions.find(el => el.value === _homeTeam)?.date
+          _time = this.teamOptions.find(el => el.value === _homeTeam)?.time
+        }
         _constDatetimeNew.value = _date + ' ' + _time
       }
     },
