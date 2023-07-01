@@ -29,7 +29,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getProperties } from 'src/boot/utils.js'
+import { IsAdministrator, Client, HomeTeam, StandardText, Link1, Link2, Link3, Link4, Link5, URLMatch, URLNextMatch, URLParticipant, URLParticipantArchive, URLWhereIsMyCard, URLMember, URLProperties, URLMatchBasis, URLNextMatchBasis, URLParticipantBasis, URLParticipantArchiveBasis, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 export default {
@@ -54,7 +54,28 @@ export default {
 
   data () {
     return {
-      getProperties
+      IsAdministrator,
+      Client,
+      HomeTeam,
+      StandardText,
+      Link1,
+      Link2,
+      Link3,
+      Link4,
+      Link5,
+      URLMatch,
+      URLNextMatch,
+      URLParticipant,
+      URLParticipantArchive,
+      URLWhereIsMyCard,
+      URLMember,
+      URLProperties,
+      URLMatchBasis,
+      URLNextMatchBasis,
+      URLParticipantBasis,
+      URLParticipantArchiveBasis,
+      URLWhereIsMyCardBasis,
+      URLMemberBasis
     }
   },
 
@@ -62,6 +83,43 @@ export default {
   },
 
   methods: {
+    getProperties (_adminCode) {
+      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${_adminCode}`)
+        .then((res) => {
+          this.tableProperties = res.data.split('\n')
+          for (let index = 0; index < this.tableProperties.length - 1; index++) {
+            const element = this.tableProperties[index].split(',')
+            const element2 = element[2].split('_')
+
+            if (element[1] === _adminCode) {
+              this.IsAdministrator = true
+            } else {
+              this.IsAdministrator = false
+            }
+
+            if (IsAdministrator === true ||
+          (element[1].substring(1, 4) + element[1].substring(6, 4) === element2[1] && parseInt(element2[2]) > 330)) {
+              this.Client = _adminCode
+              this.HomeTeam = element[3]
+              this.StandardText = element[4]
+              this.Link1 = element[5]
+              this.Link2 = element[6]
+              this.Link3 = element[7]
+              this.Link4 = element[8]
+              this.Link5 = element[9]
+              this.URLMatch = URLMatchBasis + '?sh=' + this.Client
+              this.URLNextMatch = URLNextMatchBasis + '?sh=' + this.HomeTeam
+              this.URLParticipant = URLParticipantBasis + '?sh=' + this.Client
+              this.URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + this.Client
+              this.URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + this.Client
+              this.URLMember = URLMemberBasis + '?sh=' + this.Client
+            }
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   }
 }
 </script>

@@ -1,29 +1,49 @@
 let IsAdministrator = true
-let Client = 'BGB'
-let HomeTeam = 'Freiburg'
-let StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
+let Client = ''
+let HomeTeam = ''
+let StandardText = ''
 let Link1 = ''
 let Link2 = ''
 let Link3 = ''
 let Link4 = ''
 let Link5 = ''
 
-let URLMatch = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
-let URLNextMatch = 'https://script.google.com/macros/s/AKfycbzo1RuM5zOC_1kkUBRJB4tbMKZNgVZ65KTGdm76wyBTB9F_FQLFs8vt3Nh16xwDwChOuA/exec'
-let URLParticipant = 'https://script.google.com/macros/s/AKfycby5QLG3Ri_vpENUrwSNtyBR3L8j_AR9_ly4eRKwTHSLaCdgFfPmnEuvPEKX085oJEAwlg/exec'
-let URLParticipantArchive = 'https://script.google.com/macros/s/AKfycbwDcHzzr6JqZoENUjRAe1OXY3YCOLsqYMwVbDfdOlYFIjqNJ6lTWuVcYWh_wc99gsv_8A/exec'
-let URLWhereIsMyCard = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
-let URLMember = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
-let URLProperties = 'https://script.google.com/macros/s/AKfycbyG0TbbSD0eRYIZeXUUFI8DEMV6-Hn670Hq_9AhC9RevynXtRVYNNw4gKczGu07cPlc/exec'
-const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'
+IsAdministrator = true
+Client = 'BGB'
+HomeTeam = 'Freiburg'
+StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
+Link1 = ''
+Link2 = ''
+Link3 = ''
+Link4 = ''
+Link5 = ''
 
-URLMatch += '?sh=' + Client
-URLNextMatch += '?sh=' + HomeTeam
-URLParticipant += '?sh=' + Client
-URLParticipantArchive += '?sh=' + Client
-URLWhereIsMyCard += '?sh=' + Client
-URLMember += '?sh=' + Client
-URLProperties += '?sh=Properties'
+const URLMatchBasis = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
+const URLNextMatchBasis = 'https://script.google.com/macros/s/AKfycbzo1RuM5zOC_1kkUBRJB4tbMKZNgVZ65KTGdm76wyBTB9F_FQLFs8vt3Nh16xwDwChOuA/exec'
+const URLParticipantBasis = 'https://script.google.com/macros/s/AKfycby5QLG3Ri_vpENUrwSNtyBR3L8j_AR9_ly4eRKwTHSLaCdgFfPmnEuvPEKX085oJEAwlg/exec'
+const URLParticipantArchiveBasis = 'https://script.google.com/macros/s/AKfycbwDcHzzr6JqZoENUjRAe1OXY3YCOLsqYMwVbDfdOlYFIjqNJ6lTWuVcYWh_wc99gsv_8A/exec'
+const URLWhereIsMyCardBasis = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
+const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
+const URLPropertiesBasis = 'https://script.google.com/macros/s/AKfycbyG0TbbSD0eRYIZeXUUFI8DEMV6-Hn670Hq_9AhC9RevynXtRVYNNw4gKczGu07cPlc/exec'
+const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec'
+
+let URLMatch = ''
+let URLNextMatch = ''
+let URLParticipant = ''
+let URLParticipantArchive = ''
+let URLWhereIsMyCard = ''
+let URLMember = ''
+let URLProperties = ''
+let URLOrder = ''
+
+URLMatch = URLMatchBasis + '?sh=' + Client
+URLNextMatch = URLNextMatchBasis + '?sh=' + HomeTeam
+URLParticipant = URLParticipantBasis + '?sh=' + Client
+URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + Client
+URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + Client
+URLMember = URLMemberBasis + '?sh=' + Client
+URLProperties = URLPropertiesBasis + '?sh=Properties'
+URLOrder = URLOrderBasis + '?sh=' + Client
 
 const getLogo = function () {
   return 'statics/images/' + Client + '/Logo.png'
@@ -46,38 +66,6 @@ const getTeamImage = function (_team) {
 const getEventImage = function (_matchName) {
   if (_matchName.toLowerCase().indexOf('test') >= 0) return 'statics/teams/Test.png'
   return 'statics/teams/Event.png'
-}
-
-const getProperties = function (_adminCode) {
-  this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${_adminCode}`)
-    .then((res) => {
-      this.tableProperties = res.data.split('\n')
-      for (let index = 0; index < this.tableProperties.length - 1; index++) {
-        const element = this.tableProperties[index].split(',')
-        const element2 = element[2].split('_')
-
-        if (element[1] === _adminCode) {
-          IsAdministrator = true
-        } else {
-          IsAdministrator = false
-        }
-
-        if (IsAdministrator === true ||
-          (element[1].substring(1, 4) + element[1].substring(6, 4) === element2[1] && parseInt(element2[2]) > 330)) {
-          Client = _adminCode
-          HomeTeam = element[3]
-          StandardText = element[4]
-          Link1 = element[5]
-          Link2 = element[6]
-          Link3 = element[7]
-          Link4 = element[8]
-          Link5 = element[9]
-        }
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-    })
 }
 
 const teamImages = [
@@ -192,10 +180,15 @@ export { URLWhereIsMyCard }
 export { URLMember }
 export { URLProperties }
 export { URLOrder }
+export { URLMatchBasis }
+export { URLNextMatchBasis }
+export { URLParticipantBasis }
+export { URLParticipantArchiveBasis }
+export { URLWhereIsMyCardBasis }
+export { URLMemberBasis }
 export { getLogo }
 export { getAvatar }
 export { getTeamImage }
 export { getEventImage }
-export { getProperties }
 export { teamImages }
 export { avatarImages }
