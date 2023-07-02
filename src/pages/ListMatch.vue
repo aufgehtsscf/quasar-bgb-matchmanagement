@@ -5,7 +5,7 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title>Aktuelle Spiele</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true" v-if="_isAdministrator === 'true'" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true"  v-if="_isAdministrator !== 'false'" />
       </q-toolbar>
     </div>
 
@@ -423,7 +423,6 @@ const _constInactiveNumberOfParticipants = ref('')
 const _constMatchNameNew = ref('')
 const _constDatetimeNew = ref('')
 
-let _isAdministrator
 let _client
 let _homeTeam
 let _URLMatch
@@ -472,7 +471,9 @@ export default {
       addMatch: ref(false),
       editMatch: ref(false),
       arcMatch: ref(false),
-      showInactiveMatch: ref(false)
+      showInactiveMatch: ref(false),
+
+      _isAdministrator: ref('false')
     }
   },
 
@@ -559,11 +560,11 @@ export default {
 
   methods: {
     setVariables () {
+      this._isAdministrator = this.getCookie('isAdministrator')
+      if (this._isAdministrator === '') this._isAdministrator = this.IsAdministrator
+
       _client = this.getCookie('client')
       if (_client === '') _client = this.Client
-
-      _isAdministrator = this.getCookie('isAdministrator')
-      if (_isAdministrator === '') _isAdministrator = this.IsAdministrator
 
       _homeTeam = this.getCookie('homeTeam')
       if (_homeTeam === '') _homeTeam = this.HomeTeam
@@ -594,7 +595,7 @@ export default {
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      const publishedParam = _isAdministrator === 'true' ? '' : 'TRUE'
+      const publishedParam = this._isAdministrator === 'true' ? '' : 'TRUE'
       // console.log('URLMatch: ' + _URLMatch + '&func=ReadActive&published=' + publishedParam)
       this.$axios(`${_URLMatch}&func=ReadActive&published=${publishedParam}`)
         .then((res) => {
@@ -693,7 +694,7 @@ export default {
       _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
 
-      if (_isAdministrator === 'true') this.editMatch = true
+      if (this._isAdministrator === 'true') this.editMatch = true
     },
 
     setFieldsForMatchNew (_homeTeam, _awayTeam) {
