@@ -1,22 +1,7 @@
-let IsAdministrator = true
-let Client = ''
-let HomeTeam = ''
-let StandardText = ''
-let Link1 = ''
-let Link2 = ''
-let Link3 = ''
-let Link4 = ''
-let Link5 = ''
-
-IsAdministrator = true
-Client = 'BGB'
-HomeTeam = 'Freiburg'
-StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
-Link1 = ''
-Link2 = ''
-Link3 = ''
-Link4 = ''
-Link5 = ''
+const IsAdministrator = true
+const Client = 'TEST'
+const HomeTeam = 'Freiburg'
+const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
 
 const URLMatchBasis = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
 const URLNextMatchBasis = 'https://script.google.com/macros/s/AKfycbzo1RuM5zOC_1kkUBRJB4tbMKZNgVZ65KTGdm76wyBTB9F_FQLFs8vt3Nh16xwDwChOuA/exec'
@@ -24,28 +9,17 @@ const URLParticipantBasis = 'https://script.google.com/macros/s/AKfycby5QLG3Ri_v
 const URLParticipantArchiveBasis = 'https://script.google.com/macros/s/AKfycbwDcHzzr6JqZoENUjRAe1OXY3YCOLsqYMwVbDfdOlYFIjqNJ6lTWuVcYWh_wc99gsv_8A/exec'
 const URLWhereIsMyCardBasis = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
 const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
-const URLPropertiesBasis = 'https://script.google.com/macros/s/AKfycbyG0TbbSD0eRYIZeXUUFI8DEMV6-Hn670Hq_9AhC9RevynXtRVYNNw4gKczGu07cPlc/exec'
-const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec'
 
-let URLMatch = ''
-let URLNextMatch = ''
-let URLParticipant = ''
-let URLParticipantArchive = ''
-let URLWhereIsMyCard = ''
-let URLMember = ''
-let URLProperties = ''
-let URLOrder = ''
+const URLProperties = 'https://script.google.com/macros/s/AKfycbyG0TbbSD0eRYIZeXUUFI8DEMV6-Hn670Hq_9AhC9RevynXtRVYNNw4gKczGu07cPlc/exec?sh=Properties'
+const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'
 
-URLMatch = URLMatchBasis + '?sh=' + Client
-URLNextMatch = URLNextMatchBasis + '?sh=' + HomeTeam
-URLParticipant = URLParticipantBasis + '?sh=' + Client
-URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + Client
-URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + Client
-URLMember = URLMemberBasis + '?sh=' + Client
-URLProperties = URLPropertiesBasis + '?sh=Properties'
-URLOrder = URLOrderBasis + '?sh=' + Client
+const getClient = function () {
+  if (typeof Client === 'undefined') return 'TEST'
+  return Client
+}
 
 const getLogo = function () {
+  if (typeof Client === 'undefined') return 'statics/images/TEST/Logo.png'
   return 'statics/images/' + Client + '/Logo.png'
 }
 
@@ -167,17 +141,6 @@ export { IsAdministrator }
 export { Client }
 export { HomeTeam }
 export { StandardText }
-export { Link1 }
-export { Link2 }
-export { Link3 }
-export { Link4 }
-export { Link5 }
-export { URLMatch }
-export { URLNextMatch }
-export { URLParticipant }
-export { URLParticipantArchive }
-export { URLWhereIsMyCard }
-export { URLMember }
 export { URLProperties }
 export { URLOrder }
 export { URLMatchBasis }
@@ -186,6 +149,7 @@ export { URLParticipantBasis }
 export { URLParticipantArchiveBasis }
 export { URLWhereIsMyCardBasis }
 export { URLMemberBasis }
+export { getClient }
 export { getLogo }
 export { getAvatar }
 export { getTeamImage }

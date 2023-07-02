@@ -318,7 +318,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, StandardText, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, teamImages, getTeamImage, getEventImage } from 'src/boot/utils.js'
+import { IsAdministrator, Client, StandardText, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchBasis, URLParticipantBasis, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchId = ref('')
@@ -428,6 +428,7 @@ export default {
   data () {
     return {
       IsAdministrator,
+      Client,
       StandardText,
       URLMatch,
       URLParticipant,
@@ -437,6 +438,10 @@ export default {
       teamImages,
       getTeamImage,
       getEventImage,
+      URLMatchBasis,
+      URLParticipantBasis,
+      URLWhereIsMyCardBasis,
+      URLMemberBasis,
 
       activeMatchObject: [
         {
@@ -540,12 +545,22 @@ export default {
   },
 
   mounted () {
+    this.setVariables()
     this.getTableMember()
     this.getTableActiveMatch()
     this.getTableWhereIsMyCard()
   },
 
   methods: {
+    setVariables () {
+      if (Client === '') this.Client = 'TEST'
+
+      this.URLMatch = URLMatchBasis + '?sh=' + this.Client
+      this.URLParticipant = URLParticipantBasis + '?sh=' + this.Client
+      this.URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + Client
+      this.URLMember = URLMemberBasis + '?sh=' + this.Client
+    },
+
     isReservation (_participantArrival, _matchTime) {
       if (_participantArrival !== '') {
         if (parseInt(_participantArrival.substring(0, 2)) === parseInt(_matchTime.substring(0, 2) - 2) &&

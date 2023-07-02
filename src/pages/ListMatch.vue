@@ -5,7 +5,7 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title>Aktuelle Spiele</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true" v-if="IsAdministrator" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true" v-if="_isAdministrator === 'true'" />
       </q-toolbar>
     </div>
 
@@ -312,7 +312,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="IsAdministrator" />
+            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="_isAdministrator === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglPublished, txtDatetime, txtAnnotations)" :disable="txtMatchName === ''" v-close-popup />
           </q-card-actions>
@@ -401,7 +401,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, HomeTeam, URLMatch, URLNextMatch, URLParticipant, URLParticipantArchive, URLMember, getAvatar, getTeamImage, getEventImage, teamImages } from 'src/boot/utils.js'
+import { IsAdministrator, Client, HomeTeam, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchBasis, URLNextMatchBasis, URLParticipantBasis, URLParticipantArchiveBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
@@ -422,6 +422,15 @@ const _constInactiveNumberOfParticipants = ref('')
 
 const _constMatchNameNew = ref('')
 const _constDatetimeNew = ref('')
+
+let _isAdministrator
+let _client
+let _homeTeam
+let _URLMatch
+let _URLNextMatch
+let _URLParticipant
+let _URLParticipantArchive
+let _URLMember
 
 export default {
   name: 'ListMatch',
@@ -470,16 +479,17 @@ export default {
   data () {
     return {
       IsAdministrator,
+      Client,
       HomeTeam,
-      URLMatch,
-      URLNextMatch,
-      URLParticipant,
-      URLParticipantArchive,
-      URLMember,
       getAvatar,
       getTeamImage,
       getEventImage,
       teamImages,
+      URLMatchBasis,
+      URLNextMatchBasis,
+      URLParticipantBasis,
+      URLParticipantArchiveBasis,
+      URLMemberBasis,
 
       activeMatchObject: [
         {
@@ -540,6 +550,7 @@ export default {
   },
 
   mounted () {
+    this.setVariables()
     this.getTableMember()
     this.getTableActiveMatch()
     this.getTableInactiveMatch()
@@ -547,12 +558,45 @@ export default {
   },
 
   methods: {
+    setVariables () {
+      _client = this.getCookie('client')
+      if (_client === '') _client = this.Client
+
+      _isAdministrator = this.getCookie('isAdministrator')
+      if (_isAdministrator === '') _isAdministrator = this.IsAdministrator
+
+      _homeTeam = this.getCookie('homeTeam')
+      if (_homeTeam === '') _homeTeam = this.HomeTeam
+
+      _URLMatch = URLMatchBasis + '?sh=' + _client
+      _URLNextMatch = URLNextMatchBasis + '?sh=' + _homeTeam
+      _URLParticipant = URLParticipantBasis + '?sh=' + _client
+      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + _client
+      _URLMember = URLMemberBasis + '?sh=' + _client
+    },
+
+    getCookie (_cookieName) {
+      const name = _cookieName + '='
+      const decodedCookie = decodeURIComponent(document.cookie)
+      const ca = decodedCookie.split(';')
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i]
+        while (c.charAt(0) === ' ') {
+          c = c.substring(1)
+        }
+        if (c.indexOf(name) === 0) {
+          return c.substring(name.length, c.length)
+        }
+      }
+      return ''
+    },
+
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      const publishedParam = this.IsAdministrator ? '' : 'TRUE'
-      // console.log('URLMatch: ' + this.URLMatch + '&func=ReadActive&published=' + publishedParam)
-      this.$axios(`${this.URLMatch}&func=ReadActive&published=${publishedParam}`)
+      const publishedParam = _isAdministrator === 'true' ? '' : 'TRUE'
+      // console.log('URLMatch: ' + _URLMatch + '&func=ReadActive&published=' + publishedParam)
+      this.$axios(`${_URLMatch}&func=ReadActive&published=${publishedParam}`)
         .then((res) => {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
@@ -589,8 +633,8 @@ export default {
       _constInactiveNumberOfParticipants.value = _numberOfParticipants
 
       this.participantInactiveMatchObject = []
-      // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadMatch&matchId=' + _matchId)
-      this.$axios(`${this.URLParticipantArchive}&func=ReadMatch&matchId=${_matchId}`)
+      // console.log('URLParticipantArchive: ' + _URLParticipantArchive + '&func=ReadMatch&matchId=' + _matchId)
+      this.$axios(`${_URLParticipantArchive}&func=ReadMatch&matchId=${_matchId}`)
         .then((res) => {
           this.tableParticipantArchive = res.data.split('\n')
           for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
@@ -618,8 +662,8 @@ export default {
     getTableMember () {
       this.memberObject = []
 
-      // console.log('URLMember: ' + this.URLMember + '&func=Read')
-      this.$axios(`${this.URLMember}&func=Read`)
+      // console.log('URLMember: ' + _URLMember + '&func=Read')
+      this.$axios(`${_URLMember}&func=Read`)
         .then((res) => {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
@@ -649,7 +693,7 @@ export default {
       _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
 
-      if (this.IsAdministrator) this.editMatch = true
+      if (_isAdministrator === 'true') this.editMatch = true
     },
 
     setFieldsForMatchNew (_homeTeam, _awayTeam) {
@@ -684,7 +728,7 @@ export default {
         const _date = _datetime.substring(0, 10)
         const _time = _datetime.substring(11, 16)
 
-        this.$axios(`${this.URLMatch}&func=Add&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios(`${_URLMatch}&func=Add&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.getTableActiveMatch()
@@ -711,11 +755,11 @@ export default {
         const _time = _datetime.substring(11, 16)
         const _newMatchName = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
 
-        this.$axios(`${this.URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios(`${_URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               // console.log('editMatchSave - UpdateMatch: ' + _matchId + ', ' + _newMatchName)
-              this.$axios(`${this.URLParticipant}&func=UpdateMatch&matchId=${_matchId}&newMatchName=${_newMatchName}`)
+              this.$axios(`${_URLParticipant}&func=UpdateMatch&matchId=${_matchId}&newMatchName=${_newMatchName}`)
                 .then((res2) => {
                   if (res2.data === 'Success, requested action completed') {
                     this.getTableActiveMatch()
@@ -739,13 +783,13 @@ export default {
 
       const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
-      this.$axios(`${this.URLParticipant}&func=Read&matchId=${_matchId}`)
+      this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
         .then(async (res) => {
           this.tableParticipant = res.data.split('\n')
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
             const element = this.tableParticipant[index].split(',')
             await sleep(1000)
-            this.$axios(`${this.URLParticipantArchive}&func=Add&timestamp=${element[3]}&matchId=${element[2]}&matchName=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
+            this.$axios(`${_URLParticipantArchive}&func=Add&timestamp=${element[3]}&matchId=${element[2]}&matchName=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
               .catch((err) => {
                 console.log(err)
               })
@@ -759,11 +803,11 @@ export default {
     },
 
     inactivateMatch (_row, _matchId) {
-      this.$axios(`${this.URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
+      this.$axios(`${_URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
         .then((res3) => {
           if (res3.data === 'Success, requested action completed') {
-            // console.log(this.URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId)
-            this.$axios(`${this.URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
+            // console.log(_URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId)
+            this.$axios(`${_URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
               .then((res4) => {
                 if (res4.data === 'Success, requested action completed') {
                   this.getTableActiveMatch()
@@ -783,16 +827,16 @@ export default {
     getTableInactiveMatch () {
       this.inactiveMatchObject = []
 
-      // console.log('URLMatch: ' + this.URLMatch + '&func=ReadInactive')
-      this.$axios(`${this.URLMatch}&func=ReadInactive`)
+      // console.log('URLMatch: ' + _URLMatch + '&func=ReadInactive')
+      this.$axios(`${_URLMatch}&func=ReadInactive`)
         .then((res) => {
           this.tableInactiveMatch = res.data.split('\n')
           for (let index = 0; index < this.tableInactiveMatch.length - 1; index++) {
             const element = this.tableInactiveMatch[index].split(',')
 
             let _numberOfParticipants = 0
-            // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadMatch')
-            this.$axios(`${this.URLParticipantArchive}&func=ReadMatch&matchId=${element[1]}`)
+            // console.log('URLParticipantArchive: ' + _URLParticipantArchive + '&func=ReadMatch')
+            this.$axios(`${_URLParticipantArchive}&func=ReadMatch&matchId=${element[1]}`)
               .then((res2) => {
                 this.tableParticipantArchive = res2.data.split('\n')
                 _numberOfParticipants = this.tableParticipantArchive.length - 1
@@ -832,8 +876,8 @@ export default {
       let _image = this.teamImages.find(el => el.value === this.HomeTeam)?.image
       this.setTeamOptionsObject(_label, this.HomeTeam, _image)
 
-      // console.log('URLNextMatch: ' + this.URLNextMatch + '&func=Read')
-      this.$axios(`${this.URLNextMatch}&func=Read`)
+      // console.log('URLNextMatch: ' + _URLNextMatch + '&func=Read')
+      this.$axios(`${_URLNextMatch}&func=Read`)
         .then((res) => {
           this.tableNextMatch = res.data.split('\n')
           for (let index = 0; index < this.tableNextMatch.length - 1; index++) {
