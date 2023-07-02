@@ -85,15 +85,17 @@ export default {
         _adminCode = 'BGB'
         _userCode = 'BGB_330'
       } else {
-        if (_applicationCode.length === 11) {
-          const _stringCode = _applicationCode.split('_')
-          if (_stringCode[1].length === 8 && parseInt(_stringCode[2]) >= 330) {
-            _userCode = _applicationCode
-            _adminCode = _stringCode[2].substring(0, 1) + _stringCode[1].substring(0, 4) + _stringCode[2].substring(1, 2) + _stringCode[1].substring(4, 8) + _stringCode[2].substring(2, _stringCode[2].length)
-          } else {
-            _adminCode = _applicationCode
-            _userCode = _stringCode[1].substring(0, 4) + _stringCode[1].substring(4, 8) + '_' + _stringCode[2].substring(0, _stringCode[2].length)
+        if (_applicationCode.length === 12) {
+          if (_applicationCode.indexOf('_') > 0) {
+            const _stringCode = _applicationCode.split('_')
+            if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 330) {
+              _userCode = _applicationCode
+              _adminCode = _stringCode[1].substring(0, 1) + _stringCode[0].substring(0, 4) + _stringCode[1].substring(1, 2) + _stringCode[0].substring(4, 8) + _stringCode[1].substring(2, _stringCode[1].length)
+            }
           }
+        } else if (_applicationCode.length === 11) {
+          _adminCode = _applicationCode
+          _userCode = _applicationCode.substring(1, 5) + _applicationCode.substring(6, 10) + '_' + _applicationCode.substring(0, 1) + _applicationCode.substring(5, 6) + _applicationCode.substring(10, _applicationCode.length)
         } else {
           _applicationCode = ''
         }
@@ -146,7 +148,6 @@ export default {
       document.cookie = 'link3=' + _link3 + ';' + _expires + '";path=/'
       document.cookie = 'link4=' + _link4 + ';' + _expires + '";path=/'
       document.cookie = 'link5=' + _link5 + ';' + _expires + '";path=/'
-      document.cookie = 'Client=;' + _expires + '";path=/'
     }
   }
 }
