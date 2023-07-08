@@ -13,9 +13,23 @@ const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheR
 const URLProperties = 'https://script.google.com/macros/s/AKfycbyG0TbbSD0eRYIZeXUUFI8DEMV6-Hn670Hq_9AhC9RevynXtRVYNNw4gKczGu07cPlc/exec?sh=Properties'
 const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'
 
-const getClient = function () {
-  if (typeof Client === 'undefined') return 'TEST'
-  return Client
+const getCookie = function (_cookieName) {
+  const name = _cookieName + '='
+  const decodedCookie = decodeURIComponent(document.cookie)
+  const ca = decodedCookie.split(';')
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i]
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1)
+    }
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length)
+    }
+  }
+  if (_cookieName === 'isAdministrator') return IsAdministrator
+  if (_cookieName === 'client') return Client
+  if (_cookieName === 'homeTeam') return HomeTeam
+  if (_cookieName === 'standardText') return StandardText
 }
 
 const getLogo = function () {
@@ -149,7 +163,7 @@ export { URLParticipantBasis }
 export { URLParticipantArchiveBasis }
 export { URLWhereIsMyCardBasis }
 export { URLMemberBasis }
-export { getClient }
+export { getCookie }
 export { getLogo }
 export { getAvatar }
 export { getTeamImage }

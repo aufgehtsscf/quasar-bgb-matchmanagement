@@ -142,7 +142,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delMember = true" v-if="IsAdministrator" />
+            <q-btn icon="delete" color="primary" @click="delMember = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
@@ -172,7 +172,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLMember, URLParticipantArchive, URLMatch, getAvatar, getTeamImage, getEventImage, teamImages, avatarImages } from 'src/boot/utils.js'
+import { getCookie, getAvatar, getTeamImage, getEventImage, teamImages, avatarImages, URLMemberBasis, URLParticipantArchiveBasis, URLMatchBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -180,6 +180,10 @@ const _constMemberId = ref('')
 const _constMember = ref('')
 const _constMemberOld = ref('')
 const _constAvatar = ref('')
+
+let _URLMember
+let _URLParticipantArchive
+let _URLMatch
 
 export default {
   name: 'ListMember',
@@ -197,6 +201,27 @@ export default {
       txtMemberNew: ref(''),
       txtAvatarNew: ref(''),
 
+      onMemberCreated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Mitglieder wurde erfolgreich erfasst!'
+        })
+      },
+
+      onMemberUpdated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Mitglieder wurde erfolgreich aktualisiert!'
+        })
+      },
+
+      onMemberDeleted () {
+        $q.notify({
+          message: 'Mitglieder wurde erfolgreich gelöscht!',
+          color: 'orange'
+        })
+      },
+
       onMemberAlreadyExists () {
         $q.notify({
           type: 'negative',
@@ -212,15 +237,15 @@ export default {
 
   data () {
     return {
-      IsAdministrator,
-      URLMember,
-      URLParticipantArchive,
-      URLMatch,
+      getCookie,
       getAvatar,
       getTeamImage,
       getEventImage,
       teamImages,
       avatarImages,
+      URLMemberBasis,
+      URLParticipantArchiveBasis,
+      URLMatchBasis,
 
       memberObject: [
         {
@@ -257,24 +282,31 @@ export default {
   },
 
   mounted () {
+    this.setVariables()
     this.getTableMember()
     this.getTableMatch()
   },
 
   methods: {
+    setVariables () {
+      _URLMember = URLMemberBasis + '?sh=' + getCookie('client')
+      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getCookie('client')
+      _URLMatch = URLMatchBasis + '?sh=' + getCookie('client')
+    },
+
     getTableMember () {
       this.memberObject = []
 
-      // console.log('URLMember: ' + this.URLMember + '&func=Read')
-      this.$axios(`${this.URLMember}&func=Read`)
+      // console.log('URLMember: ' + _URLMember + '&func=Read')
+      this.$axios(`${_URLMember}&func=Read`)
         .then((res) => {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
             const element = this.tableMember[index].split(',')
 
-            // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadParticipant&participant=' + element[3].trim())
+            // console.log('URLParticipantArchive: ' + _URLParticipantArchive + '&func=ReadParticipant&participant=' + element[3].trim())
             let _numberOfParticipations = 0
-            this.$axios(`${this.URLParticipantArchive}&func=ReadParticipant&participant=${element[3].trim()}`)
+            this.$axios(`${_URLParticipantArchive}&func=ReadParticipant&participant=${element[3].trim()}`)
               .then((res2) => {
                 this.tableParticipantArchive = res2.data.split('\n')
                 _numberOfParticipations = this.tableParticipantArchive.length - 1
@@ -307,8 +339,8 @@ export default {
     getTableMatch () {
       this.matchObject = []
 
-      // console.log('URLMatch: ' + this.URLMatch + '&func=ReadInactive')
-      this.$axios(`${this.URLMatch}&func=ReadInactive`)
+      // console.log('URLMatch: ' + _URLMatch + '&func=ReadInactive')
+      this.$axios(`${_URLMatch}&func=ReadInactive`)
         .then((res) => {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
@@ -334,8 +366,8 @@ export default {
       _constAvatar.value = _avatar
 
       this.inactiveMatchObject = []
-      // console.log('URLParticipantArchive: ' + this.URLParticipantArchive + '&func=ReadParticipant&participant=' + _member)
-      this.$axios(`${this.URLParticipantArchive}&func=ReadParticipant&participant=${_member}`)
+      // console.log('URLParticipantArchive: ' + _URLParticipantArchive + '&func=ReadParticipant&participant=' + _member)
+      this.$axios(`${_URLParticipantArchive}&func=ReadParticipant&participant=${_member}`)
         .then((res) => {
           this.tableParticipantArchive = res.data.split('\n')
           for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
@@ -365,9 +397,10 @@ export default {
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {
-        this.$axios(`${this.URLMember}&func=Add&member=${encodeURI(_member.replace(',', ' '))}&avatar=${_avatar}`)
+        this.$axios(`${_URLMember}&func=Add&member=${encodeURI(_member.replace(',', ' '))}&avatar=${_avatar}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
+              this.onMemberCreated()
               this.getTableMember()
             }
           })
@@ -387,9 +420,10 @@ export default {
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {
-        this.$axios(`${this.URLMember}&func=Update&row=${_row}&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatar=${_avatar}`)
+        this.$axios(`${_URLMember}&func=Update&row=${_row}&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatar=${_avatar}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
+              this.onMemberUpdated()
               this.getTableMember()
             }
           })
@@ -402,9 +436,10 @@ export default {
     deleteMember (_row, _memberId) {
       // console.log('deleteMember: ' + _row + ', ' + _memberId)
 
-      this.$axios(`${this.URLMember}&func=Delete&row=${_row}&memberId=${_memberId}`)
+      this.$axios(`${_URLMember}&func=Delete&row=${_row}&memberId=${_memberId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
+            this.onMemberDeleted()
             this.getTableMember()
             this.editMember = false
           }

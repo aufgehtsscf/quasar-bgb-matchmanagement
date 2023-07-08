@@ -5,7 +5,7 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title>Aktuelle Spiele</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true"  v-if="_isAdministrator !== 'false'" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true"  v-if="getCookie('isAdministrator') === 'true'" />
       </q-toolbar>
     </div>
 
@@ -312,7 +312,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="_isAdministrator === 'true'" />
+            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglPublished, txtDatetime, txtAnnotations)" :disable="txtMatchName === ''" v-close-popup />
           </q-card-actions>
@@ -401,13 +401,13 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, Client, HomeTeam, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchBasis, URLNextMatchBasis, URLParticipantBasis, URLParticipantArchiveBasis, URLMemberBasis } from 'src/boot/utils.js'
+import { getCookie, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchBasis, URLNextMatchBasis, URLParticipantBasis, URLParticipantArchiveBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
 const _constMatchId = ref('')
 const _constIsEvent = ref(false)
-const _constHomeTeamNew = ref(HomeTeam)
+const _constHomeTeamNew = ref(getCookie('homeTeam'))
 const _constHomeTeam = ref('')
 const _constAwayTeam = ref('')
 const _constMatchName = ref('')
@@ -423,8 +423,6 @@ const _constInactiveNumberOfParticipants = ref('')
 const _constMatchNameNew = ref('')
 const _constDatetimeNew = ref('')
 
-let _client
-let _homeTeam
 let _URLMatch
 let _URLNextMatch
 let _URLParticipant
@@ -461,6 +459,27 @@ export default {
       txtDatetimeNew: ref(_constDatetimeNew),
       txtAnnotationsNew: ref('<STANDARDTEXT>'),
 
+      onMatchCreated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Spiel wurde erfolgreich erfasst!'
+        })
+      },
+
+      onMatchUpdated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Spiel wurde erfolgreich aktualisiert!'
+        })
+      },
+
+      onMatchArchived () {
+        $q.notify({
+          type: 'positive',
+          message: 'Spiel wurde erfolgreich archiviert!'
+        })
+      },
+
       onMatchAlreadyExists () {
         $q.notify({
           type: 'negative',
@@ -471,17 +490,13 @@ export default {
       addMatch: ref(false),
       editMatch: ref(false),
       arcMatch: ref(false),
-      showInactiveMatch: ref(false),
-
-      _isAdministrator: ref('false')
+      showInactiveMatch: ref(false)
     }
   },
 
   data () {
     return {
-      IsAdministrator,
-      Client,
-      HomeTeam,
+      getCookie,
       getAvatar,
       getTeamImage,
       getEventImage,
@@ -560,42 +575,17 @@ export default {
 
   methods: {
     setVariables () {
-      this._isAdministrator = this.getCookie('isAdministrator')
-      if (this._isAdministrator === '') this._isAdministrator = this.IsAdministrator
-
-      _client = this.getCookie('client')
-      if (_client === '') _client = this.Client
-
-      _homeTeam = this.getCookie('homeTeam')
-      if (_homeTeam === '') _homeTeam = this.HomeTeam
-
-      _URLMatch = URLMatchBasis + '?sh=' + _client
-      _URLNextMatch = URLNextMatchBasis + '?sh=' + _homeTeam
-      _URLParticipant = URLParticipantBasis + '?sh=' + _client
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + _client
-      _URLMember = URLMemberBasis + '?sh=' + _client
-    },
-
-    getCookie (_cookieName) {
-      const name = _cookieName + '='
-      const decodedCookie = decodeURIComponent(document.cookie)
-      const ca = decodedCookie.split(';')
-      for (let i = 0; i < ca.length; i++) {
-        let c = ca[i]
-        while (c.charAt(0) === ' ') {
-          c = c.substring(1)
-        }
-        if (c.indexOf(name) === 0) {
-          return c.substring(name.length, c.length)
-        }
-      }
-      return ''
+      _URLMatch = URLMatchBasis + '?sh=' + getCookie('client')
+      _URLNextMatch = URLNextMatchBasis + '?sh=' + getCookie('homeTeam')
+      _URLParticipant = URLParticipantBasis + '?sh=' + getCookie('client')
+      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getCookie('client')
+      _URLMember = URLMemberBasis + '?sh=' + getCookie('client')
     },
 
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      const publishedParam = this._isAdministrator === 'true' ? '' : 'TRUE'
+      const publishedParam = getCookie('isAdministrator') === 'true' ? '' : 'TRUE'
       // console.log('URLMatch: ' + _URLMatch + '&func=ReadActive&published=' + publishedParam)
       this.$axios(`${_URLMatch}&func=ReadActive&published=${publishedParam}`)
         .then((res) => {
@@ -694,7 +684,7 @@ export default {
       _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
 
-      if (this._isAdministrator === 'true') this.editMatch = true
+      if (getCookie('isAdministrator') === 'true') this.editMatch = true
     },
 
     setFieldsForMatchNew (_homeTeam, _awayTeam) {
@@ -732,6 +722,7 @@ export default {
         this.$axios(`${_URLMatch}&func=Add&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
+              this.onMatchCreated()
               this.getTableActiveMatch()
             }
           })
@@ -763,6 +754,7 @@ export default {
               this.$axios(`${_URLParticipant}&func=UpdateMatch&matchId=${_matchId}&newMatchName=${_newMatchName}`)
                 .then((res2) => {
                   if (res2.data === 'Success, requested action completed') {
+                    this.onMatchUpdated()
                     this.getTableActiveMatch()
                   }
                 })
@@ -811,6 +803,7 @@ export default {
             this.$axios(`${_URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
               .then((res4) => {
                 if (res4.data === 'Success, requested action completed') {
+                  this.onMatchArchived()
                   this.getTableActiveMatch()
                   this.editMatch = false
                 }

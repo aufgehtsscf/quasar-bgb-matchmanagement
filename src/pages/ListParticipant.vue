@@ -47,7 +47,7 @@
     </q-card>
 
     <!-- Share -->
-    <div class="q-pa-md" style="max-width: 500px" v-if="IsAdministrator" >
+    <div class="q-pa-md" style="max-width: 500px" v-if="getCookie('isAdministrator') === 'true'" >
       <q-btn class="bg-white text-primary" icon="share" label="Übersicht teilen" @click="setTextShare(txtMatchName)" />
     </div>
 
@@ -97,7 +97,7 @@
       <div class="q-pa-md" style="max-width: 470px">
         <q-toolbar class="bg-primary text-white">
             <q-toolbar-title class="text-overline">Karte weitergeben ({{ ticketGivenObject.length }}) oder bedarf ({{ ticketRequiredObject.length }})</q-toolbar-title>
-            <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="IsAdministrator" />
+            <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="getCookie('isAdministrator') === 'true'" />
         </q-toolbar>
       </div>
 
@@ -189,7 +189,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if="IsAdministrator && txtParticipantReaction === ''" />
+            <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if="getCookie('isAdministrator') === 'true' && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantRow, txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === ''" v-close-popup />
           </q-card-actions>
@@ -252,7 +252,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="IsAdministrator" />
+            <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(intTicketParticipantRow, txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
@@ -274,7 +274,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="swipe_left" label="Aufheben" color="primary" @click="delTicketAssigned = true" v-if="IsAdministrator" />
+            <q-btn icon="swipe_left" label="Aufheben" color="primary" @click="delTicketAssigned = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
           </q-card-actions>
         </q-card>
@@ -318,7 +318,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, Client, StandardText, URLMatch, URLParticipant, URLWhereIsMyCard, URLMember, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchBasis, URLParticipantBasis, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
+import { getCookie, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchBasis, URLParticipantBasis, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchId = ref('')
@@ -356,6 +356,11 @@ const _constParticipantList = ref('')
 const _constTicketList = ref('')
 const _constShare = ref('')
 
+let _URLMatch
+let _URLParticipant
+let _URLWhereIsMyCard
+let _URLMember
+
 export default {
   name: 'ListParticipant',
 
@@ -371,6 +376,55 @@ export default {
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
       cbxArrivalOptions: ref(_constArrivalElements),
+
+      onParticipantCreated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Teilnahme wurde erfolgreich erfasst!'
+        })
+      },
+
+      onParticipantUpdated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Teilnahme wurde erfolgreich aktualisiert!'
+        })
+      },
+
+      onParticipantDeleted () {
+        $q.notify({
+          message: 'Teilnahme wurde erfolgreich gelöscht!',
+          color: 'orange'
+        })
+      },
+
+      onAssignmentCreated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Zuweisung wurde erfolgreich erfasst!'
+        })
+      },
+
+      OnTicketAssignedDeleted () {
+        $q.notify({
+          message: 'Zuweisung wurde erfolgreich aufgehoben!',
+          color: 'orange'
+        })
+      },
+
+      onTicketAssigmentUpdated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Freigabe/Bedarf wurde erfolgreich aktualisert!'
+        })
+      },
+
+      onTicketAssigmentDeleted () {
+        $q.notify({
+          message: 'Fregabe/Bedarf wurde erfolgreich gelöscht!',
+          color: 'orange'
+        })
+      },
 
       onParticipantAlreadyExists () {
         $q.notify({
@@ -427,13 +481,7 @@ export default {
 
   data () {
     return {
-      IsAdministrator,
-      Client,
-      StandardText,
-      URLMatch,
-      URLParticipant,
-      URLWhereIsMyCard,
-      URLMember,
+      getCookie,
       getAvatar,
       teamImages,
       getTeamImage,
@@ -553,12 +601,10 @@ export default {
 
   methods: {
     setVariables () {
-      if (Client === '') this.Client = 'TEST'
-
-      this.URLMatch = URLMatchBasis + '?sh=' + this.Client
-      this.URLParticipant = URLParticipantBasis + '?sh=' + this.Client
-      this.URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + Client
-      this.URLMember = URLMemberBasis + '?sh=' + this.Client
+      _URLMatch = URLMatchBasis + '?sh=' + getCookie('client')
+      _URLParticipant = URLParticipantBasis + '?sh=' + getCookie('client')
+      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getCookie('client')
+      _URLMember = URLMemberBasis + '?sh=' + getCookie('client')
     },
 
     isReservation (_participantArrival, _matchTime) {
@@ -572,8 +618,8 @@ export default {
     getTableMember () {
       this.memberObject = []
 
-      // console.log('URLMember: ' + this.URLMember + '&func=Read')
-      this.$axios(`${this.URLMember}&func=Read`)
+      // console.log('URLMember: ' + _URLMember + '&func=Read')
+      this.$axios(`${_URLMember}&func=Read`)
         .then((res) => {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
@@ -593,8 +639,8 @@ export default {
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      // console.log('URLMatch: ' + this.URLMatch + '&func=ReadActive&published=TRUE')
-      this.$axios(`${this.URLMatch}&func=ReadActive&published=TRUE`)
+      // console.log('URLMatch: ' + _URLMatch + '&func=ReadActive&published=TRUE')
+      this.$axios(`${_URLMatch}&func=ReadActive&published=TRUE`)
         .then((res) => {
           this.tableMatch = res.data.split('\n')
           for (let index = 0; index < this.tableMatch.length - 1; index++) {
@@ -678,9 +724,10 @@ export default {
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${this.URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}&reaction=&matchId=${_matchId}`)
+        this.$axios(`${_URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}&reaction=&matchId=${_matchId}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
+              this.onParticipantCreated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
             }
           })
@@ -700,9 +747,10 @@ export default {
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${this.URLParticipant}&func=Update&row=${_row}&participantId=${_participantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
+        this.$axios(`${_URLParticipant}&func=Update&row=${_row}&participantId=${_participantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
+              this.onParticipantUpdated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
             }
           })
@@ -715,10 +763,11 @@ export default {
     deleteParticipant (_row, _participantId, _matchId, _time, _annotationsMatch) {
       // console.log('deleteParticipant: ' + _row + ', ' + _participantId + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
 
-      this.$axios(`${this.URLParticipant}&func=Delete&row=${_row}&participantId=${_participantId}`)
+      this.$axios(`${_URLParticipant}&func=Delete&row=${_row}&participantId=${_participantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editParticipant = false
+            this.onParticipantDeleted()
             this.loadReloadData(_matchId, _time, _annotationsMatch)
           }
         })
@@ -756,7 +805,7 @@ export default {
       const _ticketGivenRow = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenRow
       const _ticketGivenParticipantId = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenParticipantId
       if (typeof _ticketGivenParticipantId !== 'undefined') {
-        this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&row=${_ticketGivenRow}&participantId=${_ticketGivenParticipantId}&reaction=${_ticketAssignmentRequired}`)
+        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&row=${_ticketGivenRow}&participantId=${_ticketGivenParticipantId}&reaction=${_ticketAssignmentRequired}`)
           .catch((err) => {
             console.log(err)
           })
@@ -764,9 +813,10 @@ export default {
         const _ticketRequiredRow = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredRow
         const _ticketRequiredParticipantId = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredParticipantId
         if (typeof _ticketRequiredParticipantId !== 'undefined') {
-          this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&row=${_ticketRequiredRow}&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
+          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&row=${_ticketRequiredRow}&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
             .then((res) => {
               if (res.data === 'Success, requested action completed') {
+                this.onAssignmentCreated()
                 this.loadReloadData(_matchId, _time, _annotationsMatch)
               }
             })
@@ -783,7 +833,7 @@ export default {
       const _ticketGivenRow = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedRow
       const _ticketAssignedGivenParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedParticipantId
       if (typeof _ticketAssignedGivenParticipantId !== 'undefined') {
-        this.$axios(`${this.URLParticipant}&func=UpdateTicketGiven&row=${_ticketGivenRow}&participantId=${_ticketAssignedGivenParticipantId}&reaction=`)
+        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&row=${_ticketGivenRow}&participantId=${_ticketAssignedGivenParticipantId}&reaction=`)
           .catch((err) => {
             console.log(err)
           })
@@ -791,10 +841,11 @@ export default {
         const _ticketRequiredRow = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedRow
         const _ticketAssignedRequiredParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedParticipantId
         if (typeof _ticketAssignedRequiredParticipantId !== 'undefined') {
-          this.$axios(`${this.URLParticipant}&func=UpdateTicketRequired&row=${_ticketRequiredRow}&participantId=${_ticketAssignedRequiredParticipantId}&action=brauche Karte&reaction=`)
+          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&row=${_ticketRequiredRow}&participantId=${_ticketAssignedRequiredParticipantId}&action=brauche Karte&reaction=`)
             .then((res) => {
               if (res.data === 'Success, requested action completed') {
                 this.editTicketAssigned = false
+                this.OnTicketAssignedDeleted()
                 this.loadReloadData(_matchId, _time, _annotationsMatch)
               }
             })
@@ -815,10 +866,11 @@ export default {
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${this.URLParticipant}&func=Update&row=${_ticketRow}&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
+        this.$axios(`${_URLParticipant}&func=Update&row=${_ticketRow}&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.editTicketAssignment = false
+              this.onTicketAssigmentUpdated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
             }
           })
@@ -830,10 +882,11 @@ export default {
 
     deleteTicketAssignment (_ticketRow, _ticketParticipantId, _matchId, _time, _annotationsMatch) {
       // console.log('deleteTicketAssignment: ' + _ticketRow + ', ' + _ticketParticipantId + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
-      this.$axios(`${this.URLParticipant}&func=Delete&row=${_ticketRow}&participantId=${_ticketParticipantId}`)
+      this.$axios(`${_URLParticipant}&func=Delete&row=${_ticketRow}&participantId=${_ticketParticipantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssignment = false
+            this.onTicketAssigmentDeleted()
             this.loadReloadData(_matchId, _time, _annotationsMatch)
           }
         })
@@ -845,8 +898,8 @@ export default {
     getTableParticipant (_matchId, _time, _annotationsMatch) {
       this.participantObject = []
 
-      // console.log('URLParticipant: ' + this.URLParticipant + '&func=Read&matchId=' + _matchId)
-      this.$axios(`${this.URLParticipant}&func=Read&matchId=${_matchId}`)
+      // console.log('URLParticipant: ' + _URLParticipant + '&func=Read&matchId=' + _matchId)
+      this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
         .then((res) => {
           this.tableParticipant = res.data.split('\n')
           for (let index = 0; index < this.tableParticipant.length - 1; index++) {
@@ -931,7 +984,7 @@ export default {
 
       if (this.reservation !== '') this.reservation += ','
 
-      const _standardText = StandardText.replace('<HH>', parseInt(_time.substring(0, 2) - 2)).replace('<MM>', _time.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
+      const _standardText = getCookie('standardText').replace('<HH>', parseInt(_time.substring(0, 2) - 2)).replace('<MM>', _time.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
 
       _constAnnotationsMatchOriginal.value = _annotationsMatch
       _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText)
@@ -990,8 +1043,8 @@ export default {
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
 
-      // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read')
-      this.$axios(`${this.URLWhereIsMyCard}&func=Read`)
+      // console.log('URLWhereIsMyCard: ' + _URLWhereIsMyCard + '&func=Read')
+      this.$axios(`${_URLWhereIsMyCard}&func=Read`)
         .then((res) => {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {

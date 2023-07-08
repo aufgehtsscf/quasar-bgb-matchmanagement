@@ -97,7 +97,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="IsAdministrator" />
+            <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intCardHolderRow, txtCardHolderId, txtCardHolder, txtCardHolderOld, tglDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
           </q-card-actions>
@@ -127,7 +127,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { IsAdministrator, URLWhereIsMyCard, URLMember, getAvatar } from 'src/boot/utils.js'
+import { getCookie, getAvatar, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constCardHolderRow = ref(0)
@@ -136,6 +136,9 @@ const _constCardHolder = ref('')
 const _constCardHolderOld = ref('')
 const _constDiscounted = ref('')
 const _constWhoHasTheCard = ref('')
+
+let _URLWhereIsMyCard
+let _URLMember
 
 export default {
   name: 'ListWhoHasTheCard',
@@ -155,10 +158,31 @@ export default {
       tglDiscountedNew: ref(false),
       txtWhoHasTheCardNew: ref(''),
 
+      onCardHolderCreated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Karteninhaber wurde erfolgreich erfasst!'
+        })
+      },
+
+      onCardHolderUpdated () {
+        $q.notify({
+          type: 'positive',
+          message: 'Karteninhaber wurde erfolgreich aktualisiert!'
+        })
+      },
+
+      onCardHolderDeleted () {
+        $q.notify({
+          message: 'Karteninhaber wurde erfolgreich gelöscht!',
+          color: 'orange'
+        })
+      },
+
       onCardHolderAlreadyExists () {
         $q.notify({
           type: 'negative',
-          message: 'Dieser Inhaber besteht bereits!'
+          message: 'Dieser Karteninhaber besteht bereits!'
         })
       },
 
@@ -170,10 +194,10 @@ export default {
 
   data () {
     return {
-      IsAdministrator,
-      URLWhereIsMyCard,
-      URLMember,
+      getCookie,
       getAvatar,
+      URLWhereIsMyCardBasis,
+      URLMemberBasis,
 
       whereIsMyCardObject: [
         {
@@ -203,15 +227,21 @@ export default {
   },
 
   mounted () {
+    this.setVariables()
     this.getTableWhereIsMyCard()
   },
 
   methods: {
+    setVariables () {
+      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getCookie('client')
+      _URLMember = URLMemberBasis + '?sh=' + getCookie('client')
+    },
+
     getTableMember () {
       this.memberObject = []
 
-      // console.log('URLMember: ' + this.URLMember + '&func=Read')
-      this.$axios(`${this.URLMember}&func=Read`)
+      // console.log('URLMember: ' + _URLMember + '&func=Read')
+      this.$axios(`${_URLMember}&func=Read`)
         .then((res) => {
           this.tableMember = res.data.split('\n')
           for (let index = 0; index < this.tableMember.length - 1; index++) {
@@ -236,8 +266,8 @@ export default {
 
       this.whereIsMyCardObject = []
 
-      // console.log('URLWhereIsMyCard: ' + this.URLWhereIsMyCard + '&func=Read')
-      this.$axios(`${this.URLWhereIsMyCard}&func=Read`)
+      // console.log('URLWhereIsMyCard: ' + _URLWhereIsMyCard + '&func=Read')
+      this.$axios(`${_URLWhereIsMyCard}&func=Read`)
         .then((res) => {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
@@ -285,9 +315,10 @@ export default {
       if (_cardHolderExists) {
         this.onCardHolderAlreadyExists()
       } else {
-        this.$axios(`${this.URLWhereIsMyCard}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+        this.$axios(`${_URLWhereIsMyCard}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
+              this.onCardHolderCreated()
               this.getTableWhereIsMyCard()
             }
           })
@@ -305,9 +336,10 @@ export default {
       if (_cardHolderExists) {
         this.onCardHolderAlreadyExists()
       } else {
-        this.$axios(`${this.URLWhereIsMyCard}&func=Update&row=${_row}&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+        this.$axios(`${_URLWhereIsMyCard}&func=Update&row=${_row}&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
+              this.onCardHolderUpdated()
               this.getTableWhereIsMyCard()
             }
           })
@@ -320,11 +352,12 @@ export default {
     deleteWhereIsMyCard (_row, _cardHolderId) {
       // console.log('deleteWhereIsMyCard: ' + _cardHolderId)
 
-      this.$axios(`${this.URLWhereIsMyCard}&func=Delete&row=${_row}&cardholderId=${_cardHolderId}`)
+      this.$axios(`${_URLWhereIsMyCard}&func=Delete&row=${_row}&cardholderId=${_cardHolderId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
-            this.getTableWhereIsMyCard()
             this.editWhereIsMyCard = false
+            this.onCardHolderDeleted()
+            this.getTableWhereIsMyCard()
           }
         })
         .catch((err) => {
