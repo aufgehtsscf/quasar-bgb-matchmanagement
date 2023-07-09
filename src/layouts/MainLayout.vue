@@ -104,31 +104,31 @@ import { date } from 'quasar'
 
 const linksList = [
   {
-    title: getCookie('title1'),
+    title: 'Homepage',
     caption: getCookie('caption1'),
     icon: 'favorite',
     link: getCookie('link1')
   },
   {
-    title: getCookie('title2'),
+    title: 'Email',
     caption: getCookie('caption2'),
     icon: 'drafts',
     link: getCookie('link2')
   },
   {
-    title: getCookie('title3'),
+    title: 'Facebook',
     caption: getCookie('caption3'),
     icon: 'public',
     link: getCookie('link3')
   },
   {
-    title: getCookie('title4'),
+    title: 'Twitter',
     caption: getCookie('caption4'),
     icon: 'rss_feed',
     link: getCookie('link4')
   },
   {
-    title: getCookie('title5'),
+    title: 'Instagram',
     caption: getCookie('caption5'),
     icon: 'record_voice_over',
     link: getCookie('link5')

@@ -144,7 +144,7 @@ export default {
               const _caption5 = element[20]
               const _link5 = element[21]
 
-              if (element[1] === _adminCode || element[2] === _userCode) this.setCookie(_isAdministrator, _adminCode, _userCode, _clientName, _email, _homeTeam, _standardText, _title1, _caption1, _link1, _title2, _caption2, _link2, _title3, _caption3, _link3, _title4, _caption4, _link4, _title5, _caption5, _link5)
+              if (element[1] === _adminCode || element[2] === _userCode) this.setCookie(_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _standardText, _title1, _caption1, _link1, _title2, _caption2, _link2, _title3, _caption3, _link3, _title4, _caption4, _link4, _title5, _caption5, _link5)
               else this.onUserCodeIsInvalid()
 
               this.onCodeIsValid()
@@ -156,13 +156,12 @@ export default {
       }
     },
 
-    setCookie (_isAdministrator, _adminCode, _userCode, _clientName, _email, _homeTeam, _standardText, _title1, _caption1, _link1, _title2, _caption2, _link2, _title3, _caption3, _link3, _title4, _caption4, _link4, _title5, _caption5, _link5) {
+    setCookie (_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _standardText, _title1, _caption1, _link1, _title2, _caption2, _link2, _title3, _caption3, _link3, _title4, _caption4, _link4, _title5, _caption5, _link5) {
       const d = new Date()
       d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000))
       const _expires = 'expires=' + d.toUTCString()
       document.cookie = 'isAdministrator=' + _isAdministrator + ';' + _expires + '";path=/'
-      document.cookie = 'adminCode=' + _adminCode + ';' + _expires + '";path=/'
-      document.cookie = 'userCode=' + _userCode + ';' + _expires + '";path=/'
+      document.cookie = 'applicationCode=' + _applicationCode + ';' + _expires + '";path=/'
       document.cookie = 'clientName=' + _clientName + ';' + _expires + '";path=/'
       document.cookie = 'email=' + _email + ';' + _expires + '";path=/'
       document.cookie = 'homeTeam=' + _homeTeam + ';' + _expires + '";path=/'

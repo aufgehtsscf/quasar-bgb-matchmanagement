@@ -1,7 +1,6 @@
 const IsAdministrator = 'true'
-const AdminCode = 'TEST'
-const UserCode = ''
-const ClientName = 'TEST'
+const AdminCode = 'BGB'
+const ClientName = 'BGB'
 const Email = ''
 const HomeTeam = 'Freiburg'
 const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
@@ -23,7 +22,6 @@ const Link5 = 'https://www.instagram.com/bierguerillabreisgau'
 
 // const IsAdministrator = 'true'
 // const AdminCode = 'BGB'
-// const UserCode = 'NGdoLbyd_330'
 // const ClientName = 'BGB'
 // const Email = 'bgb@dirkschnaiter.de'
 // const HomeTeam = 'Freiburg'
@@ -68,8 +66,7 @@ const getCookie = function (_cookieName) {
     }
   }
   if (_cookieName === 'isAdministrator') return IsAdministrator
-  if (_cookieName === 'adminCode') return AdminCode
-  if (_cookieName === 'userCode') return UserCode
+  if (_cookieName === 'applicationCode') return AdminCode
   if (_cookieName === 'clientName') return ClientName
   if (_cookieName === 'email') return Email
   if (_cookieName === 'homeTeam') return HomeTeam
@@ -89,6 +86,42 @@ const getCookie = function (_cookieName) {
   if (_cookieName === 'title5') return Title5
   if (_cookieName === 'caption5') return Caption5
   if (_cookieName === 'link5') return Link5
+}
+
+const getAdminCode = function (_applicationCode) {
+  let _adminCode = ''
+
+  if (_applicationCode === 'BGB' || _applicationCode === 'TEST') return AdminCode
+
+  if (_applicationCode.length === 12) {
+    if (_applicationCode.indexOf('_') > 0) {
+      const _stringCode = _applicationCode.split('_')
+      if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 330) {
+        _adminCode = _stringCode[1].substring(0, 1) + _stringCode[0].substring(0, 4) + _stringCode[1].substring(1, 2) + _stringCode[0].substring(4, 8) + _stringCode[1].substring(2, _stringCode[1].length)
+      }
+    }
+  } else if (_applicationCode.length === 11) {
+    _adminCode = _applicationCode
+  }
+
+  return _adminCode
+}
+
+const getUserCode = function (_applicationCode) {
+  let _userCode = ''
+
+  if (_applicationCode.length === 12) {
+    if (_applicationCode.indexOf('_') > 0) {
+      const _stringCode = _applicationCode.split('_')
+      if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 330) {
+        _userCode = _applicationCode
+      }
+    }
+  } else if (_applicationCode.length === 11) {
+    _userCode = _applicationCode.substring(1, 5) + _applicationCode.substring(6, 10) + '_' + _applicationCode.substring(0, 1) + _applicationCode.substring(5, 6) + _applicationCode.substring(10, _applicationCode.length)
+  }
+
+  return _userCode
 }
 
 const getLogo = function (_client) {
@@ -218,6 +251,8 @@ export { URLMemberBasis }
 export { URLProperties }
 export { URLOrder }
 export { getCookie }
+export { getAdminCode }
+export { getUserCode }
 export { getLogo }
 export { getAvatar }
 export { getTeamImage }

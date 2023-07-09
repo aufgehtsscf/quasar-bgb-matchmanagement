@@ -401,7 +401,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchBasis, URLNextMatchBasis, URLParticipantBasis, URLParticipantArchiveBasis, URLMemberBasis } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchBasis, URLNextMatchBasis, URLParticipantBasis, URLParticipantArchiveBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchRow = ref(0)
@@ -497,6 +497,7 @@ export default {
   data () {
     return {
       getCookie,
+      getAdminCode,
       getAvatar,
       getTeamImage,
       getEventImage,
@@ -575,11 +576,11 @@ export default {
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getCookie('adminCode')
+      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
       _URLNextMatch = URLNextMatchBasis + '?sh=' + getCookie('homeTeam')
-      _URLParticipant = URLParticipantBasis + '?sh=' + getCookie('adminCode')
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getCookie('adminCode')
-      _URLMember = URLMemberBasis + '?sh=' + getCookie('adminCode')
+      _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
     },
 
     getTableActiveMatch () {

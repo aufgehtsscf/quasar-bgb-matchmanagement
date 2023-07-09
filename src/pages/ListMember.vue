@@ -172,7 +172,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAvatar, getTeamImage, getEventImage, teamImages, avatarImages, URLMemberBasis, URLParticipantArchiveBasis, URLMatchBasis } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, avatarImages, URLMemberBasis, URLParticipantArchiveBasis, URLMatchBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMemberRow = ref(0)
@@ -238,6 +238,7 @@ export default {
   data () {
     return {
       getCookie,
+      getAdminCode,
       getAvatar,
       getTeamImage,
       getEventImage,
@@ -289,9 +290,9 @@ export default {
 
   methods: {
     setVariables () {
-      _URLMember = URLMemberBasis + '?sh=' + getCookie('adminCode')
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getCookie('adminCode')
-      _URLMatch = URLMatchBasis + '?sh=' + getCookie('adminCode')
+      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
     },
 
     getTableMember () {

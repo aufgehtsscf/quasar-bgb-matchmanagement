@@ -318,7 +318,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchBasis, URLParticipantBasis, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchBasis, URLParticipantBasis, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constMatchId = ref('')
@@ -482,6 +482,7 @@ export default {
   data () {
     return {
       getCookie,
+      getAdminCode,
       getAvatar,
       teamImages,
       getTeamImage,
@@ -601,10 +602,10 @@ export default {
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getCookie('adminCode')
-      _URLParticipant = URLParticipantBasis + '?sh=' + getCookie('adminCode')
-      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getCookie('adminCode')
-      _URLMember = URLMemberBasis + '?sh=' + getCookie('adminCode')
+      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
     },
 
     isReservation (_participantArrival, _matchTime) {

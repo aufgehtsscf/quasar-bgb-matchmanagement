@@ -127,7 +127,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAvatar, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constCardHolderRow = ref(0)
@@ -195,6 +195,7 @@ export default {
   data () {
     return {
       getCookie,
+      getAdminCode,
       getAvatar,
       URLWhereIsMyCardBasis,
       URLMemberBasis,
@@ -233,8 +234,8 @@ export default {
 
   methods: {
     setVariables () {
-      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getCookie('adminCode')
-      _URLMember = URLMemberBasis + '?sh=' + getCookie('adminCode')
+      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
     },
 
     getTableMember () {
