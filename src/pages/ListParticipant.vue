@@ -80,7 +80,7 @@
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
             </q-avatar>
             <q-avatar size="70px" v-if="el.presentParticipantParticipantAvatar !== ''">
-              <img :src="getAvatar(el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized === 'TRUE')">
+              <img :src="getAvatar(getCookie('clientName'), el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized === 'TRUE')">
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
             </q-avatar>
           </q-item-section>
@@ -601,10 +601,10 @@ export default {
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getCookie('client')
-      _URLParticipant = URLParticipantBasis + '?sh=' + getCookie('client')
-      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getCookie('client')
-      _URLMember = URLMemberBasis + '?sh=' + getCookie('client')
+      _URLMatch = URLMatchBasis + '?sh=' + getCookie('adminCode')
+      _URLParticipant = URLParticipantBasis + '?sh=' + getCookie('adminCode')
+      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getCookie('adminCode')
+      _URLMember = URLMemberBasis + '?sh=' + getCookie('adminCode')
     },
 
     isReservation (_participantArrival, _matchTime) {

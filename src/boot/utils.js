@@ -1,7 +1,48 @@
 const IsAdministrator = 'true'
-const Client = 'TEST'
+const AdminCode = 'TEST'
+const UserCode = ''
+const ClientName = 'TEST'
+const Email = ''
 const HomeTeam = 'Freiburg'
 const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
+const Title1 = 'Homepage'
+const Caption1 = 'Bier Guerilla Breisgau'
+const Link1 = 'http://www.fanclub-bgb.de/'
+const Title2 = 'Email'
+const Caption2 = 'bgb@dirkschnaiter.de'
+const Link2 = 'mailto:bgb@dirkschnaiter.de'
+const Title3 = 'Facebook'
+const Caption3 = 'facebook.com/bierguerillabreisgau'
+const Link3 = 'https://www.facebook.com/bierguerillabreisgau'
+const Title4 = 'Twitter'
+const Caption4 = 'twitter.com/B_Guerilla'
+const Link4 = 'https://twitter.com/B_Guerilla'
+const Title5 = 'Instagram'
+const Caption5 = 'instagram.com/bierguerillabreisgau'
+const Link5 = 'https://www.instagram.com/bierguerillabreisgau'
+
+// const IsAdministrator = 'true'
+// const AdminCode = 'BGB'
+// const UserCode = 'NGdoLbyd_330'
+// const ClientName = 'BGB'
+// const Email = 'bgb@dirkschnaiter.de'
+// const HomeTeam = 'Freiburg'
+// const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
+// const Title1 = 'Homepage'
+// const Caption1 = 'Bier Guerilla Breisgau'
+// const Link1 = 'http://www.fanclub-bgb.de/'
+// const Title2 = 'Email'
+// const Caption2 = 'bgb@dirkschnaiter.de'
+// const Link2 = 'mailto:bgb@dirkschnaiter.de'
+// const Title3 = 'Facebook'
+// const Caption3 = 'facebook.com/bierguerillabreisgau'
+// const Link3 = 'https://www.facebook.com/bierguerillabreisgau'
+// const Title4 = 'Twitter'
+// const Caption4 = 'twitter.com/B_Guerilla'
+// const Link4 = 'https://twitter.com/B_Guerilla'
+// const Title5 = 'Instagram'
+// const Caption5 = 'instagram.com/bierguerillabreisgau'
+// const Link5 = 'https://www.instagram.com/bierguerillabreisgau'
 
 const URLMatchBasis = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
 const URLNextMatchBasis = 'https://script.google.com/macros/s/AKfycbzo1RuM5zOC_1kkUBRJB4tbMKZNgVZ65KTGdm76wyBTB9F_FQLFs8vt3Nh16xwDwChOuA/exec'
@@ -11,7 +52,7 @@ const URLWhereIsMyCardBasis = 'https://script.google.com/macros/s/AKfycbwi7JYV_w
 const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
 
 const URLProperties = 'https://script.google.com/macros/s/AKfycbyG0TbbSD0eRYIZeXUUFI8DEMV6-Hn670Hq_9AhC9RevynXtRVYNNw4gKczGu07cPlc/exec?sh=Properties'
-const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=BGB'
+const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=' + AdminCode
 
 const getCookie = function (_cookieName) {
   const name = _cookieName + '='
@@ -27,19 +68,36 @@ const getCookie = function (_cookieName) {
     }
   }
   if (_cookieName === 'isAdministrator') return IsAdministrator
-  if (_cookieName === 'client') return Client
+  if (_cookieName === 'adminCode') return AdminCode
+  if (_cookieName === 'userCode') return UserCode
+  if (_cookieName === 'clientName') return ClientName
+  if (_cookieName === 'email') return Email
   if (_cookieName === 'homeTeam') return HomeTeam
   if (_cookieName === 'standardText') return StandardText
+  if (_cookieName === 'title1') return Title1
+  if (_cookieName === 'caption1') return Caption1
+  if (_cookieName === 'link1') return Link1
+  if (_cookieName === 'title2') return Title2
+  if (_cookieName === 'caption2') return Caption2
+  if (_cookieName === 'link2') return Link2
+  if (_cookieName === 'title3') return Title3
+  if (_cookieName === 'caption3') return Caption3
+  if (_cookieName === 'link3') return Link3
+  if (_cookieName === 'title4') return Title4
+  if (_cookieName === 'caption4') return Caption4
+  if (_cookieName === 'link4') return Link4
+  if (_cookieName === 'title5') return Title5
+  if (_cookieName === 'caption5') return Caption5
+  if (_cookieName === 'link5') return Link5
 }
 
-const getLogo = function () {
-  if (typeof Client === 'undefined') return 'statics/images/TEST/Logo.png'
-  return 'statics/images/' + Client + '/Logo.png'
+const getLogo = function (_client) {
+  return 'statics/images/' + _client + '/Logo.png'
 }
 
-const getAvatar = function (_avatar, _customized) {
+const getAvatar = function (_clientName, _avatar, _customized) {
   if (_avatar === '') return 'statics/avatars/collection/Placeholder.png'
-  else if (_customized) return 'statics/avatars/' + Client + '/' + _avatar + '.png'
+  else if (_customized) return 'statics/avatars/' + _clientName + '/' + _avatar + '.png'
   else return 'statics/avatars/collection/' + _avatar + '.png'
 }
 
@@ -151,18 +209,14 @@ const avatarImages = [
   { label: 'Woodstock', value: 'Woodstock', avatar: 'statics/avatars/collection/Woodstock.png' }
 ]
 
-export { IsAdministrator }
-export { Client }
-export { HomeTeam }
-export { StandardText }
-export { URLProperties }
-export { URLOrder }
 export { URLMatchBasis }
 export { URLNextMatchBasis }
 export { URLParticipantBasis }
 export { URLParticipantArchiveBasis }
 export { URLWhereIsMyCardBasis }
 export { URLMemberBasis }
+export { URLProperties }
+export { URLOrder }
 export { getCookie }
 export { getLogo }
 export { getAvatar }

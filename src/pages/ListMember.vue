@@ -21,7 +21,7 @@
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
             <q-avatar size="50px" v-if="member.avatar !== ''">
-              <img :src="getAvatar(member.avatar, member.customized === 'TRUE')">
+              <img :src="getAvatar(getCookie('clientName'), member.avatar, member.customized === 'TRUE')">
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
           </q-item-section>
@@ -289,9 +289,9 @@ export default {
 
   methods: {
     setVariables () {
-      _URLMember = URLMemberBasis + '?sh=' + getCookie('client')
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getCookie('client')
-      _URLMatch = URLMatchBasis + '?sh=' + getCookie('client')
+      _URLMember = URLMemberBasis + '?sh=' + getCookie('adminCode')
+      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getCookie('adminCode')
+      _URLMatch = URLMatchBasis + '?sh=' + getCookie('adminCode')
     },
 
     getTableMember () {

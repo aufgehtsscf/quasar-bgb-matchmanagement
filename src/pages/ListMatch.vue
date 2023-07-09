@@ -342,7 +342,7 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n <= 9">
+              <img :src="getAvatar(getCookie('clientName'), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n <= 9">
             </q-avatar>
           </div>
 
@@ -354,7 +354,7 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 9 && n <= 19">
+              <img :src="getAvatar(getCookie('clientName'), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 9 && n <= 19">
             </q-avatar>
           </div>
 
@@ -366,7 +366,7 @@
               class="overlapping"
               :style="`left: ${(n - 20) * 32}px`"
             >
-              <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19">
+              <img :src="getAvatar(getCookie('clientName'), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19">
             </q-avatar>
           </div>
 
@@ -575,11 +575,11 @@ export default {
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getCookie('client')
+      _URLMatch = URLMatchBasis + '?sh=' + getCookie('adminCode')
       _URLNextMatch = URLNextMatchBasis + '?sh=' + getCookie('homeTeam')
-      _URLParticipant = URLParticipantBasis + '?sh=' + getCookie('client')
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getCookie('client')
-      _URLMember = URLMemberBasis + '?sh=' + getCookie('client')
+      _URLParticipant = URLParticipantBasis + '?sh=' + getCookie('adminCode')
+      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getCookie('adminCode')
+      _URLMember = URLMemberBasis + '?sh=' + getCookie('adminCode')
     },
 
     getTableActiveMatch () {

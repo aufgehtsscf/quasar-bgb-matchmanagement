@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { IsAdministrator, URLOrder } from 'src/boot/utils.js'
+import { URLOrder } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constPosition = ref('')
@@ -50,7 +50,6 @@ export default {
 
   data () {
     return {
-      IsAdministrator,
       URLOrder,
 
       index: [],

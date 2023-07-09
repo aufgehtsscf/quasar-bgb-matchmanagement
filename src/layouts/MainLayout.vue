@@ -12,7 +12,7 @@
         />
       </q-toolbar>
       <div class="q-px-lg q-pt-xl q-mb-md">
-        <div class="text-h4">BGB Spieltagsplanung</div>
+        <div class="text-h4">{{ getCookie('clientName') }} Spieltagsplanung</div>
         <div class="text-subtitle1">{{ todaysDate }}</div>
       </div>
       <q-img src="statics/images/AufGehtsSCF.png" class="header-image absolute-top" />
@@ -60,14 +60,14 @@
             <q-item-section> Mitglieder </q-item-section>
           </q-item>
 
-          <q-item to="/order" exact clickable v-ripple v-if="getCookie('client') === 'BGB'">
+          <q-item to="/order" exact clickable v-ripple v-if="getCookie('clientName') === 'BGB'">
             <q-item-section avatar>
               <q-icon name="shopping_cart" />
             </q-item-section>
             <q-item-section> Bestellungen </q-item-section>
           </q-item>
 
-          <q-item to="/entercode" exact clickable v-ripple v-if="getCookie('client') === 'TEST'">
+          <q-item to="/entercode" exact clickable v-ripple v-if="getCookie('clientName') === 'TEST'">
             <q-item-section avatar>
               <q-icon name="qr_code_2" />
             </q-item-section>
@@ -84,7 +84,7 @@
         />
       </q-scroll-area>
 
-      <q-img class="absolute-top" :src="getLogo()" style="height: 182px">
+      <q-img class="absolute-top" :src="getLogo(getCookie('clientName'))" style="height: 182px">
       </q-img>
     </q-drawer>
 
@@ -104,34 +104,34 @@ import { date } from 'quasar'
 
 const linksList = [
   {
-    title: 'Homepage',
-    caption: 'Bier Guerilla Breisgau',
+    title: getCookie('title1'),
+    caption: getCookie('caption1'),
     icon: 'favorite',
-    link: 'http://www.fanclub-bgb.de/'
+    link: getCookie('link1')
   },
   {
-    title: 'Email',
-    caption: 'bgb@dirkschnaiter.de',
+    title: getCookie('title2'),
+    caption: getCookie('caption2'),
     icon: 'drafts',
-    link: 'mailto:bgb@dirkschnaiter.de'
+    link: getCookie('link2')
   },
   {
-    title: 'Facebook',
-    caption: 'facebook.com/bierguerillabreisgau',
+    title: getCookie('title3'),
+    caption: getCookie('caption3'),
     icon: 'public',
-    link: 'https://www.facebook.com/bierguerillabreisgau'
+    link: getCookie('link3')
   },
   {
-    title: 'Twitter',
-    caption: 'twitter.com/B_Guerilla',
+    title: getCookie('title4'),
+    caption: getCookie('caption4'),
     icon: 'rss_feed',
-    link: 'https://twitter.com/B_Guerilla'
+    link: getCookie('link4')
   },
   {
-    title: 'Instagram',
-    caption: 'instagram.com/bierguerillabreisgau',
+    title: getCookie('title5'),
+    caption: getCookie('caption5'),
     icon: 'record_voice_over',
-    link: 'https://www.instagram.com/bierguerillabreisgau'
+    link: getCookie('link5')
   }
 ]
 
