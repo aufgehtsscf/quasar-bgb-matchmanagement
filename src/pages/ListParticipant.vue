@@ -94,7 +94,7 @@
       </q-list>
 
       <!-- Ticket assignment area (Titel) -->
-      <div class="q-pa-md" style="max-width: 470px">
+      <div class="q-pa-md" style="max-width: 470px" v-if="txtHomeTeam === getCookie('homeTeam')">
         <q-toolbar class="bg-primary text-white">
             <q-toolbar-title class="text-overline">Karte weitergeben ({{ ticketGivenObject.length }}) oder bedarf ({{ ticketRequiredObject.length }})</q-toolbar-title>
             <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="getCookie('isAdministrator') === 'true'" />
@@ -150,7 +150,8 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtParticipantNew" autofocus label="Name" />
-            <q-select v-model="txtActionNew" :options="cbxActionOptions" label="Aktion" />
+            <q-select v-model="txtActionNew" :options="cbxActionOptionsHome" label="Aktion" v-if="txtHomeTeam === getCookie('homeTeam')" />
+            <q-select v-model="txtActionNew" :options="cbxActionOptionsAway" label="Aktion" v-if="txtHomeTeam !== getCookie('homeTeam')" />
             <q-select v-model="txtArrivalNew" :options="cbxArrivalOptions" label="Ankunft" v-if="txtActionNew === 'bin dabei'" />
             <div class="q-pt-md" style="max-width: 350px">
               <q-input v-model="txtAnnotationsParticipantNew" filled type="textarea" label="Kommentar"/>
@@ -177,8 +178,10 @@
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="false" v-if="txtParticipantReaction === ''" />
             <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="true" v-if="txtParticipantReaction !== ''" />
-            <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="false" v-if="txtParticipantReaction === ''" />
-            <q-select v-model="txtParticipantAction" :options="cbxActionOptions" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== ''" />
+            <q-select v-model="txtParticipantAction" :options="cbxActionOptionsHome" label="Aktion" :readonly="false" v-if="txtParticipantReaction === '' &&  txtHomeTeam === getCookie('homeTeam')" />
+            <q-select v-model="txtParticipantAction" :options="cbxActionOptionsAway" label="Aktion" :readonly="false" v-if="txtParticipantReaction === '' &&  txtHomeTeam !== getCookie('homeTeam')" />
+            <q-select v-model="txtParticipantAction" :options="cbxActionOptionsHome" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== '' &&  txtHomeTeam === getCookie('homeTeam')" />
+            <q-select v-model="txtParticipantAction" :options="cbxActionOptionsAway" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== getCookie('homeTeam')" />
             <q-select v-model="txtParticipantArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtParticipantAction === 'bin dabei'" />
             <q-input class="text-italic" dense v-model="txtParticipantReaction" :readonly="true" v-if="txtParticipantReaction !== ''" />
             <div class="q-pt-md" style="max-width: 350px">
@@ -243,7 +246,8 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtTicketParticipant" autofocus label="Name" />
-            <q-select v-model="txtTicketAction" :options="cbxActionOptions" label="Aktion" />
+            <q-select v-model="txtTicketAction" :options="cbxActionOptionsHome" label="Aktion" v-if="txtHomeTeam === getCookie('homeTeam')" />
+            <q-select v-model="txtTicketAction" :options="cbxActionOptionsAway" label="Aktion" v-if="txtHomeTeam !== getCookie('homeTeam')" />
             <div class="q-pt-md" style="max-width: 350px">
               <q-input v-model="txtTicketAnnotations" filled type="textarea" label="Kommentar"/>
             </div>
@@ -453,7 +457,8 @@ export default {
       txtParticipantAction: ref(_constParticipantAction),
       txtParticipantReaction: ref(_constParticipantReaction),
 
-      cbxActionOptions: ['bin dabei', 'brauche Karte', 'meine Karte ist frei'],
+      cbxActionOptionsHome: ['bin dabei', 'brauche Karte', 'meine Karte ist frei'],
+      cbxActionOptionsAway: ['bin dabei'],
 
       intTicketParticipantRow: ref(_constTicketParticipantRow),
       txtTicketParticipantId: ref(_constTicketParticipantId),
