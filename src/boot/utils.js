@@ -1,46 +1,35 @@
 const IsAdministrator = 'true'
-const AdminCode = 'BGB'
+const ApplicationCode = 'BGB'
+const AdminCode = '3NGdo3Lbyd0'
 const ClientName = 'BGB'
-const Email = ''
+const Email = 'bgb@dirkschnaiter.de'
 const HomeTeam = 'Freiburg'
+const HomeTeamAlias = 'SCF'
 const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
-const Title1 = 'Homepage'
-const Caption1 = 'Bier Guerilla Breisgau'
-const Link1 = 'http://www.fanclub-bgb.de/'
-const Title2 = 'Email'
-const Caption2 = 'bgb@dirkschnaiter.de'
-const Link2 = 'mailto:bgb@dirkschnaiter.de'
-const Title3 = 'Facebook'
-const Caption3 = 'facebook.com/bierguerillabreisgau'
-const Link3 = 'https://www.facebook.com/bierguerillabreisgau'
-const Title4 = 'Twitter'
-const Caption4 = 'twitter.com/B_Guerilla'
-const Link4 = 'https://twitter.com/B_Guerilla'
-const Title5 = 'Instagram'
-const Caption5 = 'instagram.com/bierguerillabreisgau'
-const Link5 = 'https://www.instagram.com/bierguerillabreisgau'
+const TitleUrl1 = 'Homepage'
+const CaptionUrl1 = 'Bier Guerilla Breisgau'
+const LinkUrl1 = 'http://www.fanclub-bgb.de/'
+const TitleUrl2 = 'Email'
+const CaptionUrl2 = 'bgb@dirkschnaiter.de'
+const LinkUrl2 = 'mailto:bgb@dirkschnaiter.de'
+const TitleUrl3 = 'Facebook'
+const CaptionUrl3 = 'facebook.com/bierguerillabreisgau'
+const LinkUrl3 = 'https://www.facebook.com/bierguerillabreisgau'
+const TitleUrl4 = 'Twitter'
+const CaptionUrl4 = 'twitter.com/B_Guerilla'
+const LinkUrl4 = 'https://twitter.com/B_Guerilla'
+const TitleUrl5 = 'Instagram'
+const CaptionUrl5 = 'instagram.com/bierguerillabreisgau'
+const LinkUrl5 = 'https://www.instagram.com/bierguerillabreisgau'
 
 // const IsAdministrator = 'true'
-// const AdminCode = 'BGB'
-// const ClientName = 'BGB'
-// const Email = 'bgb@dirkschnaiter.de'
+// const ApplicationCode = 'TEST'
+// const AdminCode = '3Test2tseT9'
+// const ClientName = 'TEST'
+// const Email = 'aufgehtsscf@gmail.com'
 // const HomeTeam = 'Freiburg'
-// const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
-// const Title1 = 'Homepage'
-// const Caption1 = 'Bier Guerilla Breisgau'
-// const Link1 = 'http://www.fanclub-bgb.de/'
-// const Title2 = 'Email'
-// const Caption2 = 'bgb@dirkschnaiter.de'
-// const Link2 = 'mailto:bgb@dirkschnaiter.de'
-// const Title3 = 'Facebook'
-// const Caption3 = 'facebook.com/bierguerillabreisgau'
-// const Link3 = 'https://www.facebook.com/bierguerillabreisgau'
-// const Title4 = 'Twitter'
-// const Caption4 = 'twitter.com/B_Guerilla'
-// const Link4 = 'https://twitter.com/B_Guerilla'
-// const Title5 = 'Instagram'
-// const Caption5 = 'instagram.com/bierguerillabreisgau'
-// const Link5 = 'https://www.instagram.com/bierguerillabreisgau'
+// const HomeTeamAlias = 'SCF'
+// const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES>'
 
 const URLMatchBasis = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
 const URLNextMatchBasis = 'https://script.google.com/macros/s/AKfycbzo1RuM5zOC_1kkUBRJB4tbMKZNgVZ65KTGdm76wyBTB9F_FQLFs8vt3Nh16xwDwChOuA/exec'
@@ -50,7 +39,7 @@ const URLWhereIsMyCardBasis = 'https://script.google.com/macros/s/AKfycbwi7JYV_w
 const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
 
 const URLProperties = 'https://script.google.com/macros/s/AKfycbyG0TbbSD0eRYIZeXUUFI8DEMV6-Hn670Hq_9AhC9RevynXtRVYNNw4gKczGu07cPlc/exec?sh=Properties'
-const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=' + AdminCode
+const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=' + ApplicationCode
 
 const getCookie = function (_cookieName) {
   const name = _cookieName + '='
@@ -66,37 +55,38 @@ const getCookie = function (_cookieName) {
     }
   }
   if (_cookieName === 'isAdministrator') return IsAdministrator
-  if (_cookieName === 'applicationCode') return AdminCode
+  if (_cookieName === 'applicationCode') return ApplicationCode
   if (_cookieName === 'clientName') return ClientName
   if (_cookieName === 'email') return Email
   if (_cookieName === 'homeTeam') return HomeTeam
+  if (_cookieName === 'homeTeamAlias') return HomeTeamAlias
   if (_cookieName === 'standardText') return StandardText
-  if (_cookieName === 'title1') return Title1
-  if (_cookieName === 'caption1') return Caption1
-  if (_cookieName === 'link1') return Link1
-  if (_cookieName === 'title2') return Title2
-  if (_cookieName === 'caption2') return Caption2
-  if (_cookieName === 'link2') return Link2
-  if (_cookieName === 'title3') return Title3
-  if (_cookieName === 'caption3') return Caption3
-  if (_cookieName === 'link3') return Link3
-  if (_cookieName === 'title4') return Title4
-  if (_cookieName === 'caption4') return Caption4
-  if (_cookieName === 'link4') return Link4
-  if (_cookieName === 'title5') return Title5
-  if (_cookieName === 'caption5') return Caption5
-  if (_cookieName === 'link5') return Link5
+  if (_cookieName === 'titleUrl1') return TitleUrl1
+  if (_cookieName === 'captionUrl1') return CaptionUrl1
+  if (_cookieName === 'linkUrl1') return LinkUrl1
+  if (_cookieName === 'titleUrl2') return TitleUrl2
+  if (_cookieName === 'captionUrl2') return CaptionUrl2
+  if (_cookieName === 'linkUrl2') return LinkUrl2
+  if (_cookieName === 'titleUrl3') return TitleUrl3
+  if (_cookieName === 'captionUrl3') return CaptionUrl3
+  if (_cookieName === 'linkUrl3') return LinkUrl3
+  if (_cookieName === 'titleUrl4') return TitleUrl4
+  if (_cookieName === 'captionUrl4') return CaptionUrl4
+  if (_cookieName === 'linkUrl4') return LinkUrl4
+  if (_cookieName === 'titleUrl5') return TitleUrl5
+  if (_cookieName === 'captionUrl5') return CaptionUrl5
+  if (_cookieName === 'linkUrl5') return LinkUrl5
 }
 
 const getAdminCode = function (_applicationCode) {
   let _adminCode = ''
 
-  if (_applicationCode === 'BGB' || _applicationCode === 'TEST') return AdminCode
+  if (_applicationCode === 'BGB' || _applicationCode === 'TEST') return _applicationCode
 
   if (_applicationCode.length === 12) {
     if (_applicationCode.indexOf('_') > 0) {
       const _stringCode = _applicationCode.split('_')
-      if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 330) {
+      if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 329) {
         _adminCode = _stringCode[1].substring(0, 1) + _stringCode[0].substring(0, 4) + _stringCode[1].substring(1, 2) + _stringCode[0].substring(4, 8) + _stringCode[1].substring(2, _stringCode[1].length)
       }
     }
@@ -113,7 +103,7 @@ const getUserCode = function (_applicationCode) {
   if (_applicationCode.length === 12) {
     if (_applicationCode.indexOf('_') > 0) {
       const _stringCode = _applicationCode.split('_')
-      if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 330) {
+      if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 329) {
         _userCode = _applicationCode
       }
     }
@@ -242,6 +232,7 @@ const avatarImages = [
   { label: 'Woodstock', value: 'Woodstock', avatar: 'statics/avatars/collection/Woodstock.png' }
 ]
 
+export { AdminCode }
 export { URLMatchBasis }
 export { URLNextMatchBasis }
 export { URLParticipantBasis }

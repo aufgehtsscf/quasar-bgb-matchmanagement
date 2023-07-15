@@ -692,8 +692,18 @@ export default {
       if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
 
       if (typeof _homeTeam !== 'undefined' && typeof _awayTeam !== 'undefined') {
-        const _labelHomeTeam = this.teamOptions.find(el => el.value === _homeTeam)?.label
-        const _labelAwayTeam = this.teamOptions.find(el => el.value === _awayTeam)?.label
+        let _labelHomeTeam = ''
+        if (_homeTeam === getCookie('homeTeam')) {
+          _labelHomeTeam = getCookie('homeTeamAlias')
+        } else {
+          _labelHomeTeam = this.teamOptions.find(el => el.value === _homeTeam)?.label
+        }
+        let _labelAwayTeam = ''
+        if (_awayTeam === getCookie('homeTeam')) {
+          _labelAwayTeam = getCookie('homeTeamAlias')
+        } else {
+          _labelAwayTeam = this.teamOptions.find(el => el.value === _awayTeam)?.label
+        }
         _constMatchNameNew.value = _labelHomeTeam + ' vs. ' + _labelAwayTeam
 
         let _date = this.teamOptions.find(el => el.value === _awayTeam)?.date
@@ -867,9 +877,9 @@ export default {
     getTableNextMatch () {
       this.teamOptions = []
 
-      let _label = this.teamImages.find(el => el.value === this.HomeTeam)?.label
-      let _image = this.teamImages.find(el => el.value === this.HomeTeam)?.image
-      this.setTeamOptionsObject(_label, this.HomeTeam, _image)
+      let _label = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.label
+      let _image = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.image
+      this.setTeamOptionsObject(_label, getCookie('homeTeam'), _image)
 
       // console.log('URLNextMatch: ' + _URLNextMatch + '&func=Read')
       this.$axios(`${_URLNextMatch}&func=Read`)

@@ -99,39 +99,39 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
-import { getCookie, getLogo } from 'src/boot/utils.js'
+import { AdminCode, getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
 import { date } from 'quasar'
 
 const linksList = [
   {
-    title: 'Homepage',
-    caption: getCookie('caption1'),
+    title: getCookie('titleUrl1'),
+    caption: getCookie('captionUrl1'),
     icon: 'favorite',
-    link: getCookie('link1')
+    link: getCookie('linkUrl1')
   },
   {
-    title: 'Email',
-    caption: getCookie('caption2'),
+    title: getCookie('titleUrl2'),
+    caption: getCookie('captionUrl2'),
     icon: 'drafts',
-    link: getCookie('link2')
+    link: getCookie('linkUrl2')
   },
   {
-    title: 'Facebook',
-    caption: getCookie('caption3'),
+    title: getCookie('titleUrl3'),
+    caption: getCookie('captionUrl3'),
     icon: 'public',
-    link: getCookie('link3')
+    link: getCookie('linkUrl3')
   },
   {
-    title: 'Twitter',
-    caption: getCookie('caption4'),
+    title: getCookie('titleUrl4'),
+    caption: getCookie('captionUrl4'),
     icon: 'rss_feed',
-    link: getCookie('link4')
+    link: getCookie('linkUrl4')
   },
   {
-    title: 'Instagram',
-    caption: getCookie('caption5'),
+    title: getCookie('titleUrl5'),
+    caption: getCookie('captionUrl5'),
     icon: 'record_voice_over',
-    link: getCookie('link5')
+    link: getCookie('linkUrl5')
   }
 ]
 
@@ -147,8 +147,10 @@ export default defineComponent({
 
     return {
       essentialLinks: linksList,
+      AdminCode,
       getCookie,
       getLogo,
+      URLProperties,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
@@ -162,6 +164,7 @@ export default defineComponent({
       return date.formatDate(timeStamp, 'dddd D MMMM')
     }
   }
+
 })
 </script>
 

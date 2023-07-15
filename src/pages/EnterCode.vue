@@ -70,10 +70,10 @@ export default {
         })
       },
 
-      onUserCodeIsInvalid () {
+      onCodeNotFound () {
         $q.notify({
           type: 'negative',
-          message: 'Der eingegebene User-Code ist ungültig!'
+          message: 'Der eingegebene Code wurde nicht gefunden!'
         })
       },
 
@@ -98,7 +98,7 @@ export default {
       if (_applicationCode.length === 12) {
         if (_applicationCode.indexOf('_') > 0) {
           const _stringCode = _applicationCode.split('_')
-          if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 330) {
+          if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 329) {
             _userCode = _applicationCode
             _adminCode = _stringCode[1].substring(0, 1) + _stringCode[0].substring(0, 4) + _stringCode[1].substring(1, 2) + _stringCode[0].substring(4, 8) + _stringCode[1].substring(2, _stringCode[1].length)
           }
@@ -106,11 +106,9 @@ export default {
       } else if (_applicationCode.length === 11) {
         _adminCode = _applicationCode
         _userCode = _applicationCode.substring(1, 5) + _applicationCode.substring(6, 10) + '_' + _applicationCode.substring(0, 1) + _applicationCode.substring(5, 6) + _applicationCode.substring(10, _applicationCode.length)
-      } else {
-        _applicationCode = ''
       }
 
-      if (_applicationCode === '') this.onCodeIsInvalid()
+      if (_adminCode === '' && _userCode === '') this.onCodeIsInvalid()
       else {
         this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${_adminCode}`)
           .then((res) => {
@@ -127,25 +125,26 @@ export default {
               const _clientName = element[3]
               const _email = element[4]
               const _homeTeam = element[5]
-              const _standardText = element[6]
-              const _title1 = element[7]
-              const _caption1 = element[8]
-              const _link1 = element[9]
-              const _title2 = element[10]
-              const _caption2 = element[11]
-              const _link2 = element[12]
-              const _title3 = element[13]
-              const _caption3 = element[14]
-              const _link3 = element[15]
-              const _title4 = element[16]
-              const _caption4 = element[17]
-              const _link4 = element[18]
-              const _title5 = element[19]
-              const _caption5 = element[20]
-              const _link5 = element[21]
+              const _homeTeamAlias = element[6]
+              const _standardText = element[7]
+              const _titleUrl1 = element[8]
+              const _captionUrl1 = element[9]
+              const _linkUrl1 = element[10]
+              const _titleUrl2 = element[11]
+              const _captionUrl2 = element[12]
+              const _linkUrl2 = element[13]
+              const _titleUrl3 = element[14]
+              const _captionUrl3 = element[15]
+              const _linkUrl3 = element[16]
+              const _titleUrl4 = element[17]
+              const _captionUrl4 = element[18]
+              const _linkUrl4 = element[19]
+              const _titleUrl5 = element[20]
+              const _captionUrl5 = element[21]
+              const _linkUrl5 = element[22]
 
-              if (element[1] === _adminCode || element[2] === _userCode) this.setCookie(_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _standardText, _title1, _caption1, _link1, _title2, _caption2, _link2, _title3, _caption3, _link3, _title4, _caption4, _link4, _title5, _caption5, _link5)
-              else this.onUserCodeIsInvalid()
+              if (element[1] === _adminCode || element[2] === _userCode) this.setCookie(_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5)
+              else this.onCodeNotFound()
 
               this.onCodeIsValid()
             }
@@ -156,7 +155,7 @@ export default {
       }
     },
 
-    setCookie (_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _standardText, _title1, _caption1, _link1, _title2, _caption2, _link2, _title3, _caption3, _link3, _title4, _caption4, _link4, _title5, _caption5, _link5) {
+    setCookie (_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5) {
       const d = new Date()
       d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000))
       const _expires = 'expires=' + d.toUTCString()
@@ -165,22 +164,23 @@ export default {
       document.cookie = 'clientName=' + _clientName + ';' + _expires + '";path=/'
       document.cookie = 'email=' + _email + ';' + _expires + '";path=/'
       document.cookie = 'homeTeam=' + _homeTeam + ';' + _expires + '";path=/'
+      document.cookie = 'homeTeamAlias=' + _homeTeamAlias + ';' + _expires + '";path=/'
       document.cookie = 'standardText=' + _standardText + ';' + _expires + '";path=/'
-      document.cookie = 'title1=' + _title1 + ';' + _expires + '";path=/'
-      document.cookie = 'caption1=' + _caption1 + ';' + _expires + '";path=/'
-      document.cookie = 'link1=' + _link1 + ';' + _expires + '";path=/'
-      document.cookie = 'title2=' + _title2 + ';' + _expires + '";path=/'
-      document.cookie = 'caption2=' + _caption2 + ';' + _expires + '";path=/'
-      document.cookie = 'link2=' + _link2 + ';' + _expires + '";path=/'
-      document.cookie = 'title3=' + _title3 + ';' + _expires + '";path=/'
-      document.cookie = 'caption3=' + _caption3 + ';' + _expires + '";path=/'
-      document.cookie = 'link3=' + _link3 + ';' + _expires + '";path=/'
-      document.cookie = 'title4=' + _title4 + ';' + _expires + '";path=/'
-      document.cookie = 'caption4=' + _caption4 + ';' + _expires + '";path=/'
-      document.cookie = 'link4=' + _link4 + ';' + _expires + '";path=/'
-      document.cookie = 'title5=' + _title5 + ';' + _expires + '";path=/'
-      document.cookie = 'caption5=' + _caption5 + ';' + _expires + '";path=/'
-      document.cookie = 'link5=' + _link5 + ';' + _expires + '";path=/'
+      document.cookie = 'titleUrl1=' + _titleUrl1 + ';' + _expires + '";path=/'
+      document.cookie = 'captionUrl1=' + _captionUrl1 + ';' + _expires + '";path=/'
+      document.cookie = 'linkUrl1=' + _linkUrl1 + ';' + _expires + '";path=/'
+      document.cookie = 'titleUrl2=' + _titleUrl2 + ';' + _expires + '";path=/'
+      document.cookie = 'captionUrl2=' + _captionUrl2 + ';' + _expires + '";path=/'
+      document.cookie = 'linkUrl2=' + _linkUrl2 + ';' + _expires + '";path=/'
+      document.cookie = 'titleUrl3=' + _titleUrl3 + ';' + _expires + '";path=/'
+      document.cookie = 'captionUrl3=' + _captionUrl3 + ';' + _expires + '";path=/'
+      document.cookie = 'linkUrl3=' + _linkUrl3 + ';' + _expires + '";path=/'
+      document.cookie = 'titleUrl4=' + _titleUrl4 + ';' + _expires + '";path=/'
+      document.cookie = 'captionUrl4=' + _captionUrl4 + ';' + _expires + '";path=/'
+      document.cookie = 'linkUrl4=' + _linkUrl4 + ';' + _expires + '";path=/'
+      document.cookie = 'titleUrl5=' + _titleUrl5 + ';' + _expires + '";path=/'
+      document.cookie = 'captionUrl5=' + _captionUrl5 + ';' + _expires + '";path=/'
+      document.cookie = 'linkUrl5=' + _linkUrl5 + ';' + _expires + '";path=/'
     }
   }
 }
