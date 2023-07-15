@@ -60,6 +60,13 @@
             <q-item-section> Mitglieder </q-item-section>
           </q-item>
 
+          <q-item to="/properties" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="settings" />
+            </q-item-section>
+            <q-item-section> Einstellungen </q-item-section>
+          </q-item>
+
           <q-item to="/order" exact clickable v-ripple v-if="getCookie('clientName') === 'BGB'">
             <q-item-section avatar>
               <q-icon name="shopping_cart" />

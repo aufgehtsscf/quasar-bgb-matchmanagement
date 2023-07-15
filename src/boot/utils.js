@@ -1,4 +1,4 @@
-const IsAdministrator = 'true'
+const IsAdministrator = 'false'
 const ApplicationCode = 'BGB'
 const AdminCode = '3NGdo3Lbyd0'
 const ClientName = 'BGB'
