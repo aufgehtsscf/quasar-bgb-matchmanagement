@@ -7,7 +7,7 @@
         push
         glossy
         no-caps
-        icon="star"
+        icon="sports_volleyball"
         label="Spiel auswählen">
 
         <q-list v-for="(match, i) in activeMatchObject"
