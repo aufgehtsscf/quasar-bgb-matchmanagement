@@ -60,7 +60,7 @@
             <q-item-section> Mitglieder </q-item-section>
           </q-item>
 
-          <q-item to="/properties" exact clickable v-ripple>
+          <q-item to="/properties" exact clickable v-ripple v-if="getCookie('clientName') !== 'TEST' && getCookie('isAdministrator') === 'true'">
             <q-item-section avatar>
               <q-icon name="settings" />
             </q-item-section>
