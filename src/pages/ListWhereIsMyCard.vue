@@ -330,7 +330,7 @@ export default {
     },
 
     editWhereIsMyCardSave (_row, _cardHolderId, _cardHolder, _cardHolderOld, _discounted, _whoHasTheCard) {
-      // console.log('editWhereIsMyCardSave: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _cardHolderOld + ', ' + _discounted + ', ' + _whoHasTheCard)
+      // console.log('editWhereIsMyCardSave: ' + _row + ', ' + _cardHolderId + ', ' + _cardHolder + ', ' + _cardHolderOld + ', ' + _discounted + ', ' + _whoHasTheCard)
 
       const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
       const _cardHolderExists = _cardHolders.includes(_cardHolder) && _cardHolder !== _cardHolderOld

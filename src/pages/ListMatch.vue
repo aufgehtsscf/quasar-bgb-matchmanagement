@@ -89,7 +89,7 @@
 
           <q-card-section class="q-pt-none">
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-toggle
                 v-model="tglIsEventNew"
                 color="red"
@@ -97,7 +97,7 @@
                 left-label/>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-select
                 filled
                 v-model="txtHomeTeamNew"
@@ -144,12 +144,12 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-input dense v-model="txtMatchNameNew" @focus="setFieldsForMatchNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname" v-if="!tglIsEventNew" />
               <q-input dense v-model="txtMatchNameNew" label="Veranstaltungsname" v-if="tglIsEventNew" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-toggle
                 v-model="tglPublishedNew"
                 color="red"
@@ -157,7 +157,7 @@
                 left-label/>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-input filled v-model="txtDatetimeNew">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
@@ -185,7 +185,7 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-input v-model="txtAnnotationsNew" filled type="textarea" label="Kommentar"/>
             </div>
 
@@ -208,7 +208,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-toggle
                 v-model="tglIsEvent"
                 color="red"
@@ -216,7 +216,7 @@
                 left-label/>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-select
                 filled
                 v-model="txtHomeTeam"
@@ -263,12 +263,12 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-input dense v-model="txtMatchName"  label="Spielname" v-if="!tglIsEvent" />
               <q-input dense v-model="txtMatchName" label="Veranstaltungsname" v-if="tglIsEvent" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-toggle
                 v-model="tglPublished"
                 color="red"
@@ -276,7 +276,7 @@
                 left-label/>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-input filled v-model="txtDatetime">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
@@ -304,7 +304,7 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 300px">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-input v-model="txtAnnotations" filled type="textarea" label="Kommentar"/>
             </div>
           </q-card-section>

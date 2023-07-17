@@ -1,50 +1,50 @@
-// const IsAdministrator = 'false'
-// const ApplicationCode = 'BGB'
-// const AdminCode = '3NGdo3Lbyd0'
-// const ClientName = 'BGB'
-// const Email = 'bgb@dirkschnaiter.de'
-// const HomeTeam = 'Freiburg'
-// const HomeTeamAlias = 'SCF'
-// const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
-// const TitleUrl1 = 'Homepage'
-// const CaptionUrl1 = 'Bier Guerilla Breisgau'
-// const LinkUrl1 = 'http://www.fanclub-bgb.de/'
-// const TitleUrl2 = 'Email'
-// const CaptionUrl2 = 'bgb@dirkschnaiter.de'
-// const LinkUrl2 = 'mailto:bgb@dirkschnaiter.de'
-// const TitleUrl3 = 'Facebook'
-// const CaptionUrl3 = 'facebook.com/bierguerillabreisgau'
-// const LinkUrl3 = 'https://www.facebook.com/bierguerillabreisgau'
-// const TitleUrl4 = 'Twitter'
-// const CaptionUrl4 = 'twitter.com/B_Guerilla'
-// const LinkUrl4 = 'https://twitter.com/B_Guerilla'
-// const TitleUrl5 = 'Instagram'
-// const CaptionUrl5 = 'instagram.com/bierguerillabreisgau'
-// const LinkUrl5 = 'https://www.instagram.com/bierguerillabreisgau'
-
 const IsAdministrator = 'true'
-const ApplicationCode = 'TEST'
-const AdminCode = '3Test2tseT9'
-const ClientName = 'TEST'
-const Email = 'aufgehtsscf@gmail.com'
+const ApplicationCode = 'BGB'
+const AdminCode = '3NGdo3Lbyd0'
+const ClientName = 'BGB'
+const Email = 'bgb@dirkschnaiter.de'
 const HomeTeam = 'Freiburg'
 const HomeTeamAlias = 'SCF'
-const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES>'
+const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
 const TitleUrl1 = 'Homepage'
-const CaptionUrl1 = ''
-const LinkUrl1 = ''
-const TitleUrl2 = 'Email'
-const CaptionUrl2 = 'aufgehtsscf@gmail.com'
-const LinkUrl2 = 'mailto:aufgehtsscf@gmail.com'
+const CaptionUrl1 = 'Bier Guerilla Breisgau'
+const LinkUrl1 = 'http://www.fanclub-bgb.de/'
+const TitleUrl2 = 'E-Mail'
+const CaptionUrl2 = 'bgb@dirkschnaiter.de'
+const LinkUrl2 = 'mailto:bgb@dirkschnaiter.de'
 const TitleUrl3 = 'Facebook'
-const CaptionUrl3 = 'facebook.com/aufgehtsscf'
-const LinkUrl3 = 'https://www.facebook.com/profile.php?id=100094586599908'
+const CaptionUrl3 = 'facebook.com/bierguerillabreisgau'
+const LinkUrl3 = 'https://www.facebook.com/bierguerillabreisgau'
 const TitleUrl4 = 'Twitter'
-const CaptionUrl4 = ''
-const LinkUrl4 = ''
+const CaptionUrl4 = 'twitter.com/B_Guerilla'
+const LinkUrl4 = 'https://twitter.com/B_Guerilla'
 const TitleUrl5 = 'Instagram'
-const CaptionUrl5 = ''
-const LinkUrl5 = ''
+const CaptionUrl5 = 'instagram.com/bierguerillabreisgau'
+const LinkUrl5 = 'https://www.instagram.com/bierguerillabreisgau'
+
+// const IsAdministrator = 'true'
+// const ApplicationCode = 'TEST'
+// const AdminCode = '3Test2tseT9'
+// const ClientName = 'TEST'
+// const Email = 'aufgehtsscf@gmail.com'
+// const HomeTeam = 'Freiburg'
+// const HomeTeamAlias = 'SCF'
+// const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES>'
+// const TitleUrl1 = 'Homepage'
+// const CaptionUrl1 = ''
+// const LinkUrl1 = ''
+// const TitleUrl2 = 'Email'
+// const CaptionUrl2 = 'aufgehtsscf@gmail.com'
+// const LinkUrl2 = 'mailto:aufgehtsscf@gmail.com'
+// const TitleUrl3 = 'Facebook'
+// const CaptionUrl3 = 'facebook.com/aufgehtsscf'
+// const LinkUrl3 = 'https://www.facebook.com/profile.php?id=100094586599908'
+// const TitleUrl4 = 'Twitter'
+// const CaptionUrl4 = ''
+// const LinkUrl4 = ''
+// const TitleUrl5 = 'Instagram'
+// const CaptionUrl5 = ''
+// const LinkUrl5 = ''
 
 const URLMatchBasis = 'https://script.google.com/macros/s/AKfycbzekarajVCLH-xMBkO7_M0D-MHV1e-2bvXfN-N8BJMaHsc_RhnZNTw4Ctt_4OOVwMLkBA/exec'
 const URLNextMatchBasis = 'https://script.google.com/macros/s/AKfycbzo1RuM5zOC_1kkUBRJB4tbMKZNgVZ65KTGdm76wyBTB9F_FQLFs8vt3Nh16xwDwChOuA/exec'
@@ -53,7 +53,7 @@ const URLParticipantArchiveBasis = 'https://script.google.com/macros/s/AKfycbwDc
 const URLWhereIsMyCardBasis = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
 const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
 
-const URLProperties = 'https://script.google.com/macros/s/AKfycbyG0TbbSD0eRYIZeXUUFI8DEMV6-Hn670Hq_9AhC9RevynXtRVYNNw4gKczGu07cPlc/exec?sh=Properties'
+const URLProperties = 'https://script.google.com/macros/s/AKfycbw34EF7pnKDTVQGBr16IZgaz7TYmJKiVV8ypdfe9YnYo8lSfTmAttZ5n0tPjvSjNxgj/exec?sh=Properties'
 const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=' + ApplicationCode
 
 const getCookie = function (_cookieName) {
@@ -93,10 +93,16 @@ const getCookie = function (_cookieName) {
   if (_cookieName === 'linkUrl5') return LinkUrl5
 }
 
-const getAdminCode = function (_applicationCode) {
+const getAdminCode = function (_applicationCode, _calledFromListProperties) {
   let _adminCode = ''
 
-  if (_applicationCode === 'BGB' || _applicationCode === 'TEST') return _applicationCode
+  if (_applicationCode === 'BGB' || _applicationCode === 'TEST') {
+    if (_calledFromListProperties) {
+      return AdminCode
+    } else {
+      return _applicationCode
+    }
+  }
 
   if (_applicationCode.length === 12) {
     if (_applicationCode.indexOf('_') > 0) {
@@ -247,7 +253,6 @@ const avatarImages = [
   { label: 'Woodstock', value: 'Woodstock', avatar: 'statics/avatars/collection/Woodstock.png' }
 ]
 
-export { AdminCode }
 export { URLMatchBasis }
 export { URLNextMatchBasis }
 export { URLParticipantBasis }

@@ -10,18 +10,53 @@
 
     <!-- List of Properties -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
-      <q-list dark bordered separator style="max-width: 470px" v-for="(prop, i) in propertyObject"
+      <q-list dark bordered separator style="max-width: 470px" v-for="(prop, i) in propertiesObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onPropertyClick(prop.adminCode, prop.clientName, prop.email, prop.homeTeam, prop.homeTeamAlias, prop.standardText)">
+        <q-item clickable v-ripple @click="onPropertiesClick(prop.row, prop.adminCode, prop.clientName, prop.email, prop.homeTeam, prop.homeTeamAlias, prop.standardText, prop.titleUrl1, prop.captionUrl1, prop.linkUrl1, prop.titleUrl2, prop.captionUrl2, prop.linkUrl2, prop.titleUrl3, prop.captionUrl3, prop.linkUrl3, prop.titleUrl4, prop.captionUrl4, prop.linkUrl4, prop.titleUrl5, prop.captionUrl5, prop.linkUrl5)">
           <q-item-section>
-            <q-item-label overline>Name: {{ prop.clientName }}</q-item-label>
+            <q-item-label caption>Name: {{ prop.clientName }}</q-item-label>
+            <q-item-label caption></q-item-label>
             <q-item-label caption>Admincode: {{ prop.adminCode }}</q-item-label>
+            <q-item-label caption></q-item-label>
             <q-item-label caption>Usercode: {{ getUserCode(prop.adminCode) }}</q-item-label>
+            <q-item-label caption></q-item-label>
             <q-item-label caption>Email: {{ prop.email }}</q-item-label>
+            <q-item-label caption></q-item-label>
             <q-item-label caption>Heimmannschaft: {{ prop.homeTeam }}</q-item-label>
+            <q-item-label caption></q-item-label>
             <q-item-label caption>Heimmannschaft (Alias): {{ prop.homeTeamAlias }}</q-item-label>
+            <q-item-label caption></q-item-label>
             <q-item-label caption>Standardtext: {{ prop.standardText }}</q-item-label>
+            <q-item-label caption></q-item-label>
+            <q-item-label caption></q-item-label>
+            <q-item-label caption></q-item-label>
+            <q-item-label overline>Wichtige Links</q-item-label>
+            <q-item-label caption></q-item-label>
+            <q-item-label overline>Link1</q-item-label>
+            <q-item-label caption>Titel: {{ prop.titleUrl1 }}</q-item-label>
+            <q-item-label caption>Untertitel: {{ prop.captionUrl1 }}</q-item-label>
+            <q-item-label caption>URL: {{ prop.linkUrl1 }}</q-item-label>
+            <q-item-label caption></q-item-label>
+            <q-item-label overline>Link2</q-item-label>
+            <q-item-label caption>Titel: {{ prop.titleUrl2 }}</q-item-label>
+            <q-item-label caption>Untertitel: {{ prop.captionUrl2 }}</q-item-label>
+            <q-item-label caption>URL: {{ prop.linkUrl2 }}</q-item-label>
+            <q-item-label caption></q-item-label>
+            <q-item-label overline>Link3</q-item-label>
+            <q-item-label caption>Titel: {{ prop.titleUrl3 }}</q-item-label>
+            <q-item-label caption>Untertitel: {{ prop.captionUrl3 }}</q-item-label>
+            <q-item-label caption>URL: {{ prop.linkUrl3 }}</q-item-label>
+            <q-item-label caption></q-item-label>
+            <q-item-label overline>Link4</q-item-label>
+            <q-item-label caption>Titel: {{ prop.titleUrl4 }}</q-item-label>
+            <q-item-label caption>Untertitel: {{ prop.captionUrl4 }}</q-item-label>
+            <q-item-label caption>URL: {{ prop.linkUrl4 }}</q-item-label>
+            <q-item-label caption></q-item-label>
+            <q-item-label overline>Link5</q-item-label>
+            <q-item-label caption>Titel: {{ prop.titleUrl5 }}</q-item-label>
+            <q-item-label caption>Untertitel: {{ prop.captionUrl5 }}</q-item-label>
+            <q-item-label caption>URL: {{ prop.linkUrl5 }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -30,81 +65,72 @@
     <!-- Dialogs -->
     <div class="q-pa-md q-gutter-sm">
 
-      <!-- Start Dialogs Property -->
-      <!-- Add property -->
-      <q-dialog v-model="addProperty" persistent>
+      <!-- Start Dialogs Properties -->
+      <!-- Edit properties -->
+      <q-dialog v-model="editProperties" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Karte erfassen</div>
+            <div class="text-h6">Einstellungen ändern</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolderNew" autofocus label="Inhaber" />
+            <q-input dense v-model="txtClientName" autofocus label="Name" />
+            <q-input dense v-model="txtEmail" label="E-Mail" />
+            <q-input dense v-model="txtHomeTeam" label="Heimmannschaft" />
+            <q-input dense v-model="txtHomeTeamAlias" label="Heimmannschaft (Alias)" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input v-model="txtStandardText" filled type="textarea" label="Standardtext"/>
+            </div>
+          </q-card-section>
 
-            <q-toggle
-              v-model="tglDiscountedNew"
-              color="red"
-              label="Kind"
-              left-label
-            />
+          <q-card-section class="q-pt-none">
+            <div class="text-subtitle1">Wichtige Links</div>
+          </q-card-section>
 
-            <q-input dense v-model="txtWhoHasTheCardNew" autofocus label="Wer hat die Karte" />
+          <q-card-section class="q-pt-none">
+            <div class="text-subtitle2">Link 1</div>
+            <q-input dense v-model="txtTitleUrl1" label="Titel" />
+            <q-input dense v-model="txtCaptionUrl1" label="Untertitel" />
+            <q-input dense v-model="txtLinkUrl1" label="URL" />
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <div class="text-subtitle2">Link 2</div>
+            <q-input dense v-model="txtTitleUrl2" label="Titel" />
+            <q-input dense v-model="txtCaptionUrl2" label="Untertitel" />
+            <q-input dense v-model="txtLinkUrl2" label="URL" />
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <div class="text-subtitle2">Link 3</div>
+            <q-input dense v-model="txtTitleUrl3" label="Titel" />
+            <q-input dense v-model="txtCaptionUrl3" label="Untertitel" />
+            <q-input dense v-model="txtLinkUrl3" label="URL" />
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <div class="text-subtitle2">Link 4</div>
+            <q-input dense v-model="txtTitleUrl4" label="Titel" />
+            <q-input dense v-model="txtCaptionUrl4" label="Untertitel" />
+            <q-input dense v-model="txtLinkUrl4" label="URL" />
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <div class="text-subtitle2">Link 5</div>
+            <q-input dense v-model="txtTitleUrl5" label="Titel" />
+            <q-input dense v-model="txtCaptionUrl5" label="Untertitel" />
+            <q-input dense v-model="txtLinkUrl5" label="URL" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addPropertySave(txtCardHolderNew, tglDiscountedNew, txtWhoHasTheCardNew)" :disable="txtCardHolderNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editPropertiesSave(intPropertiesRow, txtAdminCode, txtClientName, txtEmail, txtHomeTeam, txtHomeTeamAlias, txtStandardText, txtTitleUrl1, txtCaptionUrl1, txtLinkUrl1, txtTitleUrl2, txtCaptionUrl2, txtLinkUrl2, txtTitleUrl3, txtCaptionUrl3, txtLinkUrl3, txtTitleUrl4, txtCaptionUrl4, txtLinkUrl4, txtTitleUrl5, txtCaptionUrl5, txtLinkUrl5)" :disable="txtClientName === '' && txtHomeTeam === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
-
-      <!-- Edit property -->
-      <q-dialog v-model="editProperty" persistent>
-        <q-card style="min-width: 350px">
-          <q-card-section>
-            <div class="text-h6">Karte ändern</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolder" autofocus label="Inhaber" />
-
-            <q-toggle
-              v-model="tglDiscounted"
-              color="red"
-              label="Kind"
-              left-label
-            />
-
-            <q-input dense v-model="txtWhoHasTheCard" autofocus label="Wer hat die Karte" />
-          </q-card-section>
-
-          <q-separator />
-
-          <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delProperty = true" v-if="getCookie('isAdministrator') === 'true'" />
-            <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editPropertySave(intCardHolderRow, txtCardHolderId, txtCardHolder, txtCardHolderOld, tglDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-
-      <!-- Delete Property -->
-      <q-dialog v-model="delProperty" persistent>
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="delete" color="primary" text-color="white" />
-            <span class="q-ml-sm">Datensatz löschen?</span>
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteProperty(intCardHolderRow, txtCardHolderId)" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <!-- End Dialogs Property -->
+      <!-- End Dialogs Properties -->
     </div>
 
     <q-img src="statics/images/AufGehtsSCF.png" class="header-image absolute-top" />
@@ -113,78 +139,83 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { AdminCode, getCookie, getAdminCode, getUserCode, URLProperties } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getUserCode, URLProperties } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
-const _constCardHolderRow = ref(0)
-const _constCardHolderId = ref('')
-const _constCardHolder = ref('')
-const _constCardHolderOld = ref('')
-const _constDiscounted = ref('')
-const _constWhoHasTheCard = ref('')
+const _constPropertiesRow = ref(0)
+const _constAdminCode = ref('')
+const _constClientName = ref('')
+const _constEmail = ref('')
+const _constHomeTeam = ref('')
+const _constHomeTeamAlias = ref('')
+const _constStandardText = ref('')
+const _constTitleUrl1 = ref('')
+const _constCaptionUrl1 = ref('')
+const _constLinkUrl1 = ref('')
+const _constTitleUrl2 = ref('')
+const _constCaptionUrl2 = ref('')
+const _constLinkUrl2 = ref('')
+const _constTitleUrl3 = ref('')
+const _constCaptionUrl3 = ref('')
+const _constLinkUrl3 = ref('')
+const _constTitleUrl4 = ref('')
+const _constCaptionUrl4 = ref('')
+const _constLinkUrl4 = ref('')
+const _constTitleUrl5 = ref('')
+const _constCaptionUrl5 = ref('')
+const _constLinkUrl5 = ref('')
 
 export default {
-  name: 'ListWhoHasTheCard',
+  name: 'ListProperties',
 
   setup () {
     const $q = useQuasar()
 
     return {
-      intCardHolderRow: ref(_constCardHolderRow),
-      txtCardHolderId: ref(_constCardHolderId),
-      txtCardHolder: ref(_constCardHolder),
-      txtCardHolderOld: ref(_constCardHolderOld),
-      tglDiscounted: ref(_constDiscounted),
-      txtWhoHasTheCard: ref(_constWhoHasTheCard),
+      intPropertiesRow: ref(_constPropertiesRow),
+      txtAdminCode: ref(_constAdminCode),
+      txtClientName: ref(_constClientName),
+      txtEmail: ref(_constEmail),
+      txtHomeTeam: ref(_constHomeTeam),
+      txtHomeTeamAlias: ref(_constHomeTeamAlias),
+      txtStandardText: ref(_constStandardText),
+      txtTitleUrl1: ref(_constTitleUrl1),
+      txtCaptionUrl1: ref(_constCaptionUrl1),
+      txtLinkUrl1: ref(_constLinkUrl1),
+      txtTitleUrl2: ref(_constTitleUrl2),
+      txtCaptionUrl2: ref(_constCaptionUrl2),
+      txtLinkUrl2: ref(_constLinkUrl2),
+      txtTitleUrl3: ref(_constTitleUrl3),
+      txtCaptionUrl3: ref(_constCaptionUrl3),
+      txtLinkUrl3: ref(_constLinkUrl3),
+      txtTitleUrl4: ref(_constTitleUrl4),
+      txtCaptionUrl4: ref(_constCaptionUrl4),
+      txtLinkUrl4: ref(_constLinkUrl4),
+      txtTitleUrl5: ref(_constTitleUrl5),
+      txtCaptionUrl5: ref(_constCaptionUrl5),
+      txtLinkUrl5: ref(_constLinkUrl5),
 
-      txtCardHolderNew: ref(''),
-      tglDiscountedNew: ref(false),
-      txtWhoHasTheCardNew: ref(''),
-
-      onCardHolderCreated () {
+      onPropertiesUpdated () {
         $q.notify({
           type: 'positive',
-          message: 'Einstellung wurde erfolgreich erfasst!'
+          message: 'Einstellungen wurden erfolgreich aktualisiert!'
         })
       },
 
-      onCardHolderUpdated () {
-        $q.notify({
-          type: 'positive',
-          message: 'Einstellung wurde erfolgreich aktualisiert!'
-        })
-      },
-
-      onCardHolderDeleted () {
-        $q.notify({
-          message: 'Einstellung wurde erfolgreich gelöscht!',
-          color: 'orange'
-        })
-      },
-
-      onCardHolderAlreadyExists () {
-        $q.notify({
-          type: 'negative',
-          message: 'Diese Einstellung besteht bereits!'
-        })
-      },
-
-      addProperty: ref(false),
-      editProperty: ref(false),
-      delProperty: ref(false)
+      editProperties: ref(false)
     }
   },
 
   data () {
     return {
-      AdminCode,
       getCookie,
       getAdminCode,
       getUserCode,
       URLProperties,
 
-      propertyObject: [
+      propertiesObject: [
         {
+          row: '',
           adminCode: '',
           clientName: '',
           email: '',
@@ -215,21 +246,21 @@ export default {
   },
 
   mounted () {
-    this.getTableProperty()
+    this.getTableProperties()
   },
 
   methods: {
-    async getTableProperty () {
-      this.propertyObject = []
+    async getTableProperties () {
+      this.propertiesObject = []
 
-      // console.log('URLProperties: ' + this.URLProperties + '&func=Read')
-      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${this.AdminCode}`)
+      // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'), true))
+      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'), true)}`)
         .then((res) => {
-          this.tableProperty = res.data.split('\n')
-          for (let index = 0; index < this.tableProperty.length - 1; index++) {
-            const element = this.tableProperty[index].split(',')
+          this.tableProperties = res.data.split('\n')
+          for (let index = 0; index < this.tableProperties.length - 1; index++) {
+            const element = this.tableProperties[index].split(',')
 
-            this.setPropertyObject(element[1].trim(), element[3].trim(), element[4].trim(), element[5].trim(), element[6].trim(), element[7].trim(), element[8].trim(), element[9].trim(), element[10].trim(), element[11].trim(), element[11].trim(), element[12].trim(), element[13].trim(), element[14].trim(), element[15].trim(), element[16].trim(), element[17].trim(), element[18].trim(), element[19].trim(), element[20].trim(), element[21].trim(), element[22].trim())
+            this.setPropertiesObject(element[0], element[1].trim(), element[3].trim(), element[4].trim(), element[5].trim(), element[6].trim(), element[7].trim(), element[8].trim(), element[9].trim(), element[10].trim(), element[11].trim(), element[12].trim(), element[13].trim(), element[14].trim(), element[15].trim(), element[16].trim(), element[17].trim(), element[18].trim(), element[19].trim(), element[20].trim(), element[21].trim(), element[22].trim())
           }
         })
         .catch((err) => {
@@ -237,73 +268,46 @@ export default {
         })
     },
 
-    setPropertyObject (_adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5) {
-      this.propertyObject.push({ adminCode: _adminCode, clientName: _clientName, email: _email, homeTeam: _homeTeam, homeTeamAlias: _homeTeamAlias, standardText: _standardText, titleUrl1: _titleUrl1, captionUrl1: _captionUrl1, linkUrl1: _linkUrl1, titleUrl2: _titleUrl2, captionUrl2: _captionUrl2, linkUrl2: _linkUrl2, titleUrl3: _titleUrl3, captionUrl3: _captionUrl3, linkUrl3: _linkUrl3, titleUrl4: _titleUrl4, captionUrl4: _captionUrl4, linkUrl4: _linkUrl4, titleUrl5: _titleUrl5, captionUrl5: _captionUrl5, linkUrl5: _linkUrl5 })
+    setPropertiesObject (_row, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5) {
+      this.propertiesObject.push({ row: parseInt(_row), adminCode: _adminCode, clientName: _clientName, email: _email, homeTeam: _homeTeam, homeTeamAlias: _homeTeamAlias, standardText: _standardText, titleUrl1: _titleUrl1, captionUrl1: _captionUrl1, linkUrl1: _linkUrl1, titleUrl2: _titleUrl2, captionUrl2: _captionUrl2, linkUrl2: _linkUrl2, titleUrl3: _titleUrl3, captionUrl3: _captionUrl3, linkUrl3: _linkUrl3, titleUrl4: _titleUrl4, captionUrl4: _captionUrl4, linkUrl4: _linkUrl4, titleUrl5: _titleUrl5, captionUrl5: _captionUrl5, linkUrl5: _linkUrl5 })
     },
 
-    onPropertyClick (_row, _cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
-      // console.log('Clicked on Property: ' + _row + ', ' + _cardHolderId + ', ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
-      _constCardHolderRow.value = _row
-      _constCardHolderId.value = _cardHolderId
-      _constCardHolder.value = _cardHolder
-      _constCardHolderOld.value = _cardHolder
-      _constDiscounted.value = _discounted === 'TRUE'
-      _constWhoHasTheCard.value = _whoHasTheCard
+    onPropertiesClick (_row, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5) {
+      // console.log('Clicked on Properties: ' + _row + ', ' + _adminCode + ', ' + _clientName + ', ' + _email + ', ' + _homeTeam + ', ' + _homeTeamAlias + ', ' + _standardText + ', ' + _titleUrl1 + ', ' + _captionUrl1 + ', ' + _linkUrl1 + ', ' + _titleUrl2 + ', ' + _captionUrl2 + ', ' + _linkUrl2 + ', ' + _titleUrl3 + ', ' + _captionUrl3 + ', ' + _linkUrl3 + ', ' + _titleUrl4 + ', ' + _captionUrl4 + ', ' + _linkUrl4 + ', ' + _titleUrl5 + ', ' + _captionUrl5 + ', ' + _linkUrl5)
+      _constPropertiesRow.value = _row
+      _constAdminCode.value = _adminCode
+      _constClientName.value = _clientName
+      _constEmail.value = _email
+      _constHomeTeam.value = _homeTeam
+      _constHomeTeamAlias.value = _homeTeamAlias
+      _constStandardText.value = _standardText
+      _constTitleUrl1.value = _titleUrl1
+      _constCaptionUrl1.value = _captionUrl1
+      _constLinkUrl1.value = _linkUrl1
+      _constTitleUrl2.value = _titleUrl2
+      _constCaptionUrl2.value = _captionUrl2
+      _constLinkUrl2.value = _linkUrl2
+      _constTitleUrl3.value = _titleUrl3
+      _constCaptionUrl3.value = _captionUrl3
+      _constLinkUrl3.value = _linkUrl3
+      _constTitleUrl4.value = _titleUrl4
+      _constCaptionUrl4.value = _captionUrl4
+      _constLinkUrl4.value = _linkUrl4
+      _constTitleUrl5.value = _titleUrl5
+      _constCaptionUrl5.value = _captionUrl5
+      _constLinkUrl5.value = _linkUrl5
 
-      this.editProperty = true
+      this.editProperties = true
     },
 
-    addPropertySave (_cardHolder, _discounted, _whoHasTheCard) {
-      // console.log('addPropertySave: ' + _cardHolder + ', ' + _discounted + ', ' + _whoHasTheCard)
+    editPropertiesSave (_row, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5) {
+      console.log('editPropertiesSave: ' + _row + ', ' + _adminCode + ', ' + _clientName + ', ' + _email + ', ' + _homeTeam + ', ' + _homeTeamAlias + ', ' + _standardText + ', ' + _titleUrl1 + ', ' + _captionUrl1 + ', ' + _linkUrl1 + ', ' + _titleUrl2 + ', ' + _captionUrl2 + ', ' + _linkUrl2 + ', ' + _titleUrl3 + ', ' + _captionUrl3 + ', ' + _linkUrl3 + ', ' + _titleUrl4 + ', ' + _captionUrl4 + ', ' + _linkUrl4 + ', ' + _titleUrl5 + ', ' + _captionUrl5 + ', ' + _linkUrl5)
 
-      const _cardHolders = this.propertyObject.map(el => el.cardHolder)
-      const _cardHolderExists = _cardHolders.includes(_cardHolder)
-      if (_cardHolderExists) {
-        this.onCardHolderAlreadyExists()
-      } else {
-        this.$axios(`${this.URLProperties}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
-          .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.onCardHolderCreated()
-              this.getTableProperty()
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      }
-    },
-
-    editPropertySave (_row, _cardHolderId, _cardHolder, _cardHolderOld, _discounted, _whoHasTheCard) {
-      // console.log('editPropertySave: ' + _cardHolderId + ', ' + _cardHolder + ', ' + _cardHolderOld + ', ' + _discounted + ', ' + _whoHasTheCard)
-
-      const _cardHolders = this.propertyObject.map(el => el.cardHolder)
-      const _cardHolderExists = _cardHolders.includes(_cardHolder) && _cardHolder !== _cardHolderOld
-      if (_cardHolderExists) {
-        this.onCardHolderAlreadyExists()
-      } else {
-        this.$axios(`${this.URLProperties}&func=Update&row=${_row}&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
-          .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.onCardHolderUpdated()
-              this.getTableProperty()
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      }
-    },
-
-    deleteProperty (_row, _cardHolderId) {
-      // console.log('deleteProperty: ' + _cardHolderId)
-
-      this.$axios(`${this.URLProperties}&func=Delete&row=${_row}&cardholderId=${_cardHolderId}`)
+      this.$axios(`${this.URLProperties}&func=UpdateAdminCode&row=${_row}&adminCode=${_adminCode}&clientName=${encodeURI(_clientName.replace(',', ' '))}&email=${encodeURI(_email.replace(',', ' '))}&homeTeam=${encodeURI(_homeTeam.replace(',', ''))}&homeTeamAlias=${encodeURI(_homeTeamAlias.replace(',', ''))}&standardText=${encodeURI(_standardText.replace(',', ''))}&titleUrl1=${encodeURI(_titleUrl1.replace(',', ''))}&captionUrl1=${encodeURI(_captionUrl1.replace(',', ''))}&linkUrl1=${encodeURI(_linkUrl1.replace(',', ''))}&titleUrl2=${encodeURI(_titleUrl2.replace(',', ''))}&captionUrl2=${encodeURI(_captionUrl2.replace(',', ''))}&linkUrl2=${encodeURI(_linkUrl2.replace(',', ''))}&titleUrl3=${encodeURI(_titleUrl3.replace(',', ''))}&captionUrl3=${encodeURI(_captionUrl3.replace(',', ''))}&linkUrl3=${encodeURI(_linkUrl3.replace(',', ''))}&titleUrl4=${encodeURI(_titleUrl4.replace(',', ''))}&captionUrl4=${encodeURI(_captionUrl4.replace(',', ''))}&linkUrl4=${encodeURI(_linkUrl4.replace(',', ''))}&titleUrl5=${encodeURI(_titleUrl5.replace(',', ''))}&captionUrl5=${encodeURI(_captionUrl5.replace(',', ''))}&linkUrl5=${encodeURI(_linkUrl5.replace(',', ''))}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
-            this.editProperty = false
-            this.onCardHolderDeleted()
-            this.getTableProperty()
+            this.onPropertiesUpdated()
+            this.getTableProperties()
           }
         })
         .catch((err) => {

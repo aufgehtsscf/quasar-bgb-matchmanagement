@@ -60,18 +60,18 @@
             <q-item-section> Mitglieder </q-item-section>
           </q-item>
 
-          <q-item to="/properties" exact clickable v-ripple v-if="getCookie('clientName') !== 'TEST' && getCookie('isAdministrator') === 'true'">
-            <q-item-section avatar>
-              <q-icon name="settings" />
-            </q-item-section>
-            <q-item-section> Einstellungen </q-item-section>
-          </q-item>
-
           <q-item to="/order" exact clickable v-ripple v-if="getCookie('clientName') === 'BGB'">
             <q-item-section avatar>
               <q-icon name="shopping_cart" />
             </q-item-section>
             <q-item-section> Bestellungen </q-item-section>
+          </q-item>
+
+          <q-item to="/properties" exact clickable v-ripple v-if="getCookie('clientName') !== 'TEST' && getCookie('isAdministrator') === 'true'">
+            <q-item-section avatar>
+              <q-icon name="settings" />
+            </q-item-section>
+            <q-item-section> Einstellungen </q-item-section>
           </q-item>
 
           <q-item to="/entercode" exact clickable v-ripple v-if="getCookie('clientName') === 'TEST'">
@@ -106,7 +106,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
-import { AdminCode, getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
+import { getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
 import { date } from 'quasar'
 
 const linksList = [
@@ -154,7 +154,6 @@ export default defineComponent({
 
     return {
       essentialLinks: linksList,
-      AdminCode,
       getCookie,
       getLogo,
       URLProperties,
