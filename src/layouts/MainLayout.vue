@@ -91,7 +91,7 @@
         />
       </q-scroll-area>
 
-      <q-img class="absolute-top" :src="getLogo(getCookie('clientName'))" style="height: 182px">
+      <q-img class="absolute-top" :src="getLogo(getAdminCode(getCookie('applicationCode')))" style="height: 182px">
       </q-img>
     </q-drawer>
 
@@ -106,7 +106,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
-import { getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
+import { getAdminCode, getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
 import { date } from 'quasar'
 
 const linksList = [
@@ -154,6 +154,7 @@ export default defineComponent({
 
     return {
       essentialLinks: linksList,
+      getAdminCode,
       getCookie,
       getLogo,
       URLProperties,

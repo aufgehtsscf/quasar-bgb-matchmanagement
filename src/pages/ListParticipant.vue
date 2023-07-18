@@ -654,7 +654,9 @@ export default {
             this.setActiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
           }
 
-          this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].time, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
+          if (this.tableMatch.length > 1) {
+            this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].time, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
+          }
         })
         .catch((err) => {
           console.log(err)
@@ -919,7 +921,9 @@ export default {
             this.setParticipantObject(element[0], element[1], element[3], element[4], element[5].trim(), _participantAvatar, _participantAvatarIsCustomized, element[6].substring(0, 5), element[7].replace(/<br>/g, '\n'), element[8], element[9])
           }
 
-          this.fillObjects(_matchId, _time, _annotationsMatch)
+          if (this.tableParticipant.length > 1) {
+            this.fillObjects(_matchId, _time, _annotationsMatch)
+          }
         })
         .catch((err) => {
           console.log(err)

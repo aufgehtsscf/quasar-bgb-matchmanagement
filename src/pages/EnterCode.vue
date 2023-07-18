@@ -42,7 +42,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { URLProperties } from 'src/boot/utils.js'
+import { URLProperties, setCookie } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 export default {
@@ -83,7 +83,8 @@ export default {
 
   data () {
     return {
-      URLProperties
+      URLProperties,
+      setCookie
     }
   },
 
@@ -153,35 +154,8 @@ export default {
             console.log(err)
           })
       }
-    },
-
-    setCookie (_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5) {
-      const d = new Date()
-      d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000))
-      const _expires = 'expires=' + d.toUTCString()
-      document.cookie = 'isAdministrator=' + _isAdministrator + ';' + _expires + '";path=/'
-      document.cookie = 'applicationCode=' + _applicationCode + ';' + _expires + '";path=/'
-      document.cookie = 'clientName=' + _clientName + ';' + _expires + '";path=/'
-      document.cookie = 'email=' + _email + ';' + _expires + '";path=/'
-      document.cookie = 'homeTeam=' + _homeTeam + ';' + _expires + '";path=/'
-      document.cookie = 'homeTeamAlias=' + _homeTeamAlias + ';' + _expires + '";path=/'
-      document.cookie = 'standardText=' + _standardText + ';' + _expires + '";path=/'
-      document.cookie = 'titleUrl1=' + _titleUrl1 + ';' + _expires + '";path=/'
-      document.cookie = 'captionUrl1=' + _captionUrl1 + ';' + _expires + '";path=/'
-      document.cookie = 'linkUrl1=' + _linkUrl1 + ';' + _expires + '";path=/'
-      document.cookie = 'titleUrl2=' + _titleUrl2 + ';' + _expires + '";path=/'
-      document.cookie = 'captionUrl2=' + _captionUrl2 + ';' + _expires + '";path=/'
-      document.cookie = 'linkUrl2=' + _linkUrl2 + ';' + _expires + '";path=/'
-      document.cookie = 'titleUrl3=' + _titleUrl3 + ';' + _expires + '";path=/'
-      document.cookie = 'captionUrl3=' + _captionUrl3 + ';' + _expires + '";path=/'
-      document.cookie = 'linkUrl3=' + _linkUrl3 + ';' + _expires + '";path=/'
-      document.cookie = 'titleUrl4=' + _titleUrl4 + ';' + _expires + '";path=/'
-      document.cookie = 'captionUrl4=' + _captionUrl4 + ';' + _expires + '";path=/'
-      document.cookie = 'linkUrl4=' + _linkUrl4 + ';' + _expires + '";path=/'
-      document.cookie = 'titleUrl5=' + _titleUrl5 + ';' + _expires + '";path=/'
-      document.cookie = 'captionUrl5=' + _captionUrl5 + ';' + _expires + '";path=/'
-      document.cookie = 'linkUrl5=' + _linkUrl5 + ';' + _expires + '";path=/'
     }
+
   }
 }
 </script>

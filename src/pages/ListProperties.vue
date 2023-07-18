@@ -75,6 +75,8 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtClientName" autofocus label="Name" />
+            <q-input dense v-model="txtAdminCode" label="AdminCode" :readonly="true"/>
+            <q-input dense v-model="txtUserCode" label="UserCode" :readonly="true"/>
             <q-input dense v-model="txtEmail" label="E-Mail" />
             <q-input dense v-model="txtHomeTeam" label="Heimmannschaft" />
             <q-input dense v-model="txtHomeTeamAlias" label="Heimmannschaft (Alias)" />
@@ -139,11 +141,12 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAdminCode, getUserCode, URLProperties } from 'src/boot/utils.js'
+import { getCookie, setCookie, getAdminCode, getUserCode, URLProperties } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constPropertiesRow = ref(0)
 const _constAdminCode = ref('')
+const _constUserCode = ref('')
 const _constClientName = ref('')
 const _constEmail = ref('')
 const _constHomeTeam = ref('')
@@ -174,6 +177,7 @@ export default {
     return {
       intPropertiesRow: ref(_constPropertiesRow),
       txtAdminCode: ref(_constAdminCode),
+      txtUserCode: ref(_constUserCode),
       txtClientName: ref(_constClientName),
       txtEmail: ref(_constEmail),
       txtHomeTeam: ref(_constHomeTeam),
@@ -209,6 +213,7 @@ export default {
   data () {
     return {
       getCookie,
+      setCookie,
       getAdminCode,
       getUserCode,
       URLProperties,
@@ -276,6 +281,7 @@ export default {
       // console.log('Clicked on Properties: ' + _row + ', ' + _adminCode + ', ' + _clientName + ', ' + _email + ', ' + _homeTeam + ', ' + _homeTeamAlias + ', ' + _standardText + ', ' + _titleUrl1 + ', ' + _captionUrl1 + ', ' + _linkUrl1 + ', ' + _titleUrl2 + ', ' + _captionUrl2 + ', ' + _linkUrl2 + ', ' + _titleUrl3 + ', ' + _captionUrl3 + ', ' + _linkUrl3 + ', ' + _titleUrl4 + ', ' + _captionUrl4 + ', ' + _linkUrl4 + ', ' + _titleUrl5 + ', ' + _captionUrl5 + ', ' + _linkUrl5)
       _constPropertiesRow.value = _row
       _constAdminCode.value = _adminCode
+      _constUserCode.value = getUserCode(_adminCode)
       _constClientName.value = _clientName
       _constEmail.value = _email
       _constHomeTeam.value = _homeTeam
@@ -297,16 +303,17 @@ export default {
       _constCaptionUrl5.value = _captionUrl5
       _constLinkUrl5.value = _linkUrl5
 
-      this.editProperties = true
+      if (getCookie('clientName') !== 'BGB') this.editProperties = true
     },
 
     editPropertiesSave (_row, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5) {
-      console.log('editPropertiesSave: ' + _row + ', ' + _adminCode + ', ' + _clientName + ', ' + _email + ', ' + _homeTeam + ', ' + _homeTeamAlias + ', ' + _standardText + ', ' + _titleUrl1 + ', ' + _captionUrl1 + ', ' + _linkUrl1 + ', ' + _titleUrl2 + ', ' + _captionUrl2 + ', ' + _linkUrl2 + ', ' + _titleUrl3 + ', ' + _captionUrl3 + ', ' + _linkUrl3 + ', ' + _titleUrl4 + ', ' + _captionUrl4 + ', ' + _linkUrl4 + ', ' + _titleUrl5 + ', ' + _captionUrl5 + ', ' + _linkUrl5)
+      // console.log('editPropertiesSave: ' + _row + ', ' + _adminCode + ', ' + _clientName + ', ' + _email + ', ' + _homeTeam + ', ' + _homeTeamAlias + ', ' + _standardText + ', ' + _titleUrl1 + ', ' + _captionUrl1 + ', ' + _linkUrl1 + ', ' + _titleUrl2 + ', ' + _captionUrl2 + ', ' + _linkUrl2 + ', ' + _titleUrl3 + ', ' + _captionUrl3 + ', ' + _linkUrl3 + ', ' + _titleUrl4 + ', ' + _captionUrl4 + ', ' + _linkUrl4 + ', ' + _titleUrl5 + ', ' + _captionUrl5 + ', ' + _linkUrl5)
 
       this.$axios(`${this.URLProperties}&func=UpdateAdminCode&row=${_row}&adminCode=${_adminCode}&clientName=${encodeURI(_clientName.replace(',', ' '))}&email=${encodeURI(_email.replace(',', ' '))}&homeTeam=${encodeURI(_homeTeam.replace(',', ''))}&homeTeamAlias=${encodeURI(_homeTeamAlias.replace(',', ''))}&standardText=${encodeURI(_standardText.replace(',', ''))}&titleUrl1=${encodeURI(_titleUrl1.replace(',', ''))}&captionUrl1=${encodeURI(_captionUrl1.replace(',', ''))}&linkUrl1=${encodeURI(_linkUrl1.replace(',', ''))}&titleUrl2=${encodeURI(_titleUrl2.replace(',', ''))}&captionUrl2=${encodeURI(_captionUrl2.replace(',', ''))}&linkUrl2=${encodeURI(_linkUrl2.replace(',', ''))}&titleUrl3=${encodeURI(_titleUrl3.replace(',', ''))}&captionUrl3=${encodeURI(_captionUrl3.replace(',', ''))}&linkUrl3=${encodeURI(_linkUrl3.replace(',', ''))}&titleUrl4=${encodeURI(_titleUrl4.replace(',', ''))}&captionUrl4=${encodeURI(_captionUrl4.replace(',', ''))}&linkUrl4=${encodeURI(_linkUrl4.replace(',', ''))}&titleUrl5=${encodeURI(_titleUrl5.replace(',', ''))}&captionUrl5=${encodeURI(_captionUrl5.replace(',', ''))}&linkUrl5=${encodeURI(_linkUrl5.replace(',', ''))}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.onPropertiesUpdated()
+            setCookie(true, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5)
             this.getTableProperties()
           }
         })
