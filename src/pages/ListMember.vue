@@ -373,9 +373,9 @@ export default {
           this.tableParticipantArchive = res.data.split('\n')
           for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
             const element = this.tableParticipantArchive[index].split(',')
-            const _homeTeam = this.matchObject.find(el => el.matchId === element[2]).homeTeam
-            const _awayTeam = this.matchObject.find(el => el.matchId === element[2]).awayTeam
-            const _matchName = this.matchObject.find(el => el.matchId === element[2]).matchName
+            const _homeTeam = this.matchObject.find(el => el.matchId === element[2].trim()).homeTeam
+            const _awayTeam = this.matchObject.find(el => el.matchId === element[2].trim()).awayTeam
+            const _matchName = this.matchObject.find(el => el.matchId === element[2].trim()).matchName
             this.setInactiveMatchObject(_homeTeam, _awayTeam, _matchName)
           }
         })

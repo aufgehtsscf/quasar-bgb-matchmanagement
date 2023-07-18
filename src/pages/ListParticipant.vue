@@ -918,7 +918,7 @@ export default {
             let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === element[5].trim())?.customized
             if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = 'FALSE'
 
-            this.setParticipantObject(element[0], element[1], element[3], element[4], element[5].trim(), _participantAvatar, _participantAvatarIsCustomized, element[6].substring(0, 5), element[7].replace(/<br>/g, '\n'), element[8], element[9])
+            this.setParticipantObject(element[0], element[1], element[3], element[4].trim(), element[5].trim(), _participantAvatar, _participantAvatarIsCustomized, element[6].substring(0, 5), element[7].trim().replace(/<br>/g, '\n'), element[8], element[9])
           }
 
           if (this.tableParticipant.length > 1) {
@@ -1059,7 +1059,7 @@ export default {
           this.tableWhereIsMyCard = res.data.split('\n')
           for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
             const element = this.tableWhereIsMyCard[index].split(',')
-            this.setWhereIsMyCardObject(element[3], element[4], element[5])
+            this.setWhereIsMyCardObject(element[3].trim(), element[4], element[5].trim())
           }
         })
         .catch((err) => {
