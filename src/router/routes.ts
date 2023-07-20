@@ -11,7 +11,8 @@ const routes: RouteRecordRaw[] = [
       { path: '/member', component: () => import('src/pages/ListMember.vue') },
       { path: '/order', component: () => import('src/pages/ListOrder.vue') },
       { path: '/properties', component: () => import('src/pages/ListProperties.vue') },
-      { path: '/entercode', component: () => import('src/pages/EnterCode.vue') }
+      { path: '/entercode', component: () => import('src/pages/EnterCode.vue') },
+      { path: '/updateproperties', component: () => import('src/pages/UpdateProperties.vue') }
     ]
   },
 

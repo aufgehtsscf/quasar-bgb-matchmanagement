@@ -1,4 +1,4 @@
-// const IsAdministrator = 'true'
+// const IsAdministrator = 'false'
 // const ApplicationCode = 'BGB'
 // const AdminCode = '3NGdo3Lbyd0'
 // const ClientName = 'BGB'
@@ -53,7 +53,7 @@ const URLParticipantArchiveBasis = 'https://script.google.com/macros/s/AKfycbwDc
 const URLWhereIsMyCardBasis = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
 const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
 
-const URLProperties = 'https://script.google.com/macros/s/AKfycbw34EF7pnKDTVQGBr16IZgaz7TYmJKiVV8ypdfe9YnYo8lSfTmAttZ5n0tPjvSjNxgj/exec?sh=Properties'
+const URLProperties = 'https://script.google.com/macros/s/AKfycbxMU3wrrJ9m8Qcnpzu-0oC-APSA28i765lF_AHh6tVagXj1JpHz5glq8MY0GCPNbvdK/exec?sh=Properties'
 const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=' + ApplicationCode
 
 const getCookie = function (_cookieName) {
@@ -91,9 +91,10 @@ const getCookie = function (_cookieName) {
   if (_cookieName === 'titleUrl5') return TitleUrl5
   if (_cookieName === 'captionUrl5') return CaptionUrl5
   if (_cookieName === 'linkUrl5') return LinkUrl5
+  if (_cookieName === 'updatedOn') return LinkUrl5
 }
 
-const setCookie = function (_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5) {
+const setCookie = function (_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5, _updatedOn) {
   const d = new Date()
   d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000))
   const _expires = 'expires=' + d.toUTCString()
@@ -119,6 +120,7 @@ const setCookie = function (_isAdministrator, _applicationCode, _clientName, _em
   document.cookie = 'titleUrl5=' + _titleUrl5 + ';' + _expires + '";path=/'
   document.cookie = 'captionUrl5=' + _captionUrl5 + ';' + _expires + '";path=/'
   document.cookie = 'linkUrl5=' + _linkUrl5 + ';' + _expires + '";path=/'
+  document.cookie = 'updatedOn=' + _updatedOn + ';' + _expires + '";path=/'
 }
 
 const getAdminCode = function (_applicationCode, _calledFromListProperties) {

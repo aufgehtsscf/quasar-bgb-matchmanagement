@@ -80,6 +80,13 @@
             </q-item-section>
             <q-item-section> Hast du einen Code? </q-item-section>
           </q-item>
+
+          <q-item to="/updateproperties" exact clickable v-ripple v-if="getCookie('isAdministrator') === 'false' && getCookie('updatedOn') !== txtUpdatedOn">
+            <q-item-section avatar>
+              <q-icon name="system_update" />
+            </q-item-section>
+            <q-item-section> Update verfügbar </q-item-section>
+          </q-item>
         </q-list>
 
         <q-item-label header> Wichtige Links </q-item-label>
@@ -108,6 +115,8 @@ import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 import { getAdminCode, getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
 import { date } from 'quasar'
+
+const _constUpdatedOn = ref('')
 
 const linksList = [
   {
@@ -158,6 +167,7 @@ export default defineComponent({
       getCookie,
       getLogo,
       URLProperties,
+      txtUpdatedOn: ref(_constUpdatedOn),
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
@@ -169,6 +179,24 @@ export default defineComponent({
     todaysDate () {
       const timeStamp = Date.now()
       return date.formatDate(timeStamp, 'dddd D MMMM')
+    }
+  },
+
+  mounted () {
+    this.getTableProperties()
+  },
+
+  methods: {
+    async getTableProperties () {
+      // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'), true))
+      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'), true)}`)
+        .then((res) => {
+          const element = res.data.split(',')
+          _constUpdatedOn.value = element[23].replace(/(?:\r\n|\r|\n)/g, '')
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
 
