@@ -913,6 +913,11 @@ export default {
       this.ticketRequiredObject = []
       this.ticketAssignedObject = []
 
+      this.reservation = ''
+      _constParticipantList.value = ''
+      _constAnnotationsMatch.value = ''
+      _constTicketList.value = ''
+
       // console.log('URLParticipant: ' + _URLParticipant + '&func=Read&matchId=' + _matchId)
       this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
         .then((res) => {
@@ -955,8 +960,6 @@ export default {
     },
 
     fillObjects (_matchId, _time, _annotationsMatch) {
-      this.reservation = ''
-
       this.participantObject.forEach(el => {
         if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.matchName, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
 
@@ -969,7 +972,6 @@ export default {
         if (el.reaction !== '') this.setTicketAssignedObject(el.row, el.participantId, el.participant)
       })
 
-      _constParticipantList.value = ''
       this.presentParticipantObject.forEach(el => {
         _constParticipantList.value += el.presentParticipantParticipant.trim()
 
@@ -1000,7 +1002,6 @@ export default {
       _constAnnotationsMatchOriginal.value = _annotationsMatch
       _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText).replace(',,', ',')
 
-      _constTicketList.value = ''
       this.ticketObject.forEach(el => {
         if (el.ticketAction === 'brauche Karte') _constTicketList.value += '??? an ' + el.ticketParticipant.trim()
 
