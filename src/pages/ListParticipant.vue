@@ -699,7 +699,9 @@ export default {
 
     setTextShare (_matchName) {
       _constShare.value = _matchName + '\n\nAnwesend (' + this.presentParticipantObject.length + '):\n' + _constParticipantList.value
-      _constShare.value += '\nKarte weitergeben (' + this.ticketGivenObject.length + ') oder bedarf (' + this.ticketRequiredObject.length + '):\n' + _constTicketList.value
+      if (_constHomeTeam.value === getCookie('homeTeam')) {
+        _constShare.value += '\nKarte weitergeben (' + this.ticketGivenObject.length + ') oder bedarf (' + this.ticketRequiredObject.length + '):\n' + _constTicketList.value
+      }
       _constShare.value += '\n' + _constAnnotationsMatch.value
       this.share = true
     },
@@ -905,6 +907,11 @@ export default {
 
     getTableParticipant (_matchId, _time, _annotationsMatch) {
       this.participantObject = []
+      this.presentParticipantObject = []
+      this.ticketObject = []
+      this.ticketGivenObject = []
+      this.ticketRequiredObject = []
+      this.ticketAssignedObject = []
 
       // console.log('URLParticipant: ' + _URLParticipant + '&func=Read&matchId=' + _matchId)
       this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
@@ -948,12 +955,6 @@ export default {
     },
 
     fillObjects (_matchId, _time, _annotationsMatch) {
-      this.presentParticipantObject = []
-      this.ticketObject = []
-      this.ticketGivenObject = []
-      this.ticketRequiredObject = []
-      this.ticketAssignedObject = []
-
       this.reservation = ''
 
       this.participantObject.forEach(el => {
@@ -997,7 +998,7 @@ export default {
       const _standardText = getCookie('standardText').replace('<HH>', parseInt(_time.substring(0, 2) - 2)).replace('<MM>', _time.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
 
       _constAnnotationsMatchOriginal.value = _annotationsMatch
-      _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText)
+      _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText).replace(',,', ',')
 
       _constTicketList.value = ''
       this.ticketObject.forEach(el => {

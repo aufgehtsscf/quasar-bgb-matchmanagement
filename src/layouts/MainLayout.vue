@@ -12,7 +12,8 @@
         />
       </q-toolbar>
       <div class="q-px-lg q-pt-xl q-mb-md">
-        <div class="text-h4">{{ getCookie('clientName') }} Spieltagsplanung</div>
+        <div class="text-h4" v-if="getCookie('clientName') !== 'TEST'">{{ getCookie('clientName') }} Spieltagsplanung</div>
+        <div class="text-h4" v-if="getCookie('clientName') === 'TEST'">Auf geht's Spieltagsplanung</div>
         <div class="text-subtitle1">{{ todaysDate }}</div>
       </div>
       <q-img src="statics/images/AufGehtsSCF.png" class="header-image absolute-top" />
@@ -81,11 +82,11 @@
             <q-item-section> Hast du einen Code? </q-item-section>
           </q-item>
 
-          <q-item to="/updateproperties" exact clickable v-ripple v-if="getCookie('isAdministrator') === 'false' && getCookie('updatedOn') !== txtUpdatedOn">
+          <q-item to="/updateproperties" exact clickable v-ripple v-if="getCookie('clientName') !== 'BGB' && getCookie('isAdministrator') === 'false' && getCookie('updatedOn') !== txtUpdatedOn">
             <q-item-section avatar>
               <q-icon name="system_update" />
             </q-item-section>
-            <q-item-section> Update verfügbar </q-item-section>
+            <q-item-section> Einstellungen updaten </q-item-section>
           </q-item>
         </q-list>
 

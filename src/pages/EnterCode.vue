@@ -5,24 +5,23 @@
       <q-dialog v-model="enterCode" persistent>
         <q-card
           class="my-card text-white"
-          style="background: radial-gradient(circle, #f4243f 0%, #610101 100%)"
+          style="background: radial-gradient(circle, #792d3f 0%, #571111 100%)"
           >
 
           <q-card-section>
-            <div class="text-h6">Our Changing Planet</div>
-            <div class="text-subtitle2">by John Doe</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            {{ lorem }}
+            <div class="text-h6">Auf geht's SCF</div>
           </q-card-section>
 
           <q-card-section>
-            <div class="text-h6">Code eingeben</div>
+            <div class="text-subtitle2">Lieber SCF-Fan</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtApplicationCode" autofocus label="Code" />
+            {{ bodyText }}
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-input dense v-model="txtApplicationCode" autofocus label="Code hier eingeben" />
           </q-card-section>
 
           <q-separator />
@@ -54,7 +53,7 @@ export default {
     return {
       txtApplicationCode: ref(''),
 
-      lorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+      bodyText: 'Um diese Applikation für deinen Fanclub freizuschalten, benötigen wir einige Eckdaten. Bitte sende eine E-Mail an aufgehtsscf@gmail.com mit einer Kontakt-E-Mail-Adresse und dem Namen deiner Fan-Community. Du erhältst schnellstmöglich von uns einen kostenlosen Aktivierungscode.',
 
       onCodeIsValid () {
         $q.notify({
