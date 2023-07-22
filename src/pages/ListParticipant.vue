@@ -1001,6 +1001,9 @@ export default {
 
       _constAnnotationsMatchOriginal.value = _annotationsMatch
       _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText).replace(',,', ',')
+      if (_constAnnotationsMatch.value.substring(_constAnnotationsMatch.value.length - 1, _constAnnotationsMatch.value.length) === ',') {
+        _constAnnotationsMatch.value = _constAnnotationsMatch.value.substring(0, _constAnnotationsMatch.value.length - 1) + '.'
+      }
 
       this.ticketObject.forEach(el => {
         if (el.ticketAction === 'brauche Karte') _constTicketList.value += '??? an ' + el.ticketParticipant.trim()
