@@ -9,7 +9,7 @@
           >
 
           <q-card-section>
-            <div class="text-h6">Einstellungen updaten</div>
+            <div class="text-h6">Einstellungen sind veraltet</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -42,12 +42,12 @@ export default {
     const $q = useQuasar()
 
     return {
-      bodyText: 'Ihre Applikationseinstellungen sind veraltet. \r\n Ihr Administrator hat einige Anpassungen vorgenommen.',
+      bodyText: 'Ihr Administrator hat seit Ihrem letzten Besuch einige Anpassungen vorgenommen. Bitte aktualisieren Sie die Einstellungen.',
 
-      onCodeIsValid () {
+      onPropertiesUpdated () {
         $q.notify({
           type: 'positive',
-          message: 'Der eingegebene Code ist gültig!'
+          message: 'Die Einstellungen sind jetzt aktuell!'
         })
       },
 
@@ -96,10 +96,11 @@ export default {
             const _titleUrl5 = element[20].trim()
             const _captionUrl5 = element[21].trim()
             const _linkUrl5 = element[22].trim()
+            const _updatedOn = element[23].trim()
 
-            this.setCookie(getCookie('isAdministrator'), getCookie('applicationCode'), _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5)
+            this.setCookie(getCookie('isAdministrator'), getCookie('applicationCode'), _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5, _updatedOn)
 
-            this.onCodeIsValid()
+            this.onPropertiesUpdated()
           }
         })
         .catch((err) => {
@@ -113,7 +114,7 @@ export default {
 <style lang="sass" scoped>
 .my-card
   width: 100%
-  max-width: 250px
+  max-width: 350px
 </style>
 
 <style lang="scss">
