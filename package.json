@@ -1,8 +1,8 @@
 {
   "name": "quasar-bgb-matchmanagement",
   "version": "0.0.1",
-  "description": "BGB Spieltagsplanung",
-  "productName": "BGB Match Management",
+  "description": "Plan the game",
+  "productName": "Auf geht's SCF",
   "author": "Bladimir Gonzalez <bladgonza@yahoo.com>",
   "private": true,
   "scripts": {

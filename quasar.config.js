@@ -145,8 +145,8 @@ module.exports = configure(function (ctx) {
       // chainWebpackCustomSW (/* chain */) {},
 
       manifest: {
-        name: 'BGB Match Management',
-        short_name: 'BGB Match Management',
+        name: 'Auf geht\'s SCF',
+        short_name: 'Plan the game',
         description: '',
         display: 'standalone',
         orientation: 'portrait',
