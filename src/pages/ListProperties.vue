@@ -314,7 +314,7 @@ export default {
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.onPropertiesUpdated()
-            setCookie(true, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5, _date)
+            setCookie(true, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _date)
             this.getTableProperties()
           }
         })

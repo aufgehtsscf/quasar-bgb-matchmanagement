@@ -117,38 +117,53 @@ import EssentialLink from 'components/EssentialLink.vue'
 import { getAdminCode, getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
 import { date } from 'quasar'
 
+const _constTitleUrl1 = ref('')
+const _constCaptionUrl1 = ref('')
+const _constLinkUrl1 = ref('')
+const _constTitleUrl2 = ref('')
+const _constCaptionUrl2 = ref('')
+const _constLinkUrl2 = ref('')
+const _constTitleUrl3 = ref('')
+const _constCaptionUrl3 = ref('')
+const _constLinkUrl3 = ref('')
+const _constTitleUrl4 = ref('')
+const _constCaptionUrl4 = ref('')
+const _constLinkUrl4 = ref('')
+const _constTitleUrl5 = ref('')
+const _constCaptionUrl5 = ref('')
+const _constLinkUrl5 = ref('')
 const _constUpdatedOn = ref('')
 
 const linksList = [
   {
-    title: getCookie('titleUrl1'),
-    caption: getCookie('captionUrl1'),
+    title: _constTitleUrl1.value,
+    caption: _constCaptionUrl1.value,
     icon: 'favorite',
-    link: getCookie('linkUrl1')
+    link: _constLinkUrl1.value
   },
   {
-    title: getCookie('titleUrl2'),
-    caption: getCookie('captionUrl2'),
+    title: _constTitleUrl2.value,
+    caption: _constCaptionUrl2.value,
     icon: 'drafts',
-    link: getCookie('linkUrl2')
+    link: _constLinkUrl2.value
   },
   {
-    title: getCookie('titleUrl3'),
-    caption: getCookie('captionUrl3'),
+    title: _constTitleUrl3.value,
+    caption: _constCaptionUrl3.value,
     icon: 'public',
-    link: getCookie('linkUrl3')
+    link: _constLinkUrl3.value
   },
   {
-    title: getCookie('titleUrl4'),
-    caption: getCookie('captionUrl4'),
+    title: _constTitleUrl4.value,
+    caption: _constCaptionUrl4.value,
     icon: 'rss_feed',
-    link: getCookie('linkUrl4')
+    link: _constLinkUrl4.value
   },
   {
-    title: getCookie('titleUrl5'),
-    caption: getCookie('captionUrl5'),
+    title: _constTitleUrl5.value,
+    caption: _constCaptionUrl5.value,
     icon: 'record_voice_over',
-    link: getCookie('linkUrl5')
+    link: _constLinkUrl5.value
   }
 ]
 
@@ -193,7 +208,22 @@ export default defineComponent({
       this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'))}`)
         .then((res) => {
           const element = res.data.split(',')
-          _constUpdatedOn.value = element[23].replace(/(?:\r\n|\r|\n)/g, '')
+          _constTitleUrl1.value = element[8].trim()
+          _constCaptionUrl1.value = element[9].trim()
+          _constLinkUrl1.value = element[10].trim()
+          _constTitleUrl2.value = element[11].trim()
+          _constCaptionUrl2.value = element[12].trim()
+          _constLinkUrl2.value = element[13].trim()
+          _constTitleUrl3.value = element[14].trim()
+          _constCaptionUrl3.value = element[15].trim()
+          _constLinkUrl3.value = element[16].trim()
+          _constTitleUrl4.value = element[17].trim()
+          _constCaptionUrl4.value = element[18].trim()
+          _constLinkUrl4.value = element[19].trim()
+          _constTitleUrl5.value = element[20].trim()
+          _constCaptionUrl5.value = element[21].trim()
+          _constLinkUrl5.value = element[22].trim()
+          _constUpdatedOn.value = element[23].trim().replace(/(?:\r\n|\r|\n)/g, '')
         })
         .catch((err) => {
           console.log(err)
