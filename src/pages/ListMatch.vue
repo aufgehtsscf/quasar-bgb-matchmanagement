@@ -342,7 +342,7 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getAvatar(getCookie('clientName'), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n <= 9">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n <= 9">
             </q-avatar>
           </div>
 
@@ -354,7 +354,7 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getAvatar(getCookie('clientName'), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 9 && n <= 19">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 9 && n <= 19">
             </q-avatar>
           </div>
 
@@ -366,7 +366,7 @@
               class="overlapping"
               :style="`left: ${(n - 20) * 32}px`"
             >
-              <img :src="getAvatar(getCookie('clientName'), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19">
             </q-avatar>
           </div>
 

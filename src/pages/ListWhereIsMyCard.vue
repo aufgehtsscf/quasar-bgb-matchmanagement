@@ -20,7 +20,7 @@
               {{ card.cardHolder.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.cardHolderAvatar !== ''">
-              <img :src="getAvatar(getCookie('clientName'), card.cardHolderAvatar, card.cardHolderAvatarIsCustomized === 'TRUE')">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), card.cardHolderAvatar, card.cardHolderAvatarIsCustomized === 'TRUE')">
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
@@ -28,7 +28,7 @@
               {{ card.whoHasTheCard.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.whoHasTheCardAvatar !== ''">
-              <img :src="getAvatar(getCookie('clientName'), card.whoHasTheCardAvatar, card.whoHasTheCardAvatarIsCustomized === 'TRUE')">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), card.whoHasTheCardAvatar, card.whoHasTheCardAvatarIsCustomized === 'TRUE')">
             </q-avatar>
           </q-item-section>
           <q-item-section>

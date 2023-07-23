@@ -82,7 +82,7 @@
             <q-item-section> Hast du einen Code? </q-item-section>
           </q-item>
 
-          <q-item to="/updateproperties" exact clickable v-ripple v-if="getCookie('clientName') !== 'BGB' && getCookie('isAdministrator') === 'false' && getCookie('updatedOn') !== txtUpdatedOn">
+          <q-item to="/updateproperties" exact clickable v-ripple v-if="getCookie('isAdministrator') === 'false' && getCookie('updatedOn') !== txtUpdatedOn">
             <q-item-section avatar>
               <q-icon name="system_update" />
             </q-item-section>
@@ -190,7 +190,7 @@ export default defineComponent({
   methods: {
     async getTableProperties () {
       // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'), true))
-      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'), true)}`)
+      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'))}`)
         .then((res) => {
           const element = res.data.split(',')
           _constUpdatedOn.value = element[23].replace(/(?:\r\n|\r|\n)/g, '')

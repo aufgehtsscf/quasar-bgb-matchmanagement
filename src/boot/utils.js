@@ -1,27 +1,3 @@
-// const IsAdministrator = 'false'
-// const ApplicationCode = 'BGB'
-// const AdminCode = '3NGdo3Lbyd0'
-// const ClientName = 'BGB'
-// const Email = 'bgb@dirkschnaiter.de'
-// const HomeTeam = 'Freiburg'
-// const HomeTeamAlias = 'SCF'
-// const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES> die Fahne und die Socken'
-// const TitleUrl1 = 'Homepage'
-// const CaptionUrl1 = 'Bier Guerilla Breisgau'
-// const LinkUrl1 = 'http://www.fanclub-bgb.de/'
-// const TitleUrl2 = 'E-Mail'
-// const CaptionUrl2 = 'bgb@dirkschnaiter.de'
-// const LinkUrl2 = 'mailto:bgb@dirkschnaiter.de'
-// const TitleUrl3 = 'Facebook'
-// const CaptionUrl3 = 'facebook.com/bierguerillabreisgau'
-// const LinkUrl3 = 'https://www.facebook.com/bierguerillabreisgau'
-// const TitleUrl4 = 'Twitter'
-// const CaptionUrl4 = 'twitter.com/B_Guerilla'
-// const LinkUrl4 = 'https://twitter.com/B_Guerilla'
-// const TitleUrl5 = 'Instagram'
-// const CaptionUrl5 = 'instagram.com/bierguerillabreisgau'
-// const LinkUrl5 = 'https://www.instagram.com/bierguerillabreisgau'
-
 const IsAdministrator = 'true'
 const ApplicationCode = 'TEST'
 const AdminCode = '3Test2tseT9'
@@ -52,9 +28,8 @@ const URLParticipantBasis = 'https://script.google.com/macros/s/AKfycby5QLG3Ri_v
 const URLParticipantArchiveBasis = 'https://script.google.com/macros/s/AKfycbwDcHzzr6JqZoENUjRAe1OXY3YCOLsqYMwVbDfdOlYFIjqNJ6lTWuVcYWh_wc99gsv_8A/exec'
 const URLWhereIsMyCardBasis = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
 const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
-
+const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec'
 const URLProperties = 'https://script.google.com/macros/s/AKfycbxMU3wrrJ9m8Qcnpzu-0oC-APSA28i765lF_AHh6tVagXj1JpHz5glq8MY0GCPNbvdK/exec?sh=Properties'
-const URLOrder = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec?sh=' + ApplicationCode
 
 const getCookie = function (_cookieName) {
   const name = _cookieName + '='
@@ -123,15 +98,11 @@ const setCookie = function (_isAdministrator, _applicationCode, _clientName, _em
   document.cookie = 'updatedOn=' + _updatedOn + ';' + _expires + '";path=/'
 }
 
-const getAdminCode = function (_applicationCode, _calledFromListProperties) {
+const getAdminCode = function (_applicationCode) {
   let _adminCode = ''
 
-  if (_applicationCode === 'BGB' || _applicationCode === 'TEST') {
-    if (_calledFromListProperties) {
-      return AdminCode
-    } else {
-      return _applicationCode
-    }
+  if (_applicationCode === 'TEST') {
+    return AdminCode
   }
 
   if (_applicationCode.length === 12) {
@@ -165,13 +136,13 @@ const getUserCode = function (_applicationCode) {
   return _userCode
 }
 
-const getLogo = function (_client) {
-  return 'statics/images/' + _client + '/Logo.png'
+const getLogo = function (_adminCode) {
+  return 'statics/images/' + _adminCode + '/Logo.png'
 }
 
-const getAvatar = function (_clientName, _avatar, _customized) {
+const getAvatar = function (_adminCode, _avatar, _customized) {
   if (_avatar === '') return 'statics/avatars/collection/Placeholder.png'
-  else if (_customized) return 'statics/avatars/' + _clientName + '/' + _avatar + '.png'
+  else if (_customized) return 'statics/avatars/' + _adminCode + '/' + _avatar + '.png'
   else return 'statics/avatars/collection/' + _avatar + '.png'
 }
 
@@ -290,7 +261,7 @@ export { URLParticipantArchiveBasis }
 export { URLWhereIsMyCardBasis }
 export { URLMemberBasis }
 export { URLProperties }
-export { URLOrder }
+export { URLOrderBasis }
 export { getCookie }
 export { setCookie }
 export { getAdminCode }

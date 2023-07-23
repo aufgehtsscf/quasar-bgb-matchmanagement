@@ -74,7 +74,8 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtClientName" autofocus label="Name" />
+            <q-input dense v-model="txtClientName" autofocus label="Name" :readonly="true" v-if="getCookie('clientName') === 'BGB'"/>
+            <q-input dense v-model="txtClientName" autofocus label="Name" v-if="getCookie('clientName') !== 'BGB'"/>
             <q-input dense v-model="txtAdminCode" label="AdminCode" :readonly="true"/>
             <q-input dense v-model="txtUserCode" label="UserCode" :readonly="true"/>
             <q-input dense v-model="txtEmail" label="E-Mail" />
@@ -258,8 +259,8 @@ export default {
     async getTableProperties () {
       this.propertiesObject = []
 
-      // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'), true))
-      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'), true)}`)
+      // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'))
+      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'))}`)
         .then((res) => {
           this.tableProperties = res.data.split('\n')
           for (let index = 0; index < this.tableProperties.length - 1; index++) {
@@ -303,7 +304,7 @@ export default {
       _constCaptionUrl5.value = _captionUrl5
       _constLinkUrl5.value = _linkUrl5
 
-      if (getCookie('clientName') !== 'BGB') this.editProperties = true
+      this.editProperties = true
     },
 
     editPropertiesSave (_row, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5) {

@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { URLOrder } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, URLOrderBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constPosition = ref('')
@@ -39,6 +39,8 @@ const _constProduct = ref('')
 const _constSize = ref('')
 const _constColor = ref('')
 const _constInitials = ref('')
+
+let _URLOrder
 
 export default {
   name: 'ListOrder',
@@ -50,7 +52,9 @@ export default {
 
   data () {
     return {
-      URLOrder,
+      getCookie,
+      getAdminCode,
+      URLOrderBasis,
 
       index: [],
       position: [],
@@ -66,13 +70,18 @@ export default {
   },
 
   mounted () {
+    this.setVariables()
     this.getTableOrder()
   },
 
   methods: {
+    setVariables () {
+      _URLOrder = URLOrderBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+    },
+
     getTableOrder () {
-      console.log('URLOrder: ' + this.URLOrder + '&func=Read')
-      this.$axios(`${this.URLOrder}&func=Read`)
+      console.log('URLOrder: ' + _URLOrder + '&func=Read')
+      this.$axios(`${_URLOrder}&func=Read`)
         .then((res) => {
           this.tableOrder = res.data.split('\n')
           for (let index = 0; index < this.tableOrder.length - 1; index++) {

@@ -21,7 +21,7 @@
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
             <q-avatar size="50px" v-if="member.avatar !== ''">
-              <img :src="getAvatar(getCookie('clientName'), member.avatar, member.customized === 'TRUE')">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), member.avatar, member.customized === 'TRUE')">
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
           </q-item-section>
