@@ -117,55 +117,7 @@ import EssentialLink from 'components/EssentialLink.vue'
 import { getAdminCode, getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
 import { date } from 'quasar'
 
-const _constTitleUrl1 = ref('')
-const _constCaptionUrl1 = ref('')
-const _constLinkUrl1 = ref('')
-const _constTitleUrl2 = ref('')
-const _constCaptionUrl2 = ref('')
-const _constLinkUrl2 = ref('')
-const _constTitleUrl3 = ref('')
-const _constCaptionUrl3 = ref('')
-const _constLinkUrl3 = ref('')
-const _constTitleUrl4 = ref('')
-const _constCaptionUrl4 = ref('')
-const _constLinkUrl4 = ref('')
-const _constTitleUrl5 = ref('')
-const _constCaptionUrl5 = ref('')
-const _constLinkUrl5 = ref('')
 const _constUpdatedOn = ref('')
-
-const linksList = [
-  {
-    title: _constTitleUrl1.value,
-    caption: _constCaptionUrl1.value,
-    icon: 'favorite',
-    link: _constLinkUrl1.value
-  },
-  {
-    title: _constTitleUrl2.value,
-    caption: _constCaptionUrl2.value,
-    icon: 'drafts',
-    link: _constLinkUrl2.value
-  },
-  {
-    title: _constTitleUrl3.value,
-    caption: _constCaptionUrl3.value,
-    icon: 'public',
-    link: _constLinkUrl3.value
-  },
-  {
-    title: _constTitleUrl4.value,
-    caption: _constCaptionUrl4.value,
-    icon: 'rss_feed',
-    link: _constLinkUrl4.value
-  },
-  {
-    title: _constTitleUrl5.value,
-    caption: _constCaptionUrl5.value,
-    icon: 'record_voice_over',
-    link: _constLinkUrl5.value
-  }
-]
 
 export default defineComponent({
   name: 'MainLayout',
@@ -178,7 +130,13 @@ export default defineComponent({
     const leftDrawerOpen = ref(false)
 
     return {
-      essentialLinks: linksList,
+      essentialLinks: [
+        {
+          title: '',
+          caption: '',
+          icon: '',
+          link: ''
+        }],
       getAdminCode,
       getCookie,
       getLogo,
@@ -205,24 +163,36 @@ export default defineComponent({
   methods: {
     async getTableProperties () {
       // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'), true))
+      this.essentialLinks = []
+
       this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'))}`)
         .then((res) => {
           const element = res.data.split(',')
-          _constTitleUrl1.value = element[8].trim()
-          _constCaptionUrl1.value = element[9].trim()
-          _constLinkUrl1.value = element[10].trim()
-          _constTitleUrl2.value = element[11].trim()
-          _constCaptionUrl2.value = element[12].trim()
-          _constLinkUrl2.value = element[13].trim()
-          _constTitleUrl3.value = element[14].trim()
-          _constCaptionUrl3.value = element[15].trim()
-          _constLinkUrl3.value = element[16].trim()
-          _constTitleUrl4.value = element[17].trim()
-          _constCaptionUrl4.value = element[18].trim()
-          _constLinkUrl4.value = element[19].trim()
-          _constTitleUrl5.value = element[20].trim()
-          _constCaptionUrl5.value = element[21].trim()
-          _constLinkUrl5.value = element[22].trim()
+          const _titleUrl1 = element[8].trim()
+          const _captionUrl1 = element[9].trim()
+          const _linkUrl1 = element[10].trim()
+          this.essentialLinks.push({ title: _titleUrl1, caption: _captionUrl1, icon: 'favorite', link: _linkUrl1 })
+
+          const _titleUrl2 = element[11].trim()
+          const _captionUrl2 = element[12].trim()
+          const _linkUrl2 = element[13].trim()
+          this.essentialLinks.push({ title: _titleUrl2, caption: _captionUrl2, icon: 'drafts', link: _linkUrl2 })
+
+          const _titleUrl3 = element[14].trim()
+          const _captionUrl3 = element[15].trim()
+          const _linkUrl3 = element[16].trim()
+          this.essentialLinks.push({ title: _titleUrl3, caption: _captionUrl3, icon: 'public', link: _linkUrl3 })
+
+          const _titleUrl4 = element[17].trim()
+          const _captionUrl4 = element[18].trim()
+          const _linkUrl4 = element[19].trim()
+          this.essentialLinks.push({ title: _titleUrl4, caption: _captionUrl4, icon: 'rss_feed', link: _linkUrl4 })
+
+          const _titleUrl5 = element[20].trim()
+          const _captionUrl5 = element[21].trim()
+          const _linkUrl5 = element[22].trim()
+          this.essentialLinks.push({ title: _titleUrl5, caption: _captionUrl5, icon: 'record_voice_over', link: _linkUrl5 })
+
           _constUpdatedOn.value = element[23].trim().replace(/(?:\r\n|\r|\n)/g, '')
         })
         .catch((err) => {

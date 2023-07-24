@@ -63,7 +63,7 @@ export default {
 
       bodyText: 'Um diese Applikation für deinen Fanclub freizuschalten, benötigen wir einige Eckdaten. Bitte sende eine E-Mail an aufgehtsscf@gmail.com mit einer Kontakt-E-Mail-Adresse und dem Namen deiner Fan-Community. Du erhältst schnellstmöglich von uns einen kostenlosen Aktivierungscode.',
 
-      cookieText: 'Diese Website verwendet Cookies, um Ihnen ein optimales Erlebnis zu bieten. Durch die Nutzung unserer Website erklären Sie sich damit einverstanden, dass wir Cookies gemäß unserer Datenschutzrichtlinie verwenden. Weitere Informationen zu unserer Cookie-Richtlinie finden Sie hier. Klicken Sie auf "OK", um den Aktivierungscode einzugeben und der Cookie-Nutzung zuzustimmen.',
+      cookieText: 'Diese Website verwendet Cookies, um Ihnen ein optimales Erlebnis zu bieten. Durch die Nutzung unserer Website erklären Sie sich damit einverstanden, dass wir Cookies verwenden. Klicken Sie auf "OK", um den Aktivierungscode einzugeben und der Cookie-Nutzung zuzustimmen.',
 
       onCodeIsValid () {
         $q.notify({
