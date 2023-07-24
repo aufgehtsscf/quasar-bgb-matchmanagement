@@ -161,7 +161,7 @@ export default defineComponent({
   },
 
   methods: {
-    async getTableProperties () {
+    getTableProperties () {
       // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'), true))
       this.essentialLinks = []
 
