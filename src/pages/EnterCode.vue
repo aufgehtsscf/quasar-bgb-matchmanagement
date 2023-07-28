@@ -5,19 +5,11 @@
       <q-dialog v-model="enterCode" persistent>
         <q-card
           class="my-card text-white"
-          style="background: radial-gradient(circle, #792d3f 0%, #571111 100%)">
+          style="background: radial-gradient(circle, #7e0210 0%, #59000b 100%)">
 
           <q-card-section>
             <div class="text-h6">Auf geht's SCF</div>
-            <div class="text-subtitle2">By BGB</div>
-          </q-card-section>
-
-          <q-card-section>
-            <div class="text-subtitle2">Lieber SCF-Fan</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            {{ bodyText }}
+            <div class="text-subtitle2">Plan the game</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -28,8 +20,20 @@
             </q-input>
           </q-card-section>
 
+          <q-card-section>
+            <div class="text-subtitle2">Wir verwenden Cookies</div>
+          </q-card-section>
+
           <q-card-section class="q-pt-none">
-            {{ cookieText }}
+            {{ cookieText1 }}
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            {{ cookieText2 }}
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            {{ cookieText3 }}
           </q-card-section>
 
           <q-separator />
@@ -61,9 +65,9 @@ export default {
     return {
       txtApplicationCode: ref(''),
 
-      bodyText: 'Um diese Applikation für deinen Fanclub freizuschalten, benötigen wir einige Eckdaten. Bitte sende eine E-Mail an aufgehtsscf@gmail.com mit einer Kontakt-E-Mail-Adresse und dem Namen deiner Fan-Community. Du erhältst schnellstmöglich von uns einen kostenlosen Aktivierungscode.',
-
-      cookieText: 'Diese Website verwendet Cookies, um Ihnen ein optimales Erlebnis zu bieten. Durch die Nutzung unserer Website erklären Sie sich damit einverstanden, dass wir Cookies verwenden. Klicken Sie auf "OK", um den Aktivierungscode einzugeben und der Cookie-Nutzung zuzustimmen.',
+      cookieText1: 'Damit du deinen Zugangscode nicht jedes Mal neu eingeben musst, speichern wir diese und andere von deinem Administrator festgelegte Informationen als Cookies.',
+      cookieText2: 'Durch die Nutzung dieser Website erklärst du dich damit einverstanden, dass wir Cookies verwenden.',
+      cookieText3: 'Klick auf "OK" klicken, um den Aktivierungscode zu überprüfen.',
 
       onCodeIsValid () {
         $q.notify({
@@ -118,13 +122,18 @@ export default {
         _userCode = _applicationCode.substring(1, 5) + _applicationCode.substring(6, 10) + '_' + _applicationCode.substring(0, 1) + _applicationCode.substring(5, 6) + _applicationCode.substring(10, _applicationCode.length)
       }
 
-      if (_adminCode === '' && _userCode === '') this.onCodeIsInvalid()
-      else {
+      if (_adminCode === '' && _userCode === '') {
+        this.onCodeIsInvalid()
+        this.refreshPage(false)
+      } else {
         this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${_adminCode}`)
           .then((res) => {
             this.tableProperties = res.data.split('\n')
 
-            if (res.data === '') this.onCodeIsInvalid()
+            if (res.data === '') {
+              this.onCodeIsInvalid()
+              this.refreshPage(false)
+            }
 
             for (let index = 0; index < this.tableProperties.length - 1; index++) {
               const element = this.tableProperties[index].split(',')
@@ -137,18 +146,44 @@ export default {
               const _homeTeam = element[5].trim()
               const _homeTeamAlias = element[6].trim()
               const _standardText = element[7].trim()
+              const _titleUrl1 = element[8].trim()
+              const _captionUrl1 = element[9].trim()
+              const _linkUrl1 = element[10].trim()
+              const _titleUrl2 = element[11].trim()
+              const _captionUrl2 = element[12].trim()
+              const _linkUrl2 = element[13].trim()
+              const _titleUrl3 = element[14].trim()
+              const _captionUrl3 = element[15].trim()
+              const _linkUrl3 = element[16].trim()
+              const _titleUrl4 = element[17].trim()
+              const _captionUrl4 = element[18].trim()
+              const _linkUrl4 = element[19].trim()
+              const _titleUrl5 = element[20].trim()
+              const _captionUrl5 = element[21].trim()
+              const _linkUrl5 = element[22].trim()
               const _updatedOn = element[23].trim()
 
-              if (element[1] === _adminCode || element[2] === _userCode) this.setCookie(_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _updatedOn)
+              if (element[1] === _adminCode || element[2] === _userCode) this.setCookie(_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5, _updatedOn)
               else this.onCodeNotFound()
 
               this.onCodeIsValid()
+              this.refreshPage(true)
             }
           })
           .catch((err) => {
             console.log(err)
           })
       }
+    },
+
+    async refreshPage (codeIsValid) {
+      const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+      await sleep(3000)
+
+      if (codeIsValid) {
+        this.$router.push('/')
+        await sleep(5000)
+      } else location.reload()
     }
 
   }

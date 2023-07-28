@@ -35,9 +35,9 @@
         <q-list padding>
           <q-item to="/" exact clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="home" />
+              <q-icon name="emoji_people" />
             </q-item-section>
-            <q-item-section> Home </q-item-section>
+            <q-item-section> Teilnehmer </q-item-section>
           </q-item>
 
           <q-item to="/match" exact clickable v-ripple>
@@ -47,18 +47,18 @@
             <q-item-section> Spiele </q-item-section>
           </q-item>
 
-          <q-item to="/whereismycard" exact clickable v-ripple>
-            <q-item-section avatar>
-              <q-icon name="credit_card" />
-            </q-item-section>
-            <q-item-section> Wer hat meine Karte? </q-item-section>
-          </q-item>
-
           <q-item to="/member" exact clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
             <q-item-section> Mitglieder </q-item-section>
+          </q-item>
+
+          <q-item to="/whereismycard" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="credit_card" />
+            </q-item-section>
+            <q-item-section> Wer hat meine Karte? </q-item-section>
           </q-item>
 
           <q-item to="/order" exact clickable v-ripple v-if="getCookie('clientName') === 'BGB'">
@@ -117,6 +117,39 @@ import EssentialLink from 'components/EssentialLink.vue'
 import { getAdminCode, getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
 import { date } from 'quasar'
 
+const linksList = [
+  {
+    title: getCookie('titleUrl1'),
+    caption: getCookie('captionUrl1'),
+    icon: 'favorite',
+    link: getCookie('linkUrl1')
+  },
+  {
+    title: getCookie('titleUrl2'),
+    caption: getCookie('captionUrl2'),
+    icon: 'drafts',
+    link: getCookie('linkUrl2')
+  },
+  {
+    title: getCookie('titleUrl3'),
+    caption: getCookie('captionUrl3'),
+    icon: 'public',
+    link: getCookie('linkUrl3')
+  },
+  {
+    title: getCookie('titleUrl4'),
+    caption: getCookie('captionUrl4'),
+    icon: 'rss_feed',
+    link: getCookie('linkUrl4')
+  },
+  {
+    title: getCookie('titleUrl5'),
+    caption: getCookie('captionUrl5'),
+    icon: 'record_voice_over',
+    link: getCookie('linkUrl5')
+  }
+]
+
 const _constUpdatedOn = ref('')
 
 export default defineComponent({
@@ -130,13 +163,7 @@ export default defineComponent({
     const leftDrawerOpen = ref(false)
 
     return {
-      essentialLinks: [
-        {
-          title: '',
-          caption: '',
-          icon: '',
-          link: ''
-        }],
+      essentialLinks: linksList,
       getAdminCode,
       getCookie,
       getLogo,
@@ -153,51 +180,6 @@ export default defineComponent({
     todaysDate () {
       const timeStamp = Date.now()
       return date.formatDate(timeStamp, 'dddd D MMMM')
-    }
-  },
-
-  mounted () {
-    this.getTableProperties()
-  },
-
-  methods: {
-    getTableProperties () {
-      // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'), true))
-      this.essentialLinks = []
-
-      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'))}`)
-        .then((res) => {
-          const element = res.data.split(',')
-          const _titleUrl1 = element[8].trim()
-          const _captionUrl1 = element[9].trim()
-          const _linkUrl1 = element[10].trim()
-          this.essentialLinks.push({ title: _titleUrl1, caption: _captionUrl1, icon: 'favorite', link: _linkUrl1 })
-
-          const _titleUrl2 = element[11].trim()
-          const _captionUrl2 = element[12].trim()
-          const _linkUrl2 = element[13].trim()
-          this.essentialLinks.push({ title: _titleUrl2, caption: _captionUrl2, icon: 'drafts', link: _linkUrl2 })
-
-          const _titleUrl3 = element[14].trim()
-          const _captionUrl3 = element[15].trim()
-          const _linkUrl3 = element[16].trim()
-          this.essentialLinks.push({ title: _titleUrl3, caption: _captionUrl3, icon: 'public', link: _linkUrl3 })
-
-          const _titleUrl4 = element[17].trim()
-          const _captionUrl4 = element[18].trim()
-          const _linkUrl4 = element[19].trim()
-          this.essentialLinks.push({ title: _titleUrl4, caption: _captionUrl4, icon: 'rss_feed', link: _linkUrl4 })
-
-          const _titleUrl5 = element[20].trim()
-          const _captionUrl5 = element[21].trim()
-          const _linkUrl5 = element[22].trim()
-          this.essentialLinks.push({ title: _titleUrl5, caption: _captionUrl5, icon: 'record_voice_over', link: _linkUrl5 })
-
-          _constUpdatedOn.value = element[23].trim().replace(/(?:\r\n|\r|\n)/g, '')
-        })
-        .catch((err) => {
-          console.log(err)
-        })
     }
   }
 
