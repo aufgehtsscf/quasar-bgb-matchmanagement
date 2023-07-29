@@ -140,7 +140,7 @@
         <img src="statics/images/AufGehtsSCF2.png">
 
         <q-card-section>
-          <div class="text-subtitle2">Verfügbare Bereiche:</div>
+          <div class="text-subtitle2">Was kann diese App?</div>
         </q-card-section>
 
         <q-list>
@@ -150,7 +150,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label class="text-subtitle2">Teilnehmer</q-item-label>
+              <q-item-label class="text-subtitle2">Teilnehmer verwalten</q-item-label>
               <q-item-label>Hier kannst du dich für ein bestimmtes Spiel eintragen. Du kannst angeben, ob du dabei bist oder ob du ein Ticket brauchst/freigibst. Du hast stets den Überblick über die aktuellen Spiele.</q-item-label>
             </q-item-section>
           </q-item>
@@ -161,7 +161,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label class="text-subtitle2">Spiele</q-item-label>
+              <q-item-label class="text-subtitle2">Spiele verwalten</q-item-label>
               <q-item-label>Hier kannst du ein bereits terminierten Spiel erfassen und publizieren. Heim- und Auswärtsspiele können erfasst werden.</q-item-label>
             </q-item-section>
           </q-item>
@@ -172,7 +172,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label class="text-subtitle2">Mitglieder</q-item-label>
+              <q-item-label class="text-subtitle2">Mitglieder verwalten</q-item-label>
               <q-item-label>Hier kannst du als Mitglied eintragen. Es stehen dir jede Menge coole Avatare zur Verfügung.</q-item-label>
             </q-item-section>
           </q-item>
@@ -183,7 +183,7 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label class="text-subtitle2">Wer hat meine Karte?</q-item-label>
+              <q-item-label class="text-subtitle2">Karten verwalten. Wer hat meine Karte?</q-item-label>
               <q-item-label>Hier kannst du angeben, wer aktuell deine Karte hat. Diese Information fließt in die Spielübersicht ein.</q-item-label>
             </q-item-section>
           </q-item>
@@ -199,6 +199,13 @@
             </q-item-section>
           </q-item>
         </q-list>
+
+        <q-separator />
+
+        <q-card-actions class="text-white" align="right">
+          <q-btn icon="done" label="Ok" v-close-popup />
+        </q-card-actions>
+
       </q-card>
     </q-dialog>
     </div>
