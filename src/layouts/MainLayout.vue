@@ -181,6 +181,24 @@ export default defineComponent({
       const timeStamp = Date.now()
       return date.formatDate(timeStamp, 'dddd D MMMM')
     }
+  },
+
+  mounted () {
+    this.getTableProperties()
+  },
+
+  methods: {
+    getTableProperties () {
+      // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'), true))
+      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'))}`)
+        .then((res) => {
+          const element = res.data.split(',')
+          _constUpdatedOn.value = element[23].replace(/(?:\r\n|\r|\n)/g, '')
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   }
 
 })
