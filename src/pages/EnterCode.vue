@@ -39,8 +39,8 @@
           <q-separator />
 
           <q-card-actions class="text-white" align="right">
-            <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="done" label="Ok" @click="getProperties(txtApplicationCode)" :disable="txtApplicationCode === ''" v-close-popup />
+            <q-btn label="Abbrechen" v-close-popup />
+            <q-btn label="Ok" @click="getProperties(txtApplicationCode)" :disable="txtApplicationCode === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>

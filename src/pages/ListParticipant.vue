@@ -203,7 +203,7 @@
         <q-separator />
 
         <q-card-actions class="text-white" align="right">
-          <q-btn icon="done" label="Ok" v-close-popup />
+          <q-btn label="Ok" v-close-popup />
         </q-card-actions>
 
       </q-card>
