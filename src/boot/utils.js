@@ -216,6 +216,7 @@ const avatarImages = [
   { label: 'Eeyore', value: 'Eeyore', avatar: 'statics/avatars/collection/Eeyore.png' },
   { label: 'Elon Musk', value: 'Elon_Musk', avatar: 'statics/avatars/collection/Elon_Musk.png' },
   { label: 'Fat Cat', value: 'Fat_Cat', avatar: 'statics/avatars/collection/Fat_Cat.png' },
+  { label: 'Garfield', value: 'Garfield', avatar: 'statics/avatars/collection/Garfield.png' },
   { label: 'Hello Kitty', value: 'Hello_Kitty', avatar: 'statics/avatars/collection/Hello_Kitty.png' },
   { label: 'Homer Simpson', value: 'Homer_Simpson', avatar: 'statics/avatars/collection/Homer_Simpson.png' },
   { label: 'Ironman', value: 'Ironman', avatar: 'statics/avatars/collection/Ironman.png' },
@@ -250,6 +251,7 @@ const avatarImages = [
   { label: 'Super Mario', value: 'Super_Mario', avatar: 'statics/avatars/collection/Super_Mario.png' },
   { label: 'Tom', value: 'Tom', avatar: 'statics/avatars/collection/Tom.png' },
   { label: 'Tom Kid', value: 'Tom_Kid', avatar: 'statics/avatars/collection/Tom_Kid.png' },
+  { label: 'Tweety', value: 'Tweety', avatar: 'statics/avatars/collection/Tweety.png' },
   { label: 'Woodstock', value: 'Woodstock', avatar: 'statics/avatars/collection/Woodstock.png' }
 ]
 
