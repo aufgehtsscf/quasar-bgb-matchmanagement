@@ -167,6 +167,7 @@ const teamImages = [
   { label: 'Darmstadt', value: 'Darmstadt', image: 'statics/teams/Darmstadt.png' },
   { label: 'DFB Pokal', value: 'DFB_Pokal', image: 'statics/teams/DFB_Pokal.png' },
   { label: 'Dortmund', value: 'Borussia_Dortmund', image: 'statics/teams/Borussia_Dortmund.png' },
+  { label: 'Europa League', value: 'Europa_League', image: 'statics/teams/Europa_League.png' },
   { label: 'Frankfurt', value: 'Eintracht_Frankfurt', image: 'statics/teams/Eintracht_Frankfurt.png' },
   { label: 'Fortuna Düsseldorf', value: 'Fortuna_Düsseldorf', image: 'statics/teams/Fortuna_Düsseldorf.png' },
   { label: 'Freiburg', value: 'Freiburg', image: 'statics/teams/Freiburg.png' },
