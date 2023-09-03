@@ -1013,6 +1013,13 @@ export default {
     },
 
     getTableParticipant (_matchId, _time, _annotationsMatch) {
+      this.participantObject = []
+      this.presentParticipantObject = []
+      this.ticketObject = []
+      this.ticketGivenObject = []
+      this.ticketRequiredObject = []
+      this.ticketAssignedObject = []
+
       this.reservation = ''
       _constParticipantList.value = ''
       _constAnnotationsMatch.value = ''
