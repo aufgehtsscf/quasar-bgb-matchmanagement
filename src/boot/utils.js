@@ -161,6 +161,7 @@ const getEventImage = function (_matchName) {
 const teamImages = [
   { label: 'Arminia', value: 'Arminia_Bielefeld', image: 'statics/teams/Arminia_Bielefeld.png' },
   { label: 'Augsburg', value: 'Augsburg', image: 'statics/teams/Augsburg.png' },
+  { label: 'Backa Topola', value: 'Backa_Topola', image: 'statics/teams/Backa_Topola.png' },
   { label: 'Bayern', value: 'Bayern_München', image: 'statics/teams/Bayern_München.png' },
   { label: 'Bochum', value: 'Bochum', image: 'statics/teams/Bochum.png' },
   { label: 'Braunschweig', value: 'Eintracht_Braunschweig', image: 'statics/teams/Eintracht_Braunschweig.png' },
@@ -199,6 +200,7 @@ const teamImages = [
   { label: 'Stuttgart', value: 'Stuttgart', image: 'statics/teams/Stuttgart.png' },
   { label: 'Union Berlin', value: 'Union_Berlin', image: 'statics/teams/Union_Berlin.png' },
   { label: 'Werder Bremen', value: 'Werder_Bremen', image: 'statics/teams/Werder_Bremen.png' },
+  { label: 'West Ham', value: 'West_Ham', image: 'statics/teams/West_Ham.png' },
   { label: 'Wolfsburg', value: 'Wolfsburg', image: 'statics/teams/Wolfsburg.png' }
 ]
 

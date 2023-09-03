@@ -745,6 +745,12 @@ export default {
 
     getTableActiveMatch () {
       this.activeMatchObject = []
+      this.participantObject = []
+      this.presentParticipantObject = []
+      this.ticketObject = []
+      this.ticketGivenObject = []
+      this.ticketRequiredObject = []
+      this.ticketAssignedObject = []
 
       // console.log('URLMatch: ' + _URLMatch + '&func=ReadActive&published=TRUE')
       this.$axios(`${_URLMatch}&func=ReadActive&published=TRUE`)
@@ -1007,13 +1013,6 @@ export default {
     },
 
     getTableParticipant (_matchId, _time, _annotationsMatch) {
-      this.participantObject = []
-      this.presentParticipantObject = []
-      this.ticketObject = []
-      this.ticketGivenObject = []
-      this.ticketRequiredObject = []
-      this.ticketAssignedObject = []
-
       this.reservation = ''
       _constParticipantList.value = ''
       _constAnnotationsMatch.value = ''
