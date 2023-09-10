@@ -313,6 +313,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglPublished, txtDatetime, txtAnnotations)" :disable="txtMatchName === ''" v-close-popup />
           </q-card-actions>
@@ -389,6 +390,21 @@
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
             <q-btn flat label="Ja" color="primary" @click="archiveMatch(intMatchRow, txtMatchId, txtDatetime)" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- Delete match -->
+      <q-dialog v-model="delMatch" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="delete" color="primary" text-color="white" />
+            <span class="q-ml-sm">Datensatz löschen?</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Nein" color="primary" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteMatch(intMatchRow, txtMatchId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -480,6 +496,13 @@ export default {
         })
       },
 
+      onMatchDeleted () {
+        $q.notify({
+          message: 'Spiel wurde erfolgreich gelöscht!',
+          color: 'orange'
+        })
+      },
+
       onMatchAlreadyExists () {
         $q.notify({
           type: 'negative',
@@ -490,6 +513,7 @@ export default {
       addMatch: ref(false),
       editMatch: ref(false),
       arcMatch: ref(false),
+      delMatch: ref(false),
       showInactiveMatch: ref(false)
     }
   },
@@ -803,30 +827,51 @@ export default {
           console.log(err)
         })
 
-      this.inactivateMatch(_row, _matchId)
+      this.inactivateDeleteMatch(_row, _matchId, true)
     },
 
-    inactivateMatch (_row, _matchId) {
+    inactivateDeleteMatch (_row, _matchId, _inactivate) {
       this.$axios(`${_URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
         .then((res3) => {
           if (res3.data === 'Success, requested action completed') {
+            if (_inactivate) {
             // console.log(_URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId)
-            this.$axios(`${_URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
-              .then((res4) => {
-                if (res4.data === 'Success, requested action completed') {
-                  this.onMatchArchived()
-                  this.getTableActiveMatch()
-                  this.editMatch = false
-                }
-              })
-              .catch((err) => {
-                console.log(err)
-              })
+              this.$axios(`${_URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
+                .then((res4) => {
+                  if (res4.data === 'Success, requested action completed') {
+                    this.onMatchArchived()
+                    this.getTableActiveMatch()
+                    this.editMatch = false
+                  }
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+            } else {
+            // console.log(_URLMatch + '&func=Delete&row=' + _row + '&matchId=' + _matchId)
+              this.$axios(`${_URLMatch}&func=Delete&row=${_row}&matchId=${_matchId}`)
+                .then((res5) => {
+                  if (res5.data === 'Success, requested action completed') {
+                    this.onMatchDeleted()
+                    this.getTableActiveMatch()
+                    this.editMatch = false
+                  }
+                })
+                .catch((err) => {
+                  console.log(err)
+                })
+            }
           }
         })
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    async deleteMatch (_row, _matchId) {
+      // console.log('deleteMatch: ' + _row + ', ' + _matchId + ', ' + _datetime)
+
+      this.inactivateDeleteMatch(_row, _matchId, false)
     },
 
     getTableInactiveMatch () {

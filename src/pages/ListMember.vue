@@ -121,8 +121,9 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== ''">
-              <img :src="getEventImage(el.matchName)" v-if="n <= 9 && el.awayTeam === ''">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
+              <img :src="getTeamImage(el.homeTeam)" v-if="n <= 9 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
+              <img :src="getEventImage(el.matchName)" v-if="n <= 9 && el.homeTeam === '' && el.awayTeam === ''">
             </q-avatar>
           </div>
 
@@ -134,8 +135,9 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== ''">
-              <img :src="getEventImage(el.matchName)" v-if="n > 9 && n <= 19 && el.awayTeam === ''">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
+              <img :src="getEventImage(el.matchName)" v-if="n > 9 && n <= 19 && el.homeTeam === '' && el.awayTeam === ''">
             </q-avatar>
           </div>
 
