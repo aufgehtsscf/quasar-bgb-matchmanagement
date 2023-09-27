@@ -1108,8 +1108,7 @@ export default {
 
         if (el.presentParticipantAnnotations !== '') {
           _constParticipantList.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')'
-          if (el.presentParticipantArrival !== '') _constParticipantListFormattedForWhatsApp.value += '_'
-          _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')'
+          if (el.presentParticipantArrival !== '') { _constParticipantListFormattedForWhatsApp.value += ' _(' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')' } else { _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')' }
         }
 
         if (el.presentParticipantReaction !== '') {
@@ -1125,7 +1124,7 @@ export default {
         } else {
           if (el.presentParticipantAnnotations !== '') _constParticipantListFormattedForWhatsApp.value += '_'
         }
-        if (el.presentParticipantAnnotations !== '' && el.presentParticipantReaction !== '') _constParticipantListFormattedForWhatsApp.value += '_'
+        if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations !== '' && el.presentParticipantReaction !== '') _constParticipantListFormattedForWhatsApp.value += '_'
 
         _constParticipantList.value += '\n'
         if (el.presentParticipantArrival === '') _constParticipantListFormattedForWhatsApp.value += '_'
