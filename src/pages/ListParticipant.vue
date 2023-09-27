@@ -48,7 +48,7 @@
 
     <!-- Share -->
     <div class="q-pa-md" style="max-width: 500px" v-if="getCookie('isAdministrator') === 'true'" >
-      <q-btn class="bg-white text-primary" icon="share" label="Übersicht teilen" @click="setTextShare(txtMatchName)" />
+      <q-btn class="bg-white text-primary" icon="share" label="Übersicht teilen" @click="setTextShareForWhatsApp(txtMatchName)" />
     </div>
 
     <!-- List of participants and tickets -->
@@ -449,6 +449,7 @@ const _constTicketAssignmentGiven = ref('')
 const _constTicketAssignmentRequired = ref('')
 
 const _constParticipantList = ref('')
+const _constParticipantListFormattedForWhatsApp = ref('')
 const _constTicketList = ref('')
 const _constShare = ref('')
 
@@ -813,6 +814,15 @@ export default {
       this.share = true
     },
 
+    setTextShareForWhatsApp (_matchName) {
+      _constShare.value = '*' + _matchName + '*\n\n*Anwesend (' + this.presentParticipantObject.length + '):*\n\n' + _constParticipantListFormattedForWhatsApp.value
+      if (_constHomeTeam.value === getCookie('homeTeam')) {
+        _constShare.value += '\n*Karte weitergeben (' + this.ticketGivenObject.length + ') oder bedarf (' + this.ticketRequiredObject.length + '):*\n\n' + _constTicketList.value
+      }
+      _constShare.value += '\n' + _constAnnotationsMatch.value
+      this.share = true
+    },
+
     onParticipantClick (_row, _participantId, _participant, _arrival, _annotations, _action, _reaction) {
       // console.log('Clicked on Participant: ' + _participantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
       _constParticipantRow.value = _row
@@ -1022,6 +1032,7 @@ export default {
 
       this.reservation = ''
       _constParticipantList.value = ''
+      _constParticipantListFormattedForWhatsApp.value = ''
       _constAnnotationsMatch.value = ''
       _constTicketList.value = ''
 
@@ -1081,14 +1092,25 @@ export default {
 
       this.presentParticipantObject.forEach(el => {
         _constParticipantList.value += el.presentParticipantParticipant.trim()
+        if (el.presentParticipantArrival !== '') _constParticipantListFormattedForWhatsApp.value += '*'
+        else _constParticipantListFormattedForWhatsApp.value += '_'
+        _constParticipantListFormattedForWhatsApp.value += el.presentParticipantParticipant.trim()
 
         _constParticipantList.value += ' (' + el.presentParticipantArrival + ')'
+        _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantArrival + ')'
+
+        if (el.presentParticipantArrival !== '') _constParticipantListFormattedForWhatsApp.value += '*'
+
         if (this.isReservation(el.presentParticipantArrival, _time)) {
           if (this.reservation !== '') this.reservation += ', '
           this.reservation += el.presentParticipantParticipant.trim()
         }
 
-        if (el.presentParticipantAnnotations !== '') _constParticipantList.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')'
+        if (el.presentParticipantAnnotations !== '') {
+          _constParticipantList.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')'
+          if (el.presentParticipantArrival !== '') _constParticipantListFormattedForWhatsApp.value += '_'
+          _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')'
+        }
 
         if (el.presentParticipantReaction !== '') {
           const _whoHasTheCard = this.whereIsMyCardObject.find(el2 => el2.cardHolder === el.presentParticipantReaction)?.whoHasTheCard
@@ -1097,9 +1119,17 @@ export default {
           }
           el.presentParticipantReaction = 'habe Karte von ' + el.presentParticipantReaction.trim()
           _constParticipantList.value += ', ' + el.presentParticipantReaction.trim()
+          if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations === '') _constParticipantListFormattedForWhatsApp.value += '_'
+          _constParticipantListFormattedForWhatsApp.value += ', ' + el.presentParticipantReaction.trim()
+          if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations === '') _constParticipantListFormattedForWhatsApp.value += '_'
+        } else {
+          if (el.presentParticipantAnnotations !== '') _constParticipantListFormattedForWhatsApp.value += '_'
         }
+        if (el.presentParticipantAnnotations !== '' && el.presentParticipantReaction !== '') _constParticipantListFormattedForWhatsApp.value += '_'
 
         _constParticipantList.value += '\n'
+        if (el.presentParticipantArrival === '') _constParticipantListFormattedForWhatsApp.value += '_'
+        _constParticipantListFormattedForWhatsApp.value += '\n'
       })
 
       if (this.reservation !== '') this.reservation += ','
