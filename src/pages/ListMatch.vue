@@ -367,7 +367,19 @@
               class="overlapping"
               :style="`left: ${(n - 20) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19 && n <= 29">
+            </q-avatar>
+          </div>
+
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in participantInactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${(n - 30) * 32}px`"
+            >
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 29">
             </q-avatar>
           </div>
 
