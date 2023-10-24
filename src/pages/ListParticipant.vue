@@ -1113,10 +1113,13 @@ export default {
 
         if (el.presentParticipantReaction !== '') {
           const _whoHasTheCard = this.whereIsMyCardObject.find(el2 => el2.cardHolder === el.presentParticipantReaction)?.whoHasTheCard
-          if (typeof _whoHasTheCard !== 'undefined') {
-            el.presentParticipantReaction = el.presentParticipantReaction.trim() + ' (Karte bei ' + _whoHasTheCard + ')'
+          let haveCardFrom = el.presentParticipantReaction.trim()
+          if (typeof _whoHasTheCard !== 'undefined' &&
+              !el.presentParticipantMatchName.includes('DFB Pokal') &&
+              !el.presentParticipantMatchName.includes('Europapokal')) {
+            haveCardFrom += ' (Karte bei ' + _whoHasTheCard + ')'
           }
-          el.presentParticipantReaction = 'habe Karte von ' + el.presentParticipantReaction.trim()
+          el.presentParticipantReaction = 'habe Karte von ' + haveCardFrom.trim()
           _constParticipantList.value += ', ' + el.presentParticipantReaction.trim()
           if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations === '') _constParticipantListFormattedForWhatsApp.value += '_'
           _constParticipantListFormattedForWhatsApp.value += ', ' + el.presentParticipantReaction.trim()
