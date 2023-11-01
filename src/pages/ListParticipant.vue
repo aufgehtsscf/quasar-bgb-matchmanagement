@@ -705,7 +705,7 @@ export default {
 
   methods: {
     showWelcome () {
-      if (getCookie('clientName') === 'TEST') this.welcome = true
+      if (getCookie('clientName') === 'HOME') this.welcome = true
     },
 
     setVariables () {

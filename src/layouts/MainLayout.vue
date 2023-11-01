@@ -12,8 +12,8 @@
         />
       </q-toolbar>
       <div class="q-px-lg q-pt-xl q-mb-md">
-        <div class="text-h4" v-if="getCookie('clientName') !== 'TEST'">{{ getCookie('clientName') }} Spieltagsplanung</div>
-        <div class="text-h4" v-if="getCookie('clientName') === 'TEST'">Auf geht's Spieltagsplanung</div>
+        <div class="text-h4" v-if="getCookie('clientName') !== 'HOME'">{{ getCookie('clientName') }} Spieltagsplanung</div>
+        <div class="text-h4" v-if="getCookie('clientName') === 'HOME'">Auf geht's Spieltagsplanung</div>
         <div class="text-subtitle1">{{ todaysDate }}</div>
       </div>
       <q-img src="statics/images/AufGehtsSCF.png" class="header-image absolute-top" />
@@ -25,7 +25,7 @@
       :width="350"
       :breakpoint="600"
     >
-      <q-scroll-area
+      <q-scroll-area v-if="getCookie('clientName') === 'HOME'"
         style="
           height: calc(100% - 192px);
           margin-top: 192px;
@@ -34,6 +34,39 @@
       >
         <q-list padding>
           <q-item to="/" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="home" />
+            </q-item-section>
+            <q-item-section> Home </q-item-section>
+          </q-item>
+
+          <q-item to="/entercode" exact clickable v-ripple v-if="getCookie('clientName') === 'HOME'">
+              <q-item-section avatar>
+                <q-icon name="qr_code_2" />
+              </q-item-section>
+              <q-item-section> Hast du einen Code? </q-item-section>
+          </q-item>
+
+        </q-list>
+
+        <q-item-label header> Wichtige Links </q-item-label>
+
+        <EssentialLinkHome
+          v-for="link in essentialLinksHome"
+          :key="link.title"
+          v-bind="link"
+        />
+      </q-scroll-area>
+
+      <q-scroll-area v-if="getCookie('clientName') !== 'HOME'"
+              style="
+                height: calc(100% - 192px);
+                margin-top: 192px;
+                border-right: 1px solid #ddd;
+              "
+      >
+        <q-list padding>
+          <q-item to="/participant" exact clickable v-ripple>
             <q-item-section avatar>
               <q-icon name="emoji_people" />
             </q-item-section>
@@ -68,18 +101,11 @@
             <q-item-section> Bestellungen </q-item-section>
           </q-item>
 
-          <q-item to="/properties" exact clickable v-ripple v-if="getCookie('clientName') !== 'TEST' && getCookie('isAdministrator') === 'true'">
+          <q-item to="/properties" exact clickable v-ripple v-if="getCookie('isAdministrator') === 'true'">
             <q-item-section avatar>
               <q-icon name="settings" />
             </q-item-section>
             <q-item-section> Einstellungen </q-item-section>
-          </q-item>
-
-          <q-item to="/entercode" exact clickable v-ripple v-if="getCookie('clientName') === 'TEST'">
-            <q-item-section avatar>
-              <q-icon name="qr_code_2" />
-            </q-item-section>
-            <q-item-section> Hast du einen Code? </q-item-section>
           </q-item>
 
           <q-item to="/updateproperties" exact clickable v-ripple v-if="getCookie('isAdministrator') === 'false' && getCookie('updatedOn') !== txtUpdatedOn">
@@ -114,6 +140,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
+import EssentialLinkHome from 'components/EssentialLinkHome.vue'
 import { getAdminCode, getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
 import { date } from 'quasar'
 
@@ -150,19 +177,42 @@ const linksList = [
   }
 ]
 
+const linksListHome = [
+  {
+    title: getCookie('titleUrl2'),
+    caption: getCookie('captionUrl2'),
+    icon: 'drafts',
+    link: getCookie('linkUrl2')
+  },
+  {
+    title: getCookie('titleUrl3'),
+    caption: getCookie('captionUrl3'),
+    icon: 'public',
+    link: getCookie('linkUrl3')
+  },
+  {
+    title: getCookie('titleUrl5'),
+    caption: getCookie('captionUrl5'),
+    icon: 'record_voice_over',
+    link: getCookie('linkUrl5')
+  }
+]
+
 const _constUpdatedOn = ref('')
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    EssentialLink
+    EssentialLink,
+    EssentialLinkHome
   },
 
   setup () {
     const leftDrawerOpen = ref(false)
 
     return {
+      essentialLinksHome: linksListHome,
       essentialLinks: linksList,
       getAdminCode,
       getCookie,
