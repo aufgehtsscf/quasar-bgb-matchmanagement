@@ -116,100 +116,6 @@
       </q-list>
     </div>
 
-    <!-- Dialogs -->
-    <div class="q-pa-md row items-start q-gutter-md">
-    <!-- Welcome -->
-    <q-dialog v-model="welcome">
-      <q-card
-          class="my-card text-white"
-          style="background: radial-gradient(circle, #7e0210 0%, #59000b 100%)">
-
-        <q-card-section>
-          <div class="text-h6 q-mb-xs">Auf geht's SCF</div>
-          <div class="text-subtitle2">Plan the game</div>
-        </q-card-section>
-
-        <q-card-section>
-          <div class="text-subtitle2">Lieber SCF-Fan</div>
-        </q-card-section>
-
-         <q-card-section class="q-pt-none">
-          {{ bodyText }}
-        </q-card-section>
-
-        <img src="statics/images/AufGehtsSCF2.png">
-
-        <q-card-section>
-          <div class="text-subtitle2">Was kann diese App?</div>
-        </q-card-section>
-
-        <q-list>
-          <q-item>
-            <q-item-section avatar>
-              <q-icon color="yellow" name="emoji_people" />
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label class="text-subtitle2">Teilnehmer verwalten</q-item-label>
-              <q-item-label>Hier kannst du dich für ein bestimmtes Spiel eintragen. Du kannst angeben, ob du dabei bist oder ob du ein Ticket brauchst/freigibst. Du hast stets den Überblick über die aktuellen Spiele.</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item>
-            <q-item-section avatar>
-              <q-icon color="blue" name="sports_volleyball" />
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label class="text-subtitle2">Spiele verwalten</q-item-label>
-              <q-item-label>Hier kannst du ein bereits terminierten Spiel erfassen und publizieren. Heim- und Auswärtsspiele können erfasst werden.</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item>
-            <q-item-section avatar>
-              <q-icon color="red" name="person" />
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label class="text-subtitle2">Mitglieder verwalten</q-item-label>
-              <q-item-label>Hier kannst du als Mitglied eintragen. Es stehen dir jede Menge coole Avatare zur Verfügung.</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item>
-            <q-item-section avatar>
-              <q-icon color="green" name="credit_card" />
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label class="text-subtitle2">Karten verwalten. Wer hat meine Karte?</q-item-label>
-              <q-item-label>Hier kannst du angeben, wer aktuell deine Karte hat. Diese Information fließt in die Spielübersicht ein.</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-item>
-            <q-item-section avatar>
-              <q-icon color="teal" name="add" />
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label class="text-subtitle2">... und vieles mehr</q-item-label>
-              <q-item-label>Wer ist der Heimspielkönig? Welches Spiel wurde am meisten besucht? Diese und andere Statistiken sind jederzeit sichtbar.</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-
-        <q-separator />
-
-        <q-card-actions class="text-white" align="right">
-          <q-btn label="Ok" v-close-popup />
-        </q-card-actions>
-
-      </q-card>
-    </q-dialog>
-    </div>
-
     <div class="q-pa-md q-gutter-sm">
       <!-- Share -->
       <q-dialog v-model="share" persistent>
@@ -534,7 +440,6 @@ export default {
       editParticipant: ref(false),
       delParticipant: ref(false),
       share: ref(false),
-      welcome: ref(false),
 
       addTicketAssignment: ref(false),
       editTicketAssignment: ref(false),
@@ -696,7 +601,6 @@ export default {
   },
 
   mounted () {
-    this.showWelcome()
     this.setVariables()
     this.getTableMember()
     this.getTableActiveMatch()
@@ -704,10 +608,6 @@ export default {
   },
 
   methods: {
-    showWelcome () {
-      if (getCookie('clientName') === 'HOME') this.welcome = true
-    },
-
     setVariables () {
       _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
       _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
