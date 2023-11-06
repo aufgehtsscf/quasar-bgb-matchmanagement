@@ -145,7 +145,7 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input dense v-model="txtMatchNameNew" @focus="setFieldsForMatchNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname" v-if="!tglIsEventNew" />
+              <q-input dense v-model="txtMatchNameNew" @focus="setFieldsForMatchNameNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname" v-if="!tglIsEventNew" />
               <q-input dense v-model="txtMatchNameNew" label="Veranstaltungsname" v-if="tglIsEventNew" />
             </div>
 
@@ -195,7 +195,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtMatchNameNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtMatchNameNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -264,7 +264,7 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input dense v-model="txtMatchName"  label="Spielname" v-if="!tglIsEvent" />
+              <q-input dense v-model="txtMatchName" label="Spielname" v-if="!tglIsEvent" />
               <q-input dense v-model="txtMatchName" label="Veranstaltungsname" v-if="tglIsEvent" />
             </div>
 
@@ -315,7 +315,7 @@
             <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglPublished, txtDatetime, txtAnnotations)" :disable="txtMatchName === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtDatetime, txtAnnotations)" :disable="txtMatchName === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -724,7 +724,7 @@ export default {
       if (getCookie('isAdministrator') === 'true') this.editMatch = true
     },
 
-    setFieldsForMatchNew (_homeTeam, _awayTeam) {
+    setFieldsForMatchNameNew (_homeTeam, _awayTeam) {
       if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
 
       if (typeof _homeTeam !== 'undefined' && typeof _awayTeam !== 'undefined') {
@@ -753,10 +753,15 @@ export default {
       }
     },
 
-    addMatchSave (_homeTeam, _awayTeam, _matchName, _published, _datetime, _annotations) {
-      // console.log('addMatchSave: ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    addMatchSave (_homeTeam, _awayTeam, _matchName, _isEvent, _published, _datetime, _annotations) {
+      // console.log('addMatchSave: ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _isEvent + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
+      if (_isEvent) {
+        _homeTeam = ''
+        _awayTeam = ''
+      } else {
+        if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
+      }
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName)
@@ -779,11 +784,16 @@ export default {
       }
     },
 
-    editMatchSave (_row, _matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _published, _datetime, _annotations) {
-      // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _matchNameOld + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
+    editMatchSave (_row, _matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _isEvent, _published, _datetime, _annotations) {
+      // console.log('editMatchSave - Update: ' + _row + ', ' + _matchId + ', ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _matchNameOld + ', ' + _isEvent + ', ' + _published + ', ' + _datetime + ', ' + _annotations)
 
-      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeam.value
-      if (typeof _awayTeam === 'undefined') _awayTeam = _constAwayTeam.value
+      if (_isEvent) {
+        _homeTeam = ''
+        _awayTeam = ''
+      } else {
+        if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeam.value
+        if (typeof _awayTeam === 'undefined') _awayTeam = _constAwayTeam.value
+      }
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName) && _matchName !== _matchNameOld
