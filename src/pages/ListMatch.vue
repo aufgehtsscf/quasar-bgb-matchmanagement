@@ -4,7 +4,7 @@
     <!-- Active matchs area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>Aktuelle Spiele</q-toolbar-title>
+        <q-toolbar-title>Aktuelle Spiele ({{ activeMatchObject.length }})</q-toolbar-title>
         <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true"  v-if="getCookie('isAdministrator') === 'true'" />
       </q-toolbar>
     </div>

@@ -3,7 +3,7 @@
     <div class="q-pa-md" style="max-width: 500px">
     <q-toolbar class="bg-primary text-white">
       <q-toolbar-title>
-        Bestellungen
+        Bestellungen ({{ index.length }})
       </q-toolbar-title>
     </q-toolbar>
   </div>

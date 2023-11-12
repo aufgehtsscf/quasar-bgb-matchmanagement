@@ -4,7 +4,7 @@
     <!-- Member area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>Mitglieder</q-toolbar-title>
+        <q-toolbar-title>Mitglieder ({{ memberObject.length }})</q-toolbar-title>
         <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMember = true" />
       </q-toolbar>
     </div>
