@@ -2,29 +2,23 @@
   <q-page>
     <!-- Dialog: Start now -->
     <div class="q-pa-md q-gutter-sm">
-      <q-dialog v-model="startNow" persistent>
-        <q-card
-          class="my-card text-white"
-          style="background: radial-gradient(circle, #cf7112 0%, #c7150f 100%)">
-
+      <q-dialog v-model="codeRequest" persistent>
+        <q-card style="max-width: 350px">
           <q-card-section>
-            <div class="text-h6">Auf geht's SCF</div>
-            <div class="text-subtitle2">Plan the game</div>
+            <div class="text-h6">Ich möchte einen Code!</div>
+            <div class="text-subtitle3">Sende mir bitte einen kostenlosen Code, um mit meiner Spieltagsplanung zu starten!</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input color="lime-11" bg-color="lime-11" label-color="black" filled v-model="txtApplicationCode" label="Code hier eingeben">
-              <template v-slot:append>
-                <q-icon name="qr_code_2" />
-              </template>
-            </q-input>
+            <q-input dense v-model="txtFanClub" autofocus label="Fanclub" />
+            <q-input dense v-model="txtEmailAddress" label="E-Mail-Adresse" />
           </q-card-section>
 
           <q-separator />
 
-          <q-card-actions class="text-white" align="right">
+          <q-card-actions class="text-primary" align="right">
             <q-btn label="Abbrechen" v-close-popup />
-            <q-btn label="Ok" @click="getProperties(txtApplicationCode)" :disable="txtApplicationCode === ''" v-close-popup />
+            <q-btn label="Ok" @click="sendCodeRequest(txtFanClub, txtEmailAddress)" :disable="txtFanClub === '' || txtEmailAddress === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -34,17 +28,15 @@
     <!-- Dialog: Enter code -->
     <div class="q-pa-md q-gutter-sm">
       <q-dialog v-model="enterCode" persistent>
-        <q-card
-          class="my-card text-white"
-          style="background: radial-gradient(circle, #cf7112 0%, #c7150f 100%)">
+        <q-card style="max-width: 350px">
 
           <q-card-section>
-            <div class="text-h6">Auf geht's SCF</div>
-            <div class="text-subtitle2">Plan the game</div>
+            <div class="text-h6">Ich habe einen Code!</div>
+            <div class="text-subtitle3">Ich besitze bereits einen Code.</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input color="lime-11" bg-color="lime-11" label-color="black" filled v-model="txtApplicationCode" label="Code hier eingeben">
+            <q-input color="red" bg-color="red" label-color="black" filled v-model="txtApplicationCode" label="Code hier eingeben">
               <template v-slot:append>
                 <q-icon name="qr_code_2" />
               </template>
@@ -69,7 +61,7 @@
 
           <q-separator />
 
-          <q-card-actions class="text-white" align="right">
+          <q-card-actions class="text-primary" align="right">
             <q-btn label="Abbrechen" v-close-popup />
             <q-btn label="Ok" @click="getProperties(txtApplicationCode)" :disable="txtApplicationCode === ''" v-close-popup />
           </q-card-actions>
@@ -100,7 +92,7 @@
         <q-separator />
 
         <q-card-actions align="center">
-          <q-btn class="glossy" rounded color="red" label="Jetzt starten" @click="startNow = true"/>
+          <q-btn class="glossy" rounded color="red" label="Jetzt starten" @click="codeRequest = true"/>
           <q-btn class="glossy" rounded color="red" label="Ich habe einen Code!" @click="enterCode = true"/>
         </q-card-actions>
       </q-card>
@@ -287,7 +279,7 @@
         <q-separator />
 
         <q-card-actions align="center">
-          <q-btn class="glossy" rounded color="red" label="Jetzt starten" @click="startNow = true"/>
+          <q-btn class="glossy" rounded color="red" label="Jetzt starten" @click="codeRequest = true"/>
           <q-btn class="glossy" rounded color="red" label="Ich habe einen Code!" @click="enterCode = true"/>
         </q-card-actions>
       </q-card>
@@ -300,6 +292,7 @@
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
 import { URLProperties, setCookie } from 'src/boot/utils.js'
+import emailjs from 'emailjs-com'
 import { ref } from 'vue'
 
 export default {
@@ -311,6 +304,9 @@ export default {
     return {
       slide: ref('spiel_erfassen'),
       slide2: ref('karteninhaber_erfassen'),
+
+      txtFanClub: ref(''),
+      txtEmailAddress: ref(''),
 
       txtApplicationCode: ref(''),
       cookieText1: 'Damit du deinen Zugangscode nicht jedes Mal neu eingeben musst, speichern wir diese und andere von deinem Administrator festgelegte Informationen als Cookies.',
@@ -338,7 +334,14 @@ export default {
         })
       },
 
-      startNow: ref(false),
+      onCodeRequestWasSent () {
+        $q.notify({
+          type: 'positive',
+          message: 'Deine Code-Anfrage wurde gesendet!'
+        })
+      },
+
+      codeRequest: ref(false),
       enterCode: ref(false)
     }
   },
@@ -354,6 +357,25 @@ export default {
   },
 
   methods: {
+    sendCodeRequest (_fanClub, _emailAddress) {
+      try {
+        emailjs.sendForm('service_1z8boq8', 'template_uc9j4dn', e.target,
+          'YOUR_USER_ID', {
+            name: this.name,
+            email: this.email,
+            message: this.message
+          })
+      } catch (error) {
+        console.log({ error })
+      }
+      // Reset form field
+      this.name = ''
+      this.email = ''
+      this.message = ''
+
+      this.onCodeRequestWasSent()
+    },
+
     getProperties (_applicationCode) {
       let _adminCode = ''
       let _userCode = ''
@@ -373,7 +395,6 @@ export default {
 
       if (_adminCode === '' && _userCode === '') {
         this.onCodeIsInvalid()
-        this.refreshPage(false)
       } else {
         this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${_adminCode}`)
           .then((res) => {
@@ -381,7 +402,6 @@ export default {
 
             if (res.data === '') {
               this.onCodeIsInvalid()
-              this.refreshPage(false)
             }
 
             for (let index = 0; index < this.tableProperties.length - 1; index++) {
@@ -416,7 +436,7 @@ export default {
               else this.onCodeNotFound()
 
               this.onCodeIsValid()
-              this.refreshPage(true)
+              this.refreshPage()
             }
           })
           .catch((err) => {
@@ -425,14 +445,12 @@ export default {
       }
     },
 
-    async refreshPage (codeIsValid) {
+    async refreshPage () {
       const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
       await sleep(3000)
 
-      if (codeIsValid) {
-        this.$router.push('/')
-        await sleep(5000)
-      } else location.reload()
+      this.$router.push('/participant')
+      await sleep(5000)
     }
 
   }

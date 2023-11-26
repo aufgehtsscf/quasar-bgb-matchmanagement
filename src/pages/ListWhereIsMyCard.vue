@@ -62,7 +62,7 @@
               left-label
             />
 
-            <q-input dense v-model="txtWhoHasTheCardNew" autofocus label="Wer hat die Karte" />
+            <q-input dense v-model="txtWhoHasTheCardNew" label="Wer hat die Karte" />
           </q-card-section>
 
           <q-separator />

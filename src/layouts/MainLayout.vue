@@ -40,13 +40,6 @@
             <q-item-section> Home </q-item-section>
           </q-item>
 
-          <q-item to="/entercode" exact clickable v-ripple v-if="getCookie('clientName') === 'HOME'">
-              <q-item-section avatar>
-                <q-icon name="qr_code_2" />
-              </q-item-section>
-              <q-item-section> Hast du einen Code? </q-item-section>
-          </q-item>
-
         </q-list>
 
         <q-item-label header> Wichtige Links </q-item-label>
