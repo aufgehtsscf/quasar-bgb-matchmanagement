@@ -10,15 +10,16 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtFanClub" autofocus label="Fanclub" />
-            <q-input dense v-model="txtEmailAddress" label="E-Mail-Adresse" />
+            <q-input dense v-model="txtFanClubName" autofocus label="Fanclub" />
+            <q-input dense v-model="txtFanClubContactPerson" label="Kontaktperson" />
+            <q-input dense v-model="txtFanClubEmailAddress" label="E-Mail-Adresse" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn label="Abbrechen" v-close-popup />
-            <q-btn label="Ok" @click="sendCodeRequest(txtFanClub, txtEmailAddress)" :disable="txtFanClub === '' || txtEmailAddress === ''" v-close-popup />
+            <q-btn label="Ok" @click="sendCodeRequest(txtFanClubName, txtFanClubContactPerson, txtFanClubEmailAddress)" :disable="txtFanClubName === '' || txtFanClubContactPerson === '' || txtFanClubEmailAddress === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -305,8 +306,9 @@ export default {
       slide: ref('spiel_erfassen'),
       slide2: ref('karteninhaber_erfassen'),
 
-      txtFanClub: ref(''),
-      txtEmailAddress: ref(''),
+      txtFanClubName: ref(''),
+      txtFanClubContactPerson: ref(''),
+      txtFanClubEmailAddress: ref(''),
 
       txtApplicationCode: ref(''),
       cookieText1: 'Damit du deinen Zugangscode nicht jedes Mal neu eingeben musst, speichern wir diese und andere von deinem Administrator festgelegte Informationen als Cookies.',
@@ -357,21 +359,17 @@ export default {
   },
 
   methods: {
-    sendCodeRequest (_fanClub, _emailAddress) {
+    sendCodeRequest (_fanClub, _contactperson, _emailAddress) {
       try {
-        emailjs.sendForm('service_1z8boq8', 'template_uc9j4dn', e.target,
-          'YOUR_USER_ID', {
-            name: this.name,
-            email: this.email,
-            message: this.message
-          })
+        emailjs.send('service_1z8boq8', 'template_uc9j4dn', {
+          from_name: 'Auf geht\'s SCF App-Team',
+          to_email: _emailAddress,
+          contactperson: _contactperson,
+          fanclub: _fanClub
+        }, 'z6CsuBOLcuYCsxNiZ')
       } catch (error) {
         console.log({ error })
       }
-      // Reset form field
-      this.name = ''
-      this.email = ''
-      this.message = ''
 
       this.onCodeRequestWasSent()
     },
