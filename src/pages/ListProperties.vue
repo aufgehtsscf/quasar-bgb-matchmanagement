@@ -74,15 +74,15 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtClientName" autofocus label="Name" :readonly="true" v-if="getCookie('clientName') === 'BGB'"/>
-            <q-input dense v-model="txtClientName" autofocus label="Name" v-if="getCookie('clientName') !== 'BGB'"/>
-            <q-input dense v-model="txtAdminCode" label="AdminCode" :readonly="true"/>
-            <q-input dense v-model="txtUserCode" label="UserCode" :readonly="true"/>
-            <q-input dense v-model="txtEmail" label="E-Mail" />
-            <q-input dense v-model="txtHomeTeam" label="Heimmannschaft" />
-            <q-input dense v-model="txtHomeTeamAlias" label="Heimmannschaft (Alias)" />
+            <q-input filled dense v-model="txtClientName" autofocus label="Name" :readonly="true" v-if="getCookie('clientName') === 'BGB'"/>
+            <q-input filled dense v-model="txtClientName" autofocus label="Name" v-if="getCookie('clientName') !== 'BGB'"/>
+            <q-input filled dense v-model="txtAdminCode" label="AdminCode" :readonly="true"/>
+            <q-input filled dense v-model="txtUserCode" label="UserCode" :readonly="true"/>
+            <q-input filled dense v-model="txtEmail" label="E-Mail" />
+            <q-input filled dense v-model="txtHomeTeam" label="Heimmannschaft" />
+            <q-input filled dense v-model="txtHomeTeamAlias" label="Heimmannschaft (Alias)" />
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input v-model="txtStandardText" filled type="textarea" label="Standardtext"/>
+              <q-input filled dense v-model="txtStandardText" type="textarea" label="Standardtext"/>
             </div>
           </q-card-section>
 
@@ -92,37 +92,37 @@
 
           <q-card-section class="q-pt-none">
             <div class="text-subtitle2">Link 1</div>
-            <q-input dense v-model="txtTitleUrl1" label="Titel" />
-            <q-input dense v-model="txtCaptionUrl1" label="Untertitel" />
-            <q-input dense v-model="txtLinkUrl1" label="URL" />
+            <q-input filled dense v-model="txtTitleUrl1" label="Titel" />
+            <q-input filled dense v-model="txtCaptionUrl1" label="Untertitel" />
+            <q-input filled dense v-model="txtLinkUrl1" label="URL" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <div class="text-subtitle2">Link 2</div>
-            <q-input dense v-model="txtTitleUrl2" label="Titel" />
-            <q-input dense v-model="txtCaptionUrl2" label="Untertitel" />
-            <q-input dense v-model="txtLinkUrl2" label="URL" />
+            <q-input filled dense v-model="txtTitleUrl2" label="Titel" />
+            <q-input filled dense v-model="txtCaptionUrl2" label="Untertitel" />
+            <q-input filled dense v-model="txtLinkUrl2" label="URL" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <div class="text-subtitle2">Link 3</div>
-            <q-input dense v-model="txtTitleUrl3" label="Titel" />
-            <q-input dense v-model="txtCaptionUrl3" label="Untertitel" />
-            <q-input dense v-model="txtLinkUrl3" label="URL" />
+            <q-input filled dense v-model="txtTitleUrl3" label="Titel" />
+            <q-input filled dense v-model="txtCaptionUrl3" label="Untertitel" />
+            <q-input filled dense v-model="txtLinkUrl3" label="URL" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <div class="text-subtitle2">Link 4</div>
-            <q-input dense v-model="txtTitleUrl4" label="Titel" />
-            <q-input dense v-model="txtCaptionUrl4" label="Untertitel" />
-            <q-input dense v-model="txtLinkUrl4" label="URL" />
+            <q-input filled dense v-model="txtTitleUrl4" label="Titel" />
+            <q-input filled dense v-model="txtCaptionUrl4" label="Untertitel" />
+            <q-input filled dense v-model="txtLinkUrl4" label="URL" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <div class="text-subtitle2">Link 5</div>
-            <q-input dense v-model="txtTitleUrl5" label="Titel" />
-            <q-input dense v-model="txtCaptionUrl5" label="Untertitel" />
-            <q-input dense v-model="txtLinkUrl5" label="URL" />
+            <q-input filled dense v-model="txtTitleUrl5" label="Titel" />
+            <q-input filled dense v-model="txtCaptionUrl5" label="Untertitel" />
+            <q-input filled dense v-model="txtLinkUrl5" label="URL" />
           </q-card-section>
 
           <q-separator />

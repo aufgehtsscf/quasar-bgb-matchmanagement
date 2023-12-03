@@ -44,12 +44,12 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtMemberNew" autofocus label="Mitglied" />
+            <q-input filled dense v-model="txtMemberNew" autofocus label="Mitglied *" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <q-select
-              filled
+              filled dense
               v-model="txtAvatarNew"
               :options="avatarImages"
               label="Avatar"
@@ -87,12 +87,12 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtMember" autofocus label="Mitglied" />
+            <q-input filled dense v-model="txtMember" autofocus label="Mitglied *" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <q-select
-              filled
+              filled dense
               v-model="txtAvatar"
               :options="avatarImages"
               label="Avatar"

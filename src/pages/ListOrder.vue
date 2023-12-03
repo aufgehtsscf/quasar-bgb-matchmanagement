@@ -64,15 +64,15 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <q-input dense v-model="txtNameNew" autofocus label="Name" />
+      <q-input filled dense v-model="txtNameNew" autofocus label="Name *" />
     </q-card-section>
 
     <q-card-section class="q-pt-none">
       <q-select
-        filled
+        filled dense
         v-model="txtProductNew"
         :options="cbxProductOptions"
-        label="Artikel"
+        label="Artikel *"
         options-selected-class="text-deep-orange"
       >
       </q-select>
@@ -80,10 +80,10 @@
 
     <q-card-section class="q-pt-none">
       <q-select
-        filled
+        filled dense
         v-model="txtSizeNew"
         :options="cbxSizeOptions"
-        label="Größe"
+        label="Größe *"
         options-selected-class="text-deep-orange"
       >
       </q-select>
@@ -91,17 +91,17 @@
 
     <q-card-section class="q-pt-none">
       <q-select
-        filled
+        filled dense
         v-model="txtColorNew"
         :options="cbxColorOptions"
-        label="Farbe"
+        label="Farbe *"
         options-selected-class="text-deep-orange"
       >
       </q-select>
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <q-input dense v-model="txtInitialsNew"  label="Initialien" />
+      <q-input filled dense v-model="txtInitialsNew"  label="Initialen" />
     </q-card-section>
 
     <q-separator />
@@ -121,15 +121,15 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <q-input dense v-model="txtName" autofocus label="Name" />
+      <q-input filled dense v-model="txtName" autofocus label="Name *" />
     </q-card-section>
 
     <q-card-section class="q-pt-none">
       <q-select
-        filled
+        filled dense
         v-model="txtProduct"
         :options="cbxProductOptions"
-        label="Artikel"
+        label="Artikel *"
         options-selected-class="text-deep-orange"
       >
       </q-select>
@@ -137,10 +137,10 @@
 
     <q-card-section class="q-pt-none">
       <q-select
-        filled
+        filled dense
         v-model="txtSize"
         :options="cbxSizeOptions"
-        label="Größe"
+        label="Größe *"
         options-selected-class="text-deep-orange"
       >
       </q-select>
@@ -148,17 +148,17 @@
 
     <q-card-section class="q-pt-none">
       <q-select
-        filled
+        filled dense
         v-model="txtColor"
         :options="cbxColorOptions"
-        label="Farbe"
+        label="Farbe *"
         options-selected-class="text-deep-orange"
       >
       </q-select>
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <q-input dense v-model="txtInitials"  label="Initialien" />
+      <q-input filled dense v-model="txtInitials"  label="Initialen" />
     </q-card-section>
 
     <q-separator />

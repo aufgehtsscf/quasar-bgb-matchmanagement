@@ -147,15 +147,15 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtParticipantNew" autofocus label="Name" />
+            <q-input filled dense v-model="txtParticipantNew" autofocus label="Name *" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <q-select
-              filled
+              filled dense
               v-model="txtActionNew"
               :options="cbxActionOptionsHome"
-              label="Aktion"
+              label="Aktion *"
               options-selected-class="text-deep-orange"
               v-if="txtHomeTeam === getCookie('homeTeam')"
             >
@@ -164,10 +164,10 @@
 
           <q-card-section class="q-pt-none">
             <q-select
-              filled
+              filled dense
               v-model="txtActionNew"
               :options="cbxActionOptionsAway"
-              label="Aktion"
+              label="Aktion *"
               options-selected-class="text-deep-orange"
               v-if="txtHomeTeam !== getCookie('homeTeam')"
             >
@@ -176,7 +176,7 @@
 
           <q-card-section class="q-pt-none">
             <q-select
-              filled
+              filled dense
               v-model="txtArrivalNew"
               :options="cbxArrivalOptions"
               label="Ankunft"
@@ -187,14 +187,14 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input v-model="txtAnnotationsParticipantNew" filled type="textarea" label="Kommentar"/>
+            <q-input filled dense v-model="txtAnnotationsParticipantNew" type="textarea" label="Kommentar"/>
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantNew === '' || txtActionNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -207,16 +207,16 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="false" v-if="txtParticipantReaction === ''" />
-            <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="true" v-if="txtParticipantReaction !== ''" />
+            <q-input filled dense v-model="txtParticipantParticipant" autofocus label="Name *" :readonly="false" v-if="txtParticipantReaction === ''" />
+            <q-input filled dense v-model="txtParticipantParticipant" autofocus label="Name *" :readonly="true" v-if="txtParticipantReaction !== ''" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <q-select
-              filled
+              filled dense
               v-model="txtParticipantAction"
               :options="cbxActionOptionsHome"
-              label="Aktion"
+              label="Aktion *"
               :readonly="false"
               options-selected-class="text-deep-orange"
               v-if="txtParticipantReaction === '' &&  txtHomeTeam === getCookie('homeTeam')"
@@ -224,10 +224,10 @@
             </q-select>
 
             <q-select
-              filled
+              filled dense
               v-model="txtParticipantAction"
               :options="cbxActionOptionsAway"
-              label="Aktion"
+              label="Aktion *"
               :readonly="false"
               options-selected-class="text-deep-orange"
               v-if="txtParticipantReaction === '' &&  txtHomeTeam !== getCookie('homeTeam')"
@@ -237,20 +237,20 @@
 
           <q-card-section class="q-pt-none">
             <q-select
-              filled
+              filled dense
               v-model="txtParticipantAction"
               :options="cbxActionOptionsHome"
-              label="Aktion"
+              label="Aktion *"
               :readonly="true"
               options-selected-class="text-deep-orange"
               v-if="txtParticipantReaction !== '' &&  txtHomeTeam === getCookie('homeTeam')"
             >
             </q-select>
             <q-select
-              filled
+              filled dense
               v-model="txtParticipantAction"
               :options="cbxActionOptionsAway"
-              label="Aktion"
+              label="Aktion *"
               :readonly="true"
               options-selected-class="text-deep-orange"
               v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== getCookie('homeTeam')"
@@ -260,7 +260,7 @@
 
           <q-card-section class="q-pt-none">
             <q-select
-              filled
+              filled dense
               v-model="txtParticipantArrival"
               :options="cbxArrivalOptions"
               label="Ankunft"
@@ -273,7 +273,7 @@
           <q-card-section class="q-pt-none">
             <q-input class="text-italic" dense v-model="txtParticipantReaction" :readonly="true" v-if="txtParticipantReaction !== ''" />
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input v-model="txtParticipantAnnotations" filled type="textarea" label="Kommentar"/>
+              <q-input filled dense v-model="txtParticipantAnnotations" type="textarea" label="Kommentar"/>
             </div>
           </q-card-section>
 
@@ -282,7 +282,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if="getCookie('isAdministrator') === 'true' && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantRow, txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantRow, txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>

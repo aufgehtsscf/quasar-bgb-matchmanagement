@@ -53,7 +53,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolderNew" autofocus label="Inhaber" />
+            <q-input filled dense v-model="txtCardHolderNew" autofocus label="Inhaber *" />
 
             <q-toggle
               v-model="tglDiscountedNew"
@@ -62,14 +62,14 @@
               left-label
             />
 
-            <q-input dense v-model="txtWhoHasTheCardNew" label="Wer hat die Karte" />
+            <q-input filled dense v-model="txtWhoHasTheCardNew" label="Wer hat die Karte *" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addWhereIsMyCardSave(txtCardHolderNew, tglDiscountedNew, txtWhoHasTheCardNew)" :disable="txtCardHolderNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addWhereIsMyCardSave(txtCardHolderNew, tglDiscountedNew, txtWhoHasTheCardNew)" :disable="txtCardHolderNew === '' || txtWhoHasTheCardNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -82,7 +82,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtCardHolder" autofocus label="Inhaber" />
+            <q-input filled dense v-model="txtCardHolder" autofocus label="Inhaber *" />
 
             <q-toggle
               v-model="tglDiscounted"
@@ -91,7 +91,7 @@
               left-label
             />
 
-            <q-input dense v-model="txtWhoHasTheCard" autofocus label="Wer hat die Karte" />
+            <q-input filled dense v-model="txtWhoHasTheCard" label="Wer hat die Karte *" />
           </q-card-section>
 
           <q-separator />
@@ -99,7 +99,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intCardHolderRow, txtCardHolderId, txtCardHolder, txtCardHolderOld, tglDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intCardHolderRow, txtCardHolderId, txtCardHolder, txtCardHolderOld, tglDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === '' || txtWhoHasTheCard === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>

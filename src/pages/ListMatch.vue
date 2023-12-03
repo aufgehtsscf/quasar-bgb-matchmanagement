@@ -99,10 +99,10 @@
 
             <div class="q-pt-md" style="max-width: 350px">
               <q-select
-                filled
+                filled dense
                 v-model="txtHomeTeamNew"
                 :options="teamOptions"
-                label="Heim"
+                label="Heim *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEventNew"
               >
@@ -121,11 +121,11 @@
               </q-select>
 
               <q-select
-                filled
+                filled dense
                 v-model="txtAwayTeamNew"
                 :options="teamOptions"
                 autofocus
-                label="Gast"
+                label="Gast *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEventNew"
               >
@@ -145,8 +145,8 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input dense v-model="txtMatchNameNew" @focus="setFieldsForMatchNameNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname" v-if="!tglIsEventNew" />
-              <q-input dense v-model="txtMatchNameNew" label="Veranstaltungsname" v-if="tglIsEventNew" />
+              <q-input filled dense v-model="txtMatchNameNew" @focus="setFieldsForMatchNameNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname *" v-if="!tglIsEventNew" />
+              <q-input filled dense v-model="txtMatchNameNew" label="Veranstaltungsname *" v-if="tglIsEventNew" />
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
@@ -158,7 +158,9 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input filled v-model="txtDatetimeNew">
+              <q-input
+                filled dense
+                v-model="txtDatetimeNew">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -186,7 +188,7 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input v-model="txtAnnotationsNew" filled type="textarea" label="Kommentar"/>
+              <q-input filled dense v-model="txtAnnotationsNew" type="textarea" label="Kommentar"/>
             </div>
 
           </q-card-section>
@@ -195,7 +197,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtMatchNameNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtHomeTeamNew === '' || txtAwayTeamNew === '' || txtMatchNameNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -218,11 +220,11 @@
 
             <div class="q-pt-md" style="max-width: 350px">
               <q-select
-                filled
+                filled dense
                 v-model="txtHomeTeam"
                 :options="teamOptions"
                 autofocus
-                label="Heim"
+                label="Heim *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEvent"
               >
@@ -241,10 +243,10 @@
               </q-select>
 
               <q-select
-                filled
+                filled dense
                 v-model="txtAwayTeam"
                 :options="teamOptions"
-                label="Gast"
+                label="Gast *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEvent"
               >
@@ -264,8 +266,8 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input dense v-model="txtMatchName" label="Spielname" v-if="!tglIsEvent" />
-              <q-input dense v-model="txtMatchName" label="Veranstaltungsname" v-if="tglIsEvent" />
+              <q-input filled dense v-model="txtMatchName" label="Spielname *" v-if="!tglIsEvent" />
+              <q-input filled dense v-model="txtMatchName" label="Veranstaltungsname *" v-if="tglIsEvent" />
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
@@ -277,7 +279,9 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input filled v-model="txtDatetime">
+              <q-input
+                filled dense
+                v-model="txtDatetime">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -305,7 +309,7 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input v-model="txtAnnotations" filled type="textarea" label="Kommentar"/>
+              <q-input filled dense v-model="txtAnnotations" type="textarea" label="Kommentar"/>
             </div>
           </q-card-section>
 
@@ -315,7 +319,7 @@
             <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtDatetime, txtAnnotations)" :disable="txtMatchName === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtDatetime, txtAnnotations)" :disable="txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -328,10 +332,10 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled v-model="txtInactiveMatch" label="Spiel" :readonly="true" />
+            <q-input filled dense v-model="txtInactiveMatch" label="Spiel" :readonly="true" />
 
             <div class="q-pt-md">
-              <q-input filled v-model="txtInactiveDatetime" label="Wann" :readonly="true" />
+              <q-input filled dense v-model="txtInactiveDatetime" label="Wann" :readonly="true" />
             </div>
           </q-card-section>
 
