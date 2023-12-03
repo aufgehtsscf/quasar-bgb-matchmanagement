@@ -10,15 +10,15 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtFanClubName" autofocus label="Fanclub *" />
+            <q-input filled dense v-model="txtFanClubName" autofocus label="Fanclub *" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtFanClubContactPerson" label="Kontaktperson *" />
+            <q-input filled dense v-model="txtFanClubContactPerson" label="Kontaktperson *" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtFanClubEmailAddress" label="E-Mail-Adresse *"
+            <q-input filled dense v-model="txtFanClubEmailAddress" label="E-Mail-Adresse *"
             :rules="[
             (val) => validateEmail(val) || 'Must be a valid email.'
             ]"
@@ -33,7 +33,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn label="Abbrechen" v-close-popup />
-            <q-btn label="Ok" @click="sendCodeRequest(txtFanClubName, txtFanClubContactPerson, txtFanClubEmailAddress)" :disable="txtFanClubName === '' || txtFanClubContactPerson === '' || validateEmail(val)" v-close-popup />
+            <q-btn label="Ok" @click="sendCodeRequest(txtFanClubName, txtFanClubContactPerson, txtFanClubEmailAddress)" :disable="txtFanClubName === '' || txtFanClubContactPerson === '' || !validateEmail(txtFanClubEmailAddress)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
