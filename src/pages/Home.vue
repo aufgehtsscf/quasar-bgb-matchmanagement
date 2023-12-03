@@ -6,13 +6,23 @@
         <q-card style="max-width: 350px">
           <q-card-section>
             <div class="text-h6">Ich möchte einen Code!</div>
-            <div class="text-subtitle3">Sende mir bitte einen kostenlosen Code, um mit meiner Spieltagsplanung zu starten!</div>
+            <div class="text-subtitle2">Sende mir bitte einen kostenlosen Code, um mit meiner Spieltagsplanung zu starten!</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtFanClubName" autofocus label="Fanclub" />
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
             <q-input dense v-model="txtFanClubContactPerson" label="Kontaktperson" />
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
             <q-input dense v-model="txtFanClubEmailAddress" label="E-Mail-Adresse" />
+          </q-card-section>
+
+          <q-card-section>
+            <div class="text-subtitle3">Nachdem du auf den "OK"-Button geklickt hast, solltest du sofort eine E-Mail erhalten. Sollte dies nicht der Fall ist, schreib uns bitte eine E-Mail an aufgehtsscf@gmail.com</div>
           </q-card-section>
 
           <q-separator />
@@ -292,7 +302,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { URLProperties, setCookie } from 'src/boot/utils.js'
+import { URLProperties, setCookie, serviceID, templateID, userID, FromName } from 'src/boot/utils.js'
 import emailjs from 'emailjs-com'
 import { ref } from 'vue'
 
@@ -351,7 +361,11 @@ export default {
   data () {
     return {
       URLProperties,
-      setCookie
+      setCookie,
+      serviceID,
+      templateID,
+      userID,
+      FromName
     }
   },
 
@@ -361,12 +375,12 @@ export default {
   methods: {
     sendCodeRequest (_fanClub, _contactperson, _emailAddress) {
       try {
-        emailjs.send('service_1z8boq8', 'template_uc9j4dn', {
-          from_name: 'Auf geht\'s SCF App-Team',
+        emailjs.send(serviceID, this.templateID, {
+          from_name: this.FromName,
           to_email: _emailAddress,
           contactperson: _contactperson,
           fanclub: _fanClub
-        }, 'z6CsuBOLcuYCsxNiZ')
+        }, this.userID)
       } catch (error) {
         console.log({ error })
       }

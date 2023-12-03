@@ -148,13 +148,46 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtParticipantNew" autofocus label="Name" />
-            <q-select v-model="txtActionNew" :options="cbxActionOptionsHome" label="Aktion" v-if="txtHomeTeam === getCookie('homeTeam')" />
-            <q-select v-model="txtActionNew" :options="cbxActionOptionsAway" label="Aktion" v-if="txtHomeTeam !== getCookie('homeTeam')" />
-            <q-select v-model="txtArrivalNew" :options="cbxArrivalOptions" label="Ankunft" v-if="txtActionNew === 'bin dabei'" />
-            <div class="q-pt-md" style="max-width: 350px">
-              <q-input v-model="txtAnnotationsParticipantNew" filled type="textarea" label="Kommentar"/>
-            </div>
+          </q-card-section>
 
+          <q-card-section class="q-pt-none">
+            <q-select
+              filled
+              v-model="txtActionNew"
+              :options="cbxActionOptionsHome"
+              label="Aktion"
+              options-selected-class="text-deep-orange"
+              v-if="txtHomeTeam === getCookie('homeTeam')"
+            >
+            </q-select>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-select
+              filled
+              v-model="txtActionNew"
+              :options="cbxActionOptionsAway"
+              label="Aktion"
+              options-selected-class="text-deep-orange"
+              v-if="txtHomeTeam !== getCookie('homeTeam')"
+            >
+            </q-select>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-select
+              filled
+              v-model="txtArrivalNew"
+              :options="cbxArrivalOptions"
+              label="Ankunft"
+              options-selected-class="text-deep-orange"
+              v-if="txtActionNew === 'bin dabei'"
+            >
+            </q-select>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-input v-model="txtAnnotationsParticipantNew" filled type="textarea" label="Kommentar"/>
           </q-card-section>
 
           <q-separator />
@@ -176,11 +209,68 @@
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="false" v-if="txtParticipantReaction === ''" />
             <q-input dense v-model="txtParticipantParticipant" autofocus label="Name" :readonly="true" v-if="txtParticipantReaction !== ''" />
-            <q-select v-model="txtParticipantAction" :options="cbxActionOptionsHome" label="Aktion" :readonly="false" v-if="txtParticipantReaction === '' &&  txtHomeTeam === getCookie('homeTeam')" />
-            <q-select v-model="txtParticipantAction" :options="cbxActionOptionsAway" label="Aktion" :readonly="false" v-if="txtParticipantReaction === '' &&  txtHomeTeam !== getCookie('homeTeam')" />
-            <q-select v-model="txtParticipantAction" :options="cbxActionOptionsHome" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== '' &&  txtHomeTeam === getCookie('homeTeam')" />
-            <q-select v-model="txtParticipantAction" :options="cbxActionOptionsAway" label="Aktion" :readonly="true" v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== getCookie('homeTeam')" />
-            <q-select v-model="txtParticipantArrival" :options="cbxArrivalOptions" label="Ankunft" v-if="txtParticipantAction === 'bin dabei'" />
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-select
+              filled
+              v-model="txtParticipantAction"
+              :options="cbxActionOptionsHome"
+              label="Aktion"
+              :readonly="false"
+              options-selected-class="text-deep-orange"
+              v-if="txtParticipantReaction === '' &&  txtHomeTeam === getCookie('homeTeam')"
+            >
+            </q-select>
+
+            <q-select
+              filled
+              v-model="txtParticipantAction"
+              :options="cbxActionOptionsAway"
+              label="Aktion"
+              :readonly="false"
+              options-selected-class="text-deep-orange"
+              v-if="txtParticipantReaction === '' &&  txtHomeTeam !== getCookie('homeTeam')"
+            >
+            </q-select>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-select
+              filled
+              v-model="txtParticipantAction"
+              :options="cbxActionOptionsHome"
+              label="Aktion"
+              :readonly="true"
+              options-selected-class="text-deep-orange"
+              v-if="txtParticipantReaction !== '' &&  txtHomeTeam === getCookie('homeTeam')"
+            >
+            </q-select>
+            <q-select
+              filled
+              v-model="txtParticipantAction"
+              :options="cbxActionOptionsAway"
+              label="Aktion"
+              :readonly="true"
+              options-selected-class="text-deep-orange"
+              v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== getCookie('homeTeam')"
+            >
+            </q-select>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-select
+              filled
+              v-model="txtParticipantArrival"
+              :options="cbxArrivalOptions"
+              label="Ankunft"
+              options-selected-class="text-deep-orange"
+              v-if="txtParticipantAction === 'bin dabei'"
+            >
+            </q-select>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
             <q-input class="text-italic" dense v-model="txtParticipantReaction" :readonly="true" v-if="txtParticipantReaction !== ''" />
             <div class="q-pt-md" style="max-width: 350px">
               <q-input v-model="txtParticipantAnnotations" filled type="textarea" label="Kommentar"/>
@@ -244,8 +334,33 @@
 
           <q-card-section class="q-pt-none">
             <q-input dense v-model="txtTicketParticipant" autofocus label="Name" />
-            <q-select v-model="txtTicketAction" :options="cbxActionOptionsHome" label="Aktion" v-if="txtHomeTeam === getCookie('homeTeam')" />
-            <q-select v-model="txtTicketAction" :options="cbxActionOptionsAway" label="Aktion" v-if="txtHomeTeam !== getCookie('homeTeam')" />
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-select
+              filled
+              v-model="txtTicketAction"
+              :options="cbxActionOptionsHome"
+              label="Aktion"
+              options-selected-class="text-deep-orange"
+              v-if="txtHomeTeam === getCookie('homeTeam')"
+            >
+            </q-select>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-select
+              filled
+              v-model="txtTicketAction"
+              :options="cbxActionOptionsAway"
+              label="Aktion"
+              options-selected-class="text-deep-orange"
+              v-if="txtHomeTeam !== getCookie('homeTeam')"
+            >
+            </q-select>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
             <div class="q-pt-md" style="max-width: 350px">
               <q-input v-model="txtTicketAnnotations" filled type="textarea" label="Kommentar"/>
             </div>

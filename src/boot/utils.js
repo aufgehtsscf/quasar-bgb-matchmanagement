@@ -22,13 +22,23 @@ const TitleUrl5 = 'Instagram'
 const CaptionUrl5 = 'instagram.com/aufgehtsscf'
 const LinkUrl5 = 'https://www.instagram.com/aufgehtsscf/'
 
+// emailjs
+const serviceID = 'service_1z8boq8'
+const templateID = 'template_uc9j4dn'
+const userID = 'z6CsuBOLcuYCsxNiZ'
+const FromName = 'Auf geht\'s SCF'
+
+// Orders
+const OrderId1 = 'd1f60978-f743-4b6e-88f1-ac7aa7885d2b'
+const OrderId2 = '8f26f0ad-d9d3-4c33-b1c9-f0560ee3ea11'
+
 const URLMatchBasis = 'https://script.google.com/macros/s/AKfycbxxPRbcEGlNYCJItI50s-dP70y_jwuGqxznGqkjpmlRUVH5zEt5ndRP6gnDQFJixgwCyw/exec'
 const URLNextMatchBasis = 'https://script.google.com/macros/s/AKfycbzo1RuM5zOC_1kkUBRJB4tbMKZNgVZ65KTGdm76wyBTB9F_FQLFs8vt3Nh16xwDwChOuA/exec'
 const URLParticipantBasis = 'https://script.google.com/macros/s/AKfycby5QLG3Ri_vpENUrwSNtyBR3L8j_AR9_ly4eRKwTHSLaCdgFfPmnEuvPEKX085oJEAwlg/exec'
 const URLParticipantArchiveBasis = 'https://script.google.com/macros/s/AKfycbwDcHzzr6JqZoENUjRAe1OXY3YCOLsqYMwVbDfdOlYFIjqNJ6lTWuVcYWh_wc99gsv_8A/exec'
 const URLWhereIsMyCardBasis = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
-const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbyj3smDP7m9csheRg0c6n00u0Rb2CczULz8C8lAibkv_gBjiqfkfOZdOP9etSVMDMtL/exec'
-const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbz0cWknDb0ACTYRUCqUE9cIOkU2GV460W8Mhz6VyDKELQc9cLbjnwGrP3wRwlRHJnYBEA/exec'
+const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbybGUbLhM1fVOPNfJ0TnFBSehCOvUgstkps6A0SkK7hLudyEK7bSCFD1mBUVh0M6qcU/exec'
+const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbxpYbKFzUC6iSSlE913vWGLuvRZ7TbT8eXVn54Un7rm0KJa9vVGzuvu7d-V-tSuWSDjOw/exec'
 const URLProperties = 'https://script.google.com/macros/s/AKfycbxMU3wrrJ9m8Qcnpzu-0oC-APSA28i765lF_AHh6tVagXj1JpHz5glq8MY0GCPNbvdK/exec?sh=Properties'
 
 const getCookie = function (_cookieName) {
@@ -258,6 +268,12 @@ const avatarImages = [
   { label: 'Woodstock', value: 'Woodstock', avatar: 'statics/avatars/collection/Woodstock.png' }
 ]
 
+export { serviceID }
+export { templateID }
+export { userID }
+export { FromName }
+export { OrderId1 }
+export { OrderId2 }
 export { URLMatchBasis }
 export { URLNextMatchBasis }
 export { URLParticipantBasis }
