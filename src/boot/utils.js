@@ -208,7 +208,7 @@ const teamImages = [
   { label: 'Schalke', value: 'Schalke', image: 'statics/teams/Schalke.png' },
   { label: 'St. Pauli', value: 'St._Pauli', image: 'statics/teams/St._Pauli.png' },
   { label: 'Stuttgart', value: 'Stuttgart', image: 'statics/teams/Stuttgart.png' },
-  { label: 'Union Berlin', value: 'Union_Berlin', image: 'statics/teams/Union_Berlin.png' },
+  { label: 'Union Berlin', value: 'Union_Berlin', image: 'statics/teams/Union_Berlin.svg' },
   { label: 'Werder Bremen', value: 'Werder_Bremen', image: 'statics/teams/Werder_Bremen.png' },
   { label: 'West Ham', value: 'West_Ham', image: 'statics/teams/West_Ham.png' },
   { label: 'Wolfsburg', value: 'Wolfsburg', image: 'statics/teams/Wolfsburg.png' }
