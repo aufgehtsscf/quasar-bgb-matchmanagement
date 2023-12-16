@@ -78,7 +78,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn label="Abbrechen" v-close-popup />
-            <q-btn label="Ok" @click="getProperties(txtApplicationCode)" :disable="txtApplicationCode === ''" v-close-popup />
+            <q-btn label="Ok" @click="getProperties(txtApplicationCode, true)" :disable="txtApplicationCode === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -306,7 +306,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { URLProperties, setCookie, serviceID, templateID, userID, FromName } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, URLProperties, setCookie, serviceID, templateID, userID, FromName } from 'src/boot/utils.js'
 import emailjs from 'emailjs-com'
 import { ref } from 'vue'
 
@@ -364,6 +364,8 @@ export default {
 
   data () {
     return {
+      getCookie,
+      getAdminCode,
       URLProperties,
       setCookie,
       serviceID,
@@ -374,6 +376,10 @@ export default {
   },
 
   computed: {
+  },
+
+  mounted () {
+    this.getProperties(getAdminCode(getCookie('applicationCode')), false)
   },
 
   methods: {
@@ -396,72 +402,78 @@ export default {
       this.onCodeRequestWasSent()
     },
 
-    getProperties (_applicationCode) {
+    getProperties (_applicationCode, _callFromForm) {
       let _adminCode = ''
       let _userCode = ''
 
-      if (_applicationCode.length === 12) {
-        if (_applicationCode.indexOf('_') > 0) {
-          const _stringCode = _applicationCode.split('_')
-          if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 329) {
-            _userCode = _applicationCode
-            _adminCode = _stringCode[1].substring(0, 1) + _stringCode[0].substring(0, 4) + _stringCode[1].substring(1, 2) + _stringCode[0].substring(4, 8) + _stringCode[1].substring(2, _stringCode[1].length)
-          }
+      if (!_callFromForm) {
+        if (this.getCookie('applicationCode') !== 'TEST') {
+          this.$router.push('/participant')
         }
-      } else if (_applicationCode.length === 11) {
-        _adminCode = _applicationCode
-        _userCode = _applicationCode.substring(1, 5) + _applicationCode.substring(6, 10) + '_' + _applicationCode.substring(0, 1) + _applicationCode.substring(5, 6) + _applicationCode.substring(10, _applicationCode.length)
-      }
-
-      if (_adminCode === '' && _userCode === '') {
-        this.onCodeIsInvalid()
       } else {
-        this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${_adminCode}`)
-          .then((res) => {
-            this.tableProperties = res.data.split('\n')
-
-            if (res.data === '') {
-              this.onCodeIsInvalid()
+        if (_applicationCode.length === 12) {
+          if (_applicationCode.indexOf('_') > 0) {
+            const _stringCode = _applicationCode.split('_')
+            if (_stringCode[0].length === 8 && parseInt(_stringCode[1]) >= 329) {
+              _userCode = _applicationCode
+              _adminCode = _stringCode[1].substring(0, 1) + _stringCode[0].substring(0, 4) + _stringCode[1].substring(1, 2) + _stringCode[0].substring(4, 8) + _stringCode[1].substring(2, _stringCode[1].length)
             }
+          }
+        } else if (_applicationCode.length === 11) {
+          _adminCode = _applicationCode
+          _userCode = _applicationCode.substring(1, 5) + _applicationCode.substring(6, 10) + '_' + _applicationCode.substring(0, 1) + _applicationCode.substring(5, 6) + _applicationCode.substring(10, _applicationCode.length)
+        }
 
-            for (let index = 0; index < this.tableProperties.length - 1; index++) {
-              const element = this.tableProperties[index].split(',')
+        if (_adminCode === '' && _userCode === '') {
+          this.onCodeIsInvalid()
+        } else {
+          this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${_adminCode}`)
+            .then((res) => {
+              this.tableProperties = res.data.split('\n')
 
-              let _isAdministrator = 'false'
-              if (element[1] === _applicationCode) _isAdministrator = 'true'
+              if (res.data === '') {
+                this.onCodeIsInvalid()
+              }
 
-              const _clientName = element[3].trim()
-              const _email = element[4].trim()
-              const _homeTeam = element[5].trim()
-              const _homeTeamAlias = element[6].trim()
-              const _standardText = element[7].trim()
-              const _titleUrl1 = element[8].trim()
-              const _captionUrl1 = element[9].trim()
-              const _linkUrl1 = element[10].trim()
-              const _titleUrl2 = element[11].trim()
-              const _captionUrl2 = element[12].trim()
-              const _linkUrl2 = element[13].trim()
-              const _titleUrl3 = element[14].trim()
-              const _captionUrl3 = element[15].trim()
-              const _linkUrl3 = element[16].trim()
-              const _titleUrl4 = element[17].trim()
-              const _captionUrl4 = element[18].trim()
-              const _linkUrl4 = element[19].trim()
-              const _titleUrl5 = element[20].trim()
-              const _captionUrl5 = element[21].trim()
-              const _linkUrl5 = element[22].trim()
-              const _updatedOn = element[23].trim()
+              for (let index = 0; index < this.tableProperties.length - 1; index++) {
+                const element = this.tableProperties[index].split(',')
 
-              if (element[1] === _adminCode || element[2] === _userCode) this.setCookie(_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5, _updatedOn)
-              else this.onCodeNotFound()
+                let _isAdministrator = 'false'
+                if (element[1] === _applicationCode) _isAdministrator = 'true'
 
-              this.onCodeIsValid()
-              this.refreshPage()
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
+                const _clientName = element[3].trim()
+                const _email = element[4].trim()
+                const _homeTeam = element[5].trim()
+                const _homeTeamAlias = element[6].trim()
+                const _standardText = element[7].trim()
+                const _titleUrl1 = element[8].trim()
+                const _captionUrl1 = element[9].trim()
+                const _linkUrl1 = element[10].trim()
+                const _titleUrl2 = element[11].trim()
+                const _captionUrl2 = element[12].trim()
+                const _linkUrl2 = element[13].trim()
+                const _titleUrl3 = element[14].trim()
+                const _captionUrl3 = element[15].trim()
+                const _linkUrl3 = element[16].trim()
+                const _titleUrl4 = element[17].trim()
+                const _captionUrl4 = element[18].trim()
+                const _linkUrl4 = element[19].trim()
+                const _titleUrl5 = element[20].trim()
+                const _captionUrl5 = element[21].trim()
+                const _linkUrl5 = element[22].trim()
+                const _updatedOn = element[23].trim()
+
+                if (element[1] === _adminCode || element[2] === _userCode) this.setCookie(_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5, _updatedOn)
+                else this.onCodeNotFound()
+
+                this.onCodeIsValid()
+                this.refreshPage()
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+        }
       }
     },
 
