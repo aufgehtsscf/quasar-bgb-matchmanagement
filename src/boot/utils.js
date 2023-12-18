@@ -196,6 +196,7 @@ const teamImages = [
   { label: 'Karlsruher', value: 'Karlsruher', image: 'statics/teams/Karlsruher.png' },
   { label: 'Köln', value: 'Köln', image: 'statics/teams/Köln.svg' },
   { label: 'Leipzig', value: 'Leipzig', image: 'statics/teams/Leipzig.png' },
+  { label: 'RC Lens', value: 'Lens', image: 'statics/teams/Lens.svg' },
   { label: 'Leverkusen', value: 'Bayer_Leverkusen', image: 'statics/teams/Bayer_Leverkusen.png' },
   { label: 'Magdeburg', value: 'Magdeburg', image: 'statics/teams/Magdeburg.png' },
   { label: 'Mainz', value: 'Mainz', image: 'statics/teams/Mainz.png' },
