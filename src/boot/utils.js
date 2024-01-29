@@ -1,7 +1,6 @@
-const IsAdministrator = 'true'
-const ApplicationCode = 'TEST'
-const AdminCode = '3Test2tseT9'
-const ClientName = 'HOME'
+const IsAdministrator = 'false'
+const ApplicationCode = 'NGdoLbyd_330'
+const ClientName = 'BGB'
 const Email = 'aufgehtsscf@gmail.com'
 const HomeTeam = 'Freiburg'
 const HomeTeamAlias = 'SCF'
@@ -111,7 +110,7 @@ const getAdminCode = function (_applicationCode) {
   let _adminCode = ''
 
   if (_applicationCode === 'TEST') {
-    return AdminCode
+    return '3Test2tseT9'
   }
 
   if (_applicationCode.length === 12) {
