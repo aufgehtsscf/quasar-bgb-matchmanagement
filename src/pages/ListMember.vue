@@ -141,6 +141,20 @@
             </q-avatar>
           </div>
 
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in inactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${(n - 10) * 32}px`"
+            >
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
+              <img :src="getEventImage(el.matchName)" v-if="n > 19 && n <= 29 && el.homeTeam === '' && el.awayTeam === ''">
+            </q-avatar>
+          </div>
+
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
