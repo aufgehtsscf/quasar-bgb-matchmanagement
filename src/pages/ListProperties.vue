@@ -4,7 +4,7 @@
     <!-- Properties area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>Einstellungen</q-toolbar-title>
+        <q-toolbar-title class="text-overline">Einstellungen</q-toolbar-title>
       </q-toolbar>
     </div>
 

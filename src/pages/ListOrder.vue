@@ -4,8 +4,7 @@
   <!-- Last order (Titel) -->
   <div class="q-pa-md" style="max-width: 500px">
     <q-toolbar class="bg-primary text-white">
-      <q-toolbar-title>
-        Aktuelle Bestellung ({{ order2Object.length }})</q-toolbar-title>
+      <q-toolbar-title class="text-overline">Aktuelle Bestellung ({{ order2Object.length }})</q-toolbar-title>
         <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addOrder = true" />
       </q-toolbar>
   </div>
@@ -30,8 +29,7 @@
   <!-- Previous order (Titel) -->
   <div class="q-pa-md" style="max-width: 500px">
     <q-toolbar class="bg-primary text-white">
-      <q-toolbar-title>
-        Frühere Bestellung ({{ order1Object.length }})</q-toolbar-title>
+      <q-toolbar-title class="text-overline">Frühere Bestellung ({{ order1Object.length }})</q-toolbar-title>
     </q-toolbar>
   </div>
 

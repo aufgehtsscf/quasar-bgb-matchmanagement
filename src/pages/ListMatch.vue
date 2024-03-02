@@ -4,7 +4,7 @@
     <!-- Active matchs area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>Aktuelle Spiele ({{ activeMatchObject.length }})</q-toolbar-title>
+        <q-toolbar-title class="text-overline">Aktuelle Spiele ({{ activeMatchObject.length }})</q-toolbar-title>
         <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true"  v-if="getCookie('isAdministrator') === 'true'" />
       </q-toolbar>
     </div>
@@ -43,7 +43,7 @@
     <!-- Inactive matchs area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title>Vergangene Spiele ({{ inactiveMatchObject.length }})</q-toolbar-title>
+        <q-toolbar-title class="text-overline">Vergangene Spiele ({{ inactiveMatchObject.length }})</q-toolbar-title>
       </q-toolbar>
     </div>
 
@@ -197,7 +197,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="txtHomeTeamNew === '' || txtAwayTeamNew === '' || txtMatchNameNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="((txtHomeTeamNew === '' || txtAwayTeamNew === '' || txtMatchNameNew === '') && !tglIsEventNew) || (txtMatchNameNew === '' && tglIsEventNew)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -319,7 +319,7 @@
             <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtDatetime, txtAnnotations)" :disable="txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtDatetime, txtAnnotations)" :disable="((txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === '') && !tglIsEvent) || (txtMatchName === '' && tglIsEvent)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
