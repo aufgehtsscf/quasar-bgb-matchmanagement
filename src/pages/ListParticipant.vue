@@ -207,8 +207,8 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtParticipantParticipant" autofocus label="Name *" :readonly="false" v-if="txtParticipantReaction === ''" />
-            <q-input filled dense v-model="txtParticipantParticipant" autofocus label="Name *" :readonly="true" v-if="txtParticipantReaction !== ''" />
+            <q-input filled dense v-model="txtParticipantParticipant" label="Name *" :readonly="false" v-if="txtParticipantReaction === ''" />
+            <q-input filled dense v-model="txtParticipantParticipant" label="Name *" :readonly="true" v-if="txtParticipantReaction !== ''" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
@@ -333,7 +333,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input dense v-model="txtTicketParticipant" autofocus label="Name" />
+            <q-input dense v-model="txtTicketParticipant" label="Name" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">

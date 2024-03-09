@@ -82,7 +82,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtCardHolder" autofocus label="Inhaber *" />
+            <q-input filled dense v-model="txtCardHolder" label="Inhaber *" />
 
             <q-toggle
               v-model="tglDiscounted"
@@ -91,7 +91,7 @@
               left-label
             />
 
-            <q-input filled dense v-model="txtWhoHasTheCard" label="Wer hat die Karte *" />
+            <q-input filled dense v-model="txtWhoHasTheCard" autofocus label="Wer hat die Karte *" />
           </q-card-section>
 
           <q-separator />
