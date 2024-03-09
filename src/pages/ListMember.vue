@@ -87,7 +87,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtMember" autofocus label="Mitglied *" />
+            <q-input filled dense v-model="txtMember" label="Mitglied *" />
           </q-card-section>
 
           <q-card-section class="q-pt-none">
