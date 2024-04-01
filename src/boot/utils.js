@@ -1,6 +1,7 @@
-const IsAdministrator = 'true'
-const ApplicationCode = 'TEST'
-const ClientName = 'HOME'
+const IsAdministrator = 'false'
+const ApplicationCode = 'NGdoLbyd_330'
+const ClientName = 'BGB'
+
 const Email = 'aufgehtsscf@gmail.com'
 const HomeTeam = 'Freiburg'
 const HomeTeamAlias = 'SCF'
@@ -35,7 +36,7 @@ const URLMatchBasis = 'https://script.google.com/macros/s/AKfycbxxPRbcEGlNYCJItI
 const URLNextMatchBasis = 'https://script.google.com/macros/s/AKfycbzo1RuM5zOC_1kkUBRJB4tbMKZNgVZ65KTGdm76wyBTB9F_FQLFs8vt3Nh16xwDwChOuA/exec'
 const URLParticipantBasis = 'https://script.google.com/macros/s/AKfycby5QLG3Ri_vpENUrwSNtyBR3L8j_AR9_ly4eRKwTHSLaCdgFfPmnEuvPEKX085oJEAwlg/exec'
 const URLParticipantArchiveBasis = 'https://script.google.com/macros/s/AKfycbwDcHzzr6JqZoENUjRAe1OXY3YCOLsqYMwVbDfdOlYFIjqNJ6lTWuVcYWh_wc99gsv_8A/exec'
-const URLWhereIsMyCardBasis = 'https://script.google.com/macros/s/AKfycbwi7JYV_w0u7KoYw-CUio5HWGrLPvIxRqHybNn4DdgQfOLeGfm3Ufb3IlunmgQq-zFV/exec'
+const URLMatchManagementAPI = 'https://localhost:5200'
 const URLMemberBasis = 'https://script.google.com/macros/s/AKfycbybGUbLhM1fVOPNfJ0TnFBSehCOvUgstkps6A0SkK7hLudyEK7bSCFD1mBUVh0M6qcU/exec'
 const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbxpYbKFzUC6iSSlE913vWGLuvRZ7TbT8eXVn54Un7rm0KJa9vVGzuvu7d-V-tSuWSDjOw/exec'
 const URLProperties = 'https://script.google.com/macros/s/AKfycbxMU3wrrJ9m8Qcnpzu-0oC-APSA28i765lF_AHh6tVagXj1JpHz5glq8MY0GCPNbvdK/exec?sh=Properties'
@@ -278,7 +279,7 @@ export { URLMatchBasis }
 export { URLNextMatchBasis }
 export { URLParticipantBasis }
 export { URLParticipantArchiveBasis }
-export { URLWhereIsMyCardBasis }
+export { URLMatchManagementAPI }
 export { URLMemberBasis }
 export { URLProperties }
 export { URLOrderBasis }
