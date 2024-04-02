@@ -716,18 +716,27 @@ export default {
   },
 
   mounted () {
-    this.setVariables()
-    this.getTableMember()
-    this.getTableActiveMatch()
-    this.getTableWhereIsMyCard()
+    this.setVariables().then(() => {
+      this.getTableMember().then(() => {
+        this.getTableActiveMatch().then(() => {
+          this.getTableWhereIsMyCard()
+        })
+      })
+    })
   },
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      return new Promise((resolve, reject) => {
+        _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        resolve()
+          .catch((err) => {
+            reject(err)
+          })
+      })
     },
 
     isReservation (_participantArrival, _matchTime) {
@@ -739,20 +748,22 @@ export default {
     },
 
     getTableMember () {
-      this.memberObject = []
-
-      // console.log('URLMember: ' + _URLMember + '&func=Read')
-      this.$axios(`${_URLMember}&func=Read`)
-        .then((res) => {
-          this.tableMember = res.data.split('\n')
-          for (let index = 0; index < this.tableMember.length - 1; index++) {
-            const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      return new Promise((resolve, reject) => {
+        this.memberObject = []
+        this.$axios(`${_URLMember}&func=Read`)
+          .then((res) => {
+            this.tableMember = res.data.split('\n')
+            for (let index = 0; index < this.tableMember.length - 1; index++) {
+              const element = this.tableMember[index].split(',')
+              this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
+            }
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setMemberObject (_member, _avatar, _customized) {
@@ -760,30 +771,33 @@ export default {
     },
 
     getTableActiveMatch () {
-      this.activeMatchObject = []
-      this.participantObject = []
-      this.presentParticipantObject = []
-      this.ticketObject = []
-      this.ticketGivenObject = []
-      this.ticketRequiredObject = []
-      this.ticketAssignedObject = []
+      return new Promise((resolve, reject) => {
+        this.activeMatchObject = []
+        this.participantObject = []
+        this.presentParticipantObject = []
+        this.ticketObject = []
+        this.ticketGivenObject = []
+        this.ticketRequiredObject = []
+        this.ticketAssignedObject = []
 
-      // console.log('URLMatch: ' + _URLMatch + '&func=ReadActive&published=TRUE')
-      this.$axios(`${_URLMatch}&func=ReadActive&published=TRUE`)
-        .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
-          }
+        this.$axios(`${_URLMatch}&func=ReadActive&published=TRUE`)
+          .then((res) => {
+            this.tableMatch = res.data.split('\n')
+            for (let index = 0; index < this.tableMatch.length - 1; index++) {
+              const element = this.tableMatch[index].split(',')
+              this.setActiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
+            }
 
-          if (this.tableMatch.length > 1) {
-            this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].time, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+            if (this.tableMatch.length > 1) {
+              this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].time, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
+            }
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _time, _annotations, _date) {
@@ -804,7 +818,6 @@ export default {
     },
 
     onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _time, _annotationsMatch, _date) {
-      // console.log('onMatchClick: ' + _matchId + ', ' + _homeTeam + ', ' + _awayTeam + ', ' + _matchName + ', ' + _time + ', ' + _annotationsMatch + ', ' + _date)
       _constMatchId.value = _matchId
       _constHomeTeam.value = _homeTeam
       _constAwayTeam.value = _awayTeam
@@ -815,7 +828,6 @@ export default {
     },
 
     loadReloadData (_matchId, _time, _annotationsMatch) {
-      // console.log('loadReloadData: ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
       this.setArrivalElements(_time)
       this.getTableParticipant(_matchId, _time, _annotationsMatch)
     },
@@ -857,8 +869,6 @@ export default {
     },
 
     addParticipantSave (_participant, _arrival, _annotations, _action, _matchName, _matchId, _time, _annotationsMatch) {
-      // console.log('addParticipantSave: ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchName + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
-
       if (_action !== 'bin dabei') _arrival = ''
 
       const _participants = this.participantObject.map(el => el.participant)
@@ -880,8 +890,6 @@ export default {
     },
 
     editParticipantSave (_row, _participantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
-      // console.log('editParticipantSave: ' + _row + ', ' + _participantId + ', ' + _participant + ', ' + _participantOld + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
-
       if (_action !== 'bin dabei') _arrival = ''
 
       const _participants = this.participantObject.map(el => el.participant)
@@ -903,8 +911,6 @@ export default {
     },
 
     deleteParticipant (_row, _participantId, _matchId, _time, _annotationsMatch) {
-      // console.log('deleteParticipant: ' + _row + ', ' + _participantId + ', ' + _matchId + ', ' + _time + ', ' + _annotationsMatch)
-
       this.$axios(`${_URLParticipant}&func=Delete&row=${_row}&participantId=${_participantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
@@ -919,7 +925,6 @@ export default {
     },
 
     onTicketAssignmentClick (_ticketRow, _ticketParticipantId, _participant, _arrival, _annotations, _action, _reaction) {
-      // console.log('Clicked on ticket assignment: ' + _ticketRow + ', ' + _ticketParticipantId + ', ' + _participant + ', ' + _arrival + ', ' + _annotations + ', ' + _action + ', ' + _reaction)
       _constTicketParticipantRow.value = _ticketRow
       _constTicketParticipantId.value = _ticketParticipantId
       _constTicketParticipant.value = _participant
@@ -1038,41 +1043,44 @@ export default {
     },
 
     getTableParticipant (_matchId, _time, _annotationsMatch) {
-      this.participantObject = []
-      this.presentParticipantObject = []
-      this.ticketObject = []
-      this.ticketGivenObject = []
-      this.ticketRequiredObject = []
-      this.ticketAssignedObject = []
+      return new Promise((resolve, reject) => {
+        this.participantObject = []
+        this.presentParticipantObject = []
+        this.ticketObject = []
+        this.ticketGivenObject = []
+        this.ticketRequiredObject = []
+        this.ticketAssignedObject = []
 
-      this.reservation = ''
-      _constParticipantList.value = ''
-      _constParticipantListFormattedForWhatsApp.value = ''
-      _constAnnotationsMatch.value = ''
-      _constTicketList.value = ''
+        this.reservation = ''
+        _constParticipantList.value = ''
+        _constParticipantListFormattedForWhatsApp.value = ''
+        _constAnnotationsMatch.value = ''
+        _constTicketList.value = ''
 
-      // console.log('URLParticipant: ' + _URLParticipant + '&func=Read&matchId=' + _matchId)
-      this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
-        .then((res) => {
-          this.tableParticipant = res.data.split('\n')
-          for (let index = 0; index < this.tableParticipant.length - 1; index++) {
-            const element = this.tableParticipant[index].split(',')
+        this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
+          .then((res) => {
+            this.tableParticipant = res.data.split('\n')
+            for (let index = 0; index < this.tableParticipant.length - 1; index++) {
+              const element = this.tableParticipant[index].split(',')
 
-            let _participantAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
-            if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
-            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === element[5].trim())?.customized
-            if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = 'FALSE'
+              let _participantAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
+              if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
+              let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === element[5].trim())?.customized
+              if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = 'FALSE'
 
-            this.setParticipantObject(element[0], element[1], element[3], element[4].trim(), element[5].trim(), _participantAvatar, _participantAvatarIsCustomized, element[6].substring(0, 5), element[7].trim().replace(/<br>/g, '\n'), element[8], element[9])
-          }
+              this.setParticipantObject(element[0], element[1], element[3], element[4].trim(), element[5].trim(), _participantAvatar, _participantAvatarIsCustomized, element[6].substring(0, 5), element[7].trim().replace(/<br>/g, '\n'), element[8], element[9])
+            }
 
-          if (this.tableParticipant.length > 1) {
-            this.fillObjects(_matchId, _time, _annotationsMatch)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+            if (this.tableParticipant.length > 1) {
+              this.fillObjects(_matchId, _time, _annotationsMatch)
+            }
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setParticipantObject (_row, _participantId, _timestamp, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
@@ -1211,20 +1219,22 @@ export default {
     },
 
     getTableWhereIsMyCard () {
-      this.whereIsMyCardObject = []
-
-      // console.log('URLWhereIsMyCard: ' + _URLWhereIsMyCard + '&func=Read')
-      this.$axios(`${_URLWhereIsMyCard}&func=Read`)
-        .then((res) => {
-          this.tableWhereIsMyCard = res.data.split('\n')
-          for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
-            const element = this.tableWhereIsMyCard[index].split(',')
-            this.setWhereIsMyCardObject(element[3].trim(), element[4], element[5].trim())
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      return new Promise((resolve, reject) => {
+        this.whereIsMyCardObject = []
+        this.$axios(`${_URLWhereIsMyCard}&func=Read`)
+          .then((res) => {
+            this.tableWhereIsMyCard = res.data.split('\n')
+            for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
+              const element = this.tableWhereIsMyCard[index].split(',')
+              this.setWhereIsMyCardObject(element[3].trim(), element[4], element[5].trim())
+            }
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setWhereIsMyCardObject (_cardHolder, _discounted, _whoHasTheCard) {

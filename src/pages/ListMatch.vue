@@ -383,7 +383,19 @@
               class="overlapping"
               :style="`left: ${(n - 30) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 29">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 29 && n <= 39">
+            </q-avatar>
+          </div>
+
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in participantInactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${(n - 40) * 32}px`"
+            >
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 39">
             </q-avatar>
           </div>
 
@@ -607,38 +619,51 @@ export default {
   },
 
   mounted () {
-    this.setVariables()
-    this.getTableMember()
-    this.getTableActiveMatch()
-    this.getTableInactiveMatch()
-    this.getTableNextMatch()
+    this.setVariables().then(() => {
+      this.getTableMember().then(() => {
+        this.getTableActiveMatch().then(() => {
+          this.getTableInactiveMatch().then(() => {
+            this.getTableNextMatch()
+          })
+        })
+      })
+    })
   },
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLNextMatch = URLNextMatchBasis + '?sh=' + getCookie('homeTeam')
-      _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      return new Promise((resolve, reject) => {
+        _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        _URLNextMatch = URLNextMatchBasis + '?sh=' + getCookie('homeTeam')
+        _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        resolve()
+          .catch((err) => {
+            reject(err)
+          })
+      })
     },
 
     getTableActiveMatch () {
-      this.activeMatchObject = []
+      return new Promise((resolve, reject) => {
+        this.activeMatchObject = []
 
-      const publishedParam = getCookie('isAdministrator') === 'true' ? '' : 'TRUE'
-      // console.log('URLMatch: ' + _URLMatch + '&func=ReadActive&published=' + publishedParam)
-      this.$axios(`${_URLMatch}&func=ReadActive&published=${publishedParam}`)
-        .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[6], element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+        const publishedParam = getCookie('isAdministrator') === 'true' ? '' : 'TRUE'
+        this.$axios(`${_URLMatch}&func=ReadActive&published=${publishedParam}`)
+          .then((res) => {
+            this.tableMatch = res.data.split('\n')
+            for (let index = 0; index < this.tableMatch.length - 1; index++) {
+              const element = this.tableMatch[index].split(',')
+              this.setActiveMatchObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[6], element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
+            }
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setActiveMatchObject (_row, _matchId, _homeTeam, _awayTeam, _matchName, _published, _time, _annotations, _date) {
@@ -659,13 +684,11 @@ export default {
     },
 
     onInactiveMatchClick (_matchId, _matchName, _datetime, _numberOfParticipants) {
-      // console.log('Clicked on an inactive Match: ' + _matchId + ', ' + _matchName + ', ' + _datetime + ', ' + _numberOfParticipants)
       _constInactiveMatch.value = _matchName
       _constInactiveDatetime.value = _datetime
       _constInactiveNumberOfParticipants.value = _numberOfParticipants
 
       this.participantInactiveMatchObject = []
-      // console.log('URLParticipantArchive: ' + _URLParticipantArchive + '&func=ReadMatch&matchId=' + _matchId)
       this.$axios(`${_URLParticipantArchive}&func=ReadMatch&matchId=${_matchId}`)
         .then((res) => {
           this.tableParticipantArchive = res.data.split('\n')
@@ -692,20 +715,23 @@ export default {
     },
 
     getTableMember () {
-      this.memberObject = []
+      return new Promise((resolve, reject) => {
+        this.memberObject = []
 
-      // console.log('URLMember: ' + _URLMember + '&func=Read')
-      this.$axios(`${_URLMember}&func=Read`)
-        .then((res) => {
-          this.tableMember = res.data.split('\n')
-          for (let index = 0; index < this.tableMember.length - 1; index++) {
-            const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+        this.$axios(`${_URLMember}&func=Read`)
+          .then((res) => {
+            this.tableMember = res.data.split('\n')
+            for (let index = 0; index < this.tableMember.length - 1; index++) {
+              const element = this.tableMember[index].split(',')
+              this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
+            }
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setMemberObject (_member, _avatar, _customized) {
@@ -830,68 +856,79 @@ export default {
       }
     },
 
-    async archiveMatch (_row, _matchId, _datetime) {
-      // console.log('archiveMatch: ' + _row + ', ' + _matchId + ', ' + _datetime)
+    archiveMatch (_row, _matchId, _datetime) {
+      return new Promise((resolve, reject) => {
+        const _date = _datetime.substring(0, 10)
 
-      const _date = _datetime.substring(0, 10)
+        this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
+          .then(async (res) => {
+            this.tableParticipant = res.data.split('\n')
+            for (let index = 0; index < this.tableParticipant.length - 1; index++) {
+              const element = this.tableParticipant[index].split(',')
+              this.$axios(`${_URLParticipantArchive}&func=Add&timestamp=${element[3]}&matchId=${element[2]}&matchName=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
+                .catch((err3) => {
+                  console.log(err3)
+                })
+            }
+            this.inactivateDeleteMatch(_row, _matchId, true)
+            resolve()
+          })
+          .catch((err2) => {
+            console.log(err2)
+          })
 
-      const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
-      this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
-        .then(async (res) => {
-          this.tableParticipant = res.data.split('\n')
-          for (let index = 0; index < this.tableParticipant.length - 1; index++) {
-            const element = this.tableParticipant[index].split(',')
-            await sleep(1000)
-            this.$axios(`${_URLParticipantArchive}&func=Add&timestamp=${element[3]}&matchId=${element[2]}&matchName=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
-              .catch((err) => {
-                console.log(err)
-              })
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-
-      this.inactivateDeleteMatch(_row, _matchId, true)
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     inactivateDeleteMatch (_row, _matchId, _inactivate) {
-      this.$axios(`${_URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
-        .then((res3) => {
-          if (res3.data === 'Success, requested action completed') {
-            if (_inactivate) {
-            // console.log(_URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId)
-              this.$axios(`${_URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
-                .then((res4) => {
-                  if (res4.data === 'Success, requested action completed') {
-                    this.onMatchArchived()
-                    this.getTableActiveMatch()
-                    this.editMatch = false
-                  }
-                })
-                .catch((err) => {
-                  console.log(err)
-                })
-            } else {
-            // console.log(_URLMatch + '&func=Delete&row=' + _row + '&matchId=' + _matchId)
-              this.$axios(`${_URLMatch}&func=Delete&row=${_row}&matchId=${_matchId}`)
-                .then((res5) => {
-                  if (res5.data === 'Success, requested action completed') {
-                    this.onMatchDeleted()
-                    this.getTableActiveMatch()
-                    this.editMatch = false
-                  }
-                })
-                .catch((err) => {
-                  console.log(err)
-                })
+      return new Promise((resolve, reject) => {
+        this.$axios(`${_URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
+          .then((res3) => {
+            if (res3.data === 'Success, requested action completed') {
+              if (_inactivate) {
+                // console.log(_URLMatch + '&func=Inactivate&row=' + _row + '&matchId=' + _matchId)
+                this.$axios(`${_URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
+                  .then((res4) => {
+                    if (res4.data === 'Success, requested action completed') {
+                      this.onMatchArchived()
+                      this.getTableActiveMatch()
+                      this.editMatch = false
+                      resolve()
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err)
+                  })
+              } else {
+                // console.log(_URLMatch + '&func=Delete&row=' + _row + '&matchId=' + _matchId)
+                this.$axios(`${_URLMatch}&func=Delete&row=${_row}&matchId=${_matchId}`)
+                  .then((res5) => {
+                    if (res5.data === 'Success, requested action completed') {
+                      this.onMatchDeleted()
+                      this.getTableActiveMatch()
+                      this.editMatch = false
+                      resolve()
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err)
+                  })
+              }
             }
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     async deleteMatch (_row, _matchId) {
@@ -901,31 +938,34 @@ export default {
     },
 
     getTableInactiveMatch () {
-      this.inactiveMatchObject = []
+      return new Promise((resolve, reject) => {
+        this.inactiveMatchObject = []
 
-      // console.log('URLMatch: ' + _URLMatch + '&func=ReadInactive')
-      this.$axios(`${_URLMatch}&func=ReadInactive`)
-        .then((res) => {
-          this.tableInactiveMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableInactiveMatch.length - 1; index++) {
-            const element = this.tableInactiveMatch[index].split(',')
+        this.$axios(`${_URLMatch}&func=ReadInactive`)
+          .then((res) => {
+            this.tableInactiveMatch = res.data.split('\n')
+            for (let index = 0; index < this.tableInactiveMatch.length - 1; index++) {
+              const element = this.tableInactiveMatch[index].split(',')
 
-            let _numberOfParticipants = 0
-            // console.log('URLParticipantArchive: ' + _URLParticipantArchive + '&func=ReadMatch')
-            this.$axios(`${_URLParticipantArchive}&func=ReadMatch&matchId=${element[1]}`)
-              .then((res2) => {
-                this.tableParticipantArchive = res2.data.split('\n')
-                _numberOfParticipants = this.tableParticipantArchive.length - 1
-                this.setInactiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[9], _numberOfParticipants)
-              })
-              .catch((err2) => {
-                console.log(err2)
-              })
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+              let _numberOfParticipants = 0
+              // console.log('URLParticipantArchive: ' + _URLParticipantArchive + '&func=ReadMatch')
+              this.$axios(`${_URLParticipantArchive}&func=ReadMatch&matchId=${element[1]}`)
+                .then((res2) => {
+                  this.tableParticipantArchive = res2.data.split('\n')
+                  _numberOfParticipants = this.tableParticipantArchive.length - 1
+                  this.setInactiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[9], _numberOfParticipants)
+                })
+                .catch((err2) => {
+                  console.log(err2)
+                })
+            }
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setInactiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _time, _date, _numberOfParticipants) {
@@ -946,27 +986,30 @@ export default {
     },
 
     getTableNextMatch () {
-      this.teamOptions = []
+      return new Promise((resolve, reject) => {
+        this.teamOptions = []
 
-      let _label = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.label
-      let _image = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.image
-      this.setTeamOptionsObject(_label, getCookie('homeTeam'), _image)
+        let _label = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.label
+        let _image = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.image
+        this.setTeamOptionsObject(_label, getCookie('homeTeam'), _image)
 
-      // console.log('URLNextMatch: ' + _URLNextMatch + '&func=Read')
-      this.$axios(`${_URLNextMatch}&func=Read`)
-        .then((res) => {
-          this.tableNextMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableNextMatch.length - 1; index++) {
-            const element = this.tableNextMatch[index].split(',')
+        this.$axios(`${_URLNextMatch}&func=Read`)
+          .then((res) => {
+            this.tableNextMatch = res.data.split('\n')
+            for (let index = 0; index < this.tableNextMatch.length - 1; index++) {
+              const element = this.tableNextMatch[index].split(',')
 
-            _label = this.teamImages.find(el => el.value === element[1].trim())?.label
-            _image = this.teamImages.find(el => el.value === element[1].trim())?.image
-            this.setTeamOptionsObject(_label, element[1].trim(), _image, element[2], element[3])
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+              _label = this.teamImages.find(el => el.value === element[1].trim())?.label
+              _image = this.teamImages.find(el => el.value === element[1].trim())?.image
+              this.setTeamOptionsObject(_label, element[1].trim(), _image, element[2], element[3])
+            }
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setTeamOptionsObject (_label, _value, _image, _date, _time) {

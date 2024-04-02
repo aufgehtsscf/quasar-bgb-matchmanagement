@@ -305,44 +305,54 @@ export default {
   },
 
   mounted () {
-    this.setVariables()
-    this.getTableMember()
-    this.getTableMatch()
+    this.setVariables().then(() => {
+      this.getTableMember().then(() => {
+        this.getTableMatch()
+      })
+    })
   },
 
   methods: {
     setVariables () {
-      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      return new Promise((resolve, reject) => {
+        _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+        resolve()
+          .catch((err) => {
+            reject(err)
+          })
+      })
     },
 
     getTableMember () {
-      this.memberObject = []
+      return new Promise((resolve, reject) => {
+        this.memberObject = []
 
-      // console.log('URLMember: ' + _URLMember + '&func=Read')
-      this.$axios(`${_URLMember}&func=Read`)
-        .then((res) => {
-          this.tableMember = res.data.split('\n')
-          for (let index = 0; index < this.tableMember.length - 1; index++) {
-            const element = this.tableMember[index].split(',')
+        this.$axios(`${_URLMember}&func=Read`)
+          .then((res) => {
+            this.tableMember = res.data.split('\n')
+            for (let index = 0; index < this.tableMember.length - 1; index++) {
+              const element = this.tableMember[index].split(',')
 
-            // console.log('URLParticipantArchive: ' + _URLParticipantArchive + '&func=ReadParticipant&participant=' + element[3].trim())
-            let _numberOfParticipations = 0
-            this.$axios(`${_URLParticipantArchive}&func=ReadParticipant&participant=${element[3].trim()}`)
-              .then((res2) => {
-                this.tableParticipantArchive = res2.data.split('\n')
-                _numberOfParticipations = this.tableParticipantArchive.length - 1
-                this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5], _numberOfParticipations)
-              })
-              .catch((err2) => {
-                console.log(err2)
-              })
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+              let _numberOfParticipations = 0
+              this.$axios(`${_URLParticipantArchive}&func=ReadParticipant&participant=${element[3].trim()}`)
+                .then((res2) => {
+                  this.tableParticipantArchive = res2.data.split('\n')
+                  _numberOfParticipations = this.tableParticipantArchive.length - 1
+                  this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5], _numberOfParticipations)
+                })
+                .catch((err2) => {
+                  console.log(err2)
+                })
+              resolve()
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setMemberObject (_row, _memberId, _member, _avatar, _customized, _numberOfParticipations) {
@@ -360,20 +370,23 @@ export default {
     },
 
     getTableMatch () {
-      this.matchObject = []
+      return new Promise((resolve, reject) => {
+        this.matchObject = []
 
-      // console.log('URLMatch: ' + _URLMatch + '&func=ReadInactive')
-      this.$axios(`${_URLMatch}&func=ReadInactive`)
-        .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim())
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+        this.$axios(`${_URLMatch}&func=ReadInactive`)
+          .then((res) => {
+            this.tableMatch = res.data.split('\n')
+            for (let index = 0; index < this.tableMatch.length - 1; index++) {
+              const element = this.tableMatch[index].split(',')
+              this.setMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim())
+            }
+            resolve()
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setMatchObject (_matchId, _homeTeam, _awayTeam, _matchName) {
@@ -381,7 +394,6 @@ export default {
     },
 
     onMemberClick (_row, _memberId, _member, _avatar) {
-      // console.log('Clicked on Member: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _avatar)
       _constMemberRow.value = _row
       _constMemberId.value = _memberId
       _constMember.value = _member
@@ -389,7 +401,6 @@ export default {
       _constAvatar.value = _avatar
 
       this.inactiveMatchObject = []
-      // console.log('URLParticipantArchive: ' + _URLParticipantArchive + '&func=ReadParticipant&participant=' + _member)
       this.$axios(`${_URLParticipantArchive}&func=ReadParticipant&participant=${_member}`)
         .then((res) => {
           this.tableParticipantArchive = res.data.split('\n')
@@ -413,8 +424,6 @@ export default {
     },
 
     addMemberSave (_member, _avatar) {
-      // console.log('addMemberSave: ' + _member + ', ' + _avatar)
-
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member)
       if (_memberExists) {
@@ -434,8 +443,6 @@ export default {
     },
 
     editMemberSave (_row, _memberId, _member, _memberOld, _avatar) {
-      // console.log('editMemberSave: ' + _row + ', ' + _memberId + ', ' + _member + ', ' + _memberOld + ', ' + _avatar)
-
       if (typeof _avatar === 'undefined') _avatar = _constAvatar.value
 
       const _members = this.memberObject.map(el => el.member)
@@ -457,8 +464,6 @@ export default {
     },
 
     deleteMember (_row, _memberId) {
-      // console.log('deleteMember: ' + _row + ', ' + _memberId)
-
       this.$axios(`${_URLMember}&func=Delete&row=${_row}&memberId=${_memberId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
