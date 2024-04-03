@@ -20,7 +20,7 @@
               {{ card.cardHolder.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.cardHolderAvatar !== ''">
-              <img :src="getAvatar(varAdminCode, card.cardHolderAvatar, card.cardHolderAvatarIsCustomized === true)">
+              <img :src="getAvatar(varAdminCode, card.cardHolderAvatar, card.cardHolderAvatarIsCustomized === 'TRUE')">
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
@@ -28,13 +28,13 @@
               {{ card.whoHasTheCard.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.whoHasTheCardAvatar !== ''">
-              <img :src="getAvatar(varAdminCode, card.whoHasTheCardAvatar, card.whoHasTheCardAvatarIsCustomized === true)">
+              <img :src="getAvatar(varAdminCode, card.whoHasTheCardAvatar, card.whoHasTheCardAvatarIsCustomized === 'TRUE')">
             </q-avatar>
           </q-item-section>
           <q-item-section>
             <q-item-label overline>Inhaber: {{ card.cardHolder }}</q-item-label>
-            <q-item-label caption v-if="card.discounted === true">Kind: Ja</q-item-label>
-            <q-item-label caption v-if="card.discounted === false">Kind: Nein</q-item-label>
+            <q-item-label caption v-if="card.discounted === 'TRUE'">Kind: Ja</q-item-label>
+            <q-item-label caption v-if="card.discounted === 'FALSE'">Kind: Nein</q-item-label>
             <q-item-label caption>Wer hat die Karte: {{ card.whoHasTheCard }}</q-item-label>
           </q-item-section>
         </q-item>
@@ -127,7 +127,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAdminCode, getAvatar, URLMatchManagementAPI } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
 import { ref } from 'vue'
 
 const _constCardHolderRow = ref(0)
@@ -138,8 +138,6 @@ const _constDiscounted = ref('')
 const _constWhoHasTheCard = ref('')
 const _constAdminCode = ref('')
 
-let _TenantId
-let _URLTenant
 let _URLWhereIsMyCard
 let _URLMember
 
@@ -202,10 +200,12 @@ export default {
       getCookie,
       getAdminCode,
       getAvatar,
-      URLMatchManagementAPI,
+      URLWhereIsMyCardBasis,
+      URLMemberBasis,
 
       whereIsMyCardObject: [
         {
+          row: '',
           cardHolderId: '',
           cardHolder: '',
           cardHolderAvatar: '',
@@ -232,34 +232,33 @@ export default {
 
   mounted () {
     this.setVariables().then(() => {
-      this.getTableWhereIsMyCard()
+      this.getTableMember().then(() => {
+        this.getTableWhereIsMyCard()
+      })
     })
   },
 
   methods: {
     setVariables () {
+      _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
       _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
       _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      return Promise.resolve()
     },
 
     getTableMember () {
-      return new Promise((resolve, reject) => {
-        this.memberObject = []
+      this.memberObject = []
 
-        this.$axios(`${_URLMember}&func=Read`)
-          .then((res) => {
-            this.tableMember = res.data.split('\n')
-            for (let index = 0; index < this.tableMember.length - 1; index++) {
-              const element = this.tableMember[index].split(',')
-              this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
-            }
-            resolve()
-          })
-          .catch((err) => {
-            console.log(err)
-            reject(err)
-          })
-      })
+      this.$axios(`${_URLMember}&func=Read`)
+        .then((res) => {
+          this.tableMember = res.data.split('\n')
+          for (let index = 0; index < this.tableMember.length - 1; index++) {
+            const element = this.tableMember[index].split(',')
+            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
+          }
+        })
+      return Promise.resolve()
+        .catch((err) => console.log(err))
     },
 
     setMemberObject (_member, _avatar, _customized) {
@@ -267,40 +266,32 @@ export default {
     },
 
     getTableWhereIsMyCard () {
-      return new Promise((resolve, reject) => {
-        this.getTableMember()
+      this.whereIsMyCardObject = []
 
-        this.whereIsMyCardObject = []
+      this.$axios(`${_URLWhereIsMyCard}&func=Read`)
+        .then((res) => {
+          this.tableWhereIsMyCard = res.data.split('\n')
+          for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
+            const element = this.tableWhereIsMyCard[index].split(',')
 
-        this.$axios(`${_URLWhereIsMyCard}&func=Read`)
-          .then((res) => {
-            this.tableWhereIsMyCard = res.data.split('\n')
-            for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
-              const element = this.tableWhereIsMyCard[index].split(',')
+            let _cardHolderAvatar = this.memberObject.find(el => el.member === element[3].trim())?.avatar
+            if (typeof _cardHolderAvatar === 'undefined') _cardHolderAvatar = ''
+            let _cardHolderAvatarIsCustomized = this.memberObject.find(el => el.member === element[3].trim())?.customized
+            if (typeof _cardHolderAvatarIsCustomized === 'undefined') _cardHolderAvatarIsCustomized = 'FALSE'
 
-              let _cardHolderAvatar = this.memberObject.find(el => el.member === element[3].trim())?.avatar
-              if (typeof _cardHolderAvatar === 'undefined') _cardHolderAvatar = ''
-              let _cardHolderAvatarIsCustomized = this.memberObject.find(el => el.member === element[3].trim())?.customized
-              if (typeof _cardHolderAvatarIsCustomized === 'undefined') _cardHolderAvatarIsCustomized = 'FALSE'
+            let _whoHasTheCardAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
+            if (typeof _whoHasTheCardAvatar === 'undefined') _whoHasTheCardAvatar = ''
+            let _whoHasTheCardAvatarIsCustomized = this.memberObject.find(el => el.member === element[5].trim())?.customized
+            if (typeof _whoHasTheCardAvatarIsCustomized === 'undefined') _whoHasTheCardAvatarIsCustomized = 'FALSE'
 
-              let _whoHasTheCardAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
-              if (typeof _whoHasTheCardAvatar === 'undefined') _whoHasTheCardAvatar = ''
-              let _whoHasTheCardAvatarIsCustomized = this.memberObject.find(el => el.member === element[5].trim())?.customized
-              if (typeof _whoHasTheCardAvatarIsCustomized === 'undefined') _whoHasTheCardAvatarIsCustomized = 'FALSE'
-
-              this.setWhereIsMyCardObject(element[0], element[1], element[3].trim(), _cardHolderAvatar, _cardHolderAvatarIsCustomized, element[4], element[5].trim(), _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized)
-            }
-            resolve()
-          })
-          .catch((err) => {
-            console.log(err)
-            reject(err)
-          })
-      })
+            this.setWhereIsMyCardObject(element[0], element[1], element[3].trim(), _cardHolderAvatar, _cardHolderAvatarIsCustomized, element[4], element[5].trim(), _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized)
+          }
+        })
+        .catch((err) => console.log(err))
     },
 
-    setWhereIsMyCardObject (_cardHolderId, _cardHolder, _cardHolderAvatar, _cardHolderAvatarIsCustomized, _discounted, _whoHasTheCard, _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized) {
-      this.whereIsMyCardObject.push({ cardHolderId: _cardHolderId, cardHolder: _cardHolder, cardHolderAvatar: _cardHolderAvatar, cardHolderAvatarIsCustomized: _cardHolderAvatarIsCustomized, discounted: _discounted, whoHasTheCard: _whoHasTheCard, whoHasTheCardAvatar: _whoHasTheCardAvatar, whoHasTheCardAvatarIsCustomized: _whoHasTheCardAvatarIsCustomized })
+    setWhereIsMyCardObject (_row, _cardHolderId, _cardHolder, _cardHolderAvatar, _cardHolderAvatarIsCustomized, _discounted, _whoHasTheCard, _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized) {
+      this.whereIsMyCardObject.push({ row: parseInt(_row), cardHolderId: _cardHolderId, cardHolder: _cardHolder, cardHolderAvatar: _cardHolderAvatar, cardHolderAvatarIsCustomized: _cardHolderAvatarIsCustomized, discounted: _discounted, whoHasTheCard: _whoHasTheCard, whoHasTheCardAvatar: _whoHasTheCardAvatar, whoHasTheCardAvatarIsCustomized: _whoHasTheCardAvatarIsCustomized })
     },
 
     onWhereIsMyCardClick (_row, _cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
@@ -308,7 +299,7 @@ export default {
       _constCardHolderId.value = _cardHolderId
       _constCardHolder.value = _cardHolder
       _constCardHolderOld.value = _cardHolder
-      _constDiscounted.value = _discounted === true
+      _constDiscounted.value = _discounted === 'TRUE'
       _constWhoHasTheCard.value = _whoHasTheCard
 
       this.editWhereIsMyCard = true
@@ -320,20 +311,14 @@ export default {
       if (_cardHolderExists) {
         this.onCardHolderAlreadyExists()
       } else {
-        return new Promise((resolve, reject) => {
-          this.$axios.post(`${_URLWhereIsMyCard}/${_TenantId}`)
-            .then((res) => {
-              if (res.status === 200) {
-                this.onCardHolderCreated()
-                this.getTableWhereIsMyCard()
-                resolve()
-              }
-            })
-            .catch((err) => {
-              console.log(err)
-              reject(err)
-            })
-        })
+        this.$axios(`${_URLWhereIsMyCard}&func=Add&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.onCardHolderCreated()
+              this.getTableWhereIsMyCard()
+            }
+          })
+          .catch((err) => console.log(err))
       }
     },
 
@@ -343,20 +328,14 @@ export default {
       if (_cardHolderExists) {
         this.onCardHolderAlreadyExists()
       } else {
-        return new Promise((resolve, reject) => {
-          this.$axios(`${_URLWhereIsMyCard}&func=Update&row=${_row}&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
-            .then((res) => {
-              if (res.status === 200) {
-                this.onCardHolderUpdated()
-                this.getTableWhereIsMyCard()
-                resolve()
-              }
-            })
-            .catch((err) => {
-              console.log(err)
-              reject(err)
-            })
-        })
+        this.$axios(`${_URLWhereIsMyCard}&func=Update&row=${_row}&cardholderId=${_cardHolderId}&cardholder=${encodeURI(_cardHolder.replace(',', ' '))}&discounted=${_discounted}&whohasthecard=${encodeURI(_whoHasTheCard.replace(',', ''))}`)
+          .then((res) => {
+            if (res.data === 'Success, requested action completed') {
+              this.onCardHolderUpdated()
+              this.getTableWhereIsMyCard()
+            }
+          })
+          .catch((err) => console.log(err))
       }
     },
 
@@ -369,9 +348,7 @@ export default {
             this.getTableWhereIsMyCard()
           }
         })
-        .catch((err) => {
-          console.log(err)
-        })
+        .catch((err) => console.log(err))
     }
 
   }

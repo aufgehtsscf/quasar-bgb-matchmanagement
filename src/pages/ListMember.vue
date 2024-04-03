@@ -306,53 +306,39 @@ export default {
 
   mounted () {
     this.setVariables().then(() => {
-      this.getTableMember().then(() => {
-        this.getTableMatch()
-      })
+      this.getTableInactiveMatch()
+      this.getTableMember()
     })
   },
 
   methods: {
     setVariables () {
-      return new Promise((resolve, reject) => {
-        _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-        _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-        _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-        resolve()
-          .catch((err) => {
-            reject(err)
-          })
-      })
+      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      return Promise.resolve()
     },
 
     getTableMember () {
-      return new Promise((resolve, reject) => {
-        this.memberObject = []
+      this.memberObject = []
 
-        this.$axios(`${_URLMember}&func=Read`)
-          .then((res) => {
-            this.tableMember = res.data.split('\n')
-            for (let index = 0; index < this.tableMember.length - 1; index++) {
-              const element = this.tableMember[index].split(',')
+      this.$axios(`${_URLMember}&func=Read`)
+        .then((res) => {
+          this.tableMember = res.data.split('\n')
+          for (let index = 0; index < this.tableMember.length - 1; index++) {
+            const element = this.tableMember[index].split(',')
 
-              let _numberOfParticipations = 0
-              this.$axios(`${_URLParticipantArchive}&func=ReadParticipant&participant=${element[3].trim()}`)
-                .then((res2) => {
-                  this.tableParticipantArchive = res2.data.split('\n')
-                  _numberOfParticipations = this.tableParticipantArchive.length - 1
-                  this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5], _numberOfParticipations)
-                })
-                .catch((err2) => {
-                  console.log(err2)
-                })
-              resolve()
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-            reject(err)
-          })
-      })
+            let _numberOfParticipations = 0
+            this.$axios(`${_URLParticipantArchive}&func=ReadParticipant&participant=${element[3].trim()}`)
+              .then((res2) => {
+                this.tableParticipantArchive = res2.data.split('\n')
+                _numberOfParticipations = this.tableParticipantArchive.length - 1
+                this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5], _numberOfParticipations)
+              })
+              .catch((err) => console.log(err))
+          }
+        })
+        .catch((err) => console.log(err))
     },
 
     setMemberObject (_row, _memberId, _member, _avatar, _customized, _numberOfParticipations) {
@@ -369,24 +355,18 @@ export default {
       })
     },
 
-    getTableMatch () {
-      return new Promise((resolve, reject) => {
-        this.matchObject = []
+    getTableInactiveMatch () {
+      this.matchObject = []
 
-        this.$axios(`${_URLMatch}&func=ReadInactive`)
-          .then((res) => {
-            this.tableMatch = res.data.split('\n')
-            for (let index = 0; index < this.tableMatch.length - 1; index++) {
-              const element = this.tableMatch[index].split(',')
-              this.setMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim())
-            }
-            resolve()
-          })
-          .catch((err) => {
-            console.log(err)
-            reject(err)
-          })
-      })
+      this.$axios(`${_URLMatch}&func=ReadInactive`)
+        .then((res) => {
+          this.tableMatch = res.data.split('\n')
+          for (let index = 0; index < this.tableMatch.length - 1; index++) {
+            const element = this.tableMatch[index].split(',')
+            this.setMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim())
+          }
+        })
+        .catch((err) => console.log(err))
     },
 
     setMatchObject (_matchId, _homeTeam, _awayTeam, _matchName) {
@@ -412,9 +392,7 @@ export default {
             this.setInactiveMatchObject(_homeTeam, _awayTeam, _matchName)
           }
         })
-        .catch((err) => {
-          console.log(err)
-        })
+        .catch((err) => console.log(err))
 
       this.editMember = true
     },
@@ -436,9 +414,7 @@ export default {
               this.getTableMember()
             }
           })
-          .catch((err) => {
-            console.log(err)
-          })
+          .catch((err) => console.log(err))
       }
     },
 
@@ -457,9 +433,7 @@ export default {
               this.getTableMember()
             }
           })
-          .catch((err) => {
-            console.log(err)
-          })
+          .catch((err) => console.log(err))
       }
     },
 
@@ -472,9 +446,7 @@ export default {
             this.editMember = false
           }
         })
-        .catch((err) => {
-          console.log(err)
-        })
+        .catch((err) => console.log(err))
     }
 
   }
