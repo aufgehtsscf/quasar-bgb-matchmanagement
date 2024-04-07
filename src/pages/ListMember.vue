@@ -21,7 +21,7 @@
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
             <q-avatar size="50px" v-if="member.avatar !== ''">
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), member.avatar, member.customized === 'TRUE')">
+              <img :src="getAvatar(varAdminCode, member.avatar, member.customized === true)">
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
           </q-item-section>
@@ -166,7 +166,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMember = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -181,7 +181,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteMember(intMemberRow, txtMemberId)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteMember(txtMemberId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -194,17 +194,21 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, avatarImages, URLMemberBasis, URLParticipantArchiveBasis, URLMatchBasis } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, avatarImages, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
 const _constMemberRow = ref(0)
 const _constMemberId = ref('')
 const _constMember = ref('')
 const _constMemberOld = ref('')
 const _constAvatar = ref('')
+const _constAdminCode = ref('')
 
+let _TenantId
+let _URLTenant
 let _URLMember
-let _URLParticipantArchive
+let _URLParticipant
 let _URLMatch
 
 export default {
@@ -214,6 +218,8 @@ export default {
     const $q = useQuasar()
 
     return {
+      varAdminCode: ref(_constAdminCode),
+
       intMemberRow: ref(_constMemberRow),
       txtMemberId: ref(_constMemberId),
       txtMember: ref(_constMember),
@@ -266,13 +272,10 @@ export default {
       getEventImage,
       teamImages,
       avatarImages,
-      URLMemberBasis,
-      URLParticipantArchiveBasis,
-      URLMatchBasis,
+      URLMatchManagementAPI,
 
       memberObject: [
         {
-          row: '',
           memberId: '',
           member: '',
           avatar: '',
@@ -306,43 +309,79 @@ export default {
 
   mounted () {
     this.setVariables().then(() => {
-      this.getTableInactiveMatch()
-      this.getTableMember()
+      this.getTenantId().then(() => {
+        this.getTableInactiveMatch()
+        this.getTableMember()
+      })
     })
   },
 
   methods: {
     setVariables () {
-      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
+      _URLTenant = URLMatchManagementAPI + '/Tenant'
+      _URLMember = URLMatchManagementAPI + '/Member'
+      _URLParticipant = URLMatchManagementAPI + '/Participant'
+      _URLMatch = URLMatchManagementAPI + '/Match'
       return Promise.resolve()
     },
 
-    getTableMember () {
-      this.memberObject = []
+    getTenantId () {
+      return new Promise((resolve, reject) => {
+        this.$axios.get(`${_URLTenant}/code/${_constAdminCode.value}`)
+          .then((res) => {
+            if (res.statusText === '') {
+              _TenantId = res.data.id
+              resolve()
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
 
-      this.$axios(`${_URLMember}&func=Read`)
+    getTableInactiveMatch () {
+      this.matchObject = []
+
+      this.$axios.get(`${_URLMatch}/${_TenantId}/inactive`)
         .then((res) => {
-          this.tableMember = res.data.split('\n')
-          for (let index = 0; index < this.tableMember.length - 1; index++) {
-            const element = this.tableMember[index].split(',')
-
-            let _numberOfParticipations = 0
-            this.$axios(`${_URLParticipantArchive}&func=ReadParticipant&participant=${element[3].trim()}`)
-              .then((res2) => {
-                this.tableParticipantArchive = res2.data.split('\n')
-                _numberOfParticipations = this.tableParticipantArchive.length - 1
-                this.setMemberObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5], _numberOfParticipations)
-              })
-              .catch((err) => console.log(err))
+          for (let index = 0; index < res.data.length; index++) {
+            this.setMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name)
           }
         })
         .catch((err) => console.log(err))
     },
 
-    setMemberObject (_row, _memberId, _member, _avatar, _customized, _numberOfParticipations) {
-      this.memberObject.push({ row: parseInt(_row), memberId: _memberId, member: _member, avatar: _avatar, customized: _customized, numberOfParticipations: _numberOfParticipations })
+    setMatchObject (_matchId, _homeTeam, _awayTeam, _matchName) {
+      this.matchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName })
+    },
+
+    getTableMember () {
+      this.memberObject = []
+
+      this.$axios.get(`${_URLMember}/${_TenantId}`)
+        .then((res) => {
+          if (res.statusText === '') {
+            for (let index = 0; index < res.data.length; index++) {
+              let _numberOfParticipations = 0
+              this.$axios.get(`${_URLParticipant}/${_TenantId}/name/${res.data[index].name}`)
+                .then((res2) => {
+                  if (res2.statusText === '') {
+                    _numberOfParticipations = res2.data.length
+                    this.setMemberObject(res.data[index].id, res.data[index].name, res.data[index].avatar, res.data[index].isCustomized, _numberOfParticipations)
+                  }
+                })
+                .catch((err2) => console.log(err2))
+            }
+          }
+        })
+        .catch((err) => console.log(err))
+    },
+
+    setMemberObject (_memberId, _member, _avatar, _customized, _numberOfParticipations) {
+      this.memberObject.push({ memberId: _memberId, member: _member, avatar: _avatar, customized: _customized, numberOfParticipations: _numberOfParticipations })
 
       // Sort array of objects
       this.memberObject.sort(function (a, b) {
@@ -355,24 +394,6 @@ export default {
       })
     },
 
-    getTableInactiveMatch () {
-      this.matchObject = []
-
-      this.$axios(`${_URLMatch}&func=ReadInactive`)
-        .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim())
-          }
-        })
-        .catch((err) => console.log(err))
-    },
-
-    setMatchObject (_matchId, _homeTeam, _awayTeam, _matchName) {
-      this.matchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName })
-    },
-
     onMemberClick (_row, _memberId, _member, _avatar) {
       _constMemberRow.value = _row
       _constMemberId.value = _memberId
@@ -381,15 +402,15 @@ export default {
       _constAvatar.value = _avatar
 
       this.inactiveMatchObject = []
-      this.$axios(`${_URLParticipantArchive}&func=ReadParticipant&participant=${_member}`)
+      this.$axios.get(`${_URLParticipant}/${_TenantId}/name/${_member}`)
         .then((res) => {
-          this.tableParticipantArchive = res.data.split('\n')
-          for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
-            const element = this.tableParticipantArchive[index].split(',')
-            const _homeTeam = this.matchObject.find(el => el.matchId === element[2].trim()).homeTeam
-            const _awayTeam = this.matchObject.find(el => el.matchId === element[2].trim()).awayTeam
-            const _matchName = this.matchObject.find(el => el.matchId === element[2].trim()).matchName
-            this.setInactiveMatchObject(_homeTeam, _awayTeam, _matchName)
+          if (res.statusText === '') {
+            for (let index = 0; index < res.data.length; index++) {
+              const _homeTeam = this.matchObject.find(el => el.matchId === res.data[index].id).homeTeam
+              const _awayTeam = this.matchObject.find(el => el.matchId === res.data[index].id).awayTeam
+              const _matchName = this.matchObject.find(el => el.matchId === res.data[index].id).matchName
+              this.setInactiveMatchObject(_homeTeam, _awayTeam, _matchName)
+            }
           }
         })
         .catch((err) => console.log(err))
@@ -407,9 +428,21 @@ export default {
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {
-        this.$axios(`${_URLMember}&func=Add&member=${encodeURI(_member.replace(',', ' '))}&avatar=${_avatar}`)
+        const _constNewGuid = uuidv4()
+        const _constCreationTime = new Date()
+
+        const newMember = {
+          id: _constNewGuid,
+          creationTime: _constCreationTime,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          name: _member,
+          avatar: _avatar,
+          isCustomized: false
+        }
+        this.$axios.post(`${_URLMember}/${_TenantId}`, newMember)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.statusText === '') {
               this.onMemberCreated()
               this.getTableMember()
             }
@@ -418,17 +451,27 @@ export default {
       }
     },
 
-    editMemberSave (_row, _memberId, _member, _memberOld, _avatar) {
+    editMemberSave (_memberId, _member, _memberOld, _avatar) {
       if (typeof _avatar === 'undefined') _avatar = _constAvatar.value
 
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member) && _member !== _memberOld
+
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {
-        this.$axios(`${_URLMember}&func=Update&row=${_row}&memberId=${_memberId}&member=${encodeURI(_member.replace(',', ' '))}&avatar=${_avatar}`)
+        const updMember = {
+          id: _memberId,
+          creationTime: null,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          name: _member,
+          avatar: _avatar,
+          isCustomized: false
+        }
+        this.$axios.put(`${_URLMember}/${_TenantId}/${_memberId}`, updMember)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.statusText === '') {
               this.onMemberUpdated()
               this.getTableMember()
             }
@@ -437,10 +480,10 @@ export default {
       }
     },
 
-    deleteMember (_row, _memberId) {
-      this.$axios(`${_URLMember}&func=Delete&row=${_row}&memberId=${_memberId}`)
+    deleteMember (_memberId) {
+      this.$axios.delete(`${_URLMember}/${_TenantId}/${_memberId}`)
         .then((res) => {
-          if (res.data === 'Success, requested action completed') {
+          if (res.statusText === '') {
             this.onMemberDeleted()
             this.getTableMember()
             this.editMember = false

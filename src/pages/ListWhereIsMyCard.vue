@@ -231,8 +231,10 @@ export default {
 
   mounted () {
     this.setVariables().then(() => {
-      this.getTableMember().then(() => {
-        this.getTableWhereIsMyCard()
+      this.getTenantId().then(() => {
+        this.getTableMember().then(() => {
+          this.getTableWhereIsMyCard()
+        })
       })
     })
   },
@@ -246,28 +248,33 @@ export default {
       return Promise.resolve()
     },
 
+    getTenantId () {
+      return new Promise((resolve, reject) => {
+        this.$axios.get(`${_URLTenant}/code/${_constAdminCode.value}`)
+          .then((res) => {
+            if (res.statusText === '') {
+              _TenantId = res.data.id
+              resolve()
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+
     getTableMember () {
       return new Promise((resolve, reject) => {
-        this.$axios.get(`${_URLTenant}/${_constAdminCode.value}`)
-          .then((res2) => {
-            if (res2.statusText === '') {
-              _TenantId = res2.data.id
+        this.memberObject = []
 
-              this.memberObject = []
-
-              this.$axios.get(`${_URLMember}/${_TenantId}`)
-                .then((res) => {
-                  if (res.statusText === '') {
-                    for (let index = 0; index < res.data.length; index++) {
-                      this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
-                    }
-                    resolve()
-                  }
-                })
-                .catch((err) => {
-                  console.log(err)
-                  reject(err)
-                })
+        this.$axios.get(`${_URLMember}/${_TenantId}`)
+          .then((res) => {
+            if (res.statusText === '') {
+              for (let index = 0; index < res.data.length; index++) {
+                this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
+              }
+              resolve()
             }
           })
           .catch((err) => {
