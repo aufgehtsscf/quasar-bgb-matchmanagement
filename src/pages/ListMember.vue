@@ -323,6 +323,9 @@ export default {
       _URLMember = URLMatchManagementAPI + '/Member'
       _URLParticipant = URLMatchManagementAPI + '/Participant'
       _URLMatch = URLMatchManagementAPI + '/Match'
+
+      this.memberObject = []
+
       return Promise.resolve()
     },
 
@@ -330,9 +333,12 @@ export default {
       return new Promise((resolve, reject) => {
         this.$axios.get(`${_URLTenant}/code/${_constAdminCode.value}`)
           .then((res) => {
-            if (res.statusText === '') {
+            if (res.status === 200) {
               _TenantId = res.data.id
               resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
             }
           })
           .catch((err) => {
@@ -347,8 +353,12 @@ export default {
 
       this.$axios.get(`${_URLMatch}/${_TenantId}/inactive`)
         .then((res) => {
-          for (let index = 0; index < res.data.length; index++) {
-            this.setMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name)
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              this.setMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name)
+            }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -363,18 +373,22 @@ export default {
 
       this.$axios.get(`${_URLMember}/${_TenantId}`)
         .then((res) => {
-          if (res.statusText === '') {
+          if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
               let _numberOfParticipations = 0
               this.$axios.get(`${_URLParticipant}/${_TenantId}/name/${res.data[index].name}`)
                 .then((res2) => {
-                  if (res2.statusText === '') {
+                  if (res2.status === 200) {
                     _numberOfParticipations = res2.data.length
                     this.setMemberObject(res.data[index].id, res.data[index].name, res.data[index].avatar, res.data[index].isCustomized, _numberOfParticipations)
+                  } else {
+                    console.log('Unexpected status code:', res.status)
                   }
                 })
                 .catch((err2) => console.log(err2))
             }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -404,13 +418,15 @@ export default {
       this.inactiveMatchObject = []
       this.$axios.get(`${_URLParticipant}/${_TenantId}/name/${_member}`)
         .then((res) => {
-          if (res.statusText === '') {
+          if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
               const _homeTeam = this.matchObject.find(el => el.matchId === res.data[index].id).homeTeam
               const _awayTeam = this.matchObject.find(el => el.matchId === res.data[index].id).awayTeam
               const _matchName = this.matchObject.find(el => el.matchId === res.data[index].id).matchName
               this.setInactiveMatchObject(_homeTeam, _awayTeam, _matchName)
             }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -442,9 +458,11 @@ export default {
         }
         this.$axios.post(`${_URLMember}/${_TenantId}`, newMember)
           .then((res) => {
-            if (res.statusText === '') {
+            if (res.status === 201) {
               this.onMemberCreated()
               this.getTableMember()
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => console.log(err))
@@ -471,9 +489,11 @@ export default {
         }
         this.$axios.put(`${_URLMember}/${_TenantId}/${_memberId}`, updMember)
           .then((res) => {
-            if (res.statusText === '') {
+            if (res.status === 200) {
               this.onMemberUpdated()
               this.getTableMember()
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => console.log(err))
@@ -483,10 +503,12 @@ export default {
     deleteMember (_memberId) {
       this.$axios.delete(`${_URLMember}/${_TenantId}/${_memberId}`)
         .then((res) => {
-          if (res.statusText === '') {
+          if (res.status === 200) {
             this.onMemberDeleted()
             this.getTableMember()
             this.editMember = false
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))

@@ -245,6 +245,9 @@ export default {
       _URLTenant = URLMatchManagementAPI + '/Tenant'
       _URLWhereIsMyCard = URLMatchManagementAPI + '/CardHolder'
       _URLMember = URLMatchManagementAPI + '/Member'
+
+      this.whereIsMyCardObject = []
+
       return Promise.resolve()
     },
 
@@ -252,9 +255,12 @@ export default {
       return new Promise((resolve, reject) => {
         this.$axios.get(`${_URLTenant}/code/${_constAdminCode.value}`)
           .then((res) => {
-            if (res.statusText === '') {
+            if (res.status === 200) {
               _TenantId = res.data.id
               resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
             }
           })
           .catch((err) => {
@@ -270,11 +276,14 @@ export default {
 
         this.$axios.get(`${_URLMember}/${_TenantId}`)
           .then((res) => {
-            if (res.statusText === '') {
+            if (res.status === 200) {
               for (let index = 0; index < res.data.length; index++) {
                 this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
               }
               resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
             }
           })
           .catch((err) => {
@@ -293,7 +302,7 @@ export default {
 
       this.$axios.get(`${_URLWhereIsMyCard}/${_TenantId}`)
         .then((res) => {
-          if (res.statusText === '') {
+          if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
               let _cardHolderAvatar = this.memberObject.find(el => el.member === res.data[index].name)?.avatar
               if (typeof _cardHolderAvatar === 'undefined') {
@@ -313,6 +322,8 @@ export default {
               }
               this.setWhereIsMyCardObject(res.data[index].id, res.data[index].name, _cardHolderAvatar, _cardHolderAvatarIsCustomized, res.data[index].isDiscounted, res.data[index].whoHasTheCard, _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized)
             }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -353,9 +364,11 @@ export default {
         }
         this.$axios.post(`${_URLWhereIsMyCard}/${_TenantId}`, newCardHolder)
           .then((res) => {
-            if (res.statusText === '') {
+            if (res.status === 201) {
               this.onCardHolderCreated()
               this.getTableWhereIsMyCard()
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => console.log(err))
@@ -380,9 +393,11 @@ export default {
         }
         this.$axios.put(`${_URLWhereIsMyCard}/${_TenantId}/${_cardHolderId}`, updCardHolder)
           .then((res) => {
-            if (res.statusText === '') {
+            if (res.status === 200) {
               this.onCardHolderUpdated()
               this.getTableWhereIsMyCard()
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => console.log(err))
@@ -392,10 +407,12 @@ export default {
     deleteWhereIsMyCard (_cardHolderId) {
       this.$axios.delete(`${_URLWhereIsMyCard}/${_TenantId}/${_cardHolderId}`)
         .then((res) => {
-          if (res.statusText === '') {
+          if (res.status === 200) {
             this.editWhereIsMyCard = false
             this.onCardHolderDeleted()
             this.getTableWhereIsMyCard()
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
