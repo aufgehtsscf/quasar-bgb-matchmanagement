@@ -5,7 +5,7 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title class="text-overline">Aktuelle Spiele ({{ activeMatchObject.length }})</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true"  v-if="getCookie('isAdministrator') === 'true'" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true"  v-if="getCookie('isAdministrator') === true" />
       </q-toolbar>
     </div>
 
@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in activeMatchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(match.row, match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.published, match.date + ' ' + match.time, match.annotations)">
+        <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.published, match.date + ' ' + match.time, match.annotations)">
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
@@ -32,8 +32,8 @@
             <q-item-section>
               <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
               <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
-              <q-item-label caption v-if="match.published === 'TRUE'">Publiziert: Ja</q-item-label>
-              <q-item-label caption v-if="match.published === 'FALSE'">Publiziert: Nein</q-item-label>
+              <q-item-label caption v-if="match.published === true">Publiziert: Ja</q-item-label>
+              <q-item-label caption v-if="match.published === false">Publiziert: Nein</q-item-label>
               <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
             </q-item-section>
         </q-item>
@@ -316,10 +316,10 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
-            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator') === true" />
+            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator') === true" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtDatetime, txtAnnotations)" :disable="((txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === '') && !tglIsEvent) || (txtMatchName === '' && tglIsEvent)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtDatetime, txtAnnotations)" :disable="((txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === '') && !tglIsEvent) || (txtMatchName === '' && tglIsEvent)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -347,7 +347,7 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n <= 9">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n <= 9">
             </q-avatar>
           </div>
 
@@ -359,7 +359,7 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 9 && n <= 19">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 9 && n <= 19">
             </q-avatar>
           </div>
 
@@ -371,7 +371,7 @@
               class="overlapping"
               :style="`left: ${(n - 20) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19 && n <= 29">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 19 && n <= 29">
             </q-avatar>
           </div>
 
@@ -383,7 +383,7 @@
               class="overlapping"
               :style="`left: ${(n - 30) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 29 && n <= 39">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 29 && n <= 39">
             </q-avatar>
           </div>
 
@@ -395,7 +395,7 @@
               class="overlapping"
               :style="`left: ${(n - 40) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 39">
+              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 39">
             </q-avatar>
           </div>
 
@@ -417,7 +417,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="archiveMatch(intMatchRow, txtMatchId, txtDatetime)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="archiveMatch(txtMatchId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -432,7 +432,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteMatch(intMatchRow, txtMatchId)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteMatch(txtMatchId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -445,10 +445,10 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchBasis, URLNextMatchBasis, URLParticipantBasis, URLParticipantArchiveBasis, URLMemberBasis } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
-const _constMatchRow = ref(0)
 const _constMatchId = ref('')
 const _constIsEvent = ref(false)
 const _constHomeTeamNew = ref(getCookie('homeTeam'))
@@ -466,11 +466,13 @@ const _constInactiveNumberOfParticipants = ref('')
 
 const _constMatchNameNew = ref('')
 const _constDatetimeNew = ref('')
+const _constAdminCode = ref('')
 
+let _TenantId
+let _URLTenant
 let _URLMatch
 let _URLNextMatch
 let _URLParticipant
-let _URLParticipantArchive
 let _URLMember
 
 export default {
@@ -480,7 +482,6 @@ export default {
     const $q = useQuasar()
 
     return {
-      intMatchRow: ref(_constMatchRow),
       txtMatchId: ref(_constMatchId),
       tglIsEvent: ref(_constIsEvent),
       txtHomeTeam: ref(_constHomeTeam),
@@ -554,15 +555,10 @@ export default {
       getTeamImage,
       getEventImage,
       teamImages,
-      URLMatchBasis,
-      URLNextMatchBasis,
-      URLParticipantBasis,
-      URLParticipantArchiveBasis,
-      URLMemberBasis,
+      URLMatchManagementAPI,
 
       activeMatchObject: [
         {
-          row: '',
           matchId: '',
           homeTeam: '',
           awayTeam: '',
@@ -620,41 +616,68 @@ export default {
 
   mounted () {
     this.setVariables().then(() => {
-      this.getTableNextMatch()
-      this.getTableMember().then(() => {
-        this.getTableActiveMatch()
-        this.getTableInactiveMatch()
+      this.getTenantId().then(() => {
+        this.getTableNextMatch()
+        this.getTableMember().then(() => {
+          this.getTableActiveMatch()
+          this.getTableInactiveMatch()
+        })
       })
     })
   },
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLNextMatch = URLNextMatchBasis + '?sh=' + getCookie('homeTeam')
-      _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
+      _URLMatch = URLMatchManagementAPI + '/Match'
+      _URLNextMatch = URLMatchManagementAPI + '/NextMatch'
+      _URLParticipant = URLMatchManagementAPI + '/Participant'
+      _URLMember = URLMatchManagementAPI + '/Member'
+
+      this.activeMatchObject = []
+      this.inactiveMatchObject = []
+
       return Promise.resolve()
+    },
+
+    getTenantId () {
+      return new Promise((resolve, reject) => {
+        this.$axios.get(`${_URLTenant}/code/${_constAdminCode.value}`)
+          .then((res) => {
+            if (res.status === 200) {
+              _TenantId = res.data.id
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      const publishedParam = getCookie('isAdministrator') === 'true' ? '' : 'TRUE'
-      this.$axios(`${_URLMatch}&func=ReadActive&published=${publishedParam}`)
+      const publishedParam = getCookie('isAdministrator') === true ? '' : true
+      this.$axios.get(`${_URLMatch}/${_TenantId}/active/${publishedParam}`)
         .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[6], element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].isPublished, res.data[index].fixture.substring(11, 5), res.data[index].annotations.replace(/<br>/g, '\n'), res.data[index].fixture)
+            }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
     },
 
-    setActiveMatchObject (_row, _matchId, _homeTeam, _awayTeam, _matchName, _published, _time, _annotations, _date) {
-      this.activeMatchObject.push({ row: parseInt(_row), matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, time: _time, annotations: _annotations, date: _date })
+    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _published, _time, _annotations, _date) {
+      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, time: _time, annotations: _annotations, date: _date })
 
       // Sort array of objects
       this.activeMatchObject.sort(function (a, b) {
@@ -676,18 +699,24 @@ export default {
       _constInactiveNumberOfParticipants.value = _numberOfParticipants
 
       this.participantInactiveMatchObject = []
-      this.$axios(`${_URLParticipantArchive}&func=ReadMatch&matchId=${_matchId}`)
+      this.$axios.get(`${_URLParticipant}/${_TenantId}/${_matchId}`)
         .then((res) => {
-          this.tableParticipantArchive = res.data.split('\n')
-          for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
-            const element = this.tableParticipantArchive[index].split(',')
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name)?.avatar
+              if (typeof _participantAvatar === 'undefined') {
+                _participantAvatar = ''
+              }
 
-            let _participantAvatar = this.memberObject.find(el => el.member === element[4].trim())?.avatar
-            if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
-            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === element[4].trim())?.customized
-            if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = 'FALSE'
+              let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name)?.customized
+              if (typeof _participantAvatarIsCustomized === 'undefined') {
+                _participantAvatarIsCustomized = false
+              }
 
-            this.setParticipantInactiveMatchObject(element[4].trim(), _participantAvatar, _participantAvatarIsCustomized)
+              this.setParticipantInactiveMatchObject(res.data[index].name, _participantAvatar, _participantAvatarIsCustomized)
+            }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -700,37 +729,44 @@ export default {
     },
 
     getTableMember () {
-      this.memberObject = []
+      return new Promise((resolve, reject) => {
+        this.memberObject = []
 
-      this.$axios(`${_URLMember}&func=Read`)
-        .then((res) => {
-          this.tableMember = res.data.split('\n')
-          for (let index = 0; index < this.tableMember.length - 1; index++) {
-            const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
-          }
-        })
-      return Promise.resolve()
-        .catch((err) => console.log(err))
+        this.$axios.get(`${_URLMember}/${_TenantId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              for (let index = 0; index < res.data.length; index++) {
+                this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
+              }
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setMemberObject (_member, _avatar, _customized) {
       this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
-    onMatchClick (_row, _matchId, _homeTeam, _awayTeam, _matchName, _published, _datetime, _annotations) {
-      _constMatchRow.value = _row
+    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _published, _datetime, _annotations) {
       _constMatchId.value = _matchId
       _constIsEvent.value = _homeTeam === '' && _awayTeam === ''
       _constHomeTeam.value = _homeTeam
       _constAwayTeam.value = _awayTeam
       _constMatchName.value = _matchName
       _constMatchNameOld.value = _matchName
-      _constPublished.value = _published === 'TRUE'
+      _constPublished.value = _published === true
       _constDatetime.value = _datetime
       _constAnnotations.value = _annotations
 
-      if (getCookie('isAdministrator') === 'true') this.editMatch = true
+      if (getCookie('isAdministrator') === true) this.editMatch = true
     },
 
     setFieldsForMatchNameNew (_homeTeam, _awayTeam) {
@@ -772,17 +808,35 @@ export default {
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName)
+
       if (_matchExists) {
         this.onMatchAlreadyExists()
       } else {
-        const _date = _datetime.substring(0, 10)
-        const _time = _datetime.substring(11, 16)
+        const _constNewGuid = uuidv4()
+        const _constCreationTime = new Date()
 
-        this.$axios(`${_URLMatch}&func=Add&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        const newMatch = {
+          id: _constNewGuid,
+          creationTime: _constCreationTime,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          homeTeam: _homeTeam,
+          awayTeam: _awayTeam,
+          name: _matchName,
+          isPublished: _published,
+          fixture: _datetime,
+          doorOpeningtime: null,
+          annotations: _annotations,
+          isDeactivated: false
+        }
+
+        this.$axios.post(`${_URLMatch}/${_TenantId}`, newMatch)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.status === 201) {
               this.onMatchCreated()
               this.getTableActiveMatch()
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => {
@@ -791,7 +845,7 @@ export default {
       }
     },
 
-    editMatchSave (_row, _matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _isEvent, _published, _datetime, _annotations) {
+    editMatchSave (_matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _isEvent, _published, _datetime, _annotations) {
       if (_isEvent) {
         _homeTeam = ''
         _awayTeam = ''
@@ -802,6 +856,7 @@ export default {
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName) && _matchName !== _matchNameOld
+
       if (_matchExists) {
         this.onMatchAlreadyExists()
       } else {
@@ -809,96 +864,91 @@ export default {
         const _time = _datetime.substring(11, 16)
         const _newMatchName = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
 
-        this.$axios(`${_URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        const updMatch = {
+          id: _matchId,
+          creationTime: null,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          homeTeam: _homeTeam,
+          awayTeam: _awayTeam,
+          name: _newMatchName,
+          isPublished: _published,
+          fixture: _datetime,
+          doorOpeningtime: null,
+          annotations: _annotations,
+          isDeactivated: false
+        }
+
+        this.$axios.post(`${_URLMatch}/${_TenantId}/${_matchId}`, updMatch)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.$axios(`${_URLParticipant}&func=UpdateMatch&matchId=${_matchId}&newMatchName=${_newMatchName}`)
-                .then((res2) => {
-                  if (res2.data === 'Success, requested action completed') {
-                    this.onMatchUpdated()
-                    this.getTableActiveMatch()
-                  }
-                })
-                .catch((err) => {
-                  console.log(err)
-                })
+            if (res.status === 200) {
+              this.onMatchUpdated()
+              this.getTableActiveMatch()
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
-          .catch((err) => {
-            console.log(err)
-          })
+          .catch((err) => console.log(err))
       }
     },
 
-    archiveMatch (_row, _matchId, _datetime) {
-      const _date = _datetime.substring(0, 10)
-
-      this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
-        .then(async (res) => {
-          this.tableParticipant = res.data.split('\n')
-
-          for (let index = 0; index < this.tableParticipant.length - 1; index++) {
-            const element = this.tableParticipant[index].split(',')
-            this.$axios(`${_URLParticipantArchive}&func=Add&timestamp=${element[3]}&matchId=${element[2]}&matchName=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
-              .catch((err) => console.log(err))
-          }
-
-          this.inactivateDeleteMatch(_row, _matchId, true)
-        })
-        .catch((err) => console.log(err))
+    archiveMatch (_matchId) {
+      this.inactivateDeleteMatch(_matchId, true)
     },
 
-    inactivateDeleteMatch (_row, _matchId, _inactivate) {
-      this.$axios(`${_URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
-        .then((res3) => {
-          if (res3.data === 'Success, requested action completed') {
-            if (_inactivate) {
-              this.$axios(`${_URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
-                .then((res4) => {
-                  if (res4.data === 'Success, requested action completed') {
-                    this.onMatchArchived()
-                    this.getTableActiveMatch()
-                    this.editMatch = false
-                  }
-                })
-                .catch((err) => console.log(err))
+    inactivateDeleteMatch (_matchId, _inactivate) {
+      if (_inactivate) {
+        this.$axios.patch(`${_URLMatch}/${_TenantId}/${_matchId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              this.onMatchArchived()
+              this.getTableActiveMatch()
+              this.editMatch = false
             } else {
-              this.$axios(`${_URLMatch}&func=Delete&row=${_row}&matchId=${_matchId}`)
-                .then((res5) => {
-                  if (res5.data === 'Success, requested action completed') {
-                    this.onMatchDeleted()
-                    this.getTableActiveMatch()
-                    this.editMatch = false
-                  }
-                })
-                .catch((err) => console.log(err))
+              console.log('Unexpected status code:', res.status)
             }
-          }
-        })
-        .catch((err) => console.log(err))
+          })
+          .catch((err) => console.log(err))
+      } else {
+        this.$axios.delete(`${_URLMatch}/${_TenantId}/${_matchId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              this.onMatchDeleted()
+              this.getTableActiveMatch()
+              this.editMatch = false
+            } else {
+              console.log('Unexpected status code:', res.status)
+            }
+          })
+          .catch((err) => console.log(err))
+      }
     },
 
-    async deleteMatch (_row, _matchId) {
-      this.inactivateDeleteMatch(_row, _matchId, false)
+    async deleteMatch (_matchId) {
+      this.inactivateDeleteMatch(_matchId, false)
     },
 
     getTableInactiveMatch () {
       this.inactiveMatchObject = []
 
-      this.$axios(`${_URLMatch}&func=ReadInactive`)
+      this.$axios.get(`${_URLMatch}/${_TenantId}/inactive`)
         .then((res) => {
-          this.tableInactiveMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableInactiveMatch.length - 1; index++) {
-            const element = this.tableInactiveMatch[index].split(',')
-
-            let _numberOfParticipants = 0
-            this.$axios(`${_URLParticipantArchive}&func=ReadMatch&matchId=${element[1]}`)
-              .then((res2) => {
-                this.tableParticipantArchive = res2.data.split('\n')
-                _numberOfParticipants = this.tableParticipantArchive.length - 1
-                this.setInactiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[9], _numberOfParticipants)
-              })
-              .catch((err) => console.log(err))
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              let _numberOfParticipants = 0
+              this.$axios.get(`${_URLParticipant}/${_TenantId}/${res.data[index].matchId}`)
+                .then((res2) => {
+                  if (res2.status === 200) {
+                    _numberOfParticipants = res2.data.length
+                    this.setInactiveMatchObject(res.data[index].matchId, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].fixture.substring(11, 5), res.data[index].fixture, _numberOfParticipants)
+                  } else {
+                    console.log('Unexpected status code:', res.status)
+                  }
+                })
+                .catch((err) => console.log(err))
+            }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -928,15 +978,12 @@ export default {
       let _image = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.image
       this.setTeamOptionsObject(_label, getCookie('homeTeam'), _image)
 
-      this.$axios(`${_URLNextMatch}&func=Read`)
+      this.$axios.get(`${_URLNextMatch}/${_TenantId}`)
         .then((res) => {
-          this.tableNextMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableNextMatch.length - 1; index++) {
-            const element = this.tableNextMatch[index].split(',')
-
-            _label = this.teamImages.find(el => el.value === element[1].trim())?.label
-            _image = this.teamImages.find(el => el.value === element[1].trim())?.image
-            this.setTeamOptionsObject(_label, element[1].trim(), _image, element[2], element[3])
+          for (let index = 0; index < res.data.length; index++) {
+            _label = this.teamImages.find(el => el.value === res.data[index].adversary)?.label
+            _image = this.teamImages.find(el => el.value === res.data[index].adversary)?.image
+            this.setTeamOptionsObject(_label, res.data[index].adversary, _image, res.data[index].fixture, res.data[index].fixture)
           }
         })
         .catch((err) => console.log(err))

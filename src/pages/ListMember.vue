@@ -164,7 +164,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delMember = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="delete" color="primary" @click="delMember = true" v-if="getCookie('isAdministrator') === true" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
@@ -203,6 +203,7 @@ const _constMemberId = ref('')
 const _constMember = ref('')
 const _constMemberOld = ref('')
 const _constAvatar = ref('')
+
 const _constAdminCode = ref('')
 
 let _TenantId
@@ -441,6 +442,7 @@ export default {
     addMemberSave (_member, _avatar) {
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member)
+
       if (_memberExists) {
         this.onMemberAlreadyExists()
       } else {

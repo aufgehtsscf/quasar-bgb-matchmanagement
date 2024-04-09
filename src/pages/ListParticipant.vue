@@ -73,7 +73,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(el, i) in presentParticipantObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onParticipantClick(el.presentParticipantRow, el.presentParticipantParticipantId, el.presentParticipantParticipant, el.presentParticipantArrival, el.presentParticipantAnnotations, el.presentParticipantAction, el.presentParticipantReaction)">
+        <q-item clickable v-ripple @click="onParticipantClick(el.presentParticipantParticipantId, el.presentParticipantParticipant, el.presentParticipantArrival, el.presentParticipantAnnotations, el.presentParticipantAction, el.presentParticipantReaction)">
           <q-item-section avatar>
             <q-avatar size="70px" color="deep-orange-14" text-color="white" v-if="el.presentParticipantParticipantAvatar === ''">
               {{ el.presentParticipantParticipant.substring(0, 1) }}
@@ -105,7 +105,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(ticket, i) in ticketObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onTicketAssignmentClick(ticket.ticketRow, ticket.ticketParticipantId, ticket.ticketParticipant, ticket.ticketArrival, ticket.ticketAnnotations, ticket.ticketAction, ticket.ticketReaction)">
+        <q-item clickable v-ripple @click="onTicketAssignmentClick(ticket.ticketParticipantId, ticket.ticketParticipant, ticket.ticketArrival, ticket.ticketAnnotations, ticket.ticketAction, ticket.ticketReaction)">
           <q-item-section>
             <q-item-label overline v-if="ticket.ticketAction === 'brauche Karte'">??? an {{ ticket.ticketParticipant }}</q-item-label>
             <q-item-label overline v-if="ticket.ticketAction === 'meine Karte ist frei' && ticket.ticketReaction === ''">{{ ticket.ticketParticipant }} an ???</q-item-label>
@@ -282,7 +282,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if="getCookie('isAdministrator') === 'true' && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantRow, txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -297,7 +297,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(intParticipantRow, txtParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(txtParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -371,7 +371,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(intTicketParticipantRow, txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -407,7 +407,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(intTicketParticipantRow, txtTicketParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(txtTicketParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -435,8 +435,9 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAdminCode, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchBasis, URLParticipantBasis, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
 const _constMatchId = ref('')
 const _constHomeTeam = ref('')
@@ -447,7 +448,6 @@ const _constAnnotationsMatchOriginal = ref('')
 const _constAnnotationsMatch = ref('')
 const _constArrivalElements = []
 
-const _constParticipantRow = ref(0)
 const _constParticipantId = ref('')
 const _constParticipantParticipant = ref('')
 const _constParticipantParticipantOld = ref('')
@@ -474,6 +474,10 @@ const _constParticipantListFormattedForWhatsApp = ref('')
 const _constTicketList = ref('')
 const _constShare = ref('')
 
+const _constAdminCode = ref('')
+
+let _TenantId
+let _URLTenant
 let _URLMatch
 let _URLParticipant
 let _URLWhereIsMyCard
@@ -562,7 +566,6 @@ export default {
       delTicketAssignment: ref(false),
       delTicketAssigned: ref(false),
 
-      intParticipantRow: ref(_constParticipantRow),
       txtParticipantId: ref(_constParticipantId),
       txtParticipantParticipant: ref(_constParticipantParticipant),
       txtParticipantParticipantOld: ref(_constParticipantParticipantOld),
@@ -609,10 +612,7 @@ export default {
       teamImages,
       getTeamImage,
       getEventImage,
-      URLMatchBasis,
-      URLParticipantBasis,
-      URLWhereIsMyCardBasis,
-      URLMemberBasis,
+      URLMatchManagementAPI,
 
       activeMatchObject: [
         {
@@ -628,7 +628,6 @@ export default {
 
       participantObject: [
         {
-          row: '',
           participantId: '',
           timestamp: '',
           matchName: '',
@@ -645,7 +644,6 @@ export default {
 
       presentParticipantObject: [
         {
-          presentParticipantRow: '',
           presentParticipantParticipantId: '',
           presentParticipantMatchName: '',
           presentParticipantParticipant: '',
@@ -660,7 +658,6 @@ export default {
 
       ticketObject: [
         {
-          ticketRow: '',
           ticketParticipantId: '',
           ticketParticipant: '',
           ticketArrival: '',
@@ -672,7 +669,6 @@ export default {
 
       ticketGivenObject: [
         {
-          ticketGivenRow: '',
           ticketGivenParticipantId: '',
           ticketGivenParticipant: ''
         }
@@ -680,7 +676,6 @@ export default {
 
       ticketRequiredObject: [
         {
-          ticketRequiredRow: '',
           ticketRequiredParticipantId: '',
           ticketRequiredParticipant: ''
         }
@@ -688,7 +683,6 @@ export default {
 
       ticketAssignedObject: [
         {
-          ticketAssignedRow: '',
           ticketAssignedParticipantId: '',
           ticketAssignedParticipant: ''
         }
@@ -717,19 +711,31 @@ export default {
 
   mounted () {
     this.setVariables().then(() => {
-      this.getTableMember().then(() => {
-        this.getTableActiveMatch()
-        this.getTableWhereIsMyCard()
+      this.getTenantId().then(() => {
+        this.getTableMember().then(() => {
+          this.getTableActiveMatch()
+          this.getTableWhereIsMyCard()
+        })
       })
     })
   },
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
+      _URLMatch = URLMatchManagementAPI + '/Match'
+      _URLParticipant = URLMatchManagementAPI + '/Participant'
+      _URLWhereIsMyCard = URLMatchManagementAPI + '/CardHolder'
+      _URLMember = URLMatchManagementAPI + '/Member'
+
+      this.activeMatchObject = []
+      this.participantObject = []
+      this.presentParticipantObject = []
+      this.ticketObject = []
+      this.ticketGivenObject = []
+      this.ticketRequiredObject = []
+      this.ticketAssignedObject = []
+
       return Promise.resolve()
     },
 
@@ -741,23 +747,46 @@ export default {
       return false
     },
 
-    getTableMember () {
-      this.memberObject = []
-
-      this.$axios(`${_URLMember}&func=Read`)
-        .then((res) => {
-          this.tableMember = res.data.split('\n')
-          for (let index = 0; index < this.tableMember.length - 1; index++) {
-            const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
-          }
-        })
-      return Promise.resolve()
-        .catch((err) => console.log(err))
+    getTenantId () {
+      return new Promise((resolve, reject) => {
+        this.$axios.get(`${_URLTenant}/code/${_constAdminCode.value}`)
+          .then((res) => {
+            if (res.status === 200) {
+              _TenantId = res.data.id
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
-    setMemberObject (_member, _avatar, _customized) {
-      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
+    getTableMember () {
+      return new Promise((resolve, reject) => {
+        this.memberObject = []
+
+        this.$axios.get(`${_URLMember}/${_TenantId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              for (let index = 0; index < res.data.length; index++) {
+                this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
+              }
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     getTableActiveMatch () {
@@ -834,8 +863,7 @@ export default {
       this.share = true
     },
 
-    onParticipantClick (_row, _participantId, _participant, _arrival, _annotations, _action, _reaction) {
-      _constParticipantRow.value = _row
+    onParticipantClick (_participantId, _participant, _arrival, _annotations, _action, _reaction) {
       _constParticipantId.value = _participantId
       _constParticipantParticipant.value = _participant
       _constParticipantParticipantOld.value = _participant
@@ -856,53 +884,88 @@ export default {
 
       const _participants = this.participantObject.map(el => el.participant)
       const _participantExists = _participants.includes(_participant)
+
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${_URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}&reaction=&matchId=${_matchId}`)
+        const _constNewGuid = uuidv4()
+        const _constCreationTime = new Date()
+
+        const newParticipant = {
+          id: _constNewGuid,
+          creationTime: _constCreationTime,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          name: _participant,
+          arrival: _arrival,
+          annotations: encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>')),
+          action: _action,
+          reaction: '',
+          matchId: _matchId
+        }
+
+        this.$axios.post(`${_URLParticipant}/${_TenantId}`, newParticipant)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.status === 201) {
               this.onParticipantCreated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => console.log(err))
       }
     },
 
-    editParticipantSave (_row, _participantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
+    editParticipantSave (_participantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
       if (_action !== 'bin dabei') _arrival = ''
 
       const _participants = this.participantObject.map(el => el.participant)
       const _participantExists = _participants.includes(_participant) && _participant !== _participantOld
+
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${_URLParticipant}&func=Update&row=${_row}&participantId=${_participantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
+        const updParticipant = {
+          id: _participantId,
+          creationTime: null,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          name: _participant,
+          arrival: _arrival,
+          annotations: encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>')),
+          action: _action,
+          reaction: '',
+          matchId: _matchId
+        }
+        this.$axios.put(`${_URLParticipant}/${_TenantId}`, updParticipant)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.status === 200) {
               this.onParticipantUpdated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => console.log(err))
       }
     },
 
-    deleteParticipant (_row, _participantId, _matchId, _time, _annotationsMatch) {
-      this.$axios(`${_URLParticipant}&func=Delete&row=${_row}&participantId=${_participantId}`)
+    deleteParticipant (_participantId, _matchId, _time, _annotationsMatch) {
+      this.$axios.delete(`${_URLParticipant}/${_TenantId}/${_participantId}`)
         .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.editParticipant = false
+          if (res.status === 200) {
             this.onParticipantDeleted()
             this.loadReloadData(_matchId, _time, _annotationsMatch)
+            this.editParticipant = false
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
     },
 
-    onTicketAssignmentClick (_ticketRow, _ticketParticipantId, _participant, _arrival, _annotations, _action, _reaction) {
-      _constTicketParticipantRow.value = _ticketRow
+    onTicketAssignmentClick (_ticketParticipantId, _participant, _arrival, _annotations, _action, _reaction) {
       _constTicketParticipantId.value = _ticketParticipantId
       _constTicketParticipant.value = _participant
       _constTicketParticipantOld.value = _participant
@@ -924,16 +987,14 @@ export default {
     },
 
     addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchId, _time, _annotationsMatch) {
-      const _ticketGivenRow = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenRow
       const _ticketGivenParticipantId = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenParticipantId
       if (typeof _ticketGivenParticipantId !== 'undefined') {
-        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&row=${_ticketGivenRow}&participantId=${_ticketGivenParticipantId}&reaction=${_ticketAssignmentRequired}`)
+        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketGivenParticipantId}&reaction=${_ticketAssignmentRequired}`)
           .catch((err) => console.log(err))
 
-        const _ticketRequiredRow = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredRow
         const _ticketRequiredParticipantId = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredParticipantId
         if (typeof _ticketRequiredParticipantId !== 'undefined') {
-          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&row=${_ticketRequiredRow}&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
+          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
             .then((res) => {
               if (res.data === 'Success, requested action completed') {
                 this.onAssignmentCreated()
@@ -946,16 +1007,14 @@ export default {
     },
 
     deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchId, _time, _annotationsMatch) {
-      const _ticketGivenRow = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedRow
       const _ticketAssignedGivenParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedParticipantId
       if (typeof _ticketAssignedGivenParticipantId !== 'undefined') {
-        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&row=${_ticketGivenRow}&participantId=${_ticketAssignedGivenParticipantId}&reaction=`)
+        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketAssignedGivenParticipantId}&reaction=`)
           .catch((err) => console.log(err))
 
-        const _ticketRequiredRow = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedRow
         const _ticketAssignedRequiredParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedParticipantId
         if (typeof _ticketAssignedRequiredParticipantId !== 'undefined') {
-          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&row=${_ticketRequiredRow}&participantId=${_ticketAssignedRequiredParticipantId}&action=brauche Karte&reaction=`)
+          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketAssignedRequiredParticipantId}&action=brauche Karte&reaction=`)
             .then((res) => {
               if (res.data === 'Success, requested action completed') {
                 this.editTicketAssigned = false
@@ -968,7 +1027,7 @@ export default {
       }
     },
 
-    editTicketAssignmentSave (_ticketRow, _ticketParticipantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
+    editTicketAssignmentSave (_ticketParticipantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
       if (_action !== 'bin dabei') _arrival = ''
 
       const _participants = this.ticketObject.map(el => el.ticketParticipant)
@@ -976,7 +1035,7 @@ export default {
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${_URLParticipant}&func=Update&row=${_ticketRow}&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
+        this.$axios(`${_URLParticipant}&func=Update&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.editTicketAssignment = false
@@ -988,8 +1047,8 @@ export default {
       }
     },
 
-    deleteTicketAssignment (_ticketRow, _ticketParticipantId, _matchId, _time, _annotationsMatch) {
-      this.$axios(`${_URLParticipant}&func=Delete&row=${_ticketRow}&participantId=${_ticketParticipantId}`)
+    deleteTicketAssignment (_ticketParticipantId, _matchId, _time, _annotationsMatch) {
+      this.$axios(`${_URLParticipant}&func=Delete&participantId=${_ticketParticipantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssignment = false
@@ -1035,8 +1094,8 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setParticipantObject (_row, _participantId, _timestamp, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
-      this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, matchName: _matchName, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
+    setParticipantObject (_participantId, _timestamp, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
+      this.participantObject.push({ participantId: _participantId, timestamp: _timestamp, matchName: _matchName, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
 
       // Sort array of objects
       this.participantObject.sort(function (a, b) {
@@ -1054,15 +1113,15 @@ export default {
 
     fillObjects (_matchId, _time, _annotationsMatch) {
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.matchName, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.participantId, el.matchName, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
 
-        if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.row, el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 
-        if (el.action === 'meine Karte ist frei' && el.reaction === '') this.setTicketGivenObject(el.row, el.participantId, el.participant)
+        if (el.action === 'meine Karte ist frei' && el.reaction === '') this.setTicketGivenObject(el.participantId, el.participant)
 
-        if (el.action === 'brauche Karte' && el.reaction === '') this.setTicketRequiredObject(el.row, el.participantId, el.participant)
+        if (el.action === 'brauche Karte' && el.reaction === '') this.setTicketRequiredObject(el.participantId, el.participant)
 
-        if (el.reaction !== '') this.setTicketAssignedObject(el.row, el.participantId, el.participant)
+        if (el.reaction !== '') this.setTicketAssignedObject(el.participantId, el.participant)
       })
 
       this.presentParticipantObject.forEach(el => {
@@ -1150,34 +1209,36 @@ export default {
       })
     },
 
-    setPresentParticipantObject (_row, _participantId, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
-      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantParticipantId: _participantId, presentParticipantMatchName: _matchName, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantParticipantAvatarIsCustomized: _participantAvatarIsCustomized, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
+    setPresentParticipantObject (_participantId, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
+      this.presentParticipantObject.push({ presentParticipantParticipantId: _participantId, presentParticipantMatchName: _matchName, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantParticipantAvatarIsCustomized: _participantAvatarIsCustomized, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
     },
 
-    setTicketObject (_row, _participantId, _participant, _arrival, _annotations, _action, _reaction) {
-      this.ticketObject.push({ ticketRow: _row, ticketParticipantId: _participantId, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction })
+    setTicketObject (_participantId, _participant, _arrival, _annotations, _action, _reaction) {
+      this.ticketObject.push({ ticketParticipantId: _participantId, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction })
     },
 
-    setTicketGivenObject (_row, _participantId, _participant) {
-      this.ticketGivenObject.push({ ticketGivenRow: _row, ticketGivenParticipantId: _participantId, ticketGivenParticipant: _participant })
+    setTicketGivenObject (_participantId, _participant) {
+      this.ticketGivenObject.push({ ticketGivenParticipantId: _participantId, ticketGivenParticipant: _participant })
     },
 
-    setTicketRequiredObject (_row, _participantId, _participant) {
-      this.ticketRequiredObject.push({ ticketRequiredRow: _row, ticketRequiredParticipantId: _participantId, ticketRequiredParticipant: _participant })
+    setTicketRequiredObject (_participantId, _participant) {
+      this.ticketRequiredObject.push({ ticketRequiredParticipantId: _participantId, ticketRequiredParticipant: _participant })
     },
 
-    setTicketAssignedObject (_row, _participantId, _participant) {
-      this.ticketAssignedObject.push({ ticketAssignedRow: _row, ticketAssignedParticipantId: _participantId, ticketAssignedParticipant: _participant })
+    setTicketAssignedObject (_participantId, _participant) {
+      this.ticketAssignedObject.push({ ticketAssignedParticipantId: _participantId, ticketAssignedParticipant: _participant })
     },
 
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
-      this.$axios(`${_URLWhereIsMyCard}&func=Read`)
+      this.$axios.get(`${_URLWhereIsMyCard}/${_TenantId}`)
         .then((res) => {
-          this.tableWhereIsMyCard = res.data.split('\n')
-          for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
-            const element = this.tableWhereIsMyCard[index].split(',')
-            this.setWhereIsMyCardObject(element[3].trim(), element[4], element[5].trim())
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              this.setWhereIsMyCardObject(res.data[index].name, res.data[index].isDiscounted, res.data[index].whoHasTheCard)
+            }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
