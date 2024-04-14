@@ -723,6 +723,7 @@ export default {
   methods: {
     setVariables () {
       _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
+      _URLTenant = URLMatchManagementAPI + '/Tenant'
       _URLMatch = URLMatchManagementAPI + '/Match'
       _URLParticipant = URLMatchManagementAPI + '/Participant'
       _URLWhereIsMyCard = URLMatchManagementAPI + '/CardHolder'

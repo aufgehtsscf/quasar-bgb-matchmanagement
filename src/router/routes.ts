@@ -11,7 +11,7 @@ const routes: RouteRecordRaw[] = [
       { path: '/whereismycard', component: () => import('src/pages/ListWhereIsMyCard.vue') },
       { path: '/member', component: () => import('src/pages/ListMember.vue') },
       { path: '/order', component: () => import('src/pages/ListOrder.vue') },
-      { path: '/properties', component: () => import('src/pages/ListProperties.vue') },
+      { path: '/properties', component: () => import('src/pages/ListSetting.vue') },
       { path: '/entercode', component: () => import('src/pages/EnterCode.vue') },
       { path: '/updateproperties', component: () => import('src/pages/UpdateProperties.vue') }
     ]

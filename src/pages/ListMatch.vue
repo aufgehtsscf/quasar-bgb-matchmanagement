@@ -5,7 +5,7 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title class="text-overline">Aktuelle Spiele ({{ activeMatchObject.length }})</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true"  v-if="getCookie('isAdministrator') === true" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true" v-if="getCookie('isAdministrator')" />
       </q-toolbar>
     </div>
 
@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in activeMatchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.published, match.date + ' ' + match.time, match.annotations)">
+        <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.published, match.matchDate, match.doorOpeningTime, match.annotations, match.season)">
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
@@ -31,7 +31,7 @@
 
             <q-item-section>
               <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
-              <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
+              <q-item-label caption>Wann: {{ match.matchDate }}</q-item-label>
               <q-item-label caption v-if="match.published === true">Publiziert: Ja</q-item-label>
               <q-item-label caption v-if="match.published === false">Publiziert: Nein</q-item-label>
               <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
@@ -69,7 +69,7 @@
 
             <q-item-section>
               <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
-              <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
+              <q-item-label caption>{{ match.date }}</q-item-label>
             </q-item-section>
             <q-badge floating color="teal">{{ match.numberOfParticipants }}</q-badge>
         </q-item>
@@ -101,7 +101,7 @@
               <q-select
                 filled dense
                 v-model="txtHomeTeamNew"
-                :options="teamOptions"
+                :options="teamImages"
                 label="Heim *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEventNew"
@@ -123,8 +123,9 @@
               <q-select
                 filled dense
                 v-model="txtAwayTeamNew"
-                :options="teamOptions"
+                :options="teamImages"
                 autofocus
+                @blur="setValueForMatchNameNew(txtHomeTeamNew.value, txtAwayTeamNew.value)"
                 label="Gast *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEventNew"
@@ -145,7 +146,7 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input filled dense v-model="txtMatchNameNew" @focus="setFieldsForMatchNameNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname *" v-if="!tglIsEventNew" />
+              <q-input filled dense v-model="txtMatchNameNew" label="Spielname *" v-if="!tglIsEventNew" />
               <q-input filled dense v-model="txtMatchNameNew" label="Veranstaltungsname *" v-if="tglIsEventNew" />
             </div>
 
@@ -160,11 +161,11 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input
                 filled dense
-                v-model="txtDatetimeNew">
+                v-model="txtMatchDateNew" label="Spieldatum">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="txtDatetimeNew" mask="DD.MM.YYYY HH:mm">
+                      <q-date v-model="txtMatchDateNew" mask="DD.MM.YYYY - HH:mm">
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup label="Close" color="primary" flat />
                         </div>
@@ -176,7 +177,25 @@
                 <template v-slot:append>
                   <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-time v-model="txtDatetimeNew" mask="DD.MM.YYYY HH:mm" format24h>
+                      <q-time v-model="txtMatchDateNew" mask="DD.MM.YYYY - HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input
+                filled dense
+                v-model="txtDoorOpeningTimeNew" @focus="setValueForDoorOpeningTimeNew(txtMatchDateNew.substring(13, 18))" label="Türöffnungszeit">
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-time v-model="txtDoorOpeningTimeNew" mask="HH:mm" format24h>
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup label="Close" color="primary" flat />
                         </div>
@@ -191,13 +210,17 @@
               <q-input filled dense v-model="txtAnnotationsNew" type="textarea" label="Kommentar"/>
             </div>
 
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtSeasonNew" label="Saison"/>
+            </div>
+
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="((txtHomeTeamNew === '' || txtAwayTeamNew === '' || txtMatchNameNew === '') && !tglIsEventNew) || (txtMatchNameNew === '' && tglIsEventNew)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtMatchDateNew, txtDoorOpeningTimeNew, txtAnnotationsNew, txtSeasonNew)" :disable="((txtHomeTeamNew === '' || txtAwayTeamNew === '' || txtMatchNameNew === '') && !tglIsEventNew) || (txtMatchNameNew === '' && tglIsEventNew)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -222,7 +245,7 @@
               <q-select
                 filled dense
                 v-model="txtHomeTeam"
-                :options="teamOptions"
+                :options="teamImages"
                 autofocus
                 label="Heim *"
                 options-selected-class="text-deep-orange"
@@ -245,7 +268,9 @@
               <q-select
                 filled dense
                 v-model="txtAwayTeam"
-                :options="teamOptions"
+                :options="teamImages"
+                autofocus
+                @blur="setValueForMatchName(txtHomeTeam.value, txtAwayTeam.value)"
                 label="Gast *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEvent"
@@ -281,11 +306,11 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input
                 filled dense
-                v-model="txtDatetime">
+                v-model="txtMatchDate" label="Spieldatum">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="txtDatetime" mask="DD.MM.YYYY HH:mm">
+                      <q-date v-model="txtMatchDate" mask="DD.MM.YYYY - HH:mm">
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup label="Close" color="primary" flat />
                         </div>
@@ -297,7 +322,25 @@
                 <template v-slot:append>
                   <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-time v-model="txtDatetime" mask="DD.MM.YYYY HH:mm" format24h>
+                      <q-time v-model="txtMatchDate" mask="DD.MM.YYYY - HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input
+                filled dense
+                v-model="txtDoorOpeningTime" @focus="setValueForDoorOpeningTime(txtMatchDate.substring(13, 18))" label="Türöffnungszeit">
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-time v-model="txtDoorOpeningTime" mask="HH:mm" format24h>
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup label="Close" color="primary" flat />
                         </div>
@@ -311,15 +354,19 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input filled dense v-model="txtAnnotations" type="textarea" label="Kommentar"/>
             </div>
+
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtSeason" label="Saison"/>
+            </div>
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator') === true" />
-            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator') === true" />
+            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator')" />
+            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtDatetime, txtAnnotations)" :disable="((txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === '') && !tglIsEvent) || (txtMatchName === '' && tglIsEvent)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtMatchDate, txtDoorOpeningTime, txtAnnotations, txtSeason)" :disable="((txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === '') && !tglIsEvent) || (txtMatchName === '' && tglIsEvent)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -457,21 +504,24 @@ const _constAwayTeam = ref('')
 const _constMatchName = ref('')
 const _constMatchNameOld = ref('')
 const _constPublished = ref(false)
-const _constDatetime = ref('')
+const _constMatchDate = ref('')
+const _constDoorOpeningTime = ref('')
 const _constAnnotations = ref('')
+const _constSeason = ref('')
 
 const _constInactiveMatch = ref('')
 const _constInactiveDatetime = ref('')
 const _constInactiveNumberOfParticipants = ref('')
 
 const _constMatchNameNew = ref('')
-const _constDatetimeNew = ref('')
+const _constDoorOpeningTimeNew = ref('')
+const _constSeasonNew = ref('')
+
 const _constAdminCode = ref('')
 
 let _TenantId
 let _URLTenant
 let _URLMatch
-let _URLNextMatch
 let _URLParticipant
 let _URLMember
 
@@ -489,8 +539,10 @@ export default {
       txtMatchName: ref(_constMatchName),
       txtMatchNameOld: ref(_constMatchNameOld),
       tglPublished: ref(_constPublished),
-      txtDatetime: ref(_constDatetime),
+      txtMatchDate: ref(_constMatchDate),
+      txtDoorOpeningTime: ref(_constDoorOpeningTime),
       txtAnnotations: ref(_constAnnotations),
+      txtSeason: ref(_constSeason),
 
       txtInactiveMatch: ref(_constInactiveMatch),
       txtInactiveDatetime: ref(_constInactiveDatetime),
@@ -501,8 +553,10 @@ export default {
       txtAwayTeamNew: ref(''),
       txtMatchNameNew: ref(_constMatchNameNew),
       tglPublishedNew: ref(false),
-      txtDatetimeNew: ref(_constDatetimeNew),
+      txtMatchDateNew: ref(''),
+      txtDoorOpeningTimeNew: ref(_constDoorOpeningTimeNew),
       txtAnnotationsNew: ref('<STANDARDTEXT>'),
+      txtSeasonNew: ref(_constSeasonNew),
 
       onMatchCreated () {
         $q.notify({
@@ -564,9 +618,10 @@ export default {
           awayTeam: '',
           matchName: '',
           published: '',
-          time: '',
+          matchDate: '',
+          doorOpeningTime: '',
           annotations: '',
-          date: ''
+          season: ''
         }
       ],
 
@@ -576,7 +631,6 @@ export default {
           homeTeam: '',
           awayTeam: '',
           matchName: '',
-          time: '',
           date: '',
           numberOfParticipants: ''
         }
@@ -596,16 +650,6 @@ export default {
           avatar: '',
           customized: ''
         }
-      ],
-
-      teamOptions: [
-        {
-          label: '',
-          value: '',
-          image: '',
-          date: '',
-          time: ''
-        }
       ]
 
     }
@@ -617,7 +661,6 @@ export default {
   mounted () {
     this.setVariables().then(() => {
       this.getTenantId().then(() => {
-        this.getTableNextMatch()
         this.getTableMember().then(() => {
           this.getTableActiveMatch()
           this.getTableInactiveMatch()
@@ -629,8 +672,8 @@ export default {
   methods: {
     setVariables () {
       _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
+      _URLTenant = URLMatchManagementAPI + '/Tenant'
       _URLMatch = URLMatchManagementAPI + '/Match'
-      _URLNextMatch = URLMatchManagementAPI + '/NextMatch'
       _URLParticipant = URLMatchManagementAPI + '/Participant'
       _URLMember = URLMatchManagementAPI + '/Member'
 
@@ -662,12 +705,12 @@ export default {
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      const publishedParam = getCookie('isAdministrator') === true ? '' : true
+      const publishedParam = getCookie('isAdministrator')
       this.$axios.get(`${_URLMatch}/${_TenantId}/active/${publishedParam}`)
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].isPublished, res.data[index].fixture.substring(11, 5), res.data[index].annotations.replace(/<br>/g, '\n'), res.data[index].fixture)
+              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].isPublished, res.data[index].date, res.data[index].doorOpeningTime, res.data[index].annotations.replace(/<br>/g, '\n'), res.data[index].season)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -676,15 +719,15 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _published, _time, _annotations, _date) {
-      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, time: _time, annotations: _annotations, date: _date })
+    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
+      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, matchDate: _matchDate, doorOpeningTime: _doorOpeningTime, annotations: _annotations, season: _season })
 
       // Sort array of objects
       this.activeMatchObject.sort(function (a, b) {
-        let dateA = a.date
+        let dateA = a.matchDate
         dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
 
-        let dateB = b.date
+        let dateB = b.matchDate
         dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
 
         if (dateA > dateB) return 1
@@ -755,7 +798,7 @@ export default {
       this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
-    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _published, _datetime, _annotations) {
+    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
       _constMatchId.value = _matchId
       _constIsEvent.value = _homeTeam === '' && _awayTeam === ''
       _constHomeTeam.value = _homeTeam
@@ -763,13 +806,15 @@ export default {
       _constMatchName.value = _matchName
       _constMatchNameOld.value = _matchName
       _constPublished.value = _published === true
-      _constDatetime.value = _datetime
+      _constMatchDate.value = _matchDate
+      _constDoorOpeningTime.value = _doorOpeningTime
       _constAnnotations.value = _annotations
+      _constSeason.value = _season
 
-      if (getCookie('isAdministrator') === true) this.editMatch = true
+      if (getCookie('isAdministrator')) this.editMatch = true
     },
 
-    setFieldsForMatchNameNew (_homeTeam, _awayTeam) {
+    setValueForMatchNameNew (_homeTeam, _awayTeam) {
       if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
 
       if (typeof _homeTeam !== 'undefined' && typeof _awayTeam !== 'undefined') {
@@ -777,28 +822,51 @@ export default {
         if (_homeTeam === getCookie('homeTeam')) {
           _labelHomeTeam = getCookie('homeTeamAlias')
         } else {
-          _labelHomeTeam = this.teamOptions.find(el => el.value === _homeTeam)?.label
+          _labelHomeTeam = this.teamImages.find(el => el.value === _homeTeam)?.label
         }
         let _labelAwayTeam = ''
         if (_awayTeam === getCookie('homeTeam')) {
           _labelAwayTeam = getCookie('homeTeamAlias')
         } else {
-          _labelAwayTeam = this.teamOptions.find(el => el.value === _awayTeam)?.label
+          _labelAwayTeam = this.teamImages.find(el => el.value === _awayTeam)?.label
         }
         _constMatchNameNew.value = _labelHomeTeam + ' vs. ' + _labelAwayTeam
-
-        let _date = this.teamOptions.find(el => el.value === _awayTeam)?.date
-        let _time = this.teamOptions.find(el => el.value === _awayTeam)?.time
-
-        if (typeof _date === 'undefined' && typeof _time === 'undefined') {
-          _date = this.teamOptions.find(el => el.value === _homeTeam)?.date
-          _time = this.teamOptions.find(el => el.value === _homeTeam)?.time
-        }
-        _constDatetimeNew.value = _date + ' ' + _time
       }
     },
 
-    addMatchSave (_homeTeam, _awayTeam, _matchName, _isEvent, _published, _datetime, _annotations) {
+    setValueForMatchName (_homeTeam, _awayTeam) {
+      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeam.value
+
+      if (typeof _homeTeam !== 'undefined' && typeof _awayTeam !== 'undefined') {
+        let _labelHomeTeam = ''
+        if (_homeTeam === getCookie('homeTeam')) {
+          _labelHomeTeam = getCookie('homeTeamAlias')
+        } else {
+          _labelHomeTeam = this.teamImages.find(el => el.value === _homeTeam)?.label
+        }
+        let _labelAwayTeam = ''
+        if (_awayTeam === getCookie('homeTeam')) {
+          _labelAwayTeam = getCookie('homeTeamAlias')
+        } else {
+          _labelAwayTeam = this.teamImages.find(el => el.value === _awayTeam)?.label
+        }
+        _constMatchName.value = _labelHomeTeam + ' vs. ' + _labelAwayTeam
+      }
+    },
+
+    setValueForDoorOpeningTimeNew (_matchTime) {
+      if (parseInt(_matchTime.substring(0, 2)) >= 2) {
+        _constDoorOpeningTimeNew.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString() + _matchTime.substring(2, 5)
+      }
+    },
+
+    setValueForDoorOpeningTime (_matchTime) {
+      if (parseInt(_matchTime.substring(0, 2)) >= 2) {
+        _constDoorOpeningTime.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString() + _matchTime.substring(2, 5)
+      }
+    },
+
+    addMatchSave (_homeTeam, _awayTeam, _matchName, _isEvent, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
       if (_isEvent) {
         _homeTeam = ''
         _awayTeam = ''
@@ -824,10 +892,11 @@ export default {
           awayTeam: _awayTeam,
           name: _matchName,
           isPublished: _published,
-          fixture: _datetime,
-          doorOpeningtime: null,
+          date: _matchDate,
+          doorOpeningTime: _doorOpeningTime,
           annotations: _annotations,
-          isDeactivated: false
+          isDeactivated: false,
+          season: _season
         }
 
         this.$axios.post(`${_URLMatch}/${_TenantId}`, newMatch)
@@ -845,7 +914,7 @@ export default {
       }
     },
 
-    editMatchSave (_matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _isEvent, _published, _datetime, _annotations) {
+    editMatchSave (_matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _isEvent, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
       if (_isEvent) {
         _homeTeam = ''
         _awayTeam = ''
@@ -860,10 +929,6 @@ export default {
       if (_matchExists) {
         this.onMatchAlreadyExists()
       } else {
-        const _date = _datetime.substring(0, 10)
-        const _time = _datetime.substring(11, 16)
-        const _newMatchName = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
-
         const updMatch = {
           id: _matchId,
           creationTime: null,
@@ -871,15 +936,16 @@ export default {
           tenantId: _TenantId,
           homeTeam: _homeTeam,
           awayTeam: _awayTeam,
-          name: _newMatchName,
+          name: _matchName,
           isPublished: _published,
-          fixture: _datetime,
-          doorOpeningtime: null,
+          date: _matchDate,
+          doorOpeningTime: _doorOpeningTime,
           annotations: _annotations,
-          isDeactivated: false
+          isDeactivated: false,
+          season: _season
         }
 
-        this.$axios.post(`${_URLMatch}/${_TenantId}/${_matchId}`, updMatch)
+        this.$axios.put(`${_URLMatch}/${_TenantId}/${_matchId}`, updMatch)
           .then((res) => {
             if (res.status === 200) {
               this.onMatchUpdated()
@@ -924,7 +990,7 @@ export default {
       }
     },
 
-    async deleteMatch (_matchId) {
+    deleteMatch (_matchId) {
       this.inactivateDeleteMatch(_matchId, false)
     },
 
@@ -940,7 +1006,7 @@ export default {
                 .then((res2) => {
                   if (res2.status === 200) {
                     _numberOfParticipants = res2.data.length
-                    this.setInactiveMatchObject(res.data[index].matchId, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].fixture.substring(11, 5), res.data[index].fixture, _numberOfParticipants)
+                    this.setInactiveMatchObject(res.data[index].matchId, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime.substring(0, 5), res.data[index].date, _numberOfParticipants)
                   } else {
                     console.log('Unexpected status code:', res.status)
                   }
@@ -969,28 +1035,6 @@ export default {
         if (dateA > dateB) return -1
         return 0
       })
-    },
-
-    getTableNextMatch () {
-      this.teamOptions = []
-
-      let _label = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.label
-      let _image = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.image
-      this.setTeamOptionsObject(_label, getCookie('homeTeam'), _image)
-
-      this.$axios.get(`${_URLNextMatch}/${_TenantId}`)
-        .then((res) => {
-          for (let index = 0; index < res.data.length; index++) {
-            _label = this.teamImages.find(el => el.value === res.data[index].adversary)?.label
-            _image = this.teamImages.find(el => el.value === res.data[index].adversary)?.image
-            this.setTeamOptionsObject(_label, res.data[index].adversary, _image, res.data[index].fixture, res.data[index].fixture)
-          }
-        })
-        .catch((err) => console.log(err))
-    },
-
-    setTeamOptionsObject (_label, _value, _image, _date, _time) {
-      this.teamOptions.push({ label: _label, value: _value, image: _image, date: _date, time: _time })
     }
 
   }
