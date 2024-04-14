@@ -4,59 +4,20 @@
     <!-- Setting area (Titel) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title class="text-overline">Einstellungen</q-toolbar-title>
+        <q-toolbar-title class="text-overline">Einstellungen ({{ settingObject.length }})</q-toolbar-title>
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addSetting = true" v-if="getCookie('isAdministrator')" />
       </q-toolbar>
     </div>
 
     <!-- List of Settings -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
-      <q-list dark bordered separator style="max-width: 470px" v-for="(prop, i) in settingObject"
+      <q-list dark bordered separator style="max-width: 470px" v-for="(setting, i) in settingObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onSettingClick(prop.adminCode, prop.clientName, prop.email, prop.homeTeam, prop.homeTeamAlias, prop.standardText, prop.titleUrl1, prop.captionUrl1, prop.linkUrl1, prop.titleUrl2, prop.captionUrl2, prop.linkUrl2, prop.titleUrl3, prop.captionUrl3, prop.linkUrl3, prop.titleUrl4, prop.captionUrl4, prop.linkUrl4, prop.titleUrl5, prop.captionUrl5, prop.linkUrl5)">
+        <q-item clickable v-ripple @click="onSettingClick(setting.settingId, setting.name, setting.value)">
           <q-item-section>
-            <q-item-label caption>Name: {{ prop.clientName }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label caption>Admincode: {{ prop.adminCode }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label caption>Usercode: {{ getUserCode(prop.adminCode) }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label caption>Email: {{ prop.email }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label caption>Heimmannschaft: {{ prop.homeTeam }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label caption>Heimmannschaft (Alias): {{ prop.homeTeamAlias }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label caption>Standardtext: {{ prop.standardText }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label overline>Wichtige Links</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label overline>Link1</q-item-label>
-            <q-item-label caption>Titel: {{ prop.titleUrl1 }}</q-item-label>
-            <q-item-label caption>Untertitel: {{ prop.captionUrl1 }}</q-item-label>
-            <q-item-label caption>URL: {{ prop.linkUrl1 }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label overline>Link2</q-item-label>
-            <q-item-label caption>Titel: {{ prop.titleUrl2 }}</q-item-label>
-            <q-item-label caption>Untertitel: {{ prop.captionUrl2 }}</q-item-label>
-            <q-item-label caption>URL: {{ prop.linkUrl2 }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label overline>Link3</q-item-label>
-            <q-item-label caption>Titel: {{ prop.titleUrl3 }}</q-item-label>
-            <q-item-label caption>Untertitel: {{ prop.captionUrl3 }}</q-item-label>
-            <q-item-label caption>URL: {{ prop.linkUrl3 }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label overline>Link4</q-item-label>
-            <q-item-label caption>Titel: {{ prop.titleUrl4 }}</q-item-label>
-            <q-item-label caption>Untertitel: {{ prop.captionUrl4 }}</q-item-label>
-            <q-item-label caption>URL: {{ prop.linkUrl4 }}</q-item-label>
-            <q-item-label caption></q-item-label>
-            <q-item-label overline>Link5</q-item-label>
-            <q-item-label caption>Titel: {{ prop.titleUrl5 }}</q-item-label>
-            <q-item-label caption>Untertitel: {{ prop.captionUrl5 }}</q-item-label>
-            <q-item-label caption>URL: {{ prop.linkUrl5 }}</q-item-label>
+            <q-item-label overline>Name {{ setting.name }}</q-item-label>
+            <q-item-label overline>Value {{ setting.value }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -66,70 +27,60 @@
     <div class="q-pa-md q-gutter-sm">
 
       <!-- Start Dialogs Setting -->
-      <!-- Edit Setting -->
-      <q-dialog v-model="editSetting" persistent>
+      <!-- Add Setting -->
+      <q-dialog v-model="addSetting" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Einstellungen ändern</div>
+            <div class="text-h6">Setting erfassen</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtClientName" autofocus label="Name" :readonly="true" v-if="getCookie('clientName') === 'BGB'"/>
-            <q-input filled dense v-model="txtClientName" autofocus label="Name" v-if="getCookie('clientName') !== 'BGB'"/>
-            <q-input filled dense v-model="txtAdminCode" label="AdminCode" :readonly="true"/>
-            <q-input filled dense v-model="txtUserCode" label="UserCode" :readonly="true"/>
-            <q-input filled dense v-model="txtEmail" label="E-Mail" />
-            <q-input filled dense v-model="txtHomeTeam" label="Heimmannschaft" />
-            <q-input filled dense v-model="txtHomeTeamAlias" label="Heimmannschaft (Alias)" />
-            <div class="q-pt-md" style="max-width: 350px">
-              <q-input filled dense v-model="txtStandardText" type="textarea" label="Standardtext"/>
-            </div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <div class="text-subtitle1">Wichtige Links</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <div class="text-subtitle2">Link 1</div>
-            <q-input filled dense v-model="txtTitleUrl1" label="Titel" />
-            <q-input filled dense v-model="txtCaptionUrl1" label="Untertitel" />
-            <q-input filled dense v-model="txtLinkUrl1" label="URL" />
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <div class="text-subtitle2">Link 2</div>
-            <q-input filled dense v-model="txtTitleUrl2" label="Titel" />
-            <q-input filled dense v-model="txtCaptionUrl2" label="Untertitel" />
-            <q-input filled dense v-model="txtLinkUrl2" label="URL" />
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <div class="text-subtitle2">Link 3</div>
-            <q-input filled dense v-model="txtTitleUrl3" label="Titel" />
-            <q-input filled dense v-model="txtCaptionUrl3" label="Untertitel" />
-            <q-input filled dense v-model="txtLinkUrl3" label="URL" />
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <div class="text-subtitle2">Link 4</div>
-            <q-input filled dense v-model="txtTitleUrl4" label="Titel" />
-            <q-input filled dense v-model="txtCaptionUrl4" label="Untertitel" />
-            <q-input filled dense v-model="txtLinkUrl4" label="URL" />
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <div class="text-subtitle2">Link 5</div>
-            <q-input filled dense v-model="txtTitleUrl5" label="Titel" />
-            <q-input filled dense v-model="txtCaptionUrl5" label="Untertitel" />
-            <q-input filled dense v-model="txtLinkUrl5" label="URL" />
+            <q-input filled dense v-model="txtSettingNameNew" autofocus label="Name *" />
+            <q-input filled dense v-model="txtSettingValueNew" label="Value *" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editSettingSave(txtAdminCode, txtClientName, txtEmail, txtHomeTeam, txtHomeTeamAlias, txtStandardText, txtTitleUrl1, txtCaptionUrl1, txtLinkUrl1, txtTitleUrl2, txtCaptionUrl2, txtLinkUrl2, txtTitleUrl3, txtCaptionUrl3, txtLinkUrl3, txtTitleUrl4, txtCaptionUrl4, txtLinkUrl4, txtTitleUrl5, txtCaptionUrl5, txtLinkUrl5)" :disable="txtClientName === '' && txtHomeTeam === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addSettingSave(txtSettingNameNew, txtSettingValueNew)" :disable="txtSettingNameNew === '' || txtSettingValueNew === ''" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- Edit Setting -->
+      <q-dialog v-model="editSetting" persistent>
+        <q-card style="min-width: 350px">
+          <q-card-section>
+            <div class="text-h6">Setting ändern</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <q-input filled dense v-model="txtSettingName" label="Name *" />
+            <q-input filled dense v-model="txtSettingValue" autofocus label="Value *" />
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions class="text-primary" align="right">
+            <q-btn icon="delete" color="primary" @click="delSetting = true" v-if="getCookie('isAdministrator')" />
+            <q-btn flat label="Abbrechen" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editSettingSave(txtSettingId, txtSettingName, txtSettingValue)" :disable="txtSettingName === '' || txtSettingValue === ''" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- Delete Setting -->
+      <q-dialog v-model="delSetting" persistent>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="delete" color="primary" text-color="white" />
+            <span class="q-ml-sm">Datensatz löschen?</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Nein" color="primary" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteSetting(txtSettingId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -154,6 +105,10 @@ const _constHomeTeam = ref('')
 const _constHomeTeamAlias = ref('')
 const _constStandardText = ref('')
 
+const _constSettingId = ref('')
+const _constSettingName = ref('')
+const _constSettingValue = ref('')
+
 let _TenantId
 let _URLTenant
 let _URLSetting
@@ -172,6 +127,13 @@ export default {
       txtHomeTeam: ref(_constHomeTeam),
       txtHomeTeamAlias: ref(_constHomeTeamAlias),
       txtStandardText: ref(_constStandardText),
+
+      txtSettingId: ref(_constSettingId),
+      txtSettingName: ref(_constSettingName),
+      txtSettingValue: ref(_constSettingValue),
+
+      txtSettingNameNew: ref(''),
+      txtSettingValueNew: ref(''),
 
       onSettingCreated () {
         $q.notify({
@@ -201,7 +163,9 @@ export default {
         })
       },
 
-      editSetting: ref(false)
+      addSetting: ref(false),
+      editSetting: ref(false),
+      delSetting: ref(false)
     }
   },
 
@@ -215,6 +179,7 @@ export default {
 
       settingObject: [
         {
+          settingId: '',
           name: '',
           value: ''
         }
@@ -254,9 +219,6 @@ export default {
               _constAdminCode.value = res.data.adminCode
               _constUserCode.value = res.data.userCode
               _constEmail.value = res.data.email
-              _constHomeTeam.value = res.data.homeTeam
-              _constHomeTeamAlias.value = res.data.homeTeamAlias
-              _constStandardText.value = res.data.standardText
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)
@@ -277,7 +239,7 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setSettingObject(res.data[index].name, res.data[index].value)
+              this.setSettingObject(res.data[index].id, res.data[index].name, res.data[index].value)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -288,22 +250,18 @@ export default {
         })
     },
 
-    setSettingObject (_name, _value) {
-      this.settingObject.push({ name: _name, value: _value })
+    setSettingObject (_settingId, _name, _value) {
+      this.settingObject.push({ settingId: _settingId, name: _name, value: _value })
     },
 
-    onSettingClick (_adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText) {
-      _constAdminCode.value = _adminCode
-      _constUserCode.value = getUserCode(_adminCode)
-      _constClientName.value = _clientName
-      _constEmail.value = _email
-      _constHomeTeam.value = _homeTeam
-      _constHomeTeamAlias.value = _homeTeamAlias
-      _constStandardText.value = _standardText
+    onSettingClick (_settingId, _settingName, _settingValue) {
+      _constSettingId.value = _settingId
+      _constSettingName.value = _settingName
+      _constSettingValue.value = _settingValue
 
-      const _date = new Date()
+      // const _date = new Date()
 
-      setCookie(true, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _date)
+      // setCookie(true, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _date)
 
       this.editSetting = true
     },
@@ -324,7 +282,7 @@ export default {
           lastModificationTime: null,
           tenantId: _TenantId,
           name: _name,
-          avatar: _value
+          value: _value
         }
         this.$axios.post(`${_URLSetting}/${_TenantId}`, newSetting)
           .then((res) => {
@@ -346,16 +304,13 @@ export default {
       if (_settingExists) {
         this.onSettingAlreadyExists()
       } else {
-        const _constNewGuid = uuidv4()
-        const _constCreationTime = new Date()
-
         const updSetting = {
-          id: _constNewGuid,
-          creationTime: _constCreationTime,
+          id: _settingId,
+          creationTime: null,
           lastModificationTime: null,
           tenantId: _TenantId,
           name: _name,
-          avatar: _value
+          value: _value
         }
         this.$axios.put(`${_URLSetting}/${_TenantId}/${_settingId}`, updSetting)
           .then((res) => {
@@ -374,9 +329,9 @@ export default {
       this.$axios.delete(`${_URLSetting}/${_TenantId}/${_settingId}`)
         .then((res) => {
           if (res.status === 200) {
-            this.onMemberDeleted()
-            this.getTableMember()
-            this.editMember = false
+            this.onSettingDeleted()
+            this.getTableSetting()
+            this.editSetting = false
           } else {
             console.log('Unexpected status code:', res.status)
           }

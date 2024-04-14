@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(member, i) in memberObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMemberClick(member.row, member.memberId, member.member, member.avatar)">
+        <q-item clickable v-ripple @click="onMemberClick(member.memberId, member.member, member.avatar)">
           <q-item-section avatar>
             <q-avatar size="50px" color="pink-10" text-color="white" v-if="member.avatar === ''">
               {{ member.member.substring(0, 1) }}
@@ -164,7 +164,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delMember = true" v-if="getCookie('isAdministrator') === true" />
+            <q-btn icon="delete" color="primary" @click="delMember = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === ''" v-close-popup />
           </q-card-actions>
@@ -198,7 +198,6 @@ import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamIm
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 
-const _constMemberRow = ref(0)
 const _constMemberId = ref('')
 const _constMember = ref('')
 const _constMemberOld = ref('')
@@ -221,7 +220,6 @@ export default {
     return {
       varAdminCode: ref(_constAdminCode),
 
-      intMemberRow: ref(_constMemberRow),
       txtMemberId: ref(_constMemberId),
       txtMember: ref(_constMember),
       txtMemberOld: ref(_constMemberOld),
@@ -409,8 +407,7 @@ export default {
       })
     },
 
-    onMemberClick (_row, _memberId, _member, _avatar) {
-      _constMemberRow.value = _row
+    onMemberClick (_memberId, _member, _avatar) {
       _constMemberId.value = _memberId
       _constMember.value = _member
       _constMemberOld.value = _member

@@ -47,7 +47,7 @@
     </q-card>
 
     <!-- Share -->
-    <div class="q-pa-md" style="max-width: 500px" v-if="getCookie('isAdministrator') === 'true'" >
+    <div class="q-pa-md" style="max-width: 500px" v-if="getCookie('isAdministrator')" >
       <q-btn class="bg-white text-primary" icon="share" label="Übersicht teilen" @click="setTextShareForWhatsApp(txtMatchName)" />
     </div>
 
@@ -97,7 +97,7 @@
       <div class="q-pa-md" style="max-width: 470px" v-if="txtHomeTeam === getCookie('homeTeam')">
         <q-toolbar class="bg-primary text-white">
             <q-toolbar-title class="text-overline">Karte weitergeben ({{ ticketGivenObject.length }}) oder bedarf ({{ ticketRequiredObject.length }})</q-toolbar-title>
-            <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="getCookie('isAdministrator')" />
         </q-toolbar>
       </div>
 
@@ -280,7 +280,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if="getCookie('isAdministrator') === 'true' && txtParticipantReaction === ''" />
+            <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if=" getCookie('isAdministrator') && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editParticipantSave(txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
           </q-card-actions>
@@ -369,7 +369,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
@@ -391,7 +391,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="swipe_left" label="Aufheben" color="primary" @click="delTicketAssigned = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="swipe_left" label="Aufheben" color="primary" @click="delTicketAssigned = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
           </q-card-actions>
         </q-card>

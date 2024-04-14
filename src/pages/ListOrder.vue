@@ -162,7 +162,7 @@
     <q-separator />
 
     <q-card-actions class="text-primary" align="right">
-      <q-btn icon="delete" color="primary" @click="delOrder = true" v-if="getCookie('isAdministrator') === 'true'" />
+      <q-btn icon="delete" color="primary" @click="delOrder = true" v-if="getCookie('isAdministrator')" />
       <q-btn flat label="Abbrechen" v-close-popup />
       <q-btn icon="save" label="Speichern" @click="editOrderSave(intOrderRow, txtPositionId, txtOrderId, txtName, txtProduct, txtSize, txtColor, txtInitials)" :disable="txtName === '' || txtProduct === '' || txtSize === '' || txtColor === ''" v-close-popup />
     </q-card-actions>
@@ -359,7 +359,7 @@ export default {
       _constPositionId.value = _positionId
       _constOrderId.value = _orderId
 
-      if (getCookie('isAdministrator') === 'true') this.editOrder = true
+      if (getCookie('isAdministrator')) this.editOrder = true
     },
 
     addOrderSave (_orderId, _name, _product, _size, _color, _initials) {

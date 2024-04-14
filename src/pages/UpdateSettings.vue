@@ -36,7 +36,7 @@ import { URLProperties, getCookie, setCookie, getAdminCode } from 'src/boot/util
 import { ref } from 'vue'
 
 export default {
-  name: 'EnterCode',
+  name: 'UpdateSettings',
 
   setup () {
     const $q = useQuasar()

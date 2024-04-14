@@ -94,14 +94,14 @@
             <q-item-section> Bestellungen </q-item-section>
           </q-item>
 
-          <q-item to="/properties" exact clickable v-ripple v-if="getCookie('isAdministrator') === 'true'">
+          <q-item to="/settings" exact clickable v-ripple v-if="getCookie('isAdministrator')">
             <q-item-section avatar>
               <q-icon name="settings" />
             </q-item-section>
             <q-item-section> Einstellungen </q-item-section>
           </q-item>
 
-          <q-item to="/updateproperties" exact clickable v-ripple v-if="getCookie('isAdministrator') === 'false' && getCookie('updatedOn') !== txtUpdatedOn">
+          <q-item to="/updatesettings" exact clickable v-ripple v-if="!getCookie('isAdministrator') && getCookie('updatedOn') !== txtUpdatedOn">
             <q-item-section avatar>
               <q-icon name="system_update" />
             </q-item-section>
