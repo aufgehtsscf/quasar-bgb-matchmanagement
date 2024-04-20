@@ -630,7 +630,7 @@ export default {
         {
           participantId: '',
           timestamp: '',
-          matchName: '',
+          matchId: '',
           participant: '',
           participantAvatar: '',
           _participantAvatarIsCustomized: '',
@@ -790,6 +790,10 @@ export default {
       })
     },
 
+    setMemberObject (_member, _avatar, _customized) {
+      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
+    },
+
     getTableActiveMatch () {
       this.activeMatchObject = []
       this.participantObject = []
@@ -799,15 +803,13 @@ export default {
       this.ticketRequiredObject = []
       this.ticketAssignedObject = []
 
-      this.$axios(`${_URLMatch}&func=ReadActive&published=TRUE`)
+      this.$axios.get(`${_URLMatch}/${_TenantId}/active/true`)
         .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
+          for (let index = 0; index < res.data.length; index++) {
+            this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime, res.data[index].annotations.replace(/<br>/g, '\n'), res.data[index].date)
           }
 
-          if (this.tableMatch.length > 1) {
+          if (res.data.length > 0) {
             this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].time, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
           }
         })
@@ -1074,29 +1076,26 @@ export default {
       _constAnnotationsMatch.value = ''
       _constTicketList.value = ''
 
-      this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
+      this.$axios.get(`${_URLParticipant}/${_TenantId}/${_matchId}`)
         .then((res) => {
-          this.tableParticipant = res.data.split('\n')
-          for (let index = 0; index < this.tableParticipant.length - 1; index++) {
-            const element = this.tableParticipant[index].split(',')
-
-            let _participantAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
+          for (let index = 0; index < res.data.length; index++) {
+            let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name)?.avatar
             if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
-            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === element[5].trim())?.customized
-            if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = 'FALSE'
+            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name)?.customized
+            if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = false
 
-            this.setParticipantObject(element[0], element[1], element[3], element[4].trim(), element[5].trim(), _participantAvatar, _participantAvatarIsCustomized, element[6].substring(0, 5), element[7].trim().replace(/<br>/g, '\n'), element[8], element[9])
+            this.setParticipantObject(res.data[index].id, res.data[index].creationTime, res.data[index].matchId, res.data[index].name, res.data[index].name, _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival, res.data[index].annotations.replace(/<br>/g, '\n'), res.data[index].action, res.data[index].reaction)
           }
 
-          if (this.tableParticipant.length > 1) {
+          if (res.data.length > 0) {
             this.fillObjects(_matchId, _time, _annotationsMatch)
           }
         })
         .catch((err) => console.log(err))
     },
 
-    setParticipantObject (_participantId, _timestamp, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
-      this.participantObject.push({ participantId: _participantId, timestamp: _timestamp, matchName: _matchName, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
+    setParticipantObject (_participantId, _timestamp, _matchId, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
+      this.participantObject.push({ participantId: _participantId, timestamp: _timestamp, matchId: _matchId, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
 
       // Sort array of objects
       this.participantObject.sort(function (a, b) {
@@ -1114,7 +1113,7 @@ export default {
 
     fillObjects (_matchId, _time, _annotationsMatch) {
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.participantId, el.matchName, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.participantId, el.matchId, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
 
         if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 

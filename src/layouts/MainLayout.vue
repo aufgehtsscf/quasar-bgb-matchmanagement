@@ -44,8 +44,8 @@
 
         <q-item-label header> Wichtige Links </q-item-label>
 
-        <EssentialLinkHome
-          v-for="link in essentialLinksHome"
+        <EssentialLink
+          v-for="link in essentialLinks"
           :key="link.title"
           v-bind="link"
         />
@@ -94,22 +94,15 @@
             <q-item-section> Bestellungen </q-item-section>
           </q-item>
 
-          <q-item to="/settings" exact clickable v-ripple v-if="getCookie('isAdministrator')">
+          <q-item to="/link" exact clickable v-ripple v-if="getCookie('isAdministrator')">
             <q-item-section avatar>
               <q-icon name="settings" />
             </q-item-section>
-            <q-item-section> Einstellungen </q-item-section>
-          </q-item>
-
-          <q-item to="/updatesettings" exact clickable v-ripple v-if="!getCookie('isAdministrator') && getCookie('updatedOn') !== txtUpdatedOn">
-            <q-item-section avatar>
-              <q-icon name="system_update" />
-            </q-item-section>
-            <q-item-section> Einstellungen updaten </q-item-section>
+            <q-item-section> Links </q-item-section>
           </q-item>
         </q-list>
 
-        <q-item-label header> Wichtige Links </q-item-label>
+        <q-item-label header>  </q-item-label>
 
         <EssentialLink
           v-for="link in essentialLinks"
@@ -133,85 +126,40 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
-import EssentialLinkHome from 'components/EssentialLinkHome.vue'
-import { getAdminCode, getCookie, getLogo, URLProperties } from 'src/boot/utils.js'
+import { getAdminCode, getCookie, getLogo, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { date } from 'quasar'
+
+const _constAdminCode = ref('')
+
+let _TenantId = ''
+let _URLTenant = ''
+let _URLLink = ''
 
 const linksList = [
   {
-    title: getCookie('titleUrl1'),
-    caption: getCookie('captionUrl1'),
-    icon: 'favorite',
-    link: getCookie('linkUrl1')
-  },
-  {
-    title: getCookie('titleUrl2'),
-    caption: getCookie('captionUrl2'),
-    icon: 'drafts',
-    link: getCookie('linkUrl2')
-  },
-  {
-    title: getCookie('titleUrl3'),
-    caption: getCookie('captionUrl3'),
-    icon: 'public',
-    link: getCookie('linkUrl3')
-  },
-  {
-    title: getCookie('titleUrl4'),
-    caption: getCookie('captionUrl4'),
-    icon: 'rss_feed',
-    link: getCookie('linkUrl4')
-  },
-  {
-    title: getCookie('titleUrl5'),
-    caption: getCookie('captionUrl5'),
-    icon: 'record_voice_over',
-    link: getCookie('linkUrl5')
+    title: 'Wichtige Links',
+    caption: '',
+    icon: '',
+    url: ''
   }
 ]
-
-const linksListHome = [
-  {
-    title: getCookie('titleUrl2'),
-    caption: getCookie('captionUrl2'),
-    icon: 'drafts',
-    link: getCookie('linkUrl2')
-  },
-  {
-    title: getCookie('titleUrl3'),
-    caption: getCookie('captionUrl3'),
-    icon: 'public',
-    link: getCookie('linkUrl3')
-  },
-  {
-    title: getCookie('titleUrl5'),
-    caption: getCookie('captionUrl5'),
-    icon: 'record_voice_over',
-    link: getCookie('linkUrl5')
-  }
-]
-
-const _constUpdatedOn = ref('')
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    EssentialLink,
-    EssentialLinkHome
+    EssentialLink
   },
 
   setup () {
     const leftDrawerOpen = ref(false)
 
     return {
-      essentialLinksHome: linksListHome,
       essentialLinks: linksList,
       getAdminCode,
       getCookie,
       getLogo,
-      URLProperties,
-      txtUpdatedOn: ref(_constUpdatedOn),
+      URLMatchManagementAPI,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
@@ -227,21 +175,81 @@ export default defineComponent({
   },
 
   mounted () {
-    this.getTableProperties()
+    this.setVariables().then(() => {
+      this.getTenantId().then(() => {
+        this.getTableLink()
+      })
+    })
   },
 
   methods: {
-    getTableProperties () {
-      // console.log('URLProperties: ' + this.URLProperties + '&func=ReadAdminCode&adminCode=' + getAdminCode(getCookie('applicationCode'), true))
-      this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${getAdminCode(getCookie('applicationCode'))}`)
+    setVariables () {
+      _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
+      _URLTenant = URLMatchManagementAPI + '/Tenant'
+      _URLLink = URLMatchManagementAPI + '/Link'
+
+      return Promise.resolve()
+    },
+
+    getTenantId (): Promise<void> {
+      return new Promise((resolve, reject) => {
+        this.$axios.get(`${_URLTenant}/code/${_constAdminCode.value}`)
+          .then((res) => {
+            if (res.status === 200) {
+              _TenantId = res.data.id
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+
+    getTableLink () {
+      this.$axios.get(`${_URLLink}/${_TenantId}`)
         .then((res) => {
-          const element = res.data.split(',')
-          _constUpdatedOn.value = element[23].replace(/(?:\r\n|\r|\n)/g, '')
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              let _icon = ''
+              switch (res.data[index].title) {
+                case 'E-Mail':
+                  _icon = 'drafts'
+                  break
+                case 'Facebook':
+                  _icon = 'public'
+                  break
+                case 'Z':
+                  _icon = 'rss_feed'
+                  break
+                case 'Instagram':
+                  _icon = 'record_voice_over'
+                  break
+
+                default:
+                  _icon = 'favorite'
+                  break
+              }
+
+              this.setLinkList(res.data[index].title, res.data[index].caption, _icon, res.data[index].url)
+            }
+          } else {
+            console.log('Unexpected status code:', res.status)
+          }
         })
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    setLinkList (_title: string, _caption: string, _icon: string, _url: string) {
+      linksList.push({ title: _title, caption: _caption, icon: _icon, url: _url })
     }
+
   }
 
 })

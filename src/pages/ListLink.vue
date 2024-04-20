@@ -1,23 +1,24 @@
 <template>
   <q-page>
 
-    <!-- Setting area (Titel) -->
+    <!-- Link area (Title) -->
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
-        <q-toolbar-title class="text-overline">Einstellungen ({{ settingObject.length }})</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addSetting = true" v-if="getCookie('isAdministrator')" />
+        <q-toolbar-title class="text-overline">Wichtige Links ({{ linkObject.length }})</q-toolbar-title>
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addLink = true" v-if="getCookie('isAdministrator')" />
       </q-toolbar>
     </div>
 
-    <!-- List of Settings -->
+    <!-- List of Links -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
-      <q-list dark bordered separator style="max-width: 470px" v-for="(setting, i) in settingObject"
+      <q-list dark bordered separator style="max-width: 470px" v-for="(link, i) in linkObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onSettingClick(setting.settingId, setting.name, setting.value)">
+        <q-item clickable v-ripple @click="onLinkClick(link.linkId, link.title, link.caption, link.url)">
           <q-item-section>
-            <q-item-label overline>Name {{ setting.name }}</q-item-label>
-            <q-item-label overline>Value {{ setting.value }}</q-item-label>
+            <q-item-label overline>Titel: {{ link.title }}</q-item-label>
+            <q-item-label overline>Untertitel: {{ link.caption }}</q-item-label>
+            <q-item-label overline>URL: {{ link.url }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -26,52 +27,54 @@
     <!-- Dialogs -->
     <div class="q-pa-md q-gutter-sm">
 
-      <!-- Start Dialogs Setting -->
-      <!-- Add Setting -->
-      <q-dialog v-model="addSetting" persistent>
+      <!-- Start Dialogs Link -->
+      <!-- Add Link -->
+      <q-dialog v-model="addLink" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Setting erfassen</div>
+            <div class="text-h6">Link erfassen</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtSettingNameNew" autofocus label="Name *" />
-            <q-input filled dense v-model="txtSettingValueNew" label="Value *" />
+            <q-input filled dense v-model="txtLinkTitleNew" autofocus label="Titel *" />
+            <q-input filled dense v-model="txtLinkCaptionNew" label="Untertitel" />
+            <q-input filled dense v-model="txtLinkUrlNew" label="URL" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addSettingSave(txtSettingNameNew, txtSettingValueNew)" :disable="txtSettingNameNew === '' || txtSettingValueNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addLinkSave(txtLinkTitleNew, txtLinkCaptionNew, txtLinkUrlNew)" :disable="txtLinkTitleNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
 
-      <!-- Edit Setting -->
-      <q-dialog v-model="editSetting" persistent>
+      <!-- Edit Link -->
+      <q-dialog v-model="editLink" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Setting ändern</div>
+            <div class="text-h6">Link ändern</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtSettingName" label="Name *" />
-            <q-input filled dense v-model="txtSettingValue" autofocus label="Value *" />
+            <q-input filled dense v-model="txtLinkTitle" label="Title *" />
+            <q-input filled dense v-model="txtLinkCaption" autofocus label="Untertitel" />
+            <q-input filled dense v-model="txtLinkUrl" autofocus label="URL" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delSetting = true" v-if="getCookie('isAdministrator')" />
+            <q-btn icon="delete" color="primary" @click="delLink = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editSettingSave(txtSettingId, txtSettingName, txtSettingValue)" :disable="txtSettingName === '' || txtSettingValue === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editLinkSave(txtLinkId, txtLinkTitle, txtLinkCaption, txtLinkUrl)" :disable="txtLinkTitle === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
 
-      <!-- Delete Setting -->
-      <q-dialog v-model="delSetting" persistent>
+      <!-- Delete Link -->
+      <q-dialog v-model="delLink" persistent>
         <q-card>
           <q-card-section class="row items-center">
             <q-avatar icon="delete" color="primary" text-color="white" />
@@ -80,11 +83,11 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteSetting(txtSettingId)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteLink(txtLinkId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- End Dialogs Setting -->
+      <!-- End Dialogs Link -->
     </div>
 
     <q-img src="statics/images/AufGehtsSCF.png" class="header-image absolute-top" />
@@ -104,17 +107,20 @@ const _constEmail = ref('')
 const _constHomeTeam = ref('')
 const _constHomeTeamAlias = ref('')
 const _constStandardText = ref('')
+const _constSeason = ref('')
+const _constSeasonForAdmin = ref('')
 
-const _constSettingId = ref('')
-const _constSettingName = ref('')
-const _constSettingValue = ref('')
+const _constLinkId = ref('')
+const _constLinkTitle = ref('')
+const _constLinkCaption = ref('')
+const _constLinkUrl = ref('')
 
 let _TenantId
 let _URLTenant
-let _URLSetting
+let _URLLink
 
 export default {
-  name: 'ListSetting',
+  name: 'ListLink',
 
   setup () {
     const $q = useQuasar()
@@ -128,44 +134,46 @@ export default {
       txtHomeTeamAlias: ref(_constHomeTeamAlias),
       txtStandardText: ref(_constStandardText),
 
-      txtSettingId: ref(_constSettingId),
-      txtSettingName: ref(_constSettingName),
-      txtSettingValue: ref(_constSettingValue),
+      txtLinkId: ref(_constLinkId),
+      txtLinkTitle: ref(_constLinkTitle),
+      txtLinkCaption: ref(_constLinkCaption),
+      txtLinkUrl: ref(_constLinkUrl),
 
-      txtSettingNameNew: ref(''),
-      txtSettingValueNew: ref(''),
+      txtLinkTitleNew: ref(''),
+      txtLinkCaptionNew: ref(''),
+      txtLinkUrlNew: ref(''),
 
-      onSettingCreated () {
+      onLinkCreated () {
         $q.notify({
           type: 'positive',
           message: 'Einstellung wurde erfolgreich erfasst!'
         })
       },
 
-      onSettingUpdated () {
+      onLinkUpdated () {
         $q.notify({
           type: 'positive',
           message: 'Einstellung wurden erfolgreich aktualisiert!'
         })
       },
 
-      onSettingDeleted () {
+      onLinkDeleted () {
         $q.notify({
           message: 'Einstellung wurde erfolgreich gelöscht!',
           color: 'orange'
         })
       },
 
-      onSettingAlreadyExists () {
+      onLinkAlreadyExists () {
         $q.notify({
           type: 'negative',
           message: 'Diese Einstellung besteht bereits!'
         })
       },
 
-      addSetting: ref(false),
-      editSetting: ref(false),
-      delSetting: ref(false)
+      addLink: ref(false),
+      editLink: ref(false),
+      delLink: ref(false)
     }
   },
 
@@ -177,11 +185,12 @@ export default {
       getUserCode,
       URLMatchManagementAPI,
 
-      settingObject: [
+      linkObject: [
         {
-          settingId: '',
-          name: '',
-          value: ''
+          linkId: '',
+          title: '',
+          caption: '',
+          url: ''
         }
       ]
     }
@@ -193,7 +202,7 @@ export default {
   mounted () {
     this.setVariables().then(() => {
       this.getTenantId().then(() => {
-        this.getTableSetting()
+        this.getTableLink()
       })
     })
   },
@@ -202,9 +211,9 @@ export default {
     setVariables () {
       _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
       _URLTenant = URLMatchManagementAPI + '/Tenant'
-      _URLSetting = URLMatchManagementAPI + '/Setting'
+      _URLLink = URLMatchManagementAPI + '/Link'
 
-      this.settingObject = []
+      this.linkObject = []
 
       return Promise.resolve()
     },
@@ -219,6 +228,11 @@ export default {
               _constAdminCode.value = res.data.adminCode
               _constUserCode.value = res.data.userCode
               _constEmail.value = res.data.email
+              _constHomeTeam.value = res.data.homeTeam
+              _constHomeTeamAlias.value = res.data.homeTeamAlias
+              _constStandardText.value = res.data.standardText
+              _constSeason.value = res.data.season
+              _constSeasonForAdmin.value = res.data.seasonForAdmin
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)
@@ -232,14 +246,14 @@ export default {
       })
     },
 
-    async getTableSetting () {
-      this.settingObject = []
+    getTableLink () {
+      this.linkObject = []
 
-      this.$axios.get(`${_URLSetting}/${_TenantId}`)
+      this.$axios.get(`${_URLLink}/${_TenantId}`)
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setSettingObject(res.data[index].id, res.data[index].name, res.data[index].value)
+              this.setLinkObject(res.data[index].id, res.data[index].title, res.data[index].caption, res.data[index].url)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -250,45 +264,43 @@ export default {
         })
     },
 
-    setSettingObject (_settingId, _name, _value) {
-      this.settingObject.push({ settingId: _settingId, name: _name, value: _value })
+    setLinkObject (_linkId, _title, _caption, _url) {
+      this.linkObject.push({ linkId: _linkId, title: _title, caption: _caption, url: _url })
     },
 
-    onSettingClick (_settingId, _settingName, _settingValue) {
-      _constSettingId.value = _settingId
-      _constSettingName.value = _settingName
-      _constSettingValue.value = _settingValue
+    onLinkClick (_linkId, _linkTitle, _linkCaption, _linkUrl) {
+      _constLinkId.value = _linkId
+      _constLinkTitle.value = _linkTitle
+      _constLinkCaption.value = _linkCaption
+      _constLinkUrl.value = _linkUrl
 
-      // const _date = new Date()
-
-      // setCookie(true, _adminCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _date)
-
-      this.editSetting = true
+      this.editLink = true
     },
 
-    addSettingSave (_name, _value) {
-      const _settings = this.settingObject.map(el => el.name)
-      const _settingExists = _settings.includes(_name)
+    addLinkSave (_title, _caption, _url) {
+      const _links = this.linkObject.map(el => el.title)
+      const _linkExists = _links.includes(_title)
 
-      if (_settingExists) {
-        this.onSettingAlreadyExists()
+      if (_linkExists) {
+        this.onLinkAlreadyExists()
       } else {
         const _constNewGuid = uuidv4()
         const _constCreationTime = new Date()
 
-        const newSetting = {
+        const newLink = {
           id: _constNewGuid,
           creationTime: _constCreationTime,
           lastModificationTime: null,
           tenantId: _TenantId,
-          name: _name,
-          value: _value
+          title: _title,
+          caption: _caption,
+          url: _url
         }
-        this.$axios.post(`${_URLSetting}/${_TenantId}`, newSetting)
+        this.$axios.post(`${_URLLink}/${_TenantId}`, newLink)
           .then((res) => {
             if (res.status === 201) {
-              this.onSettingUpdated()
-              this.getTableSetting()
+              this.onLinkUpdated()
+              this.getTableLink()
             } else {
               console.log('Unexpected status code:', res.status)
             }
@@ -297,26 +309,27 @@ export default {
       }
     },
 
-    editSettingSave (_settingId, _name, _value) {
-      const _settings = this.settingObject.map(el => el.name)
-      const _settingExists = _settings.includes(_name)
+    editLinkSave (_linkId, _title, _caption, _url) {
+      const _links = this.linkObject.map(el => el.name)
+      const _linkExists = _links.includes(_title)
 
-      if (_settingExists) {
-        this.onSettingAlreadyExists()
+      if (_linkExists) {
+        this.onLinkAlreadyExists()
       } else {
-        const updSetting = {
-          id: _settingId,
+        const updLink = {
+          id: _linkId,
           creationTime: null,
           lastModificationTime: null,
           tenantId: _TenantId,
-          name: _name,
-          value: _value
+          title: _title,
+          caption: _caption,
+          url: _url
         }
-        this.$axios.put(`${_URLSetting}/${_TenantId}/${_settingId}`, updSetting)
+        this.$axios.put(`${_URLLink}/${_TenantId}/${_linkId}`, updLink)
           .then((res) => {
             if (res.status === 200) {
-              this.onSettingUpdated()
-              this.getTableSetting()
+              this.onLinkUpdated()
+              this.getTableLink()
             } else {
               console.log('Unexpected status code:', res.status)
             }
@@ -325,13 +338,13 @@ export default {
       }
     },
 
-    deleteSetting (_settingId) {
-      this.$axios.delete(`${_URLSetting}/${_TenantId}/${_settingId}`)
+    deleteLink (_linkId) {
+      this.$axios.delete(`${_URLLink}/${_TenantId}/${_linkId}`)
         .then((res) => {
           if (res.status === 200) {
-            this.onSettingDeleted()
-            this.getTableSetting()
-            this.editSetting = false
+            this.onLinkDeleted()
+            this.getTableLink()
+            this.editLink = false
           } else {
             console.log('Unexpected status code:', res.status)
           }
