@@ -100,20 +100,12 @@ import { getCookie, setCookie, getAdminCode, getUserCode, URLMatchManagementAPI 
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 
-const _constClientName = ref('')
-const _constAdminCode = ref('')
-const _constUserCode = ref('')
-const _constEmail = ref('')
-const _constHomeTeam = ref('')
-const _constHomeTeamAlias = ref('')
-const _constStandardText = ref('')
-const _constSeason = ref('')
-const _constSeasonForAdmin = ref('')
-
 const _constLinkId = ref('')
 const _constLinkTitle = ref('')
 const _constLinkCaption = ref('')
 const _constLinkUrl = ref('')
+
+const _constAdminCode = ref('')
 
 let _TenantId
 let _URLTenant
@@ -126,14 +118,6 @@ export default {
     const $q = useQuasar()
 
     return {
-      txtClientName: ref(_constClientName),
-      txtAdminCode: ref(_constAdminCode),
-      txtUserCode: ref(_constUserCode),
-      txtEmail: ref(_constEmail),
-      txtHomeTeam: ref(_constHomeTeam),
-      txtHomeTeamAlias: ref(_constHomeTeamAlias),
-      txtStandardText: ref(_constStandardText),
-
       txtLinkId: ref(_constLinkId),
       txtLinkTitle: ref(_constLinkTitle),
       txtLinkCaption: ref(_constLinkCaption),
@@ -146,20 +130,20 @@ export default {
       onLinkCreated () {
         $q.notify({
           type: 'positive',
-          message: 'Einstellung wurde erfolgreich erfasst!'
+          message: 'Link wurde erfolgreich erfasst!'
         })
       },
 
       onLinkUpdated () {
         $q.notify({
           type: 'positive',
-          message: 'Einstellung wurden erfolgreich aktualisiert!'
+          message: 'Link wurden erfolgreich aktualisiert!'
         })
       },
 
       onLinkDeleted () {
         $q.notify({
-          message: 'Einstellung wurde erfolgreich gelöscht!',
+          message: 'Link wurde erfolgreich gelöscht!',
           color: 'orange'
         })
       },
@@ -167,7 +151,7 @@ export default {
       onLinkAlreadyExists () {
         $q.notify({
           type: 'negative',
-          message: 'Diese Einstellung besteht bereits!'
+          message: 'Dieser Link besteht bereits!'
         })
       },
 
@@ -224,15 +208,6 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               _TenantId = res.data.id
-              _constClientName.value = res.data.name
-              _constAdminCode.value = res.data.adminCode
-              _constUserCode.value = res.data.userCode
-              _constEmail.value = res.data.email
-              _constHomeTeam.value = res.data.homeTeam
-              _constHomeTeamAlias.value = res.data.homeTeamAlias
-              _constStandardText.value = res.data.standardText
-              _constSeason.value = res.data.season
-              _constSeasonForAdmin.value = res.data.seasonForAdmin
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)

@@ -96,9 +96,16 @@
 
           <q-item to="/link" exact clickable v-ripple v-if="getCookie('isAdministrator')">
             <q-item-section avatar>
-              <q-icon name="settings" />
+              <q-icon name="link" />
             </q-item-section>
             <q-item-section> Links </q-item-section>
+          </q-item>
+
+          <q-item to="/setting" exact clickable v-ripple v-if="getCookie('isAdministrator')">
+            <q-item-section avatar>
+              <q-icon name="settings" />
+            </q-item-section>
+            <q-item-section> Settings </q-item-section>
           </q-item>
         </q-list>
 
