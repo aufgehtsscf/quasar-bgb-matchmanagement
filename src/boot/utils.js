@@ -1,6 +1,6 @@
-const IsAdministrator = 'true'
-const ApplicationCode = 'TEST'
-const ClientName = 'HOME'
+const IsAdministrator = 'false'
+const ApplicationCode = 'NGdoLbyd_330'
+const ClientName = 'BGB'
 
 const Email = 'aufgehtsscf@gmail.com'
 const HomeTeam = 'Freiburg'

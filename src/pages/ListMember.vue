@@ -305,10 +305,9 @@ export default {
   },
 
   mounted () {
-    this.setVariables().then(() => {
-      this.getTableInactiveMatch()
-      this.getTableMember()
-    })
+    this.setVariables()
+    this.getTableInactiveMatch()
+    this.getTableMember()
   },
 
   methods: {
@@ -316,7 +315,6 @@ export default {
       _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
       _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
       _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      return Promise.resolve()
     },
 
     getTableMember () {
