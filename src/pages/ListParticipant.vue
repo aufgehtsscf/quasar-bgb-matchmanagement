@@ -808,7 +808,7 @@ export default {
       this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/active/true`)
         .then((res) => {
           for (let index = 0; index < res.data.length; index++) {
-            this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime, res.data[index].annotations.replace(/<br>/g, '\n'), res.data[index].date)
+            this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime, res.data[index].annotations, res.data[index].date)
           }
 
           if (res.data.length > 0) {
@@ -903,7 +903,7 @@ export default {
           tenantId: _TenantId,
           name: _participant,
           arrival: _arrival,
-          annotations: encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>')),
+          annotations: encodeURI(_annotations),
           action: _action,
           reaction: '',
           matchId: _matchId
@@ -938,7 +938,7 @@ export default {
           tenantId: _TenantId,
           name: _participant,
           arrival: _arrival,
-          annotations: encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>')),
+          annotations: encodeURI(_annotations),
           action: _action,
           reaction: '',
           matchId: _matchId
@@ -1040,7 +1040,7 @@ export default {
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${_URLParticipant}&func=Update&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
+        this.$axios(`${_URLParticipant}&func=Update&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant)}&arrival=${_arrival}&annotations=${encodeURI(_annotations)}&action=${_action}`)
           .then((res) => {
             if (res.data === 'Success, requested action completed') {
               this.editTicketAssignment = false
@@ -1143,8 +1143,8 @@ export default {
         }
 
         if (el.presentParticipantAnnotations !== '') {
-          _constParticipantList.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')'
-          if (el.presentParticipantArrival !== '') { _constParticipantListFormattedForWhatsApp.value += ' _(' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')' } else { _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')' }
+          _constParticipantList.value += ' (' + el.presentParticipantAnnotations.trim() + ')'
+          if (el.presentParticipantArrival !== '') { _constParticipantListFormattedForWhatsApp.value += ' _(' + el.presentParticipantAnnotations.trim() + ')' } else { _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantAnnotations.trim() + ')' }
         }
 
         if (el.presentParticipantReaction !== '') {
@@ -1175,8 +1175,8 @@ export default {
       const _standardText = getCookie('standardText').replace('<HH>', parseInt(_time.substring(0, 2) - 2)).replace('<MM>', _time.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
 
       _constAnnotationsMatchOriginal.value = _annotationsMatch
-      _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText).replace(',,', ',')
-      _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText).replace(',.', '.')
+      _constAnnotationsMatch.value = _annotationsMatch.replace('<STANDARDTEXT>', _standardText).replace(',,', ',')
+      _constAnnotationsMatch.value = _annotationsMatch.replace('<STANDARDTEXT>', _standardText).replace(',.', '.')
       if (_constAnnotationsMatch.value.substring(_constAnnotationsMatch.value.length - 1, _constAnnotationsMatch.value.length) === ',') {
         _constAnnotationsMatch.value = _constAnnotationsMatch.value.substring(0, _constAnnotationsMatch.value.length - 1) + '.'
       }
