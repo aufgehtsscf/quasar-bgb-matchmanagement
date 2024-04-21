@@ -1084,7 +1084,7 @@ export default {
             let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name)?.customized
             if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = false
 
-            this.setParticipantObject(res.data[index].id, res.data[index].creationTime, res.data[index].matchId, res.data[index].name, res.data[index].name, _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival, res.data[index].annotations.replace(/<br>/g, '\n'), res.data[index].action, res.data[index].reaction)
+            this.setParticipantObject(res.data[index].id, res.data[index].creationTime, res.data[index].matchId, res.data[index].name, _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival, res.data[index].annotations, res.data[index].action, res.data[index].reaction)
           }
 
           if (res.data.length > 0) {
