@@ -477,6 +477,7 @@ const _constShare = ref('')
 const _constAdminCode = ref('')
 
 let _TenantId
+let _Season
 let _URLTenant
 let _URLMatch
 let _URLParticipant
@@ -754,6 +755,7 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               _TenantId = res.data.id
+              _Season = res.data.season
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)
@@ -803,7 +805,7 @@ export default {
       this.ticketRequiredObject = []
       this.ticketAssignedObject = []
 
-      this.$axios.get(`${_URLMatch}/${_TenantId}/active/true`)
+      this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/active/true`)
         .then((res) => {
           for (let index = 0; index < res.data.length; index++) {
             this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime, res.data[index].annotations.replace(/<br>/g, '\n'), res.data[index].date)

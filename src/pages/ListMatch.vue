@@ -211,7 +211,7 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input filled dense v-model="txtSeasonNew" label="Saison"/>
+              <q-input filled dense v-model="txtSeasonNew" label="Saison" :disable="true" />
             </div>
 
           </q-card-section>
@@ -356,7 +356,7 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input filled dense v-model="txtSeason" label="Saison"/>
+              <q-input filled dense v-model="txtSeason" label="Saison" :disable="true" />
             </div>
           </q-card-section>
 
@@ -689,6 +689,7 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               _TenantId = res.data.id
+              _constSeasonNew.value = res.data.season
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)
@@ -706,11 +707,11 @@ export default {
       this.activeMatchObject = []
 
       const publishedParam = getCookie('isAdministrator')
-      this.$axios.get(`${_URLMatch}/${_TenantId}/active/${publishedParam}`)
+      this.$axios.get(`${_URLMatch}/${_TenantId}/${_constSeasonNew.value}/active/${publishedParam}`)
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].isPublished, res.data[index].date, res.data[index].doorOpeningTime, res.data[index].annotations.replace(/<br>/g, '\n'), res.data[index].season)
+              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].isPublished, res.data[index].date, res.data[index].doorOpeningTime, res.data[index].annotations, res.data[index].season)
             }
           } else {
             console.log('Unexpected status code:', res.status)
