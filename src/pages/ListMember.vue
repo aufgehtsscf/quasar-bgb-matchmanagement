@@ -145,7 +145,7 @@
               :key="n"
               size="40px"
               class="overlapping"
-              :style="`left: ${(n - 10) * 32}px`"
+              :style="`left: ${(n - 20) * 32}px`"
             >
               <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
               <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
