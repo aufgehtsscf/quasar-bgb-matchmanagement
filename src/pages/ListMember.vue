@@ -206,6 +206,7 @@ const _constAvatar = ref('')
 const _constAdminCode = ref('')
 
 let _TenantId
+let _Season
 let _URLTenant
 let _URLMember
 let _URLParticipant
@@ -296,7 +297,8 @@ export default {
           matchId: '',
           homeTeam: '',
           awayTeam: '',
-          matchName: ''
+          matchName: '',
+          season: ''
         }
       ]
 
@@ -334,6 +336,7 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               _TenantId = res.data.id
+              _Season = res.data.season
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)
@@ -350,11 +353,11 @@ export default {
     getTableInactiveMatch () {
       this.matchObject = []
 
-      this.$axios.get(`${_URLMatch}/${_TenantId}/inactive`)
+      this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/inactive`)
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name)
+              this.setMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].season)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -363,8 +366,8 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setMatchObject (_matchId, _homeTeam, _awayTeam, _matchName) {
-      this.matchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName })
+    setMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _season) {
+      this.matchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, season: _season })
     },
 
     getTableMember () {

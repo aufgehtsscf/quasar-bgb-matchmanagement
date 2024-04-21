@@ -519,8 +519,8 @@ const _constSeasonNew = ref('')
 
 const _constAdminCode = ref('')
 
-let _Season
 let _TenantId
+let _Season
 let _URLTenant
 let _URLMatch
 let _URLParticipant
@@ -1025,7 +1025,7 @@ export default {
                 .then((res2) => {
                   if (res2.status === 200) {
                     _numberOfParticipants = res2.data.length
-                    this.setInactiveMatchObject(res2.data[index].id, res2.data[index].homeTeam, res2.data[index].awayTeam, res2.data[index].name, res.data[index].doorOpeningTime.substring(0, 5), res.data[index].date, _numberOfParticipants)
+                    this.setInactiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime, res.data[index].date, _numberOfParticipants)
                   } else {
                     console.log('Unexpected status code:', res2.status)
                   }
