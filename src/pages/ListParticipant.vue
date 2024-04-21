@@ -13,10 +13,10 @@
         <q-list v-for="(match, i) in activeMatchObject"
           :key="i"
           v-ripple>
-          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.time, match.annotations, match.date)">
+          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.doorOpeningtime, match.annotations, match.date)">
             <q-item-section>
               <q-item-label>{{ match.matchName }}</q-item-label>
-              <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
+              <q-item-label caption>{{ match.date }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -443,7 +443,7 @@ const _constMatchId = ref('')
 const _constHomeTeam = ref('')
 const _constAwayTeam = ref('')
 const _constMatchName = ref('')
-const _constTime = ref('')
+const _constDoorOpeningTime = ref('')
 const _constAnnotationsMatchOriginal = ref('')
 const _constAnnotationsMatch = ref('')
 const _constArrivalElements = []
@@ -495,7 +495,7 @@ export default {
       txtHomeTeam: ref(_constHomeTeam),
       txtAwayTeam: ref(_constAwayTeam),
       txtMatchName: ref(_constMatchName),
-      txtTime: ref(_constTime),
+      txtTime: ref(_constDoorOpeningTime),
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
       cbxArrivalOptions: ref(_constArrivalElements),
@@ -621,7 +621,7 @@ export default {
           homeTeam: '',
           awayTeam: '',
           matchName: '',
-          time: '',
+          doorOpeningtime: '',
           annotations: '',
           date: ''
         }
@@ -743,7 +743,7 @@ export default {
 
     isReservation (_participantArrival, _matchTime) {
       if (_participantArrival !== '') {
-        if (parseInt(_participantArrival.substring(0, 2)) === parseInt(_matchTime.substring(0, 2) - 2) &&
+        if (parseInt(_participantArrival.substring(0, 2)) === parseInt(_matchTime.substring(0, 2)) &&
         _participantArrival.substring(3, 5) === _matchTime.substring(3, 5)) { return true } else { return false }
       }
       return false
@@ -812,14 +812,14 @@ export default {
           }
 
           if (res.data.length > 0) {
-            this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].time, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
+            this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].doorOpeningtime, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
           }
         })
         .catch((err) => console.log(err))
     },
 
-    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _time, _annotations, _date) {
-      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, time: _time, annotations: _annotations, date: _date })
+    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _doorOpeningTime, _annotations, _date) {
+      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, doorOpeningtime: _doorOpeningTime, annotations: _annotations, date: _date })
 
       // Sort array of objects
       this.activeMatchObject.sort(function (a, b) {
@@ -835,19 +835,19 @@ export default {
       })
     },
 
-    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _time, _annotationsMatch, _date) {
+    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _doorOpeningTime, _annotationsMatch, _date) {
       _constMatchId.value = _matchId
       _constHomeTeam.value = _homeTeam
       _constAwayTeam.value = _awayTeam
-      _constMatchName.value = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
-      _constTime.value = _time
+      _constMatchName.value = _matchName.trim() + ' ' + _date
+      _constDoorOpeningTime.value = _doorOpeningTime
 
-      this.loadReloadData(_matchId, _time, _annotationsMatch)
+      this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
     },
 
-    loadReloadData (_matchId, _time, _annotationsMatch) {
-      this.setArrivalElements(_time)
-      this.getTableParticipant(_matchId, _time, _annotationsMatch)
+    loadReloadData (_matchId, _doorOpeningTime, _annotationsMatch) {
+      this.setArrivalElements(_doorOpeningTime)
+      this.getTableParticipant(_matchId, _doorOpeningTime, _annotationsMatch)
     },
 
     setTextShare (_matchName) {
@@ -1076,7 +1076,7 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    getTableParticipant (_matchId, _time, _annotationsMatch) {
+    getTableParticipant (_matchId, _doorOpeningTime, _annotationsMatch) {
       this.participantObject = []
       this.presentParticipantObject = []
       this.ticketObject = []
@@ -1102,7 +1102,7 @@ export default {
           }
 
           if (res.data.length > 0) {
-            this.fillObjects(_matchId, _time, _annotationsMatch)
+            this.fillObjects(_matchId, _doorOpeningTime, _annotationsMatch)
           }
         })
         .catch((err) => console.log(err))
@@ -1125,7 +1125,7 @@ export default {
       })
     },
 
-    fillObjects (_matchId, _time, _annotationsMatch) {
+    fillObjects (_matchId, _doorOpeningTime, _annotationsMatch) {
       this.participantObject.forEach(el => {
         if (el.action === 'bin dabei') this.setPresentParticipantObject(el.participantId, el.matchId, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
 
@@ -1149,7 +1149,7 @@ export default {
 
         if (el.presentParticipantArrival !== '') _constParticipantListFormattedForWhatsApp.value += '*'
 
-        if (this.isReservation(el.presentParticipantArrival, _time)) {
+        if (this.isReservation(el.presentParticipantArrival, _doorOpeningTime)) {
           if (this.reservation !== '') this.reservation += ', '
           this.reservation += el.presentParticipantParticipant.trim()
         }
@@ -1184,7 +1184,7 @@ export default {
 
       if (this.reservation !== '') this.reservation += ','
 
-      const _standardText = getCookie('standardText').replace('<HH>', parseInt(_time.substring(0, 2) - 2)).replace('<MM>', _time.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
+      const _standardText = getCookie('standardText').replace('<HH>', parseInt(_doorOpeningTime.substring(0, 2))).replace('<MM>', _doorOpeningTime.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
 
       _constAnnotationsMatchOriginal.value = _annotationsMatch
       _constAnnotationsMatch.value = _annotationsMatch.replace('<STANDARDTEXT>', _standardText).replace(',,', ',')
@@ -1262,9 +1262,9 @@ export default {
       this.whereIsMyCardObject.push({ cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard })
     },
 
-    setArrivalElements (_time) {
-      const hour = _time.substring(0, 2)
-      const minute = _time.substring(3, 5)
+    setArrivalElements (_doorOpeningTime) {
+      const hour = _doorOpeningTime.substring(0, 2)
+      const minute = _doorOpeningTime.substring(3, 5)
       const minuteInterval = 15
       _constArrivalElements[1] = ''
 
@@ -1272,48 +1272,48 @@ export default {
         const _minutes = parseInt(minuteInterval * index)
         switch (minute) {
           case '00':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':00'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':15'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':30'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
-            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
-            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
-            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
-            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
-            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
+            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) + ':00'
+            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) + ':15'
+            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) + ':30'
+            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) + ':45'
+            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':00'
+            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':15'
+            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':30'
+            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':45'
+            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':00'
             break
           case '15':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':15'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':30'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
-            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
-            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
-            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
-            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
-            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':15'
+            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) + ':15'
+            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) + ':30'
+            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) + ':45'
+            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':00'
+            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':15'
+            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':30'
+            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':45'
+            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':00'
+            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':15'
             break
           case '30':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':30'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
-            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
-            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
-            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
-            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':15'
-            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':30'
+            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) + ':30'
+            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) + ':45'
+            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':00'
+            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':15'
+            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':30'
+            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':45'
+            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':00'
+            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':15'
+            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':30'
             break
           case '45':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
-            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
-            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
-            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':15'
-            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':30'
-            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':45'
+            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) + ':45'
+            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':00'
+            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':15'
+            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':30'
+            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':45'
+            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':00'
+            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':15'
+            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':30'
+            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':45'
             break
           default:
             break
