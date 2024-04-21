@@ -706,7 +706,7 @@ export default {
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      const publishedParam = getCookie('isAdministrator')
+      const publishedParam = !getCookie('isAdministrator')
       this.$axios.get(`${_URLMatch}/${_TenantId}/${_constSeasonNew.value}/active/${publishedParam}`)
         .then((res) => {
           if (res.status === 200) {
