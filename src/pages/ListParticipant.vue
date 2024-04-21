@@ -903,7 +903,7 @@ export default {
           tenantId: _TenantId,
           name: _participant,
           arrival: _arrival,
-          annotations: encodeURI(_annotations),
+          annotations: _annotations,
           action: _action,
           reaction: '',
           matchId: _matchId
@@ -938,12 +938,12 @@ export default {
           tenantId: _TenantId,
           name: _participant,
           arrival: _arrival,
-          annotations: encodeURI(_annotations),
+          annotations: _annotations,
           action: _action,
           reaction: '',
           matchId: _matchId
         }
-        this.$axios.put(`${_URLParticipant}/${_TenantId}`, updParticipant)
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_participantId}`, updParticipant)
           .then((res) => {
             if (res.status === 200) {
               this.onParticipantUpdated()
@@ -1040,9 +1040,21 @@ export default {
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${_URLParticipant}&func=Update&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant)}&arrival=${_arrival}&annotations=${encodeURI(_annotations)}&action=${_action}`)
+        const updParticipant = {
+          id: _ticketParticipantId,
+          creationTime: null,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          name: _participant,
+          arrival: _arrival,
+          annotations: _annotations,
+          action: _action,
+          reaction: '',
+          matchId: _matchId
+        }
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketParticipantId}`, updParticipant)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.status === 200) {
               this.editTicketAssignment = false
               this.onTicketAssigmentUpdated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
@@ -1053,7 +1065,7 @@ export default {
     },
 
     deleteTicketAssignment (_ticketParticipantId, _matchId, _time, _annotationsMatch) {
-      this.$axios(`${_URLParticipant}&func=Delete&participantId=${_ticketParticipantId}`)
+      this.$axios.delete(`${_URLParticipant}/${_TenantId}/${_ticketParticipantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssignment = false

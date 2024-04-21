@@ -519,6 +519,7 @@ const _constSeasonNew = ref('')
 
 const _constAdminCode = ref('')
 
+let _Season
 let _TenantId
 let _URLTenant
 let _URLMatch
@@ -690,6 +691,7 @@ export default {
             if (res.status === 200) {
               _TenantId = res.data.id
               _constSeasonNew.value = res.data.season
+              _Season = res.data.season
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)
@@ -707,7 +709,7 @@ export default {
       this.activeMatchObject = []
 
       const publishedParam = !getCookie('isAdministrator')
-      this.$axios.get(`${_URLMatch}/${_TenantId}/${_constSeasonNew.value}/active/${publishedParam}`)
+      this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/active/${publishedParam}`)
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
@@ -965,7 +967,23 @@ export default {
 
     inactivateDeleteMatch (_matchId, _inactivate) {
       if (_inactivate) {
-        this.$axios.patch(`${_URLMatch}/${_TenantId}/${_matchId}`)
+        const updMatch = {
+          id: _matchId,
+          creationTime: null,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          homeTeam: null,
+          awayTeam: null,
+          name: null,
+          isPublished: false,
+          date: null,
+          doorOpeningTime: null,
+          annotations: null,
+          isDeactivated: true,
+          season: null
+        }
+
+        this.$axios.put(`${_URLMatch}/${_TenantId}/${_matchId}`, updMatch)
           .then((res) => {
             if (res.status === 200) {
               this.onMatchArchived()
@@ -998,18 +1016,18 @@ export default {
     getTableInactiveMatch () {
       this.inactiveMatchObject = []
 
-      this.$axios.get(`${_URLMatch}/${_TenantId}/inactive`)
+      this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/inactive`)
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
               let _numberOfParticipants = 0
-              this.$axios.get(`${_URLParticipant}/${_TenantId}/${res.data[index].matchId}`)
+              this.$axios.get(`${_URLParticipant}/${_TenantId}/${res.data[index].id}`)
                 .then((res2) => {
                   if (res2.status === 200) {
                     _numberOfParticipants = res2.data.length
-                    this.setInactiveMatchObject(res.data[index].matchId, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime.substring(0, 5), res.data[index].date, _numberOfParticipants)
+                    this.setInactiveMatchObject(res2.data[index].id, res2.data[index].homeTeam, res2.data[index].awayTeam, res2.data[index].name, res.data[index].doorOpeningTime.substring(0, 5), res.data[index].date, _numberOfParticipants)
                   } else {
-                    console.log('Unexpected status code:', res.status)
+                    console.log('Unexpected status code:', res2.status)
                   }
                 })
                 .catch((err) => console.log(err))

@@ -309,7 +309,6 @@ export default {
     getTableOrder2 () {
       this.order2Object = []
 
-      // console.log('URLOrder: ' + _URLOrder + '&func=Read&orderId=' + OrderId2)
       this.$axios(`${_URLOrder}&func=Read&orderId=${OrderId2}`)
         .then((res) => {
           this.tableOrder2 = res.data.split('\n')
@@ -330,7 +329,6 @@ export default {
     getTableOrder1 () {
       this.order1Object = []
 
-      // console.log('URLOrder: ' + _URLOrder + '&func=Read&orderId=' + OrderId1)
       this.$axios(`${_URLOrder}&func=Read&orderId=${OrderId1}`)
         .then((res) => {
           this.tableOrder1 = res.data.split('\n')
@@ -349,7 +347,6 @@ export default {
     },
 
     onOrder2Click (_row, _name, _product, _size, _color, _initials, _positionId, _orderId) {
-      // console.log('Clicked on an Order: ' + _row + ', ' + _name + ', ' + _product + ', ' + _size + ', ' + _color + ', ' + _initials + ', ' + _positionId + ', ' + _orderId)
       _constRow.value = _row
       _constName.value = _name
       _constProduct.value = _product
@@ -363,8 +360,6 @@ export default {
     },
 
     addOrderSave (_orderId, _name, _product, _size, _color, _initials) {
-      // console.log('addOrderSave: ' + _orderId + ', ' + _name + ', ' + _product + ', ' + _size + ', ' + _color + ', ' + _initials)
-
       this.$axios(`${_URLOrder}&func=Add&orderId=${_orderId}&name=${encodeURI(_name.replace(',', ' '))}&product=${_product}&size=${_size}&color=${_color}&initials=${encodeURI(_initials.replace(',', ' '))}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
@@ -379,8 +374,6 @@ export default {
     },
 
     editOrderSave (_row, _positionId, _orderId, _name, _product, _size, _color, _initials) {
-      // console.log('editOrderSave: ' + _row + ', ' + _positionId + ', ' + _orderId + ', ' + _name + ', ' + _product + ', ' + _size + ', ' + _color + ', ' + _initials)
-
       this.$axios(`${_URLOrder}&func=Update&row=${_row}&positionId=${_positionId}&orderId=${_orderId}&name=${encodeURI(_name.replace(',', ' '))}&product=${_product}&size=${_size}&color=${_color}&initials=${encodeURI(_initials.replace(',', ' '))}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
@@ -395,8 +388,6 @@ export default {
     },
 
     deleteOrder (_row, _positionId, _orderId) {
-      // console.log('deleteOrder: ' + _row + ', ' + _positionId + ', ' + _orderId)
-
       this.$axios(`${_URLOrder}&func=Delete&row=${_row}&positionId=${_positionId}&orderId=${_orderId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
