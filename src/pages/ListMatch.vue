@@ -394,7 +394,7 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n <= 9">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n <= 9">
             </q-avatar>
           </div>
 
@@ -406,7 +406,7 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 9 && n <= 19">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 9 && n <= 19">
             </q-avatar>
           </div>
 
@@ -418,7 +418,7 @@
               class="overlapping"
               :style="`left: ${(n - 20) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 19 && n <= 29">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 19 && n <= 29">
             </q-avatar>
           </div>
 
@@ -430,7 +430,7 @@
               class="overlapping"
               :style="`left: ${(n - 30) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 29 && n <= 39">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 29 && n <= 39">
             </q-avatar>
           </div>
 
@@ -442,7 +442,7 @@
               class="overlapping"
               :style="`left: ${(n - 40) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 39">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 39">
             </q-avatar>
           </div>
 
@@ -533,6 +533,8 @@ export default {
     const $q = useQuasar()
 
     return {
+      varAdminCode: ref(_constAdminCode),
+
       txtMatchId: ref(_constMatchId),
       tglIsEvent: ref(_constIsEvent),
       txtHomeTeam: ref(_constHomeTeam),
@@ -962,28 +964,12 @@ export default {
     },
 
     archiveMatch (_matchId) {
-      this.inactivateDeleteMatch(_matchId, true)
+      this.deactivateDeleteMatch(_matchId, true)
     },
 
-    inactivateDeleteMatch (_matchId, _inactivate) {
-      if (_inactivate) {
-        const updMatch = {
-          id: _matchId,
-          creationTime: null,
-          lastModificationTime: null,
-          tenantId: _TenantId,
-          homeTeam: null,
-          awayTeam: null,
-          name: null,
-          isPublished: false,
-          date: null,
-          doorOpeningTime: null,
-          annotations: null,
-          isDeactivated: true,
-          season: null
-        }
-
-        this.$axios.put(`${_URLMatch}/${_TenantId}/${_matchId}`, updMatch)
+    deactivateDeleteMatch (_matchId, _deactivate) {
+      if (_deactivate) {
+        this.$axios.put(`${_URLMatch}/${_TenantId}/${_matchId}/deactivate`)
           .then((res) => {
             if (res.status === 200) {
               this.onMatchArchived()
@@ -1010,7 +996,7 @@ export default {
     },
 
     deleteMatch (_matchId) {
-      this.inactivateDeleteMatch(_matchId, false)
+      this.deactivateDeleteMatch(_matchId, false)
     },
 
     getTableInactiveMatch () {

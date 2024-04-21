@@ -88,9 +88,7 @@
 
           <q-card-section class="q-pt-none">
             <q-input filled dense v-model="txtMember" label="Mitglied *" />
-          </q-card-section>
 
-          <q-card-section class="q-pt-none">
             <q-select
               filled dense
               v-model="txtAvatar"
@@ -113,53 +111,47 @@
             </q-select>
           </q-card-section>
 
-          <q-card-section>
-            <div class="text-overline">Spielbesuche:</div>
-          </q-card-section>
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in inactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${n * 32}px`"
+            >
+              <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
+              <img :src="getTeamImage(el.homeTeam)" v-if="n <= 9 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
+              <img :src="getEventImage(el.matchName)" v-if="n <= 9 && el.homeTeam === '' && el.awayTeam === ''">
+            </q-avatar>
+          </div>
 
-          <q-card-section>
-            <div class="q-pa-md q-gutter-sm" style="height: 80px">
-              <q-avatar
-                v-for="(el, n) in inactiveMatchObject"
-                :key="n"
-                size="40px"
-                class="overlapping"
-                :style="`left: ${n * 32}px`"
-              >
-                <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
-                <img :src="getTeamImage(el.homeTeam)" v-if="n <= 9 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
-                <img :src="getEventImage(el.matchName)" v-if="n <= 9 && el.homeTeam === '' && el.awayTeam === ''">
-              </q-avatar>
-            </div>
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in inactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${(n - 10) * 32}px`"
+            >
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
+              <img :src="getEventImage(el.matchName)" v-if="n > 9 && n <= 19 && el.homeTeam === '' && el.awayTeam === ''">
+            </q-avatar>
+          </div>
 
-            <div class="q-pa-md q-gutter-sm" style="height: 80px">
-              <q-avatar
-                v-for="(el, n) in inactiveMatchObject"
-                :key="n"
-                size="40px"
-                class="overlapping"
-                :style="`left: ${(n - 10) * 32}px`"
-              >
-                <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
-                <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
-                <img :src="getEventImage(el.matchName)" v-if="n > 9 && n <= 19 && el.homeTeam === '' && el.awayTeam === ''">
-              </q-avatar>
-            </div>
-
-            <div class="q-pa-md q-gutter-sm" style="height: 80px">
-              <q-avatar
-                v-for="(el, n) in inactiveMatchObject"
-                :key="n"
-                size="40px"
-                class="overlapping"
-                :style="`left: ${(n - 10) * 32}px`"
-              >
-                <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
-                <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
-                <img :src="getEventImage(el.matchName)" v-if="n > 19 && n <= 29 && el.homeTeam === '' && el.awayTeam === ''">
-              </q-avatar>
-            </div>
-          </q-card-section>
+          <div class="q-pa-md q-gutter-sm" style="height: 80px">
+            <q-avatar
+              v-for="(el, n) in inactiveMatchObject"
+              :key="n"
+              size="40px"
+              class="overlapping"
+              :style="`left: ${(n - 10) * 32}px`"
+            >
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
+              <img :src="getEventImage(el.matchName)" v-if="n > 19 && n <= 29 && el.homeTeam === '' && el.awayTeam === ''">
+            </q-avatar>
+          </div>
 
           <q-separator />
 
@@ -210,7 +202,6 @@ let _Season
 let _URLTenant
 let _URLMember
 let _URLParticipant
-let _URLMatch
 
 export default {
   name: 'ListMember',
@@ -290,16 +281,6 @@ export default {
           awayTeam: '',
           matchName: ''
         }
-      ],
-
-      matchObject: [
-        {
-          matchId: '',
-          homeTeam: '',
-          awayTeam: '',
-          matchName: '',
-          season: ''
-        }
       ]
 
     }
@@ -311,7 +292,6 @@ export default {
   mounted () {
     this.setVariables().then(() => {
       this.getTenantId().then(() => {
-        this.getTableInactiveMatch()
         this.getTableMember()
       })
     })
@@ -323,7 +303,6 @@ export default {
       _URLTenant = URLMatchManagementAPI + '/Tenant'
       _URLMember = URLMatchManagementAPI + '/Member'
       _URLParticipant = URLMatchManagementAPI + '/Participant'
-      _URLMatch = URLMatchManagementAPI + '/Match'
 
       this.memberObject = []
 
@@ -350,26 +329,6 @@ export default {
       })
     },
 
-    getTableInactiveMatch () {
-      this.matchObject = []
-
-      this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/inactive`)
-        .then((res) => {
-          if (res.status === 200) {
-            for (let index = 0; index < res.data.length; index++) {
-              this.setMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].season)
-            }
-          } else {
-            console.log('Unexpected status code:', res.status)
-          }
-        })
-        .catch((err) => console.log(err))
-    },
-
-    setMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _season) {
-      this.matchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, season: _season })
-    },
-
     getTableMember () {
       this.memberObject = []
 
@@ -378,7 +337,7 @@ export default {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
               let _numberOfParticipations = 0
-              this.$axios.get(`${_URLParticipant}/${_TenantId}/name/${res.data[index].name}`)
+              this.$axios.get(`${_URLParticipant}/${_TenantId}/${_Season}/name/${res.data[index].name}`)
                 .then((res2) => {
                   if (res2.status === 200) {
                     _numberOfParticipations = res2.data.length
@@ -417,14 +376,11 @@ export default {
       _constAvatar.value = _avatar
 
       this.inactiveMatchObject = []
-      this.$axios.get(`${_URLParticipant}/${_TenantId}/name/${_member}`)
+      this.$axios.get(`${_URLParticipant}/${_TenantId}/${_Season}/name/${_member}`)
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              const _homeTeam = this.matchObject.find(el => el.matchId === res.data[index].id).homeTeam
-              const _awayTeam = this.matchObject.find(el => el.matchId === res.data[index].id).awayTeam
-              const _matchName = this.matchObject.find(el => el.matchId === res.data[index].id).matchName
-              this.setInactiveMatchObject(_homeTeam, _awayTeam, _matchName)
+              this.setInactiveMatchObject(res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].matchName)
             }
           } else {
             console.log('Unexpected status code:', res.status)
