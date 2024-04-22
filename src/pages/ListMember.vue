@@ -119,8 +119,8 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
-              <img :src="getTeamImage(el.homeTeam)" v-if="n <= 9 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
+              <img :src="getTeamImage(el.homeTeam)" v-if="n <= 9 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
               <img :src="getEventImage(el.matchName)" v-if="n <= 9 && el.homeTeam === '' && el.awayTeam === ''">
             </q-avatar>
           </div>
@@ -133,8 +133,8 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
               <img :src="getEventImage(el.matchName)" v-if="n > 9 && n <= 19 && el.homeTeam === '' && el.awayTeam === ''">
             </q-avatar>
           </div>
@@ -147,8 +147,8 @@
               class="overlapping"
               :style="`left: ${(n - 20) * 32}px`"
             >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== getCookie('homeTeam')">
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== getCookie('homeTeam')">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
+              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
               <img :src="getEventImage(el.matchName)" v-if="n > 19 && n <= 29 && el.homeTeam === '' && el.awayTeam === ''">
             </q-avatar>
           </div>
@@ -196,6 +196,7 @@ const _constMemberOld = ref('')
 const _constAvatar = ref('')
 
 const _constAdminCode = ref('')
+const _constHomeTeamFromTenant = ref('')
 
 let _TenantId
 let _Season
@@ -219,6 +220,8 @@ export default {
 
       txtMemberNew: ref(''),
       txtAvatarNew: ref(''),
+
+      homeTeamFromTenant: ref(_constHomeTeamFromTenant),
 
       onMemberCreated () {
         $q.notify({
@@ -316,6 +319,7 @@ export default {
             if (res.status === 200) {
               _TenantId = res.data.id
               _Season = res.data.season
+              _constHomeTeamFromTenant.value = res.data.homeTeam
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)

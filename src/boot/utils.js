@@ -1,26 +1,5 @@
 const IsAdministrator = true
 const ApplicationCode = 'NGdoLbyd_330'
-const ClientName = 'BGB'
-
-const Email = 'aufgehtsscf@gmail.com'
-const HomeTeam = 'Freiburg'
-const HomeTeamAlias = 'SCF'
-const StandardText = 'Wer reserviert Plätze (<HH>:<MM>): <WHO_RESERVES_PLACES>'
-const TitleUrl1 = 'Homepage'
-const CaptionUrl1 = ''
-const LinkUrl1 = ''
-const TitleUrl2 = 'Email'
-const CaptionUrl2 = 'aufgehtsscf@gmail.com'
-const LinkUrl2 = 'mailto:aufgehtsscf@gmail.com'
-const TitleUrl3 = 'Facebook'
-const CaptionUrl3 = 'facebook.com/aufgehtsscf'
-const LinkUrl3 = 'https://www.facebook.com/profile.php?id=100094586599908'
-const TitleUrl4 = 'Twitter'
-const CaptionUrl4 = ''
-const LinkUrl4 = ''
-const TitleUrl5 = 'Instagram'
-const CaptionUrl5 = 'instagram.com/aufgehtsscf'
-const LinkUrl5 = 'https://www.instagram.com/aufgehtsscf/'
 
 // emailjs
 const serviceID = 'service_1z8boq8'
@@ -51,62 +30,21 @@ const getCookie = function (_cookieName) {
   }
   if (_cookieName === 'isAdministrator') return IsAdministrator
   if (_cookieName === 'applicationCode') return ApplicationCode
-  if (_cookieName === 'clientName') return ClientName
-  if (_cookieName === 'email') return Email
-  if (_cookieName === 'homeTeam') return HomeTeam
-  if (_cookieName === 'homeTeamAlias') return HomeTeamAlias
-  if (_cookieName === 'standardText') return StandardText
-  if (_cookieName === 'titleUrl1') return TitleUrl1
-  if (_cookieName === 'captionUrl1') return CaptionUrl1
-  if (_cookieName === 'linkUrl1') return LinkUrl1
-  if (_cookieName === 'titleUrl2') return TitleUrl2
-  if (_cookieName === 'captionUrl2') return CaptionUrl2
-  if (_cookieName === 'linkUrl2') return LinkUrl2
-  if (_cookieName === 'titleUrl3') return TitleUrl3
-  if (_cookieName === 'captionUrl3') return CaptionUrl3
-  if (_cookieName === 'linkUrl3') return LinkUrl3
-  if (_cookieName === 'titleUrl4') return TitleUrl4
-  if (_cookieName === 'captionUrl4') return CaptionUrl4
-  if (_cookieName === 'linkUrl4') return LinkUrl4
-  if (_cookieName === 'titleUrl5') return TitleUrl5
-  if (_cookieName === 'captionUrl5') return CaptionUrl5
-  if (_cookieName === 'linkUrl5') return LinkUrl5
 }
 
-const setCookie = function (_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5, _updatedOn) {
+const setCookie = function (_isAdministrator, _applicationCode) {
   const d = new Date()
   d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000))
   const _expires = 'expires=' + d.toUTCString()
   document.cookie = 'isAdministrator=' + _isAdministrator + ';' + _expires + '";path=/'
   document.cookie = 'applicationCode=' + _applicationCode + ';' + _expires + '";path=/'
-  document.cookie = 'clientName=' + _clientName + ';' + _expires + '";path=/'
-  document.cookie = 'email=' + _email + ';' + _expires + '";path=/'
-  document.cookie = 'homeTeam=' + _homeTeam + ';' + _expires + '";path=/'
-  document.cookie = 'homeTeamAlias=' + _homeTeamAlias + ';' + _expires + '";path=/'
-  document.cookie = 'standardText=' + _standardText + ';' + _expires + '";path=/'
-  document.cookie = 'titleUrl1=' + _titleUrl1 + ';' + _expires + '";path=/'
-  document.cookie = 'captionUrl1=' + _captionUrl1 + ';' + _expires + '";path=/'
-  document.cookie = 'linkUrl1=' + _linkUrl1 + ';' + _expires + '";path=/'
-  document.cookie = 'titleUrl2=' + _titleUrl2 + ';' + _expires + '";path=/'
-  document.cookie = 'captionUrl2=' + _captionUrl2 + ';' + _expires + '";path=/'
-  document.cookie = 'linkUrl2=' + _linkUrl2 + ';' + _expires + '";path=/'
-  document.cookie = 'titleUrl3=' + _titleUrl3 + ';' + _expires + '";path=/'
-  document.cookie = 'captionUrl3=' + _captionUrl3 + ';' + _expires + '";path=/'
-  document.cookie = 'linkUrl3=' + _linkUrl3 + ';' + _expires + '";path=/'
-  document.cookie = 'titleUrl4=' + _titleUrl4 + ';' + _expires + '";path=/'
-  document.cookie = 'captionUrl4=' + _captionUrl4 + ';' + _expires + '";path=/'
-  document.cookie = 'linkUrl4=' + _linkUrl4 + ';' + _expires + '";path=/'
-  document.cookie = 'titleUrl5=' + _titleUrl5 + ';' + _expires + '";path=/'
-  document.cookie = 'captionUrl5=' + _captionUrl5 + ';' + _expires + '";path=/'
-  document.cookie = 'linkUrl5=' + _linkUrl5 + ';' + _expires + '";path=/'
-  document.cookie = 'updatedOn=' + _updatedOn + ';' + _expires + '";path=/'
 }
 
 const getAdminCode = function (_applicationCode) {
   let _adminCode = ''
 
-  if (_applicationCode === 'TEST') {
-    return '3Test2tseT9'
+  if (_applicationCode === 'HOME') {
+    return '3Home2emoH9'
   }
 
   if (_applicationCode.length === 12) {

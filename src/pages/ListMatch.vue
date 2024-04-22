@@ -498,7 +498,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 const _constMatchId = ref('')
 const _constIsEvent = ref(false)
-const _constHomeTeamNew = ref(getCookie('homeTeam'))
 const _constHomeTeam = ref('')
 const _constAwayTeam = ref('')
 const _constMatchName = ref('')
@@ -518,6 +517,8 @@ const _constDoorOpeningTimeNew = ref('')
 const _constSeasonNew = ref('')
 
 const _constAdminCode = ref('')
+const _constHomeTeamFromTenant = ref('')
+const _constHomeTeamAliasFromTenant = ref('')
 
 let _TenantId
 let _Season
@@ -552,7 +553,7 @@ export default {
       intInactiveNumberOfParticipants: ref(_constInactiveNumberOfParticipants),
 
       tglIsEventNew: ref(false),
-      txtHomeTeamNew: ref(_constHomeTeamNew),
+      txtHomeTeamNew: ref(_constHomeTeamFromTenant),
       txtAwayTeamNew: ref(''),
       txtMatchNameNew: ref(_constMatchNameNew),
       tglPublishedNew: ref(false),
@@ -560,6 +561,8 @@ export default {
       txtDoorOpeningTimeNew: ref(_constDoorOpeningTimeNew),
       txtAnnotationsNew: ref('<STANDARDTEXT>'),
       txtSeasonNew: ref(_constSeasonNew),
+
+      homeTeamFromTenant: ref(_constHomeTeamFromTenant),
 
       onMatchCreated () {
         $q.notify({
@@ -694,6 +697,8 @@ export default {
               _TenantId = res.data.id
               _constSeasonNew.value = res.data.season
               _Season = res.data.season
+              _constHomeTeamFromTenant.value = res.data.homeTeam
+              _constHomeTeamAliasFromTenant.value = res.data.homeTeamAlias
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)
@@ -820,18 +825,18 @@ export default {
     },
 
     setValueForMatchNameNew (_homeTeam, _awayTeam) {
-      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
+      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamFromTenant.value
 
       if (typeof _homeTeam !== 'undefined' && typeof _awayTeam !== 'undefined') {
         let _labelHomeTeam = ''
-        if (_homeTeam === getCookie('homeTeam')) {
-          _labelHomeTeam = getCookie('homeTeamAlias')
+        if (_homeTeam === _constHomeTeamFromTenant.value) {
+          _labelHomeTeam = _constHomeTeamAliasFromTenant.value
         } else {
           _labelHomeTeam = this.teamImages.find(el => el.value === _homeTeam)?.label
         }
         let _labelAwayTeam = ''
-        if (_awayTeam === getCookie('homeTeam')) {
-          _labelAwayTeam = getCookie('homeTeamAlias')
+        if (_awayTeam === _constHomeTeamFromTenant.value) {
+          _labelAwayTeam = _constHomeTeamAliasFromTenant.value
         } else {
           _labelAwayTeam = this.teamImages.find(el => el.value === _awayTeam)?.label
         }
@@ -844,14 +849,14 @@ export default {
 
       if (typeof _homeTeam !== 'undefined' && typeof _awayTeam !== 'undefined') {
         let _labelHomeTeam = ''
-        if (_homeTeam === getCookie('homeTeam')) {
-          _labelHomeTeam = getCookie('homeTeamAlias')
+        if (_homeTeam === _constHomeTeamFromTenant.value) {
+          _labelHomeTeam = _constHomeTeamAliasFromTenant.value
         } else {
           _labelHomeTeam = this.teamImages.find(el => el.value === _homeTeam)?.label
         }
         let _labelAwayTeam = ''
-        if (_awayTeam === getCookie('homeTeam')) {
-          _labelAwayTeam = getCookie('homeTeamAlias')
+        if (_awayTeam === _constHomeTeamFromTenant.value) {
+          _labelAwayTeam = _constHomeTeamAliasFromTenant.value
         } else {
           _labelAwayTeam = this.teamImages.find(el => el.value === _awayTeam)?.label
         }
@@ -876,7 +881,7 @@ export default {
         _homeTeam = ''
         _awayTeam = ''
       } else {
-        if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
+        if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamFromTenant.value
       }
 
       const _matches = this.activeMatchObject.map(el => el.matchName)

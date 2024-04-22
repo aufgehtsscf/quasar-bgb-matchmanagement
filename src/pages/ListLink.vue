@@ -96,7 +96,7 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, setCookie, getAdminCode, getUserCode, URLMatchManagementAPI } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getUserCode, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -164,7 +164,6 @@ export default {
   data () {
     return {
       getCookie,
-      setCookie,
       getAdminCode,
       getUserCode,
       URLMatchManagementAPI,

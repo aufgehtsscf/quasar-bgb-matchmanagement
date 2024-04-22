@@ -40,7 +40,7 @@
 
           <q-card-actions class="text-white" align="right">
             <q-btn label="Abbrechen" v-close-popup />
-            <q-btn label="Ok" @click="getProperties(txtApplicationCode)" :disable="txtApplicationCode === ''" v-close-popup />
+            <q-btn label="Ok" @click="getTenant(txtApplicationCode)" :disable="txtApplicationCode === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -53,8 +53,10 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { URLProperties, setCookie } from 'src/boot/utils.js'
+import { URLMatchManagementAPI, setCookie } from 'src/boot/utils.js'
 import { ref } from 'vue'
+
+let _URLTenant
 
 export default {
   name: 'EnterCode',
@@ -65,7 +67,7 @@ export default {
     return {
       txtApplicationCode: ref(''),
 
-      cookieText1: 'Damit du deinen Zugangscode nicht jedes Mal neu eingeben musst, speichern wir diese und andere von deinem Administrator festgelegte Informationen als Cookies.',
+      cookieText1: 'Damit du deinen Zugangscode nicht jedes Mal neu eingeben musst, speichern wir ihn als Cookie.',
       cookieText2: 'Durch die Nutzung dieser Website erklärst du dich damit einverstanden, dass wir Cookies verwenden.',
       cookieText3: 'Klick auf "OK" klicken, um den Aktivierungscode zu überprüfen.',
 
@@ -96,7 +98,7 @@ export default {
 
   data () {
     return {
-      URLProperties,
+      URLMatchManagementAPI,
       setCookie
     }
   },
@@ -104,8 +106,20 @@ export default {
   computed: {
   },
 
+  mounted () {
+    this.setVariables().then(() => {
+      this.getTenant()
+    })
+  },
+
   methods: {
-    getProperties (_applicationCode) {
+    setVariables () {
+      _URLTenant = URLMatchManagementAPI + '/Tenant'
+
+      return Promise.resolve()
+    },
+
+    getTenant (_applicationCode) {
       let _adminCode = ''
       let _userCode = ''
 
@@ -126,44 +140,18 @@ export default {
         this.onCodeIsInvalid()
         this.refreshPage(false)
       } else {
-        this.$axios(`${this.URLProperties}&func=ReadAdminCode&adminCode=${_adminCode}`)
+        this.$axios.get(`${_URLTenant}/code/${_adminCode}`)
           .then((res) => {
-            this.tableProperties = res.data.split('\n')
-
-            if (res.data === '') {
+            if (res.status !== 200) {
               this.onCodeIsInvalid()
               this.refreshPage(false)
             }
 
-            for (let index = 0; index < this.tableProperties.length - 1; index++) {
-              const element = this.tableProperties[index].split(',')
+            for (let index = 0; index < res.data.length; index++) {
+              let _isAdministrator = false
+              if (res.data[index].adminCode === _applicationCode) _isAdministrator = true
 
-              let _isAdministrator = 'false'
-              if (element[1] === _applicationCode) _isAdministrator = 'true'
-
-              const _clientName = element[3].trim()
-              const _email = element[4].trim()
-              const _homeTeam = element[5].trim()
-              const _homeTeamAlias = element[6].trim()
-              const _standardText = element[7].trim()
-              const _titleUrl1 = element[8].trim()
-              const _captionUrl1 = element[9].trim()
-              const _linkUrl1 = element[10].trim()
-              const _titleUrl2 = element[11].trim()
-              const _captionUrl2 = element[12].trim()
-              const _linkUrl2 = element[13].trim()
-              const _titleUrl3 = element[14].trim()
-              const _captionUrl3 = element[15].trim()
-              const _linkUrl3 = element[16].trim()
-              const _titleUrl4 = element[17].trim()
-              const _captionUrl4 = element[18].trim()
-              const _linkUrl4 = element[19].trim()
-              const _titleUrl5 = element[20].trim()
-              const _captionUrl5 = element[21].trim()
-              const _linkUrl5 = element[22].trim()
-              const _updatedOn = element[23].trim()
-
-              if (element[1] === _adminCode || element[2] === _userCode) this.setCookie(_isAdministrator, _applicationCode, _clientName, _email, _homeTeam, _homeTeamAlias, _standardText, _titleUrl1, _captionUrl1, _linkUrl1, _titleUrl2, _captionUrl2, _linkUrl2, _titleUrl3, _captionUrl3, _linkUrl3, _titleUrl4, _captionUrl4, _linkUrl4, _titleUrl5, _captionUrl5, _linkUrl5, _updatedOn)
+              if (res.data[index].adminCode === _adminCode || res.data[index].userCode === _userCode) this.setCookie(_isAdministrator, _applicationCode)
               else this.onCodeNotFound()
 
               this.onCodeIsValid()

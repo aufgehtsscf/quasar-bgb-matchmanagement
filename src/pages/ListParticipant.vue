@@ -77,11 +77,11 @@
           <q-item-section avatar>
             <q-avatar size="70px" color="deep-orange-14" text-color="white" v-if="el.presentParticipantParticipantAvatar === ''">
               {{ el.presentParticipantParticipant.substring(0, 1) }}
-              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
+              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
             </q-avatar>
             <q-avatar size="70px" v-if="el.presentParticipantParticipantAvatar !== ''">
               <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized === 'TRUE')">
-              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
+              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -94,7 +94,7 @@
       </q-list>
 
       <!-- Ticket assignment area (Titel) -->
-      <div class="q-pa-md" style="max-width: 470px" v-if="txtHomeTeam === getCookie('homeTeam')">
+      <div class="q-pa-md" style="max-width: 470px" v-if="txtHomeTeam === homeTeamFromTenant">
         <q-toolbar class="bg-primary text-white">
             <q-toolbar-title class="text-overline">Karte weitergeben ({{ ticketGivenObject.length }}) oder bedarf ({{ ticketRequiredObject.length }})</q-toolbar-title>
             <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="getCookie('isAdministrator')" />
@@ -157,7 +157,7 @@
               :options="cbxActionOptionsHome"
               label="Aktion *"
               options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam === getCookie('homeTeam')"
+              v-if="txtHomeTeam === homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -169,7 +169,7 @@
               :options="cbxActionOptionsAway"
               label="Aktion *"
               options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam !== getCookie('homeTeam')"
+              v-if="txtHomeTeam !== homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -194,7 +194,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantNew === '' || txtActionNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantNew === '' || txtActionNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -219,7 +219,7 @@
               label="Aktion *"
               :readonly="false"
               options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction === '' &&  txtHomeTeam === getCookie('homeTeam')"
+              v-if="txtParticipantReaction === '' &&  txtHomeTeam === homeTeamFromTenant"
             >
             </q-select>
 
@@ -230,7 +230,7 @@
               label="Aktion *"
               :readonly="false"
               options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction === '' &&  txtHomeTeam !== getCookie('homeTeam')"
+              v-if="txtParticipantReaction === '' &&  txtHomeTeam !== homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -243,7 +243,7 @@
               label="Aktion *"
               :readonly="true"
               options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction !== '' &&  txtHomeTeam === getCookie('homeTeam')"
+              v-if="txtParticipantReaction !== '' &&  txtHomeTeam === homeTeamFromTenant"
             >
             </q-select>
             <q-select
@@ -253,7 +253,7 @@
               label="Aktion *"
               :readonly="true"
               options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== getCookie('homeTeam')"
+              v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -282,7 +282,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if=" getCookie('isAdministrator') && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -297,7 +297,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(txtParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(txtParticipantId, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -320,7 +320,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addTicketAssignmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketAssignmentGiven === '' || txtTicketAssignmentRequired === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addTicketAssignmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtTicketAssignmentGiven === '' || txtTicketAssignmentRequired === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -343,7 +343,7 @@
               :options="cbxActionOptionsHome"
               label="Aktion"
               options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam === getCookie('homeTeam')"
+              v-if="txtHomeTeam === homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -355,7 +355,7 @@
               :options="cbxActionOptionsAway"
               label="Aktion"
               options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam !== getCookie('homeTeam')"
+              v-if="txtHomeTeam !== homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -371,7 +371,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -407,7 +407,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(txtTicketParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(txtTicketParticipantId, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -422,7 +422,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssigned(txtTicketAssignedGiven, txtTicketAssignedRequired, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssigned(txtTicketAssignedGiven, txtTicketAssignedRequired, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -475,6 +475,8 @@ const _constTicketList = ref('')
 const _constShare = ref('')
 
 const _constAdminCode = ref('')
+const _constHomeTeamFromTenant = ref('')
+const _constStandardTextFromTenant = ref('')
 
 let _TenantId
 let _Season
@@ -495,10 +497,12 @@ export default {
       txtHomeTeam: ref(_constHomeTeam),
       txtAwayTeam: ref(_constAwayTeam),
       txtMatchName: ref(_constMatchName),
-      txtTime: ref(_constDoorOpeningTime),
+      txtDoorOpeningTime: ref(_constDoorOpeningTime),
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
       cbxArrivalOptions: ref(_constArrivalElements),
+
+      homeTeamFromTenant: ref(_constHomeTeamFromTenant),
 
       onParticipantCreated () {
         $q.notify({
@@ -756,6 +760,8 @@ export default {
             if (res.status === 200) {
               _TenantId = res.data.id
               _Season = res.data.season
+              _constHomeTeamFromTenant.value = res.data.homeTeam
+              _constStandardTextFromTenant.value = res.data.standardText
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)
@@ -852,7 +858,7 @@ export default {
 
     setTextShare (_matchName) {
       _constShare.value = _matchName + '\n\nAnwesend (' + this.presentParticipantObject.length + '):\n' + _constParticipantList.value
-      if (_constHomeTeam.value === getCookie('homeTeam')) {
+      if (_constHomeTeam.value === _constHomeTeamFromTenant.value) {
         _constShare.value += '\nKarte weitergeben (' + this.ticketGivenObject.length + ') oder bedarf (' + this.ticketRequiredObject.length + '):\n' + _constTicketList.value
       }
       _constShare.value += '\n' + _constAnnotationsMatch.value
@@ -861,7 +867,7 @@ export default {
 
     setTextShareForWhatsApp (_matchName) {
       _constShare.value = '*' + _matchName + '*\n\n*Anwesend (' + this.presentParticipantObject.length + '):*\n\n' + _constParticipantListFormattedForWhatsApp.value
-      if (_constHomeTeam.value === getCookie('homeTeam')) {
+      if (_constHomeTeam.value === _constHomeTeamFromTenant.value) {
         _constShare.value += '\n*Karte weitergeben (' + this.ticketGivenObject.length + ') oder bedarf (' + this.ticketRequiredObject.length + '):*\n\n' + _constTicketList.value
       }
       _constShare.value += '\n' + _constAnnotationsMatch.value
@@ -991,19 +997,20 @@ export default {
       }
     },
 
-    addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchId, _time, _annotationsMatch) {
+    addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchId, _doorOpeningTime, _annotationsMatch) {
       const _ticketGivenParticipantId = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenParticipantId
       if (typeof _ticketGivenParticipantId !== 'undefined') {
-        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketGivenParticipantId}&reaction=${_ticketAssignmentRequired}`)
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketGivenParticipantId}/${_ticketAssignmentRequired}`)
           .catch((err) => console.log(err))
 
         const _ticketRequiredParticipantId = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredParticipantId
         if (typeof _ticketRequiredParticipantId !== 'undefined') {
-          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
+          const _participantAction = 'bin dabei'
+          this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketRequiredParticipantId}/${_participantAction}/${_ticketAssignmentGiven}`)
             .then((res) => {
-              if (res.data === 'Success, requested action completed') {
+              if (res.status === 200) {
                 this.onAssignmentCreated()
-                this.loadReloadData(_matchId, _time, _annotationsMatch)
+                this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
               }
             })
             .catch((err) => console.log(err))
@@ -1011,20 +1018,20 @@ export default {
       }
     },
 
-    deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchId, _time, _annotationsMatch) {
+    deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchId, _doorOpeningTime, _annotationsMatch) {
       const _ticketAssignedGivenParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedParticipantId
       if (typeof _ticketAssignedGivenParticipantId !== 'undefined') {
-        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&participantId=${_ticketAssignedGivenParticipantId}&reaction=`)
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketAssignedGivenParticipantId}/""`)
           .catch((err) => console.log(err))
 
         const _ticketAssignedRequiredParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedParticipantId
         if (typeof _ticketAssignedRequiredParticipantId !== 'undefined') {
-          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&participantId=${_ticketAssignedRequiredParticipantId}&action=brauche Karte&reaction=`)
+          this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketAssignedRequiredParticipantId}/brauche Karte//`)
             .then((res) => {
-              if (res.data === 'Success, requested action completed') {
+              if (res.status === 200) {
                 this.editTicketAssigned = false
                 this.OnTicketAssignedDeleted()
-                this.loadReloadData(_matchId, _time, _annotationsMatch)
+                this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
               }
             })
             .catch((err) => console.log(err))
@@ -1184,7 +1191,7 @@ export default {
 
       if (this.reservation !== '') this.reservation += ','
 
-      const _standardText = getCookie('standardText').replace('<HH>', parseInt(_doorOpeningTime.substring(0, 2))).replace('<MM>', _doorOpeningTime.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
+      const _standardText = _constStandardTextFromTenant.value.replace('<HH>', parseInt(_doorOpeningTime.substring(0, 2))).replace('<MM>', _doorOpeningTime.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
 
       _constAnnotationsMatchOriginal.value = _annotationsMatch
       _constAnnotationsMatch.value = _annotationsMatch.replace('<STANDARDTEXT>', _standardText).replace(',,', ',')

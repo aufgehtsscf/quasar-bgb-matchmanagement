@@ -12,8 +12,8 @@
         />
       </q-toolbar>
       <div class="q-px-lg q-pt-xl q-mb-md">
-        <div class="text-h4" v-if="getCookie('clientName') !== 'HOME'">{{ getCookie('clientName') }} Spieltagsplanung</div>
-        <div class="text-h4" v-if="getCookie('clientName') === 'HOME'">Auf geht's Spieltagsplanung</div>
+        <div class="text-h4" v-if="clientNameFromTenant !== 'HOME'">{{ clientNameFromTenant }} Spieltagsplanung</div>
+        <div class="text-h4" v-if="clientNameFromTenant === 'HOME'">Auf geht's Spieltagsplanung</div>
         <div class="text-subtitle1">{{ todaysDate }}</div>
       </div>
       <q-img src="statics/images/AufGehtsSCF.png" class="header-image absolute-top" />
@@ -25,7 +25,7 @@
       :width="350"
       :breakpoint="600"
     >
-      <q-scroll-area v-if="getCookie('clientName') === 'HOME'"
+      <q-scroll-area v-if="clientNameFromTenant === 'HOME'"
         style="
           height: calc(100% - 192px);
           margin-top: 192px;
@@ -51,7 +51,7 @@
         />
       </q-scroll-area>
 
-      <q-scroll-area v-if="getCookie('clientName') !== 'HOME'"
+      <q-scroll-area v-if="clientNameFromTenant !== 'HOME'"
               style="
                 height: calc(100% - 192px);
                 margin-top: 192px;
@@ -87,7 +87,7 @@
             <q-item-section> Wer hat meine Karte? </q-item-section>
           </q-item>
 
-          <q-item to="/order" exact clickable v-ripple v-if="getCookie('clientName') === 'BGB'">
+          <q-item to="/order" exact clickable v-ripple v-if="clientNameFromTenant === 'BGB'">
             <q-item-section avatar>
               <q-icon name="shopping_cart" />
             </q-item-section>
@@ -137,6 +137,7 @@ import { getAdminCode, getCookie, getLogo, URLMatchManagementAPI } from 'src/boo
 import { date } from 'quasar'
 
 const _constAdminCode = ref('')
+const _constClientNameFromTenant = ref('')
 
 let _TenantId = ''
 let _URLTenant = ''
@@ -170,7 +171,9 @@ export default defineComponent({
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      },
+
+      clientNameFromTenant: ref(_constClientNameFromTenant)
     }
   },
 
@@ -204,6 +207,7 @@ export default defineComponent({
           .then((res) => {
             if (res.status === 200) {
               _TenantId = res.data.id
+              _constClientNameFromTenant.value = res.data.name
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)
