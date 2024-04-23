@@ -1000,42 +1000,47 @@ export default {
     addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchId, _doorOpeningTime, _annotationsMatch) {
       const _ticketGivenParticipantId = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenParticipantId
       if (typeof _ticketGivenParticipantId !== 'undefined') {
-        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketGivenParticipantId}/${_ticketAssignmentRequired}`)
-          .catch((err) => console.log(err))
-
-        const _ticketRequiredParticipantId = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredParticipantId
-        if (typeof _ticketRequiredParticipantId !== 'undefined') {
-          const _participantAction = 'bin dabei'
-          this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketRequiredParticipantId}/${_participantAction}/${_ticketAssignmentGiven}`)
-            .then((res) => {
-              if (res.status === 200) {
-                this.onAssignmentCreated()
-                this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketGivenParticipantId}/given?reaction=${_ticketAssignmentRequired}`)
+          .then((res) => {
+            if (res.status === 200) {
+              const _ticketRequiredParticipantId = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredParticipantId
+              if (typeof _ticketRequiredParticipantId !== 'undefined') {
+                this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketRequiredParticipantId}/required?reaction=${_ticketAssignmentGiven}`)
+                  .then((res2) => {
+                    if (res2.status === 200) {
+                      this.onAssignmentCreated()
+                      this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
+                    }
+                  })
+                  .catch((err2) => console.log(err2))
               }
-            })
-            .catch((err) => console.log(err))
-        }
+            }
+          })
+          .catch((err) => console.log(err))
       }
     },
 
     deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchId, _doorOpeningTime, _annotationsMatch) {
       const _ticketAssignedGivenParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedParticipantId
       if (typeof _ticketAssignedGivenParticipantId !== 'undefined') {
-        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketAssignedGivenParticipantId}/""`)
-          .catch((err) => console.log(err))
-
-        const _ticketAssignedRequiredParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedParticipantId
-        if (typeof _ticketAssignedRequiredParticipantId !== 'undefined') {
-          this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketAssignedRequiredParticipantId}/brauche Karte//`)
-            .then((res) => {
-              if (res.status === 200) {
-                this.editTicketAssigned = false
-                this.OnTicketAssignedDeleted()
-                this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketAssignedGivenParticipantId}/given?reaction=null`)
+          .then((res) => {
+            if (res.status === 200) {
+              const _ticketAssignedRequiredParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedParticipantId
+              if (typeof _ticketAssignedRequiredParticipantId !== 'undefined') {
+                this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketAssignedRequiredParticipantId}/required?reaction=null`)
+                  .then((res2) => {
+                    if (res2.status === 200) {
+                      this.editTicketAssigned = false
+                      this.OnTicketAssignedDeleted()
+                      this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
+                    }
+                  })
+                  .catch((err2) => console.log(err2))
               }
-            })
-            .catch((err) => console.log(err))
-        }
+            }
+          })
+          .catch((err) => console.log(err))
       }
     },
 
