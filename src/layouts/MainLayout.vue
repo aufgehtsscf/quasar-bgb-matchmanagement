@@ -42,8 +42,6 @@
 
         </q-list>
 
-        <q-item-label header> Wichtige Links </q-item-label>
-
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"

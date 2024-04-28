@@ -441,13 +441,11 @@ export default {
             .then((res) => {
               if (res.status !== 200) {
                 this.onCodeIsInvalid()
-              }
-
-              for (let index = 0; index < res.data.length; index++) {
+              } else {
                 let _isAdministrator = 'false'
-                if (res.data[index].adminCode === _applicationCode) _isAdministrator = true
+                if (res.data.adminCode === _applicationCode) _isAdministrator = true
 
-                if (res.data[index].adminCode === _adminCode || res.data[index].userCode === _userCode) this.setCookie(_isAdministrator, _applicationCode)
+                if (res.data.adminCode === _adminCode || res.data.userCode === _userCode) this.setCookie(_isAdministrator, _applicationCode)
                 else this.onCodeNotFound()
 
                 this.onCodeIsValid()
@@ -455,6 +453,7 @@ export default {
               }
             })
             .catch((err) => {
+              this.onCodeIsInvalid()
               console.log(err)
             })
         }

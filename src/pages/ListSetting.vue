@@ -13,21 +13,21 @@
       <q-list dark bordered separator style="max-width: 470px">
         <q-item clickable v-ripple @click="onSettingClick()">
           <q-item-section>
-            <q-item-label h1>Fanclub: {{ txtClientName }}</q-item-label>
+            <q-item-label>Fanclub: {{ txtClientName }}</q-item-label>
             <q-item-label></q-item-label>
-            <q-item-label h1>Admin-Zugriffscode: {{ txtAdminCode }}</q-item-label>
+            <q-item-label>Admin-Zugriffscode: {{ txtAdminCode }}</q-item-label>
             <q-item-label></q-item-label>
-            <q-item-label h1>User-Zugriffscode: {{ txtUserCode }}</q-item-label>
+            <q-item-label>User-Zugriffscode: {{ txtUserCode }}</q-item-label>
             <q-item-label></q-item-label>
-            <q-item-label h1>Heimmannschaft: {{ txtHomeTeam }}</q-item-label>
+            <q-item-label>Heimmannschaft: {{ txtHomeTeam }}</q-item-label>
             <q-item-label></q-item-label>
-            <q-item-label h1>E-Mail-Adresse: {{ txtEmail }}</q-item-label>
+            <q-item-label>E-Mail-Adresse: {{ txtEmail }}</q-item-label>
             <q-item-label></q-item-label>
-            <q-item-label h1>Heimmannschaft-Alias: {{ txtHomeTeamAlias }}</q-item-label>
+            <q-item-label>Heimmannschaft-Alias: {{ txtHomeTeamAlias }}</q-item-label>
             <q-item-label></q-item-label>
-            <q-item-label h1>Standardtext: {{ txtStandardText }}</q-item-label>
+            <q-item-label>Standardtext: {{ txtStandardText }}</q-item-label>
             <q-item-label></q-item-label>
-            <q-item-label h1>Saison: {{ txtSeason }}</q-item-label>
+            <q-item-label>Saison: {{ txtSeason }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
