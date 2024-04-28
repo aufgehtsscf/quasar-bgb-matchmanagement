@@ -13,15 +13,21 @@
       <q-list dark bordered separator style="max-width: 470px">
         <q-item clickable v-ripple @click="onSettingClick()">
           <q-item-section>
-            <q-item-label overline>Fanclub: {{ txtClientName }}</q-item-label>
-            <q-item-label overline>Admin-Zugriffscode: {{ txtAdminCode }}</q-item-label>
-            <q-item-label overline>User-Zugriffscode: {{ txtUserCode }}</q-item-label>
-            <q-item-label overline>Heimmannschaft: {{ txtHomeTeam }}</q-item-label>
-            <q-item-label overline>E-Mail-Adresse: {{ txtEmail }}</q-item-label>
-            <q-item-label overline>Heimmannschaft-Alias: {{ txtHomeTeamAlias }}</q-item-label>
-            <q-item-label overline>Standardtext: {{ txtStandardText }}</q-item-label>
-            <q-item-label overline>Saison: {{ txtSeason }}</q-item-label>
-            <q-item-label overline v-if="true">Saison (Admin): {{ txtSeasonForAdmin }}</q-item-label>
+            <q-item-label h1>Fanclub: {{ txtClientName }}</q-item-label>
+            <q-item-label></q-item-label>
+            <q-item-label h1>Admin-Zugriffscode: {{ txtAdminCode }}</q-item-label>
+            <q-item-label></q-item-label>
+            <q-item-label h1>User-Zugriffscode: {{ txtUserCode }}</q-item-label>
+            <q-item-label></q-item-label>
+            <q-item-label h1>Heimmannschaft: {{ txtHomeTeam }}</q-item-label>
+            <q-item-label></q-item-label>
+            <q-item-label h1>E-Mail-Adresse: {{ txtEmail }}</q-item-label>
+            <q-item-label></q-item-label>
+            <q-item-label h1>Heimmannschaft-Alias: {{ txtHomeTeamAlias }}</q-item-label>
+            <q-item-label></q-item-label>
+            <q-item-label h1>Standardtext: {{ txtStandardText }}</q-item-label>
+            <q-item-label></q-item-label>
+            <q-item-label h1>Saison: {{ txtSeason }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -47,14 +53,13 @@
             <q-input filled dense v-model="txtHomeTeamAlias" label="Heimmannschaft-Alias" />
             <q-input filled dense v-model="txtStandardText" type="textarea" label="Standardtext" />
             <q-input filled dense v-model="txtSeason" label="Saison" />
-            <q-input filled dense v-model="txtSeasonForAdmin" label="Saison (Admin)" v-if="true" />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editSettingSave(txtClientName, txtEmail, txtHomeTeamAlias, txtStandardText, txtSeason, txtSeasonForAdmin)"  v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editSettingSave(txtClientName, txtEmail, txtHomeTeamAlias, txtStandardText, txtSeason)"  v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -78,7 +83,6 @@ const _constHomeTeam = ref('')
 const _constHomeTeamAlias = ref('')
 const _constStandardText = ref('')
 const _constSeason = ref('')
-const _constSeasonForAdmin = ref('')
 
 let _TenantId
 let _URLTenant
@@ -98,7 +102,6 @@ export default {
       txtHomeTeamAlias: ref(_constHomeTeamAlias),
       txtStandardText: ref(_constStandardText),
       txtSeason: ref(_constSeason),
-      txtSeasonForAdmin: ref(_constSeasonForAdmin),
 
       onSettingUpdated () {
         $q.notify({
@@ -149,7 +152,6 @@ export default {
             _constHomeTeamAlias.value = res.data.homeTeamAlias
             _constStandardText.value = res.data.standardText
             _constSeason.value = res.data.season
-            _constSeasonForAdmin.value = res.data.seasonForAdmin
           } else {
             console.log('Unexpected status code:', res.status)
           }
@@ -163,7 +165,7 @@ export default {
       this.editSetting = true
     },
 
-    editSettingSave (_clientName, _email, _homeTeamAlias, _standardText, _season, _seasonForAdmin) {
+    editSettingSave (_clientName, _email, _homeTeamAlias, _standardText, _season) {
       const updTenant = {
         id: _TenantId,
         creationTime: null,
@@ -174,8 +176,7 @@ export default {
         email: _email,
         homeTeamAlias: _homeTeamAlias,
         standardText: _standardText,
-        season: _season,
-        seasonForAdmin: _seasonForAdmin
+        season: _season
       }
       this.$axios.put(`${_URLTenant}/${_TenantId}`, updTenant)
         .then((res) => {

@@ -1,5 +1,5 @@
 const IsAdministrator = true
-const ApplicationCode = 'NGdoLbyd_330'
+const ApplicationCode = '3NGdo3Lbyd0'
 
 // emailjs
 const serviceID = 'service_1z8boq8'

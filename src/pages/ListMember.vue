@@ -341,13 +341,13 @@ export default {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
               let _numberOfParticipations = 0
-              this.$axios.get(`${_URLParticipant}/${_TenantId}/${_Season}/name/${res.data[index].name}`)
+              this.$axios.get(`${_URLParticipant}/${_TenantId}/${_Season}/name/${res.data[index].name.trim()}`)
                 .then((res2) => {
                   if (res2.status === 200) {
                     _numberOfParticipations = res2.data.length
                     this.setMemberObject(res.data[index].id, res.data[index].name, res.data[index].avatar, res.data[index].isCustomized, _numberOfParticipations)
                   } else {
-                    console.log('Unexpected status code:', res.status)
+                    console.log('Unexpected status code:', res2.status)
                   }
                 })
                 .catch((err2) => console.log(err2))
@@ -380,7 +380,7 @@ export default {
       _constAvatar.value = _avatar
 
       this.inactiveMatchObject = []
-      this.$axios.get(`${_URLParticipant}/${_TenantId}/${_Season}/name/${_member}`)
+      this.$axios.get(`${_URLParticipant}/${_TenantId}/${_Season}/name/${_member.trim()}`)
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
