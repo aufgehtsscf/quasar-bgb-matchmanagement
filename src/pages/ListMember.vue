@@ -5,7 +5,7 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title class="text-overline">Mitglieder ({{ memberObject.length }})</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMember = true" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMember = true" v-if="getCookie('isAdministrator') === 'true'" />
       </q-toolbar>
     </div>
 
@@ -166,7 +166,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMember = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(intMemberRow, txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === ''" v-close-popup v-if="getCookie('isAdministrator') === 'true'" />
           </q-card-actions>
         </q-card>
       </q-dialog>

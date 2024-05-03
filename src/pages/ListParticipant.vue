@@ -65,7 +65,7 @@
       <div class="q-pa-md" style="max-width: 470px">
         <q-toolbar class="bg-primary text-white">
           <q-toolbar-title class="text-overline">Anwesend ({{ presentParticipantObject.length }})</q-toolbar-title>
-          <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" />
+          <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" v-if="getCookie('isAdministrator') === 'true'" />
         </q-toolbar>
       </div>
 
@@ -282,7 +282,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if="getCookie('isAdministrator') === 'true' && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantRow, txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantRow, txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup v-if="getCookie('isAdministrator') === 'true'" />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -371,7 +371,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(intTicketParticipantRow, txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(intTicketParticipantRow, txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup v-if="getCookie('isAdministrator') === 'true'" />
           </q-card-actions>
         </q-card>
       </q-dialog>

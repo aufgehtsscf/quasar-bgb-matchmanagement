@@ -5,7 +5,7 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title class="text-overline">Wer hat meine Karte ({{ whereIsMyCardObject.length }})</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addWhereIsMyCard = true" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addWhereIsMyCard = true" v-if="getCookie('isAdministrator') === 'true'" />
       </q-toolbar>
     </div>
 
@@ -99,7 +99,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="getCookie('isAdministrator') === 'true'" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intCardHolderRow, txtCardHolderId, txtCardHolder, txtCardHolderOld, tglDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === '' || txtWhoHasTheCard === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(intCardHolderRow, txtCardHolderId, txtCardHolder, txtCardHolderOld, tglDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === '' || txtWhoHasTheCard === ''" v-close-popup v-if="getCookie('isAdministrator') === 'true'" />
           </q-card-actions>
         </q-card>
       </q-dialog>
