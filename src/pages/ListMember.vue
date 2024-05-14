@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(member, i) in memberObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMemberClick(member.memberId, member.member, member.avatar)">
+        <q-item clickable v-ripple @click="onMemberClick(member.memberId, member.member, member.avatar, member.isCustomized)">
           <q-item-section avatar>
             <q-avatar size="50px" color="pink-10" text-color="white" v-if="member.avatar === ''">
               {{ member.member.substring(0, 1) }}
@@ -158,7 +158,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMember = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === '' || boolIsCustomized" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -194,6 +194,7 @@ const _constMemberId = ref('')
 const _constMember = ref('')
 const _constMemberOld = ref('')
 const _constAvatar = ref('')
+const _constIsCustomized = ref('')
 
 const _constAdminCode = ref('')
 const _constHomeTeamFromTenant = ref('')
@@ -217,6 +218,7 @@ export default {
       txtMember: ref(_constMember),
       txtMemberOld: ref(_constMemberOld),
       txtAvatar: ref(_constAvatar),
+      boolIsCustomized: ref(_constIsCustomized),
 
       txtMemberNew: ref(''),
       txtAvatarNew: ref(''),
@@ -374,11 +376,12 @@ export default {
       })
     },
 
-    onMemberClick (_memberId, _member, _avatar) {
+    onMemberClick (_memberId, _member, _avatar, _isCustomized) {
       _constMemberId.value = _memberId
       _constMember.value = _member
       _constMemberOld.value = _member
       _constAvatar.value = _avatar
+      _constIsCustomized.value = _isCustomized
 
       this.inactiveMatchObject = []
       this.$axios.get(`${_URLParticipant}/${_TenantId}/${_Season}/name/${_member.trim()}`)
