@@ -646,7 +646,8 @@ export default {
         {
           participant: '',
           participantAvatar: '',
-          participantAvatarIsCustomized: ''
+          participantAvatarIsCustomized: '',
+          arrival: ''
         }
       ],
 
@@ -766,7 +767,7 @@ export default {
                 _participantAvatarIsCustomized = false
               }
 
-              this.setParticipantInactiveMatchObject(res.data[index].name, _participantAvatar, _participantAvatarIsCustomized)
+              this.setParticipantInactiveMatchObject(res.data[index].name, _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -777,8 +778,21 @@ export default {
       this.showInactiveMatch = true
     },
 
-    setParticipantInactiveMatchObject (_participant, _participantAvatar, _participantAvatarIsCustomized) {
-      this.participantInactiveMatchObject.push({ participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized })
+    setParticipantInactiveMatchObject (_participant, _participantAvatar, _participantAvatarIsCustomized, _arrival) {
+      this.participantInactiveMatchObject.push({ participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival })
+
+      // Sort array of objects
+      this.participantInactiveMatchObject.sort(function (a, b) {
+        let arrivalA = a.arrival.toLowerCase()
+        if (arrivalA === '') arrivalA = '24:00'
+
+        let arrivalB = b.arrival.toLowerCase()
+        if (arrivalB === '') arrivalB = '24:00'
+
+        if (arrivalA > arrivalB) return 1
+        if (arrivalA < arrivalB) return -1
+        return 0
+      })
     },
 
     getTableMember () {

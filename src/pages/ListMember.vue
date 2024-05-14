@@ -282,7 +282,8 @@ export default {
         {
           homeTeam: '',
           awayTeam: '',
-          matchName: ''
+          matchName: '',
+          date: ''
         }
       ]
 
@@ -384,7 +385,7 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setInactiveMatchObject(res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].matchName)
+              this.setInactiveMatchObject(res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].matchName, res.data[index].date)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -395,8 +396,21 @@ export default {
       this.editMember = true
     },
 
-    setInactiveMatchObject (_homeTeam, _awayTeam, _matchName) {
-      this.inactiveMatchObject.push({ homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName })
+    setInactiveMatchObject (_homeTeam, _awayTeam, _matchName, _date) {
+      this.inactiveMatchObject.push({ homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, date: _date })
+
+      // Sort array of objects
+      this.inactiveMatchObject.sort(function (a, b) {
+        let dateA = a.date
+        dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
+
+        let dateB = b.date
+        dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
+
+        if (dateA > dateB) return 1
+        if (dateA < dateB) return -1
+        return 0
+      })
     },
 
     addMemberSave (_member, _avatar) {
