@@ -14,14 +14,14 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(member, i) in memberObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMemberClick(member.memberId, member.member, member.avatar, member.isCustomized)">
+        <q-item clickable v-ripple @click="onMemberClick(member.memberId, member.member, member.avatar, member.customized)">
           <q-item-section avatar>
             <q-avatar size="50px" color="pink-10" text-color="white" v-if="member.avatar === ''">
               {{ member.member.substring(0, 1) }}
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
             <q-avatar size="50px" v-if="member.avatar !== ''">
-              <img :src="getAvatar(varAdminCode, member.avatar, member.customized === true)">
+              <img :src="getAvatar(varAdminCode, member.avatar, member.customized)">
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
           </q-item-section>
@@ -194,7 +194,7 @@ const _constMemberId = ref('')
 const _constMember = ref('')
 const _constMemberOld = ref('')
 const _constAvatar = ref('')
-const _constIsCustomized = ref('')
+const _constIsCustomized = ref(false)
 
 const _constAdminCode = ref('')
 const _constHomeTeamFromTenant = ref('')

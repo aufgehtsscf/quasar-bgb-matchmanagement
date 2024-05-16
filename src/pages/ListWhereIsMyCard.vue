@@ -20,7 +20,7 @@
               {{ card.cardHolder.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.cardHolderAvatar !== ''">
-              <img :src="getAvatar(varAdminCode, card.cardHolderAvatar, card.cardHolderAvatarIsCustomized ===true)">
+              <img :src="getAvatar(varAdminCode, card.cardHolderAvatar, card.cardHolderAvatarIsCustomized)">
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
@@ -28,13 +28,13 @@
               {{ card.whoHasTheCard.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.whoHasTheCardAvatar !== ''">
-              <img :src="getAvatar(varAdminCode, card.whoHasTheCardAvatar, card.whoHasTheCardAvatarIsCustomized === true)">
+              <img :src="getAvatar(varAdminCode, card.whoHasTheCardAvatar, card.whoHasTheCardAvatarIsCustomized)">
             </q-avatar>
           </q-item-section>
           <q-item-section>
             <q-item-label overline>Inhaber: {{ card.cardHolder }}</q-item-label>
-            <q-item-label caption v-if="card.discounted === true">Kind: Ja</q-item-label>
-            <q-item-label caption v-if="card.discounted === false">Kind: Nein</q-item-label>
+            <q-item-label caption v-if="card.discounted">Kind: Ja</q-item-label>
+            <q-item-label caption v-if="!card.discounted">Kind: Nein</q-item-label>
             <q-item-label caption>Wer hat die Karte: {{ card.whoHasTheCard }}</q-item-label>
           </q-item-section>
         </q-item>
@@ -338,7 +338,7 @@ export default {
       _constCardHolderId.value = _cardHolderId
       _constCardHolder.value = _cardHolder
       _constCardHolderOld.value = _cardHolder
-      _constDiscounted.value = _discounted === true
+      _constDiscounted.value = _discounted
       _constWhoHasTheCard.value = _whoHasTheCard
 
       this.editWhereIsMyCard = true

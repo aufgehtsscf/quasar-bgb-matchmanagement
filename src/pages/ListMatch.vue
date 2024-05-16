@@ -32,8 +32,8 @@
             <q-item-section>
               <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
               <q-item-label caption>Wann: {{ match.matchDate }}</q-item-label>
-              <q-item-label caption v-if="match.published === true">Publiziert: Ja</q-item-label>
-              <q-item-label caption v-if="match.published === false">Publiziert: Nein</q-item-label>
+              <q-item-label caption v-if="match.published">Publiziert: Ja</q-item-label>
+              <q-item-label caption v-if="!match.published">Publiziert: Nein</q-item-label>
               <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
             </q-item-section>
         </q-item>
@@ -394,7 +394,7 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n <= 9">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n <= 9">
             </q-avatar>
           </div>
 
@@ -406,7 +406,7 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 9 && n <= 19">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 9 && n <= 19">
             </q-avatar>
           </div>
 
@@ -418,7 +418,7 @@
               class="overlapping"
               :style="`left: ${(n - 20) * 32}px`"
             >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 19 && n <= 29">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 19 && n <= 29">
             </q-avatar>
           </div>
 
@@ -430,7 +430,7 @@
               class="overlapping"
               :style="`left: ${(n - 30) * 32}px`"
             >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 29 && n <= 39">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 29 && n <= 39">
             </q-avatar>
           </div>
 
@@ -442,7 +442,7 @@
               class="overlapping"
               :style="`left: ${(n - 40) * 32}px`"
             >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized === true)" v-if="n > 39">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 39">
             </q-avatar>
           </div>
 
@@ -829,7 +829,7 @@ export default {
       _constAwayTeam.value = _awayTeam
       _constMatchName.value = _matchName
       _constMatchNameOld.value = _matchName
-      _constPublished.value = _published === true
+      _constPublished.value = _published
       _constMatchDate.value = _matchDate
       _constDoorOpeningTime.value = _doorOpeningTime
       _constAnnotations.value = _annotations

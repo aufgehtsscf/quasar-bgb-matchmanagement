@@ -80,7 +80,7 @@
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
             </q-avatar>
             <q-avatar size="70px" v-if="el.presentParticipantParticipantAvatar !== ''">
-              <img :src="getAvatar(varAdminCode, el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized === true)">
+              <img :src="getAvatar(varAdminCode, el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized)">
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
             </q-avatar>
           </q-item-section>
