@@ -310,6 +310,8 @@ import { getCookie, getAdminCode, URLMatchManagementAPI, setCookie, serviceID, t
 import emailjs from 'emailjs-com'
 import { ref } from 'vue'
 
+const _constAdminCode = ref('')
+
 let _URLTenant
 
 export default {
@@ -382,12 +384,13 @@ export default {
 
   mounted () {
     this.setVariables().then(() => {
-      this.getTenant(getAdminCode(getCookie('applicationCode')), false)
+      this.getTenant(_constAdminCode.value, false)
     })
   },
 
   methods: {
     setVariables () {
+      _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
       _URLTenant = URLMatchManagementAPI + '/Tenant'
 
       return Promise.resolve()
@@ -442,7 +445,7 @@ export default {
               if (res.status !== 200) {
                 this.onCodeIsInvalid()
               } else {
-                let _isAdministrator = 'false'
+                let _isAdministrator = false
                 if (res.data.adminCode === _applicationCode) _isAdministrator = true
 
                 if (res.data.adminCode === _adminCode || res.data.userCode === _userCode) this.setCookie(_isAdministrator, _applicationCode)
