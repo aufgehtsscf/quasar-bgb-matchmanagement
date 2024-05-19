@@ -146,7 +146,8 @@ const linksList = [
     title: 'Wichtige Links',
     caption: '',
     icon: '',
-    url: ''
+    url: '',
+    href: ''
   }
 ]
 
@@ -256,7 +257,7 @@ export default defineComponent({
     },
 
     setLinkList (_title: string, _caption: string, _icon: string, _url: string) {
-      linksList.push({ title: _title, caption: _caption, icon: _icon, url: _url })
+      linksList.push({ title: _title, caption: _caption, icon: _icon, url: _url, href: _url })
     }
 
   }
