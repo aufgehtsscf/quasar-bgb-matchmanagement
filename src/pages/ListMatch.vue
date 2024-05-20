@@ -1000,12 +1000,20 @@ export default {
           })
           .catch((err) => console.log(err))
       } else {
-        this.$axios.delete(`${_URLMatch}/${_TenantId}/${_matchId}`)
+        this.$axios.delete(`${_URLParticipant}/${_TenantId}/match/${_matchId}`)
           .then((res) => {
             if (res.status === 200) {
-              this.onMatchDeleted()
-              this.getTableActiveMatch()
-              this.editMatch = false
+              this.$axios.delete(`${_URLMatch}/${_TenantId}/${_matchId}`)
+                .then((res2) => {
+                  if (res2.status === 200) {
+                    this.onMatchDeleted()
+                    this.getTableActiveMatch()
+                    this.editMatch = false
+                  } else {
+                    console.log('Unexpected status code:', res2.status)
+                  }
+                })
+                .catch((err2) => console.log(err2))
             } else {
               console.log('Unexpected status code:', res.status)
             }

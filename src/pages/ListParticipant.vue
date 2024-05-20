@@ -965,7 +965,7 @@ export default {
     },
 
     deleteParticipant (_participantId, _matchId, _time, _annotationsMatch) {
-      this.$axios.delete(`${_URLParticipant}/${_TenantId}/${_participantId}`)
+      this.$axios.delete(`${_URLParticipant}/${_TenantId}/participant/${_participantId}`)
         .then((res) => {
           if (res.status === 200) {
             this.onParticipantDeleted()
@@ -1079,7 +1079,7 @@ export default {
     },
 
     deleteTicketAssignment (_ticketParticipantId, _matchId, _time, _annotationsMatch) {
-      this.$axios.delete(`${_URLParticipant}/${_TenantId}/${_ticketParticipantId}`)
+      this.$axios.delete(`${_URLParticipant}/${_TenantId}/participant/${_ticketParticipantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssignment = false
