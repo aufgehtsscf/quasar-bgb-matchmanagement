@@ -9,6 +9,13 @@
       </q-toolbar>
     </div>
 
+    <div class="q-pa-md q-gutter-y-md column items-start">
+      <q-btn-group push>
+        <q-btn color="primary" glossy text-color="white" push label="2023-24" @click="getTableMember('2023-24')"/>
+        <q-btn color="deep-orange" glossy text-color="white" push label="2022-23" @click="getTableMember('2022-23')"/>
+      </q-btn-group>
+    </div>
+
     <!-- List of Members -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
       <q-list dark bordered separator style="max-width: 470px" v-for="(member, i) in memberObject"
@@ -336,8 +343,12 @@ export default {
       })
     },
 
-    getTableMember () {
+    getTableMember (_seasonParam) {
       this.memberObject = []
+
+      if (typeof _seasonParam !== 'undefined') {
+        _Season = _seasonParam
+      }
 
       this.$axios.get(`${_URLMember}/${_TenantId}`)
         .then((res) => {

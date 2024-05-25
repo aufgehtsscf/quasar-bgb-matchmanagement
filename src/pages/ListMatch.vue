@@ -47,6 +47,13 @@
       </q-toolbar>
     </div>
 
+    <div class="q-pa-md q-gutter-y-md column items-start">
+      <q-btn-group push>
+        <q-btn color="primary" glossy text-color="white" push label="2023-24" @click="getTableInactiveMatch('2023-24')"/>
+        <q-btn color="deep-orange" glossy text-color="white" push label="2022-23" @click="getTableInactiveMatch('2022-23')"/>
+      </q-btn-group>
+    </div>
+
     <!-- List of inactive matches -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in inactiveMatchObject"
@@ -1026,8 +1033,12 @@ export default {
       this.deactivateDeleteMatch(_matchId, false)
     },
 
-    getTableInactiveMatch () {
+    getTableInactiveMatch (_seasonParam) {
       this.inactiveMatchObject = []
+
+      if (typeof _seasonParam !== 'undefined') {
+        _Season = _seasonParam
+      }
 
       this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/inactive`)
         .then((res) => {
