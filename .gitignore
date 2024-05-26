@@ -31,11 +31,5 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
-/.vs/quasar-bgb-matchmanagement/FileContentIndex/5b91e341-e1fc-4689-8c6a-b1bc272d2223.vsidx
-/.vs/quasar-bgb-matchmanagement/FileContentIndex/cf363984-89a1-4d0a-a1dc-5d0d22e12e7e.vsidx
 /.vs/slnx.sqlite
-/.vs/quasar-bgb-matchmanagement/FileContentIndex/dd5789fd-dd89-49e9-adfe-ca23ffc8b751.vsidx
-/.vs/quasar-bgb-matchmanagement/FileContentIndex/12782fd7-3d70-4119-90d9-9ce2d80819c6.vsidx
-/.vs/quasar-bgb-matchmanagement/FileContentIndex/bef263ce-acb7-4d04-948c-4153f251738a.vsidx
-/.vs/quasar-bgb-matchmanagement/FileContentIndex/fde0dad3-7bf7-49c3-9837-4ae4cd672f5b.vsidx
 *.vsidx

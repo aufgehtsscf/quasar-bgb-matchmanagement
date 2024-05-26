@@ -5,7 +5,7 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title class="text-overline">Aktuelle Spiele ({{ activeMatchObject.length }})</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true"  v-if="getCookie('isAdministrator') === 'true'" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMatch = true" v-if="getCookie('isAdministrator')" />
       </q-toolbar>
     </div>
 
@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in activeMatchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(match.row, match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.published, match.date + ' ' + match.time, match.annotations)">
+        <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.published, match.matchDate, match.doorOpeningTime, match.annotations, match.season)">
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
@@ -31,9 +31,9 @@
 
             <q-item-section>
               <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
-              <q-item-label caption>Wann: {{ match.date }} - {{ match.time }}</q-item-label>
-              <q-item-label caption v-if="match.published === 'TRUE'">Publiziert: Ja</q-item-label>
-              <q-item-label caption v-if="match.published === 'FALSE'">Publiziert: Nein</q-item-label>
+              <q-item-label caption>Wann: {{ match.matchDate }}</q-item-label>
+              <q-item-label caption v-if="match.published">Publiziert: Ja</q-item-label>
+              <q-item-label caption v-if="!match.published">Publiziert: Nein</q-item-label>
               <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
             </q-item-section>
         </q-item>
@@ -45,6 +45,13 @@
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title class="text-overline">Vergangene Spiele ({{ inactiveMatchObject.length }})</q-toolbar-title>
       </q-toolbar>
+    </div>
+
+    <div class="q-pa-md q-gutter-y-md column items-start">
+      <q-btn-group push>
+        <q-btn color="primary" glossy text-color="white" push label="2023-24" @click="getTableInactiveMatch('2023-24')"/>
+        <q-btn color="deep-orange" glossy text-color="white" push label="2022-23" @click="getTableInactiveMatch('2022-23')"/>
+      </q-btn-group>
     </div>
 
     <!-- List of inactive matches -->
@@ -69,7 +76,7 @@
 
             <q-item-section>
               <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
-              <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
+              <q-item-label caption>{{ match.date }}</q-item-label>
             </q-item-section>
             <q-badge floating color="teal">{{ match.numberOfParticipants }}</q-badge>
         </q-item>
@@ -101,7 +108,7 @@
               <q-select
                 filled dense
                 v-model="txtHomeTeamNew"
-                :options="teamOptions"
+                :options="teamImages"
                 label="Heim *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEventNew"
@@ -123,8 +130,9 @@
               <q-select
                 filled dense
                 v-model="txtAwayTeamNew"
-                :options="teamOptions"
+                :options="teamImages"
                 autofocus
+                @blur="setValueForMatchNameNew(txtHomeTeamNew.value, txtAwayTeamNew.value)"
                 label="Gast *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEventNew"
@@ -145,7 +153,7 @@
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
-              <q-input filled dense v-model="txtMatchNameNew" @focus="setFieldsForMatchNameNew(txtHomeTeamNew.value, txtAwayTeamNew.value)" label="Spielname *" v-if="!tglIsEventNew" />
+              <q-input filled dense v-model="txtMatchNameNew" label="Spielname *" v-if="!tglIsEventNew" />
               <q-input filled dense v-model="txtMatchNameNew" label="Veranstaltungsname *" v-if="tglIsEventNew" />
             </div>
 
@@ -160,11 +168,11 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input
                 filled dense
-                v-model="txtDatetimeNew">
+                v-model="txtMatchDateNew" label="Spieldatum">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="txtDatetimeNew" mask="DD.MM.YYYY HH:mm">
+                      <q-date v-model="txtMatchDateNew" mask="DD.MM.YYYY - HH:mm">
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup label="Close" color="primary" flat />
                         </div>
@@ -176,7 +184,25 @@
                 <template v-slot:append>
                   <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-time v-model="txtDatetimeNew" mask="DD.MM.YYYY HH:mm" format24h>
+                      <q-time v-model="txtMatchDateNew" mask="DD.MM.YYYY - HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input
+                filled dense
+                v-model="txtDoorOpeningTimeNew" @focus="setValueForDoorOpeningTimeNew(txtMatchDateNew.substring(13, 18))" label="Türöffnungszeit">
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-time v-model="txtDoorOpeningTimeNew" mask="HH:mm" format24h>
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup label="Close" color="primary" flat />
                         </div>
@@ -191,13 +217,17 @@
               <q-input filled dense v-model="txtAnnotationsNew" type="textarea" label="Kommentar"/>
             </div>
 
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtSeasonNew" label="Saison" :disable="true" />
+            </div>
+
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtDatetimeNew, txtAnnotationsNew)" :disable="((txtHomeTeamNew === '' || txtAwayTeamNew === '' || txtMatchNameNew === '') && !tglIsEventNew) || (txtMatchNameNew === '' && tglIsEventNew)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtMatchDateNew, txtDoorOpeningTimeNew, txtAnnotationsNew, txtSeasonNew)" :disable="((txtHomeTeamNew === '' || txtAwayTeamNew === '' || txtMatchNameNew === '') && !tglIsEventNew) || (txtMatchNameNew === '' && tglIsEventNew)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -222,7 +252,7 @@
               <q-select
                 filled dense
                 v-model="txtHomeTeam"
-                :options="teamOptions"
+                :options="teamImages"
                 autofocus
                 label="Heim *"
                 options-selected-class="text-deep-orange"
@@ -245,7 +275,9 @@
               <q-select
                 filled dense
                 v-model="txtAwayTeam"
-                :options="teamOptions"
+                :options="teamImages"
+                autofocus
+                @blur="setValueForMatchName(txtHomeTeam.value, txtAwayTeam.value)"
                 label="Gast *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEvent"
@@ -281,11 +313,11 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input
                 filled dense
-                v-model="txtDatetime">
+                v-model="txtMatchDate" label="Spieldatum">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="txtDatetime" mask="DD.MM.YYYY HH:mm">
+                      <q-date v-model="txtMatchDate" mask="DD.MM.YYYY - HH:mm">
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup label="Close" color="primary" flat />
                         </div>
@@ -297,7 +329,25 @@
                 <template v-slot:append>
                   <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-time v-model="txtDatetime" mask="DD.MM.YYYY HH:mm" format24h>
+                      <q-time v-model="txtMatchDate" mask="DD.MM.YYYY - HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input
+                filled dense
+                v-model="txtDoorOpeningTime" @focus="setValueForDoorOpeningTime(txtMatchDate.substring(13, 18))" label="Türöffnungszeit">
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-time v-model="txtDoorOpeningTime" mask="HH:mm" format24h>
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup label="Close" color="primary" flat />
                         </div>
@@ -311,15 +361,19 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input filled dense v-model="txtAnnotations" type="textarea" label="Kommentar"/>
             </div>
+
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtSeason" label="Saison" :disable="true" />
+            </div>
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
-            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator')" />
+            <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(intMatchRow, txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtDatetime, txtAnnotations)" :disable="((txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === '') && !tglIsEvent) || (txtMatchName === '' && tglIsEvent)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtMatchDate, txtDoorOpeningTime, txtAnnotations, txtSeason)" :disable="((txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === '') && !tglIsEvent) || (txtMatchName === '' && tglIsEvent)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -347,7 +401,7 @@
               class="overlapping"
               :style="`left: ${n * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n <= 9">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n <= 9">
             </q-avatar>
           </div>
 
@@ -359,7 +413,7 @@
               class="overlapping"
               :style="`left: ${(n - 10) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 9 && n <= 19">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 9 && n <= 19">
             </q-avatar>
           </div>
 
@@ -371,7 +425,7 @@
               class="overlapping"
               :style="`left: ${(n - 20) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 19 && n <= 29">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 19 && n <= 29">
             </q-avatar>
           </div>
 
@@ -383,7 +437,7 @@
               class="overlapping"
               :style="`left: ${(n - 30) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 29 && n <= 39">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 29 && n <= 39">
             </q-avatar>
           </div>
 
@@ -395,7 +449,7 @@
               class="overlapping"
               :style="`left: ${(n - 40) * 32}px`"
             >
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.participantAvatar, el.participantAvatarIsCustomized === 'TRUE')" v-if="n > 39">
+              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 39">
             </q-avatar>
           </div>
 
@@ -417,7 +471,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="archiveMatch(intMatchRow, txtMatchId, txtDatetime)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="archiveMatch(txtMatchId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -432,7 +486,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteMatch(intMatchRow, txtMatchId)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteMatch(txtMatchId)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -445,32 +499,39 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchBasis, URLNextMatchBasis, URLParticipantBasis, URLParticipantArchiveBasis, URLMemberBasis } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
-const _constMatchRow = ref(0)
 const _constMatchId = ref('')
 const _constIsEvent = ref(false)
-const _constHomeTeamNew = ref(getCookie('homeTeam'))
 const _constHomeTeam = ref('')
 const _constAwayTeam = ref('')
 const _constMatchName = ref('')
 const _constMatchNameOld = ref('')
 const _constPublished = ref(false)
-const _constDatetime = ref('')
+const _constMatchDate = ref('')
+const _constDoorOpeningTime = ref('')
 const _constAnnotations = ref('')
+const _constSeason = ref('')
 
 const _constInactiveMatch = ref('')
 const _constInactiveDatetime = ref('')
 const _constInactiveNumberOfParticipants = ref('')
 
 const _constMatchNameNew = ref('')
-const _constDatetimeNew = ref('')
+const _constDoorOpeningTimeNew = ref('')
+const _constSeasonNew = ref('')
 
+const _constAdminCode = ref('')
+const _constHomeTeamFromTenant = ref('')
+const _constHomeTeamAliasFromTenant = ref('')
+
+let _TenantId
+let _Season
+let _URLTenant
 let _URLMatch
-let _URLNextMatch
 let _URLParticipant
-let _URLParticipantArchive
 let _URLMember
 
 export default {
@@ -480,7 +541,8 @@ export default {
     const $q = useQuasar()
 
     return {
-      intMatchRow: ref(_constMatchRow),
+      varAdminCode: ref(_constAdminCode),
+
       txtMatchId: ref(_constMatchId),
       tglIsEvent: ref(_constIsEvent),
       txtHomeTeam: ref(_constHomeTeam),
@@ -488,20 +550,26 @@ export default {
       txtMatchName: ref(_constMatchName),
       txtMatchNameOld: ref(_constMatchNameOld),
       tglPublished: ref(_constPublished),
-      txtDatetime: ref(_constDatetime),
+      txtMatchDate: ref(_constMatchDate),
+      txtDoorOpeningTime: ref(_constDoorOpeningTime),
       txtAnnotations: ref(_constAnnotations),
+      txtSeason: ref(_constSeason),
 
       txtInactiveMatch: ref(_constInactiveMatch),
       txtInactiveDatetime: ref(_constInactiveDatetime),
       intInactiveNumberOfParticipants: ref(_constInactiveNumberOfParticipants),
 
       tglIsEventNew: ref(false),
-      txtHomeTeamNew: ref(_constHomeTeamNew),
+      txtHomeTeamNew: ref(_constHomeTeamFromTenant),
       txtAwayTeamNew: ref(''),
       txtMatchNameNew: ref(_constMatchNameNew),
       tglPublishedNew: ref(false),
-      txtDatetimeNew: ref(_constDatetimeNew),
+      txtMatchDateNew: ref(''),
+      txtDoorOpeningTimeNew: ref(_constDoorOpeningTimeNew),
       txtAnnotationsNew: ref('<STANDARDTEXT>'),
+      txtSeasonNew: ref(_constSeasonNew),
+
+      homeTeamFromTenant: ref(_constHomeTeamFromTenant),
 
       onMatchCreated () {
         $q.notify({
@@ -554,23 +622,19 @@ export default {
       getTeamImage,
       getEventImage,
       teamImages,
-      URLMatchBasis,
-      URLNextMatchBasis,
-      URLParticipantBasis,
-      URLParticipantArchiveBasis,
-      URLMemberBasis,
+      URLMatchManagementAPI,
 
       activeMatchObject: [
         {
-          row: '',
           matchId: '',
           homeTeam: '',
           awayTeam: '',
           matchName: '',
           published: '',
-          time: '',
+          matchDate: '',
+          doorOpeningTime: '',
           annotations: '',
-          date: ''
+          season: ''
         }
       ],
 
@@ -580,7 +644,6 @@ export default {
           homeTeam: '',
           awayTeam: '',
           matchName: '',
-          time: '',
           date: '',
           numberOfParticipants: ''
         }
@@ -590,7 +653,8 @@ export default {
         {
           participant: '',
           participantAvatar: '',
-          participantAvatarIsCustomized: ''
+          participantAvatarIsCustomized: '',
+          arrival: ''
         }
       ],
 
@@ -599,16 +663,6 @@ export default {
           member: '',
           avatar: '',
           customized: ''
-        }
-      ],
-
-      teamOptions: [
-        {
-          label: '',
-          value: '',
-          image: '',
-          date: '',
-          time: ''
         }
       ]
 
@@ -620,48 +674,78 @@ export default {
 
   mounted () {
     this.setVariables().then(() => {
-      this.getTableNextMatch()
-      this.getTableMember().then(() => {
-        this.getTableActiveMatch()
-        this.getTableInactiveMatch()
+      this.getTenantId().then(() => {
+        this.getTableMember().then(() => {
+          this.getTableActiveMatch()
+          this.getTableInactiveMatch()
+        })
       })
     })
   },
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLNextMatch = URLNextMatchBasis + '?sh=' + getCookie('homeTeam')
-      _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLParticipantArchive = URLParticipantArchiveBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
+      _URLTenant = URLMatchManagementAPI + '/Tenant'
+      _URLMatch = URLMatchManagementAPI + '/Match'
+      _URLParticipant = URLMatchManagementAPI + '/Participant'
+      _URLMember = URLMatchManagementAPI + '/Member'
+
+      this.activeMatchObject = []
+      this.inactiveMatchObject = []
+
       return Promise.resolve()
+    },
+
+    getTenantId () {
+      return new Promise((resolve, reject) => {
+        this.$axios.get(`${_URLTenant}/code/${_constAdminCode.value}`)
+          .then((res) => {
+            if (res.status === 200) {
+              _TenantId = res.data.id
+              _constSeasonNew.value = res.data.season
+              _Season = res.data.season
+              _constHomeTeamFromTenant.value = res.data.homeTeam
+              _constHomeTeamAliasFromTenant.value = res.data.homeTeamAlias
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     getTableActiveMatch () {
       this.activeMatchObject = []
 
-      const publishedParam = getCookie('isAdministrator') === 'true' ? '' : 'TRUE'
-      this.$axios(`${_URLMatch}&func=ReadActive&published=${publishedParam}`)
+      const publishedParam = !getCookie('isAdministrator')
+      this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/active/${publishedParam}`)
         .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[0], element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[6], element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].isPublished, res.data[index].date, res.data[index].doorOpeningTime, res.data[index].annotations, res.data[index].season)
+            }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
     },
 
-    setActiveMatchObject (_row, _matchId, _homeTeam, _awayTeam, _matchName, _published, _time, _annotations, _date) {
-      this.activeMatchObject.push({ row: parseInt(_row), matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, time: _time, annotations: _annotations, date: _date })
+    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
+      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, matchDate: _matchDate, doorOpeningTime: _doorOpeningTime, annotations: _annotations, season: _season })
 
       // Sort array of objects
       this.activeMatchObject.sort(function (a, b) {
-        let dateA = a.date
+        let dateA = a.matchDate
         dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
 
-        let dateB = b.date
+        let dateB = b.matchDate
         dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
 
         if (dateA > dateB) return 1
@@ -676,18 +760,24 @@ export default {
       _constInactiveNumberOfParticipants.value = _numberOfParticipants
 
       this.participantInactiveMatchObject = []
-      this.$axios(`${_URLParticipantArchive}&func=ReadMatch&matchId=${_matchId}`)
+      this.$axios.get(`${_URLParticipant}/${_TenantId}/${_matchId}`)
         .then((res) => {
-          this.tableParticipantArchive = res.data.split('\n')
-          for (let index = 0; index < this.tableParticipantArchive.length - 1; index++) {
-            const element = this.tableParticipantArchive[index].split(',')
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name)?.avatar
+              if (typeof _participantAvatar === 'undefined') {
+                _participantAvatar = ''
+              }
 
-            let _participantAvatar = this.memberObject.find(el => el.member === element[4].trim())?.avatar
-            if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
-            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === element[4].trim())?.customized
-            if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = 'FALSE'
+              let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name)?.customized
+              if (typeof _participantAvatarIsCustomized === 'undefined') {
+                _participantAvatarIsCustomized = false
+              }
 
-            this.setParticipantInactiveMatchObject(element[4].trim(), _participantAvatar, _participantAvatarIsCustomized)
+              this.setParticipantInactiveMatchObject(res.data[index].name, _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival)
+            }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -695,94 +785,158 @@ export default {
       this.showInactiveMatch = true
     },
 
-    setParticipantInactiveMatchObject (_participant, _participantAvatar, _participantAvatarIsCustomized) {
-      this.participantInactiveMatchObject.push({ participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized })
+    setParticipantInactiveMatchObject (_participant, _participantAvatar, _participantAvatarIsCustomized, _arrival) {
+      this.participantInactiveMatchObject.push({ participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival })
+
+      // Sort array of objects
+      this.participantInactiveMatchObject.sort(function (a, b) {
+        let arrivalA = a.arrival.toLowerCase()
+        if (arrivalA === '') arrivalA = '24:00'
+
+        let arrivalB = b.arrival.toLowerCase()
+        if (arrivalB === '') arrivalB = '24:00'
+
+        if (arrivalA > arrivalB) return 1
+        if (arrivalA < arrivalB) return -1
+        return 0
+      })
     },
 
     getTableMember () {
-      this.memberObject = []
+      return new Promise((resolve, reject) => {
+        this.memberObject = []
 
-      this.$axios(`${_URLMember}&func=Read`)
-        .then((res) => {
-          this.tableMember = res.data.split('\n')
-          for (let index = 0; index < this.tableMember.length - 1; index++) {
-            const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
-          }
-        })
-      return Promise.resolve()
-        .catch((err) => console.log(err))
+        this.$axios.get(`${_URLMember}/${_TenantId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              for (let index = 0; index < res.data.length; index++) {
+                this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
+              }
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setMemberObject (_member, _avatar, _customized) {
       this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
-    onMatchClick (_row, _matchId, _homeTeam, _awayTeam, _matchName, _published, _datetime, _annotations) {
-      _constMatchRow.value = _row
+    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
       _constMatchId.value = _matchId
       _constIsEvent.value = _homeTeam === '' && _awayTeam === ''
       _constHomeTeam.value = _homeTeam
       _constAwayTeam.value = _awayTeam
       _constMatchName.value = _matchName
       _constMatchNameOld.value = _matchName
-      _constPublished.value = _published === 'TRUE'
-      _constDatetime.value = _datetime
+      _constPublished.value = _published
+      _constMatchDate.value = _matchDate
+      _constDoorOpeningTime.value = _doorOpeningTime
       _constAnnotations.value = _annotations
+      _constSeason.value = _season
 
-      if (getCookie('isAdministrator') === 'true') this.editMatch = true
+      if (getCookie('isAdministrator')) this.editMatch = true
     },
 
-    setFieldsForMatchNameNew (_homeTeam, _awayTeam) {
-      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
+    setValueForMatchNameNew (_homeTeam, _awayTeam) {
+      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamFromTenant.value
 
       if (typeof _homeTeam !== 'undefined' && typeof _awayTeam !== 'undefined') {
         let _labelHomeTeam = ''
-        if (_homeTeam === getCookie('homeTeam')) {
-          _labelHomeTeam = getCookie('homeTeamAlias')
+        if (_homeTeam === _constHomeTeamFromTenant.value) {
+          _labelHomeTeam = _constHomeTeamAliasFromTenant.value
         } else {
-          _labelHomeTeam = this.teamOptions.find(el => el.value === _homeTeam)?.label
+          _labelHomeTeam = this.teamImages.find(el => el.value === _homeTeam)?.label
         }
         let _labelAwayTeam = ''
-        if (_awayTeam === getCookie('homeTeam')) {
-          _labelAwayTeam = getCookie('homeTeamAlias')
+        if (_awayTeam === _constHomeTeamFromTenant.value) {
+          _labelAwayTeam = _constHomeTeamAliasFromTenant.value
         } else {
-          _labelAwayTeam = this.teamOptions.find(el => el.value === _awayTeam)?.label
+          _labelAwayTeam = this.teamImages.find(el => el.value === _awayTeam)?.label
         }
         _constMatchNameNew.value = _labelHomeTeam + ' vs. ' + _labelAwayTeam
-
-        let _date = this.teamOptions.find(el => el.value === _awayTeam)?.date
-        let _time = this.teamOptions.find(el => el.value === _awayTeam)?.time
-
-        if (typeof _date === 'undefined' && typeof _time === 'undefined') {
-          _date = this.teamOptions.find(el => el.value === _homeTeam)?.date
-          _time = this.teamOptions.find(el => el.value === _homeTeam)?.time
-        }
-        _constDatetimeNew.value = _date + ' ' + _time
       }
     },
 
-    addMatchSave (_homeTeam, _awayTeam, _matchName, _isEvent, _published, _datetime, _annotations) {
+    setValueForMatchName (_homeTeam, _awayTeam) {
+      if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeam.value
+
+      if (typeof _homeTeam !== 'undefined' && typeof _awayTeam !== 'undefined') {
+        let _labelHomeTeam = ''
+        if (_homeTeam === _constHomeTeamFromTenant.value) {
+          _labelHomeTeam = _constHomeTeamAliasFromTenant.value
+        } else {
+          _labelHomeTeam = this.teamImages.find(el => el.value === _homeTeam)?.label
+        }
+        let _labelAwayTeam = ''
+        if (_awayTeam === _constHomeTeamFromTenant.value) {
+          _labelAwayTeam = _constHomeTeamAliasFromTenant.value
+        } else {
+          _labelAwayTeam = this.teamImages.find(el => el.value === _awayTeam)?.label
+        }
+        _constMatchName.value = _labelHomeTeam + ' vs. ' + _labelAwayTeam
+      }
+    },
+
+    setValueForDoorOpeningTimeNew (_matchTime) {
+      if (parseInt(_matchTime.substring(0, 2)) >= 2) {
+        _constDoorOpeningTimeNew.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString() + _matchTime.substring(2, 5)
+      }
+    },
+
+    setValueForDoorOpeningTime (_matchTime) {
+      if (parseInt(_matchTime.substring(0, 2)) >= 2) {
+        _constDoorOpeningTime.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString() + _matchTime.substring(2, 5)
+      }
+    },
+
+    addMatchSave (_homeTeam, _awayTeam, _matchName, _isEvent, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
       if (_isEvent) {
         _homeTeam = ''
         _awayTeam = ''
       } else {
-        if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamNew.value
+        if (typeof _homeTeam === 'undefined') _homeTeam = _constHomeTeamFromTenant.value
       }
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName)
+
       if (_matchExists) {
         this.onMatchAlreadyExists()
       } else {
-        const _date = _datetime.substring(0, 10)
-        const _time = _datetime.substring(11, 16)
+        const _constNewGuid = uuidv4()
+        const _constCreationTime = new Date()
 
-        this.$axios(`${_URLMatch}&func=Add&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        const newMatch = {
+          id: _constNewGuid,
+          creationTime: _constCreationTime,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          homeTeam: _homeTeam,
+          awayTeam: _awayTeam,
+          name: _matchName,
+          isPublished: _published,
+          date: _matchDate,
+          doorOpeningTime: _doorOpeningTime,
+          annotations: _annotations,
+          isDeactivated: false,
+          season: _season
+        }
+
+        this.$axios.post(`${_URLMatch}/${_TenantId}`, newMatch)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.status === 201) {
               this.onMatchCreated()
               this.getTableActiveMatch()
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => {
@@ -791,7 +945,7 @@ export default {
       }
     },
 
-    editMatchSave (_row, _matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _isEvent, _published, _datetime, _annotations) {
+    editMatchSave (_matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _isEvent, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
       if (_isEvent) {
         _homeTeam = ''
         _awayTeam = ''
@@ -802,103 +956,108 @@ export default {
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName) && _matchName !== _matchNameOld
+
       if (_matchExists) {
         this.onMatchAlreadyExists()
       } else {
-        const _date = _datetime.substring(0, 10)
-        const _time = _datetime.substring(11, 16)
-        const _newMatchName = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time
+        const updMatch = {
+          id: _matchId,
+          creationTime: null,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          homeTeam: _homeTeam,
+          awayTeam: _awayTeam,
+          name: _matchName,
+          isPublished: _published,
+          date: _matchDate,
+          doorOpeningTime: _doorOpeningTime,
+          annotations: _annotations,
+          isDeactivated: false,
+          season: _season
+        }
 
-        this.$axios(`${_URLMatch}&func=Update&row=${_row}&matchId=${_matchId}&homeTeam=${_homeTeam}&awayTeam=${_awayTeam}&matchName=${encodeURI(_matchName.replace(',', ' '))}&published=${_published}&time=${_time}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&date=${_date}`)
+        this.$axios.put(`${_URLMatch}/${_TenantId}/${_matchId}`, updMatch)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
-              this.$axios(`${_URLParticipant}&func=UpdateMatch&matchId=${_matchId}&newMatchName=${_newMatchName}`)
-                .then((res2) => {
-                  if (res2.data === 'Success, requested action completed') {
-                    this.onMatchUpdated()
-                    this.getTableActiveMatch()
-                  }
-                })
-                .catch((err) => {
-                  console.log(err)
-                })
+            if (res.status === 200) {
+              this.onMatchUpdated()
+              this.getTableActiveMatch()
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
-          .catch((err) => {
-            console.log(err)
-          })
+          .catch((err) => console.log(err))
       }
     },
 
-    archiveMatch (_row, _matchId, _datetime) {
-      const _date = _datetime.substring(0, 10)
-
-      this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
-        .then(async (res) => {
-          this.tableParticipant = res.data.split('\n')
-
-          for (let index = 0; index < this.tableParticipant.length - 1; index++) {
-            const element = this.tableParticipant[index].split(',')
-            this.$axios(`${_URLParticipantArchive}&func=Add&timestamp=${element[3]}&matchId=${element[2]}&matchName=${element[4]}&participant=${element[5]}&arrival=${element[6]}&annotations=${element[7]}&action=${element[8]}&reaction=${element[9]}&date=${_date}`)
-              .catch((err) => console.log(err))
-          }
-
-          this.inactivateDeleteMatch(_row, _matchId, true)
-        })
-        .catch((err) => console.log(err))
+    archiveMatch (_matchId) {
+      this.deactivateDeleteMatch(_matchId, true)
     },
 
-    inactivateDeleteMatch (_row, _matchId, _inactivate) {
-      this.$axios(`${_URLParticipant}&func=DeleteMatch&matchId=${_matchId}`)
-        .then((res3) => {
-          if (res3.data === 'Success, requested action completed') {
-            if (_inactivate) {
-              this.$axios(`${_URLMatch}&func=Inactivate&row=${_row}&matchId=${_matchId}`)
-                .then((res4) => {
-                  if (res4.data === 'Success, requested action completed') {
-                    this.onMatchArchived()
-                    this.getTableActiveMatch()
-                    this.editMatch = false
-                  }
-                })
-                .catch((err) => console.log(err))
+    deactivateDeleteMatch (_matchId, _deactivate) {
+      if (_deactivate) {
+        this.$axios.put(`${_URLMatch}/${_TenantId}/${_matchId}/deactivate`)
+          .then((res) => {
+            if (res.status === 200) {
+              this.onMatchArchived()
+              this.getTableActiveMatch()
+              this.editMatch = false
             } else {
-              this.$axios(`${_URLMatch}&func=Delete&row=${_row}&matchId=${_matchId}`)
-                .then((res5) => {
-                  if (res5.data === 'Success, requested action completed') {
+              console.log('Unexpected status code:', res.status)
+            }
+          })
+          .catch((err) => console.log(err))
+      } else {
+        this.$axios.delete(`${_URLParticipant}/${_TenantId}/match/${_matchId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              this.$axios.delete(`${_URLMatch}/${_TenantId}/${_matchId}`)
+                .then((res2) => {
+                  if (res2.status === 200) {
                     this.onMatchDeleted()
                     this.getTableActiveMatch()
                     this.editMatch = false
+                  } else {
+                    console.log('Unexpected status code:', res2.status)
+                  }
+                })
+                .catch((err2) => console.log(err2))
+            } else {
+              console.log('Unexpected status code:', res.status)
+            }
+          })
+          .catch((err) => console.log(err))
+      }
+    },
+
+    deleteMatch (_matchId) {
+      this.deactivateDeleteMatch(_matchId, false)
+    },
+
+    getTableInactiveMatch (_seasonParam) {
+      this.inactiveMatchObject = []
+
+      if (typeof _seasonParam !== 'undefined') {
+        _Season = _seasonParam
+      }
+
+      this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/inactive`)
+        .then((res) => {
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              let _numberOfParticipants = 0
+              this.$axios.get(`${_URLParticipant}/${_TenantId}/${res.data[index].id}`)
+                .then((res2) => {
+                  if (res2.status === 200) {
+                    _numberOfParticipants = res2.data.length
+                    this.setInactiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime, res.data[index].date, _numberOfParticipants)
+                  } else {
+                    console.log('Unexpected status code:', res2.status)
                   }
                 })
                 .catch((err) => console.log(err))
             }
-          }
-        })
-        .catch((err) => console.log(err))
-    },
-
-    async deleteMatch (_row, _matchId) {
-      this.inactivateDeleteMatch(_row, _matchId, false)
-    },
-
-    getTableInactiveMatch () {
-      this.inactiveMatchObject = []
-
-      this.$axios(`${_URLMatch}&func=ReadInactive`)
-        .then((res) => {
-          this.tableInactiveMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableInactiveMatch.length - 1; index++) {
-            const element = this.tableInactiveMatch[index].split(',')
-
-            let _numberOfParticipants = 0
-            this.$axios(`${_URLParticipantArchive}&func=ReadMatch&matchId=${element[1]}`)
-              .then((res2) => {
-                this.tableParticipantArchive = res2.data.split('\n')
-                _numberOfParticipants = this.tableParticipantArchive.length - 1
-                this.setInactiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[9], _numberOfParticipants)
-              })
-              .catch((err) => console.log(err))
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -919,31 +1078,6 @@ export default {
         if (dateA > dateB) return -1
         return 0
       })
-    },
-
-    getTableNextMatch () {
-      this.teamOptions = []
-
-      let _label = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.label
-      let _image = this.teamImages.find(el => el.value === getCookie('homeTeam'))?.image
-      this.setTeamOptionsObject(_label, getCookie('homeTeam'), _image)
-
-      this.$axios(`${_URLNextMatch}&func=Read`)
-        .then((res) => {
-          this.tableNextMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableNextMatch.length - 1; index++) {
-            const element = this.tableNextMatch[index].split(',')
-
-            _label = this.teamImages.find(el => el.value === element[1].trim())?.label
-            _image = this.teamImages.find(el => el.value === element[1].trim())?.image
-            this.setTeamOptionsObject(_label, element[1].trim(), _image, element[2], element[3])
-          }
-        })
-        .catch((err) => console.log(err))
-    },
-
-    setTeamOptionsObject (_label, _value, _image, _date, _time) {
-      this.teamOptions.push({ label: _label, value: _value, image: _image, date: _date, time: _time })
     }
 
   }

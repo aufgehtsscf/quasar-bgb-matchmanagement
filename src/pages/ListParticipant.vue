@@ -13,10 +13,10 @@
         <q-list v-for="(match, i) in activeMatchObject"
           :key="i"
           v-ripple>
-          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.time, match.annotations, match.date)">
+          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.doorOpeningtime, match.annotations, match.date)">
             <q-item-section>
               <q-item-label>{{ match.matchName }}</q-item-label>
-              <q-item-label caption>{{ match.date }} - {{ match.time }}</q-item-label>
+              <q-item-label caption>{{ match.date }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -47,7 +47,7 @@
     </q-card>
 
     <!-- Share -->
-    <div class="q-pa-md" style="max-width: 500px" v-if="getCookie('isAdministrator') === 'true'" >
+    <div class="q-pa-md" style="max-width: 500px" v-if="getCookie('isAdministrator')" >
       <q-btn class="bg-white text-primary" icon="share" label="Übersicht teilen" @click="setTextShareForWhatsApp(txtMatchName)" />
     </div>
 
@@ -73,15 +73,15 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(el, i) in presentParticipantObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onParticipantClick(el.presentParticipantRow, el.presentParticipantParticipantId, el.presentParticipantParticipant, el.presentParticipantArrival, el.presentParticipantAnnotations, el.presentParticipantAction, el.presentParticipantReaction)">
+        <q-item clickable v-ripple @click="onParticipantClick(el.presentParticipantParticipantId, el.presentParticipantParticipant, el.presentParticipantArrival, el.presentParticipantAnnotations, el.presentParticipantAction, el.presentParticipantReaction)">
           <q-item-section avatar>
             <q-avatar size="70px" color="deep-orange-14" text-color="white" v-if="el.presentParticipantParticipantAvatar === ''">
               {{ el.presentParticipantParticipant.substring(0, 1) }}
-              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
+              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
             </q-avatar>
             <q-avatar size="70px" v-if="el.presentParticipantParticipantAvatar !== ''">
-              <img :src="getAvatar(getAdminCode(getCookie('applicationCode')), el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized === 'TRUE')">
-              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtTime)">reserviert</q-badge>
+              <img :src="getAvatar(varAdminCode, el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized)">
+              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -94,10 +94,10 @@
       </q-list>
 
       <!-- Ticket assignment area (Titel) -->
-      <div class="q-pa-md" style="max-width: 470px" v-if="txtHomeTeam === getCookie('homeTeam')">
+      <div class="q-pa-md" style="max-width: 470px" v-if="txtHomeTeam === homeTeamFromTenant">
         <q-toolbar class="bg-primary text-white">
             <q-toolbar-title class="text-overline">Karte weitergeben ({{ ticketGivenObject.length }}) oder bedarf ({{ ticketRequiredObject.length }})</q-toolbar-title>
-            <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="getCookie('isAdministrator')" />
         </q-toolbar>
       </div>
 
@@ -105,7 +105,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(ticket, i) in ticketObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onTicketAssignmentClick(ticket.ticketRow, ticket.ticketParticipantId, ticket.ticketParticipant, ticket.ticketArrival, ticket.ticketAnnotations, ticket.ticketAction, ticket.ticketReaction)">
+        <q-item clickable v-ripple @click="onTicketAssignmentClick(ticket.ticketParticipantId, ticket.ticketParticipant, ticket.ticketArrival, ticket.ticketAnnotations, ticket.ticketAction, ticket.ticketReaction)">
           <q-item-section>
             <q-item-label overline v-if="ticket.ticketAction === 'brauche Karte'">??? an {{ ticket.ticketParticipant }}</q-item-label>
             <q-item-label overline v-if="ticket.ticketAction === 'meine Karte ist frei' && ticket.ticketReaction === ''">{{ ticket.ticketParticipant }} an ???</q-item-label>
@@ -157,7 +157,7 @@
               :options="cbxActionOptionsHome"
               label="Aktion *"
               options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam === getCookie('homeTeam')"
+              v-if="txtHomeTeam === homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -169,7 +169,7 @@
               :options="cbxActionOptionsAway"
               label="Aktion *"
               options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam !== getCookie('homeTeam')"
+              v-if="txtHomeTeam !== homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -194,7 +194,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantNew === '' || txtActionNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addParticipantSave(txtParticipantNew, txtArrivalNew, txtAnnotationsParticipantNew, txtActionNew, txtMatchName, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantNew === '' || txtActionNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -219,7 +219,7 @@
               label="Aktion *"
               :readonly="false"
               options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction === '' &&  txtHomeTeam === getCookie('homeTeam')"
+              v-if="txtParticipantReaction === '' &&  txtHomeTeam === homeTeamFromTenant"
             >
             </q-select>
 
@@ -230,7 +230,7 @@
               label="Aktion *"
               :readonly="false"
               options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction === '' &&  txtHomeTeam !== getCookie('homeTeam')"
+              v-if="txtParticipantReaction === '' &&  txtHomeTeam !== homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -243,7 +243,7 @@
               label="Aktion *"
               :readonly="true"
               options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction !== '' &&  txtHomeTeam === getCookie('homeTeam')"
+              v-if="txtParticipantReaction !== '' &&  txtHomeTeam === homeTeamFromTenant"
             >
             </q-select>
             <q-select
@@ -253,7 +253,7 @@
               label="Aktion *"
               :readonly="true"
               options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== getCookie('homeTeam')"
+              v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -280,9 +280,9 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if="getCookie('isAdministrator') === 'true' && txtParticipantReaction === ''" />
+            <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if=" getCookie('isAdministrator') && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(intParticipantRow, txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -297,7 +297,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(intParticipantRow, txtParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteParticipant(txtParticipantId, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -320,7 +320,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addTicketAssignmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketAssignmentGiven === '' || txtTicketAssignmentRequired === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addTicketAssignmentSave(txtTicketAssignmentGiven, txtTicketAssignmentRequired, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtTicketAssignmentGiven === '' || txtTicketAssignmentRequired === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -343,7 +343,7 @@
               :options="cbxActionOptionsHome"
               label="Aktion"
               options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam === getCookie('homeTeam')"
+              v-if="txtHomeTeam === homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -355,7 +355,7 @@
               :options="cbxActionOptionsAway"
               label="Aktion"
               options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam !== getCookie('homeTeam')"
+              v-if="txtHomeTeam !== homeTeamFromTenant"
             >
             </q-select>
           </q-card-section>
@@ -369,9 +369,9 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="delete" color="primary" @click="delTicketAssignment = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(intTicketParticipantRow, txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="save" label="Speichern" @click="editTicketAssignmentSave(txtTicketParticipantId, txtTicketParticipant, txtTicketParticipantOld, txtTicketArrival, txtTicketAnnotations, txtTicketAction, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtTicketParticipant === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -391,7 +391,7 @@
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
-            <q-btn icon="swipe_left" label="Aufheben" color="primary" @click="delTicketAssigned = true" v-if="getCookie('isAdministrator') === 'true'" />
+            <q-btn icon="swipe_left" label="Aufheben" color="primary" @click="delTicketAssigned = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
           </q-card-actions>
         </q-card>
@@ -407,7 +407,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(intTicketParticipantRow, txtTicketParticipantId, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssignment(txtTicketParticipantId, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -422,7 +422,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Nein" color="primary" v-close-popup />
-            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssigned(txtTicketAssignedGiven, txtTicketAssignedRequired, txtMatchId, txtTime, txtAnnotationsMatchOriginal)" v-close-popup />
+            <q-btn flat label="Ja" color="primary" @click="deleteTicketAssigned(txtTicketAssignedGiven, txtTicketAssignedRequired, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -435,19 +435,19 @@
 
 <script>
 import useQuasar from 'quasar/src/composables/use-quasar.js'
-import { getCookie, getAdminCode, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchBasis, URLParticipantBasis, URLWhereIsMyCardBasis, URLMemberBasis } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
 const _constMatchId = ref('')
 const _constHomeTeam = ref('')
 const _constAwayTeam = ref('')
 const _constMatchName = ref('')
-const _constTime = ref('')
+const _constDoorOpeningTime = ref('')
 const _constAnnotationsMatchOriginal = ref('')
 const _constAnnotationsMatch = ref('')
 const _constArrivalElements = []
 
-const _constParticipantRow = ref(0)
 const _constParticipantId = ref('')
 const _constParticipantParticipant = ref('')
 const _constParticipantParticipantOld = ref('')
@@ -474,6 +474,13 @@ const _constParticipantListFormattedForWhatsApp = ref('')
 const _constTicketList = ref('')
 const _constShare = ref('')
 
+const _constAdminCode = ref('')
+const _constHomeTeamFromTenant = ref('')
+const _constStandardTextFromTenant = ref('')
+
+let _TenantId
+let _Season
+let _URLTenant
 let _URLMatch
 let _URLParticipant
 let _URLWhereIsMyCard
@@ -486,14 +493,18 @@ export default {
     const $q = useQuasar()
 
     return {
+      varAdminCode: ref(_constAdminCode),
+
       txtMatchId: ref(_constMatchId),
       txtHomeTeam: ref(_constHomeTeam),
       txtAwayTeam: ref(_constAwayTeam),
       txtMatchName: ref(_constMatchName),
-      txtTime: ref(_constTime),
+      txtDoorOpeningTime: ref(_constDoorOpeningTime),
       txtAnnotationsMatchOriginal: ref(_constAnnotationsMatchOriginal),
       txtAnnotationsMatch: ref(_constAnnotationsMatch),
       cbxArrivalOptions: ref(_constArrivalElements),
+
+      homeTeamFromTenant: ref(_constHomeTeamFromTenant),
 
       onParticipantCreated () {
         $q.notify({
@@ -562,7 +573,6 @@ export default {
       delTicketAssignment: ref(false),
       delTicketAssigned: ref(false),
 
-      intParticipantRow: ref(_constParticipantRow),
       txtParticipantId: ref(_constParticipantId),
       txtParticipantParticipant: ref(_constParticipantParticipant),
       txtParticipantParticipantOld: ref(_constParticipantParticipantOld),
@@ -609,10 +619,7 @@ export default {
       teamImages,
       getTeamImage,
       getEventImage,
-      URLMatchBasis,
-      URLParticipantBasis,
-      URLWhereIsMyCardBasis,
-      URLMemberBasis,
+      URLMatchManagementAPI,
 
       activeMatchObject: [
         {
@@ -620,7 +627,7 @@ export default {
           homeTeam: '',
           awayTeam: '',
           matchName: '',
-          time: '',
+          doorOpeningtime: '',
           annotations: '',
           date: ''
         }
@@ -628,10 +635,9 @@ export default {
 
       participantObject: [
         {
-          row: '',
           participantId: '',
           timestamp: '',
-          matchName: '',
+          matchId: '',
           participant: '',
           participantAvatar: '',
           _participantAvatarIsCustomized: '',
@@ -645,7 +651,6 @@ export default {
 
       presentParticipantObject: [
         {
-          presentParticipantRow: '',
           presentParticipantParticipantId: '',
           presentParticipantMatchName: '',
           presentParticipantParticipant: '',
@@ -660,7 +665,6 @@ export default {
 
       ticketObject: [
         {
-          ticketRow: '',
           ticketParticipantId: '',
           ticketParticipant: '',
           ticketArrival: '',
@@ -672,7 +676,6 @@ export default {
 
       ticketGivenObject: [
         {
-          ticketGivenRow: '',
           ticketGivenParticipantId: '',
           ticketGivenParticipant: ''
         }
@@ -680,7 +683,6 @@ export default {
 
       ticketRequiredObject: [
         {
-          ticketRequiredRow: '',
           ticketRequiredParticipantId: '',
           ticketRequiredParticipant: ''
         }
@@ -688,7 +690,6 @@ export default {
 
       ticketAssignedObject: [
         {
-          ticketAssignedRow: '',
           ticketAssignedParticipantId: '',
           ticketAssignedParticipant: ''
         }
@@ -717,43 +718,86 @@ export default {
 
   mounted () {
     this.setVariables().then(() => {
-      this.getTableMember().then(() => {
-        this.getTableActiveMatch()
-        this.getTableWhereIsMyCard()
+      this.getTenantId().then(() => {
+        this.getTableMember().then(() => {
+          this.getTableActiveMatch()
+          this.getTableWhereIsMyCard()
+        })
       })
     })
   },
 
   methods: {
     setVariables () {
-      _URLMatch = URLMatchBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLParticipant = URLParticipantBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLWhereIsMyCard = URLWhereIsMyCardBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
-      _URLMember = URLMemberBasis + '?sh=' + getAdminCode(getCookie('applicationCode'))
+      _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
+      _URLTenant = URLMatchManagementAPI + '/Tenant'
+      _URLMatch = URLMatchManagementAPI + '/Match'
+      _URLParticipant = URLMatchManagementAPI + '/Participant'
+      _URLWhereIsMyCard = URLMatchManagementAPI + '/CardHolder'
+      _URLMember = URLMatchManagementAPI + '/Member'
+
+      this.activeMatchObject = []
+      this.participantObject = []
+      this.presentParticipantObject = []
+      this.ticketObject = []
+      this.ticketGivenObject = []
+      this.ticketRequiredObject = []
+      this.ticketAssignedObject = []
+
       return Promise.resolve()
     },
 
     isReservation (_participantArrival, _matchTime) {
       if (_participantArrival !== '') {
-        if (parseInt(_participantArrival.substring(0, 2)) === parseInt(_matchTime.substring(0, 2) - 2) &&
+        if (parseInt(_participantArrival.substring(0, 2)) === parseInt(_matchTime.substring(0, 2)) &&
         _participantArrival.substring(3, 5) === _matchTime.substring(3, 5)) { return true } else { return false }
       }
       return false
     },
 
-    getTableMember () {
-      this.memberObject = []
+    getTenantId () {
+      return new Promise((resolve, reject) => {
+        this.$axios.get(`${_URLTenant}/code/${_constAdminCode.value}`)
+          .then((res) => {
+            if (res.status === 200) {
+              _TenantId = res.data.id
+              _Season = res.data.season
+              _constHomeTeamFromTenant.value = res.data.homeTeam
+              _constStandardTextFromTenant.value = res.data.standardText
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
 
-      this.$axios(`${_URLMember}&func=Read`)
-        .then((res) => {
-          this.tableMember = res.data.split('\n')
-          for (let index = 0; index < this.tableMember.length - 1; index++) {
-            const element = this.tableMember[index].split(',')
-            this.setMemberObject(element[3].trim(), element[4].trim(), element[5])
-          }
-        })
-      return Promise.resolve()
-        .catch((err) => console.log(err))
+    getTableMember () {
+      return new Promise((resolve, reject) => {
+        this.memberObject = []
+
+        this.$axios.get(`${_URLMember}/${_TenantId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              for (let index = 0; index < res.data.length; index++) {
+                this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
+              }
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     setMemberObject (_member, _avatar, _customized) {
@@ -769,23 +813,21 @@ export default {
       this.ticketRequiredObject = []
       this.ticketAssignedObject = []
 
-      this.$axios(`${_URLMatch}&func=ReadActive&published=TRUE`)
+      this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/active/true`)
         .then((res) => {
-          this.tableMatch = res.data.split('\n')
-          for (let index = 0; index < this.tableMatch.length - 1; index++) {
-            const element = this.tableMatch[index].split(',')
-            this.setActiveMatchObject(element[1], element[3].trim(), element[4].trim(), element[5].trim(), element[7].substring(0, 5), element[8].trim().replace(/<br>/g, '\n'), element[9])
+          for (let index = 0; index < res.data.length; index++) {
+            this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime, res.data[index].annotations, res.data[index].date)
           }
 
-          if (this.tableMatch.length > 1) {
-            this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].time, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
+          if (res.data.length > 0) {
+            this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].doorOpeningtime, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
           }
         })
         .catch((err) => console.log(err))
     },
 
-    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _time, _annotations, _date) {
-      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, time: _time, annotations: _annotations, date: _date })
+    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _doorOpeningTime, _annotations, _date) {
+      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, doorOpeningtime: _doorOpeningTime, annotations: _annotations, date: _date })
 
       // Sort array of objects
       this.activeMatchObject.sort(function (a, b) {
@@ -801,24 +843,24 @@ export default {
       })
     },
 
-    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _time, _annotationsMatch, _date) {
+    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _doorOpeningTime, _annotationsMatch, _date) {
       _constMatchId.value = _matchId
       _constHomeTeam.value = _homeTeam
       _constAwayTeam.value = _awayTeam
-      _constMatchName.value = _matchName.trim() + ' ' + _date.substring(0, 6) + _date.substring(8, 10) + ' - ' + _time.substring(0, 5)
-      _constTime.value = _time
+      _constMatchName.value = _matchName.trim() + ' ' + _date
+      _constDoorOpeningTime.value = _doorOpeningTime
 
-      this.loadReloadData(_matchId, _time, _annotationsMatch)
+      this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
     },
 
-    loadReloadData (_matchId, _time, _annotationsMatch) {
-      this.setArrivalElements(_time)
-      this.getTableParticipant(_matchId, _time, _annotationsMatch)
+    loadReloadData (_matchId, _doorOpeningTime, _annotationsMatch) {
+      this.setArrivalElements(_doorOpeningTime)
+      this.getTableParticipant(_matchId, _doorOpeningTime, _annotationsMatch)
     },
 
     setTextShare (_matchName) {
       _constShare.value = _matchName + '\n\nAnwesend (' + this.presentParticipantObject.length + '):\n' + _constParticipantList.value
-      if (_constHomeTeam.value === getCookie('homeTeam')) {
+      if (_constHomeTeam.value === _constHomeTeamFromTenant.value) {
         _constShare.value += '\nKarte weitergeben (' + this.ticketGivenObject.length + ') oder bedarf (' + this.ticketRequiredObject.length + '):\n' + _constTicketList.value
       }
       _constShare.value += '\n' + _constAnnotationsMatch.value
@@ -827,15 +869,14 @@ export default {
 
     setTextShareForWhatsApp (_matchName) {
       _constShare.value = '*' + _matchName + '*\n\n*Anwesend (' + this.presentParticipantObject.length + '):*\n\n' + _constParticipantListFormattedForWhatsApp.value
-      if (_constHomeTeam.value === getCookie('homeTeam')) {
+      if (_constHomeTeam.value === _constHomeTeamFromTenant.value) {
         _constShare.value += '\n*Karte weitergeben (' + this.ticketGivenObject.length + ') oder bedarf (' + this.ticketRequiredObject.length + '):*\n\n' + _constTicketList.value
       }
       _constShare.value += '\n' + _constAnnotationsMatch.value
       this.share = true
     },
 
-    onParticipantClick (_row, _participantId, _participant, _arrival, _annotations, _action, _reaction) {
-      _constParticipantRow.value = _row
+    onParticipantClick (_participantId, _participant, _arrival, _annotations, _action, _reaction) {
       _constParticipantId.value = _participantId
       _constParticipantParticipant.value = _participant
       _constParticipantParticipantOld.value = _participant
@@ -856,53 +897,88 @@ export default {
 
       const _participants = this.participantObject.map(el => el.participant)
       const _participantExists = _participants.includes(_participant)
+
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${_URLParticipant}&func=Add&match=${_matchName}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}&reaction=&matchId=${_matchId}`)
+        const _constNewGuid = uuidv4()
+        const _constCreationTime = new Date()
+
+        const newParticipant = {
+          id: _constNewGuid,
+          creationTime: _constCreationTime,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          name: _participant,
+          arrival: _arrival,
+          annotations: _annotations,
+          action: _action,
+          reaction: '',
+          matchId: _matchId
+        }
+
+        this.$axios.post(`${_URLParticipant}/${_TenantId}`, newParticipant)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.status === 201) {
               this.onParticipantCreated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => console.log(err))
       }
     },
 
-    editParticipantSave (_row, _participantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
+    editParticipantSave (_participantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
       if (_action !== 'bin dabei') _arrival = ''
 
       const _participants = this.participantObject.map(el => el.participant)
       const _participantExists = _participants.includes(_participant) && _participant !== _participantOld
+
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${_URLParticipant}&func=Update&row=${_row}&participantId=${_participantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
+        const updParticipant = {
+          id: _participantId,
+          creationTime: null,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          name: _participant,
+          arrival: _arrival,
+          annotations: _annotations,
+          action: _action,
+          reaction: '',
+          matchId: _matchId
+        }
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_participantId}`, updParticipant)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.status === 200) {
               this.onParticipantUpdated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => console.log(err))
       }
     },
 
-    deleteParticipant (_row, _participantId, _matchId, _time, _annotationsMatch) {
-      this.$axios(`${_URLParticipant}&func=Delete&row=${_row}&participantId=${_participantId}`)
+    deleteParticipant (_participantId, _matchId, _time, _annotationsMatch) {
+      this.$axios.delete(`${_URLParticipant}/${_TenantId}/participant/${_participantId}`)
         .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.editParticipant = false
+          if (res.status === 200) {
             this.onParticipantDeleted()
             this.loadReloadData(_matchId, _time, _annotationsMatch)
+            this.editParticipant = false
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
     },
 
-    onTicketAssignmentClick (_ticketRow, _ticketParticipantId, _participant, _arrival, _annotations, _action, _reaction) {
-      _constTicketParticipantRow.value = _ticketRow
+    onTicketAssignmentClick (_ticketParticipantId, _participant, _arrival, _annotations, _action, _reaction) {
       _constTicketParticipantId.value = _ticketParticipantId
       _constTicketParticipant.value = _participant
       _constTicketParticipantOld.value = _participant
@@ -923,52 +999,54 @@ export default {
       }
     },
 
-    addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchId, _time, _annotationsMatch) {
-      const _ticketGivenRow = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenRow
+    addTicketAssignmentSave (_ticketAssignmentGiven, _ticketAssignmentRequired, _matchId, _doorOpeningTime, _annotationsMatch) {
       const _ticketGivenParticipantId = this.ticketGivenObject.find(el => el.ticketGivenParticipant === _ticketAssignmentGiven)?.ticketGivenParticipantId
       if (typeof _ticketGivenParticipantId !== 'undefined') {
-        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&row=${_ticketGivenRow}&participantId=${_ticketGivenParticipantId}&reaction=${_ticketAssignmentRequired}`)
-          .catch((err) => console.log(err))
-
-        const _ticketRequiredRow = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredRow
-        const _ticketRequiredParticipantId = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredParticipantId
-        if (typeof _ticketRequiredParticipantId !== 'undefined') {
-          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&row=${_ticketRequiredRow}&participantId=${_ticketRequiredParticipantId}&action=bin dabei&reaction=${_ticketAssignmentGiven}`)
-            .then((res) => {
-              if (res.data === 'Success, requested action completed') {
-                this.onAssignmentCreated()
-                this.loadReloadData(_matchId, _time, _annotationsMatch)
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketGivenParticipantId}/given?reaction=${_ticketAssignmentRequired}`)
+          .then((res) => {
+            if (res.status === 200) {
+              const _ticketRequiredParticipantId = this.ticketRequiredObject.find(el => el.ticketRequiredParticipant === _ticketAssignmentRequired)?.ticketRequiredParticipantId
+              if (typeof _ticketRequiredParticipantId !== 'undefined') {
+                this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketRequiredParticipantId}/required?reaction=${_ticketAssignmentGiven}`)
+                  .then((res2) => {
+                    if (res2.status === 200) {
+                      this.onAssignmentCreated()
+                      this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
+                    }
+                  })
+                  .catch((err2) => console.log(err2))
               }
-            })
-            .catch((err) => console.log(err))
-        }
+            }
+          })
+          .catch((err) => console.log(err))
       }
     },
 
-    deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchId, _time, _annotationsMatch) {
-      const _ticketGivenRow = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedRow
+    deleteTicketAssigned (_ticketAssignedGiven, _ticketAssignedRequired, _matchId, _doorOpeningTime, _annotationsMatch) {
       const _ticketAssignedGivenParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedGiven)?.ticketAssignedParticipantId
       if (typeof _ticketAssignedGivenParticipantId !== 'undefined') {
-        this.$axios(`${_URLParticipant}&func=UpdateTicketGiven&row=${_ticketGivenRow}&participantId=${_ticketAssignedGivenParticipantId}&reaction=`)
-          .catch((err) => console.log(err))
-
-        const _ticketRequiredRow = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedRow
-        const _ticketAssignedRequiredParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedParticipantId
-        if (typeof _ticketAssignedRequiredParticipantId !== 'undefined') {
-          this.$axios(`${_URLParticipant}&func=UpdateTicketRequired&row=${_ticketRequiredRow}&participantId=${_ticketAssignedRequiredParticipantId}&action=brauche Karte&reaction=`)
-            .then((res) => {
-              if (res.data === 'Success, requested action completed') {
-                this.editTicketAssigned = false
-                this.OnTicketAssignedDeleted()
-                this.loadReloadData(_matchId, _time, _annotationsMatch)
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketAssignedGivenParticipantId}/given?reaction=null`)
+          .then((res) => {
+            if (res.status === 200) {
+              const _ticketAssignedRequiredParticipantId = this.ticketAssignedObject.find(el => el.ticketAssignedParticipant === _ticketAssignedRequired)?.ticketAssignedParticipantId
+              if (typeof _ticketAssignedRequiredParticipantId !== 'undefined') {
+                this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketAssignedRequiredParticipantId}/required?reaction=null`)
+                  .then((res2) => {
+                    if (res2.status === 200) {
+                      this.editTicketAssigned = false
+                      this.OnTicketAssignedDeleted()
+                      this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
+                    }
+                  })
+                  .catch((err2) => console.log(err2))
               }
-            })
-            .catch((err) => console.log(err))
-        }
+            }
+          })
+          .catch((err) => console.log(err))
       }
     },
 
-    editTicketAssignmentSave (_ticketRow, _ticketParticipantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
+    editTicketAssignmentSave (_ticketParticipantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
       if (_action !== 'bin dabei') _arrival = ''
 
       const _participants = this.ticketObject.map(el => el.ticketParticipant)
@@ -976,9 +1054,21 @@ export default {
       if (_participantExists) {
         this.onParticipantAlreadyExists()
       } else {
-        this.$axios(`${_URLParticipant}&func=Update&row=${_ticketRow}&participantId=${_ticketParticipantId}&participant=${encodeURI(_participant.replace(',', ' '))}&arrival=${_arrival}&annotations=${encodeURI(_annotations.replace(',', ';').replace(/(?:\r\n|\r|\n)/g, '<br>'))}&action=${_action}`)
+        const updParticipant = {
+          id: _ticketParticipantId,
+          creationTime: null,
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          name: _participant,
+          arrival: _arrival,
+          annotations: _annotations,
+          action: _action,
+          reaction: '',
+          matchId: _matchId
+        }
+        this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketParticipantId}`, updParticipant)
           .then((res) => {
-            if (res.data === 'Success, requested action completed') {
+            if (res.status === 200) {
               this.editTicketAssignment = false
               this.onTicketAssigmentUpdated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
@@ -988,8 +1078,8 @@ export default {
       }
     },
 
-    deleteTicketAssignment (_ticketRow, _ticketParticipantId, _matchId, _time, _annotationsMatch) {
-      this.$axios(`${_URLParticipant}&func=Delete&row=${_ticketRow}&participantId=${_ticketParticipantId}`)
+    deleteTicketAssignment (_ticketParticipantId, _matchId, _time, _annotationsMatch) {
+      this.$axios.delete(`${_URLParticipant}/${_TenantId}/participant/${_ticketParticipantId}`)
         .then((res) => {
           if (res.data === 'Success, requested action completed') {
             this.editTicketAssignment = false
@@ -1000,7 +1090,7 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    getTableParticipant (_matchId, _time, _annotationsMatch) {
+    getTableParticipant (_matchId, _doorOpeningTime, _annotationsMatch) {
       this.participantObject = []
       this.presentParticipantObject = []
       this.ticketObject = []
@@ -1014,29 +1104,26 @@ export default {
       _constAnnotationsMatch.value = ''
       _constTicketList.value = ''
 
-      this.$axios(`${_URLParticipant}&func=Read&matchId=${_matchId}`)
+      this.$axios.get(`${_URLParticipant}/${_TenantId}/${_matchId}`)
         .then((res) => {
-          this.tableParticipant = res.data.split('\n')
-          for (let index = 0; index < this.tableParticipant.length - 1; index++) {
-            const element = this.tableParticipant[index].split(',')
-
-            let _participantAvatar = this.memberObject.find(el => el.member === element[5].trim())?.avatar
+          for (let index = 0; index < res.data.length; index++) {
+            let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name)?.avatar
             if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
-            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === element[5].trim())?.customized
-            if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = 'FALSE'
+            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name)?.customized
+            if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = false
 
-            this.setParticipantObject(element[0], element[1], element[3], element[4].trim(), element[5].trim(), _participantAvatar, _participantAvatarIsCustomized, element[6].substring(0, 5), element[7].trim().replace(/<br>/g, '\n'), element[8], element[9])
+            this.setParticipantObject(res.data[index].id, res.data[index].creationTime, res.data[index].matchId, res.data[index].name, _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival, res.data[index].annotations, res.data[index].action, res.data[index].reaction)
           }
 
-          if (this.tableParticipant.length > 1) {
-            this.fillObjects(_matchId, _time, _annotationsMatch)
+          if (res.data.length > 0) {
+            this.fillObjects(_matchId, _doorOpeningTime, _annotationsMatch)
           }
         })
         .catch((err) => console.log(err))
     },
 
-    setParticipantObject (_row, _participantId, _timestamp, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
-      this.participantObject.push({ row: parseInt(_row), participantId: _participantId, timestamp: _timestamp, matchName: _matchName, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
+    setParticipantObject (_participantId, _timestamp, _matchId, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
+      this.participantObject.push({ participantId: _participantId, timestamp: _timestamp, matchId: _matchId, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
 
       // Sort array of objects
       this.participantObject.sort(function (a, b) {
@@ -1052,17 +1139,17 @@ export default {
       })
     },
 
-    fillObjects (_matchId, _time, _annotationsMatch) {
+    fillObjects (_matchId, _doorOpeningTime, _annotationsMatch) {
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.row, el.participantId, el.matchName, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.participantId, el.matchId, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
 
-        if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.row, el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 
-        if (el.action === 'meine Karte ist frei' && el.reaction === '') this.setTicketGivenObject(el.row, el.participantId, el.participant)
+        if (el.action === 'meine Karte ist frei' && el.reaction === '') this.setTicketGivenObject(el.participantId, el.participant)
 
-        if (el.action === 'brauche Karte' && el.reaction === '') this.setTicketRequiredObject(el.row, el.participantId, el.participant)
+        if (el.action === 'brauche Karte' && el.reaction === '') this.setTicketRequiredObject(el.participantId, el.participant)
 
-        if (el.reaction !== '') this.setTicketAssignedObject(el.row, el.participantId, el.participant)
+        if (el.reaction !== '') this.setTicketAssignedObject(el.participantId, el.participant)
       })
 
       this.presentParticipantObject.forEach(el => {
@@ -1076,14 +1163,14 @@ export default {
 
         if (el.presentParticipantArrival !== '') _constParticipantListFormattedForWhatsApp.value += '*'
 
-        if (this.isReservation(el.presentParticipantArrival, _time)) {
+        if (this.isReservation(el.presentParticipantArrival, _doorOpeningTime)) {
           if (this.reservation !== '') this.reservation += ', '
           this.reservation += el.presentParticipantParticipant.trim()
         }
 
         if (el.presentParticipantAnnotations !== '') {
-          _constParticipantList.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')'
-          if (el.presentParticipantArrival !== '') { _constParticipantListFormattedForWhatsApp.value += ' _(' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')' } else { _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantAnnotations.trim().replace(/\n/g, ' / ') + ')' }
+          _constParticipantList.value += ' (' + el.presentParticipantAnnotations.trim() + ')'
+          if (el.presentParticipantArrival !== '') { _constParticipantListFormattedForWhatsApp.value += ' _(' + el.presentParticipantAnnotations.trim() + ')' } else { _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantAnnotations.trim() + ')' }
         }
 
         if (el.presentParticipantReaction !== '') {
@@ -1111,11 +1198,11 @@ export default {
 
       if (this.reservation !== '') this.reservation += ','
 
-      const _standardText = getCookie('standardText').replace('<HH>', parseInt(_time.substring(0, 2) - 2)).replace('<MM>', _time.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
+      const _standardText = _constStandardTextFromTenant.value.replace('<HH>', parseInt(_doorOpeningTime.substring(0, 2))).replace('<MM>', _doorOpeningTime.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
 
       _constAnnotationsMatchOriginal.value = _annotationsMatch
-      _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText).replace(',,', ',')
-      _constAnnotationsMatch.value = _annotationsMatch.replace(/<br>/g, '\n').replace('<STANDARDTEXT>', _standardText).replace(',.', '.')
+      _constAnnotationsMatch.value = _annotationsMatch.replace('<STANDARDTEXT>', _standardText).replace(',,', ',')
+      _constAnnotationsMatch.value = _annotationsMatch.replace('<STANDARDTEXT>', _standardText).replace(',.', '.')
       if (_constAnnotationsMatch.value.substring(_constAnnotationsMatch.value.length - 1, _constAnnotationsMatch.value.length) === ',') {
         _constAnnotationsMatch.value = _constAnnotationsMatch.value.substring(0, _constAnnotationsMatch.value.length - 1) + '.'
       }
@@ -1150,34 +1237,36 @@ export default {
       })
     },
 
-    setPresentParticipantObject (_row, _participantId, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
-      this.presentParticipantObject.push({ presentParticipantRow: _row, presentParticipantParticipantId: _participantId, presentParticipantMatchName: _matchName, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantParticipantAvatarIsCustomized: _participantAvatarIsCustomized, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
+    setPresentParticipantObject (_participantId, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
+      this.presentParticipantObject.push({ presentParticipantParticipantId: _participantId, presentParticipantMatchName: _matchName, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantParticipantAvatarIsCustomized: _participantAvatarIsCustomized, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
     },
 
-    setTicketObject (_row, _participantId, _participant, _arrival, _annotations, _action, _reaction) {
-      this.ticketObject.push({ ticketRow: _row, ticketParticipantId: _participantId, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction })
+    setTicketObject (_participantId, _participant, _arrival, _annotations, _action, _reaction) {
+      this.ticketObject.push({ ticketParticipantId: _participantId, ticketParticipant: _participant, ticketArrival: _arrival, ticketAnnotations: _annotations, ticketAction: _action, ticketReaction: _reaction })
     },
 
-    setTicketGivenObject (_row, _participantId, _participant) {
-      this.ticketGivenObject.push({ ticketGivenRow: _row, ticketGivenParticipantId: _participantId, ticketGivenParticipant: _participant })
+    setTicketGivenObject (_participantId, _participant) {
+      this.ticketGivenObject.push({ ticketGivenParticipantId: _participantId, ticketGivenParticipant: _participant })
     },
 
-    setTicketRequiredObject (_row, _participantId, _participant) {
-      this.ticketRequiredObject.push({ ticketRequiredRow: _row, ticketRequiredParticipantId: _participantId, ticketRequiredParticipant: _participant })
+    setTicketRequiredObject (_participantId, _participant) {
+      this.ticketRequiredObject.push({ ticketRequiredParticipantId: _participantId, ticketRequiredParticipant: _participant })
     },
 
-    setTicketAssignedObject (_row, _participantId, _participant) {
-      this.ticketAssignedObject.push({ ticketAssignedRow: _row, ticketAssignedParticipantId: _participantId, ticketAssignedParticipant: _participant })
+    setTicketAssignedObject (_participantId, _participant) {
+      this.ticketAssignedObject.push({ ticketAssignedParticipantId: _participantId, ticketAssignedParticipant: _participant })
     },
 
     getTableWhereIsMyCard () {
       this.whereIsMyCardObject = []
-      this.$axios(`${_URLWhereIsMyCard}&func=Read`)
+      this.$axios.get(`${_URLWhereIsMyCard}/${_TenantId}`)
         .then((res) => {
-          this.tableWhereIsMyCard = res.data.split('\n')
-          for (let index = 0; index < this.tableWhereIsMyCard.length - 1; index++) {
-            const element = this.tableWhereIsMyCard[index].split(',')
-            this.setWhereIsMyCardObject(element[3].trim(), element[4], element[5].trim())
+          if (res.status === 200) {
+            for (let index = 0; index < res.data.length; index++) {
+              this.setWhereIsMyCardObject(res.data[index].name, res.data[index].isDiscounted, res.data[index].whoHasTheCard)
+            }
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -1187,9 +1276,9 @@ export default {
       this.whereIsMyCardObject.push({ cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard })
     },
 
-    setArrivalElements (_time) {
-      const hour = _time.substring(0, 2)
-      const minute = _time.substring(3, 5)
+    setArrivalElements (_doorOpeningTime) {
+      const hour = _doorOpeningTime.substring(0, 2)
+      const minute = _doorOpeningTime.substring(3, 5)
       const minuteInterval = 15
       _constArrivalElements[1] = ''
 
@@ -1197,48 +1286,48 @@ export default {
         const _minutes = parseInt(minuteInterval * index)
         switch (minute) {
           case '00':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':00'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':15'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':30'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
-            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
-            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
-            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
-            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
-            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
+            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) + ':00'
+            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) + ':15'
+            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) + ':30'
+            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) + ':45'
+            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':00'
+            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':15'
+            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':30'
+            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':45'
+            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':00'
             break
           case '15':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':15'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':30'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
-            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
-            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
-            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
-            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
-            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':15'
+            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) + ':15'
+            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) + ':30'
+            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) + ':45'
+            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':00'
+            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':15'
+            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':30'
+            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':45'
+            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':00'
+            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':15'
             break
           case '30':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':30'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
-            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
-            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
-            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
-            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':15'
-            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':30'
+            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) + ':30'
+            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) + ':45'
+            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':00'
+            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':15'
+            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':30'
+            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':45'
+            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':00'
+            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':15'
+            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':30'
             break
           case '45':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) - 2 + ':45'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':00'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':15'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':30'
-            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) - 1 + ':45'
-            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':00'
-            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':15'
-            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':30'
-            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) - 0 + ':45'
+            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour) + ':45'
+            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':00'
+            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':15'
+            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':30'
+            if (_minutes === 60) _constArrivalElements[index + 2] = parseInt(hour) + 1 + ':45'
+            if (_minutes === 75) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':00'
+            if (_minutes === 90) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':15'
+            if (_minutes === 105) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':30'
+            if (_minutes === 120) _constArrivalElements[index + 2] = parseInt(hour) + 2 + ':45'
             break
           default:
             break
