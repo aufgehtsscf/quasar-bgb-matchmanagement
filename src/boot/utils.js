@@ -1,5 +1,5 @@
 const IsAdministrator = false
-const ApplicationCode = 'HOME'
+const ApplicationCode = 'NGdoLbyd_330'
 
 // emailjs
 const serviceID = 'service_1z8boq8'
@@ -108,15 +108,15 @@ const teamImages = [
   { label: 'Backa Topola', value: 'Backa_Topola', image: 'statics/teams/Backa_Topola.png' },
   { label: 'Bayern', value: 'Bayern_München', image: 'statics/teams/Bayern_München.png' },
   { label: 'Bochum', value: 'Bochum', image: 'statics/teams/Bochum.png' },
-  { label: 'Braunschweig', value: 'Eintracht_Braunschweig', image: 'statics/teams/Eintracht_Braunschweig.png' },
   { label: 'Darmstadt', value: 'Darmstadt', image: 'statics/teams/Darmstadt.png' },
   { label: 'DFB Pokal', value: 'DFB_Pokal', image: 'statics/teams/DFB_Pokal.png' },
   { label: 'Dortmund', value: 'Borussia_Dortmund', image: 'statics/teams/Borussia_Dortmund.png' },
+  { label: 'Eintracht Braunschweig', value: 'Eintracht_Braunschweig', image: 'statics/teams/Eintracht_Braunschweig.svg' },
   { label: 'Europa League', value: 'Europa_League', image: 'statics/teams/Europa_League.png' },
   { label: 'Frankfurt', value: 'Eintracht_Frankfurt', image: 'statics/teams/Eintracht_Frankfurt.png' },
   { label: 'Fortuna Düsseldorf', value: 'Fortuna_Düsseldorf', image: 'statics/teams/Fortuna_Düsseldorf.png' },
   { label: 'Freiburg', value: 'Freiburg', image: 'statics/teams/Freiburg.svg' },
-  { label: 'Greuther Fürth', value: 'Greuther_Fürth', image: 'statics/teams/Greuther_Fürth.png' },
+  { label: 'Greuther Fürth', value: 'Greuther_Fürth', image: 'statics/teams/Greuther_Fürth.svg' },
   { label: 'Hamburger SV', value: 'Hamburger_SV', image: 'statics/teams/Hamburger_SV.png' },
   { label: 'Hannover', value: 'Hannover', image: 'statics/teams/Hannover.png' },
   { label: 'Hansa Rostock', value: 'Hansa_Rostock', image: 'statics/teams/Hansa_Rostock.png' },
@@ -144,6 +144,7 @@ const teamImages = [
   { label: 'St. Pauli', value: 'St._Pauli', image: 'statics/teams/St._Pauli.png' },
   { label: 'Stuttgart', value: 'Stuttgart', image: 'statics/teams/Stuttgart.png' },
   { label: 'Union Berlin', value: 'Union_Berlin', image: 'statics/teams/Union_Berlin.svg' },
+  { label: 'VfL Osnabrück', value: 'VfL_Osnabrück', image: 'statics/teams/VfL_Osnabrück.svg' },
   { label: 'Werder Bremen', value: 'Werder_Bremen', image: 'statics/teams/Werder_Bremen.png' },
   { label: 'West Ham', value: 'West_Ham', image: 'statics/teams/West_Ham.png' },
   { label: 'Wolfsburg', value: 'Wolfsburg', image: 'statics/teams/Wolfsburg.png' }
