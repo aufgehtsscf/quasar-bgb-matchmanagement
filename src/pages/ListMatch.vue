@@ -574,27 +574,27 @@ export default {
       onMatchCreated () {
         $q.notify({
           type: 'positive',
-          message: 'Spiel wurde erfolgreich erfasst!'
+          message: 'Spiel/Veranstaltung wurde erfolgreich erfasst!'
         })
       },
 
       onMatchUpdated () {
         $q.notify({
           type: 'positive',
-          message: 'Spiel wurde erfolgreich aktualisiert!'
+          message: 'Spiel/Veranstaltung wurde erfolgreich aktualisiert!'
         })
       },
 
       onMatchArchived () {
         $q.notify({
           type: 'positive',
-          message: 'Spiel wurde erfolgreich archiviert!'
+          message: 'Spiel/Veranstaltung wurde erfolgreich archiviert!'
         })
       },
 
       onMatchDeleted () {
         $q.notify({
-          message: 'Spiel wurde erfolgreich gelöscht!',
+          message: 'Spiel/Veranstaltung wurde erfolgreich gelöscht!',
           color: 'orange'
         })
       },
@@ -602,7 +602,7 @@ export default {
       onMatchAlreadyExists () {
         $q.notify({
           type: 'negative',
-          message: 'Dieses Spiel besteht bereits!'
+          message: 'Dieses/e Spiel/Veranstaltung besteht bereits!'
         })
       },
 
