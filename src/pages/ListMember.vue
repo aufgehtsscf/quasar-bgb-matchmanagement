@@ -5,7 +5,7 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title class="text-overline">Mitglieder ({{ memberObject.length }})</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMember = true" v-if="getCookie('isAdministrator') === true" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMember = true" />
       </q-toolbar>
     </div>
 
