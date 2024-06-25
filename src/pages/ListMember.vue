@@ -5,14 +5,15 @@
     <div class="q-pa-md" style="max-width: 500px">
       <q-toolbar class="bg-primary text-white">
         <q-toolbar-title class="text-overline">Mitglieder ({{ memberObject.length }})</q-toolbar-title>
-        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMember = true" v-if="getCookie('isAdministrator') === 'true'" />
+        <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addMember = true" v-if="getCookie('isAdministrator') === true" />
       </q-toolbar>
     </div>
 
     <div class="q-pa-md q-gutter-y-md column items-start">
       <q-btn-group push>
-        <q-btn color="primary" glossy text-color="white" push label="2023-24" @click="getTableMember('2023-24')"/>
-        <q-btn color="deep-orange" glossy text-color="white" push label="2022-23" @click="getTableMember('2022-23')"/>
+        <q-btn color="primary" glossy text-color="white" push label="2024-25" @click="getTableMember('2024-25')"/>
+        <q-btn color="deep-orange-10" glossy text-color="white" push label="2023-24" @click="getTableMember('2023-24')"/>
+        <q-btn color="deep-orange-9" glossy text-color="white" push label="2022-23" @click="getTableMember('2022-23')"/>
       </q-btn-group>
     </div>
 
