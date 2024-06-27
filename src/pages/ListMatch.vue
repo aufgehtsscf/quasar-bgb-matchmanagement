@@ -32,6 +32,7 @@
             <q-item-section>
               <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
               <q-item-label caption>Wann: {{ match.matchDate }}</q-item-label>
+              <q-item-label caption>Türöffnungszeit: {{ match.doorOpeningTime }}</q-item-label>
               <q-item-label caption v-if="match.published">Publiziert: Ja</q-item-label>
               <q-item-label caption v-if="!match.published">Publiziert: Nein</q-item-label>
               <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
@@ -888,13 +889,13 @@ export default {
 
     setValueForDoorOpeningTimeNew (_matchTime) {
       if (parseInt(_matchTime.substring(0, 2)) >= 2) {
-        _constDoorOpeningTimeNew.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString() + _matchTime.substring(2, 5)
+        _constDoorOpeningTimeNew.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString().padStart(2, '0') + _matchTime.substring(2, 5)
       }
     },
 
     setValueForDoorOpeningTime (_matchTime) {
       if (parseInt(_matchTime.substring(0, 2)) >= 2) {
-        _constDoorOpeningTime.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString() + _matchTime.substring(2, 5)
+        _constDoorOpeningTime.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString().padStart(2, '0') + _matchTime.substring(2, 5)
       }
     },
 
