@@ -279,7 +279,7 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               for (let index = 0; index < res.data.length; index++) {
-                this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
+                this.setMemberObject(res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized)
               }
               resolve()
             } else {
@@ -305,11 +305,11 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              let _cardHolderAvatar = this.memberObject.find(el => el.member === res.data[index].name)?.avatar
+              let _cardHolderAvatar = this.memberObject.find(el => el.member === res.data[index].name.trim())?.avatar
               if (typeof _cardHolderAvatar === 'undefined') {
                 _cardHolderAvatar = ''
               }
-              let _cardHolderAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name)?.customized
+              let _cardHolderAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name.trim())?.customized
               if (typeof _cardHolderAvatarIsCustomized === 'undefined') {
                 _cardHolderAvatarIsCustomized = false
               }
@@ -321,7 +321,7 @@ export default {
               if (typeof _whoHasTheCardAvatarIsCustomized === 'undefined') {
                 _whoHasTheCardAvatarIsCustomized = false
               }
-              this.setWhereIsMyCardObject(res.data[index].id, res.data[index].name, _cardHolderAvatar, _cardHolderAvatarIsCustomized, res.data[index].isDiscounted, res.data[index].whoHasTheCard, _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized)
+              this.setWhereIsMyCardObject(res.data[index].id, res.data[index].name.trim(), _cardHolderAvatar, _cardHolderAvatarIsCustomized, res.data[index].isDiscounted, res.data[index].whoHasTheCard.trim(), _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -359,9 +359,9 @@ export default {
           creationTime: _constCreationTime,
           lastModificationTime: null,
           tenantId: _TenantId,
-          name: _cardHolder,
+          name: _cardHolder.trim(),
           discounted: _discounted,
-          whoHasTheCard: _whoHasTheCard
+          whoHasTheCard: _whoHasTheCard.trim()
         }
         this.$axios.post(`${_URLWhereIsMyCard}/${_TenantId}`, newCardHolder)
           .then((res) => {
@@ -388,9 +388,9 @@ export default {
           creationTime: null,
           lastModificationTime: null,
           tenantId: _TenantId,
-          name: _cardHolder,
+          name: _cardHolder.trim(),
           discounted: _discounted,
-          whoHasTheCard: _whoHasTheCard
+          whoHasTheCard: _whoHasTheCard.trim()
         }
         this.$axios.put(`${_URLWhereIsMyCard}/${_TenantId}/${_cardHolderId}`, updCardHolder)
           .then((res) => {

@@ -785,7 +785,7 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               for (let index = 0; index < res.data.length; index++) {
-                this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
+                this.setMemberObject(res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized)
               }
               resolve()
             } else {
@@ -816,7 +816,7 @@ export default {
       this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/active/true`)
         .then((res) => {
           for (let index = 0; index < res.data.length; index++) {
-            this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime, res.data[index].annotations, res.data[index].date)
+            this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name.trim(), res.data[index].doorOpeningTime, res.data[index].annotations.trim(), res.data[index].date)
           }
 
           if (res.data.length > 0) {
@@ -909,9 +909,9 @@ export default {
           creationTime: _constCreationTime,
           lastModificationTime: null,
           tenantId: _TenantId,
-          name: _participant,
+          name: _participant.trim(),
           arrival: _arrival,
-          annotations: _annotations,
+          annotations: _annotations.trim(),
           action: _action,
           reaction: '',
           matchId: _matchId
@@ -944,9 +944,9 @@ export default {
           creationTime: null,
           lastModificationTime: null,
           tenantId: _TenantId,
-          name: _participant,
+          name: _participant.trim(),
           arrival: _arrival,
-          annotations: _annotations,
+          annotations: _annotations.trim(),
           action: _action,
           reaction: '',
           matchId: _matchId
@@ -1107,12 +1107,12 @@ export default {
       this.$axios.get(`${_URLParticipant}/${_TenantId}/${_matchId}`)
         .then((res) => {
           for (let index = 0; index < res.data.length; index++) {
-            let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name)?.avatar
+            let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name.trim())?.avatar
             if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
-            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name)?.customized
+            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name.trim())?.customized
             if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = false
 
-            this.setParticipantObject(res.data[index].id, res.data[index].creationTime, res.data[index].matchId, res.data[index].name, _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival, res.data[index].annotations, res.data[index].action, res.data[index].reaction)
+            this.setParticipantObject(res.data[index].id, res.data[index].creationTime, res.data[index].matchId, res.data[index].name.trim(), _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival, res.data[index].annotations.trim(), res.data[index].action, res.data[index].reaction)
           }
 
           if (res.data.length > 0) {
@@ -1263,7 +1263,7 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setWhereIsMyCardObject(res.data[index].name, res.data[index].isDiscounted, res.data[index].whoHasTheCard)
+              this.setWhereIsMyCardObject(res.data[index].name.trim(), res.data[index].isDiscounted, res.data[index].whoHasTheCard.trim())
             }
           } else {
             console.log('Unexpected status code:', res.status)

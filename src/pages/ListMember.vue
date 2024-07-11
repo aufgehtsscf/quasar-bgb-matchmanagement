@@ -360,7 +360,7 @@ export default {
                 .then((res2) => {
                   if (res2.status === 200) {
                     _numberOfParticipations = res2.data.length
-                    this.setMemberObject(res.data[index].id, res.data[index].name, res.data[index].avatar, res.data[index].isCustomized, _numberOfParticipations)
+                    this.setMemberObject(res.data[index].id, res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized, _numberOfParticipations)
                   } else {
                     console.log('Unexpected status code:', res2.status)
                   }
@@ -443,8 +443,8 @@ export default {
           creationTime: _constCreationTime,
           lastModificationTime: null,
           tenantId: _TenantId,
-          name: _member,
-          avatar: _avatar,
+          name: _member.trim(),
+          avatar: _avatar.trim(),
           isCustomized: false
         }
         this.$axios.post(`${_URLMember}/${_TenantId}`, newMember)
@@ -474,8 +474,8 @@ export default {
           creationTime: null,
           lastModificationTime: null,
           tenantId: _TenantId,
-          name: _member,
-          avatar: _avatar,
+          name: _member.trim(),
+          avatar: _avatar.trim(),
           isCustomized: false
         }
         this.$axios.put(`${_URLMember}/${_TenantId}/${_memberId}`, updMember)

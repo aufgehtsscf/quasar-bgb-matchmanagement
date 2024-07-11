@@ -730,7 +730,7 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].isPublished, res.data[index].date, res.data[index].doorOpeningTime, res.data[index].annotations, res.data[index].season)
+              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name.trim(), res.data[index].isPublished, res.data[index].date, res.data[index].doorOpeningTime, res.data[index].annotations.trim(), res.data[index].season)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -766,17 +766,17 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name)?.avatar
+              let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name.trim())?.avatar
               if (typeof _participantAvatar === 'undefined') {
                 _participantAvatar = ''
               }
 
-              let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name)?.customized
+              let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name.trim())?.customized
               if (typeof _participantAvatarIsCustomized === 'undefined') {
                 _participantAvatarIsCustomized = false
               }
 
-              this.setParticipantInactiveMatchObject(res.data[index].name, _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival)
+              this.setParticipantInactiveMatchObject(res.data[index].name.trim(), _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -812,7 +812,7 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               for (let index = 0; index < res.data.length; index++) {
-                this.setMemberObject(res.data[index].name, res.data[index].avatar, res.data[index].isCustomized)
+                this.setMemberObject(res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized)
               }
               resolve()
             } else {
@@ -923,11 +923,11 @@ export default {
           tenantId: _TenantId,
           homeTeam: _homeTeam,
           awayTeam: _awayTeam,
-          name: _matchName,
+          name: _matchName.trim(),
           isPublished: _published,
           date: _matchDate,
           doorOpeningTime: _doorOpeningTime,
-          annotations: _annotations,
+          annotations: _annotations.trim(),
           isDeactivated: false,
           season: _season
         }
@@ -969,11 +969,11 @@ export default {
           tenantId: _TenantId,
           homeTeam: _homeTeam,
           awayTeam: _awayTeam,
-          name: _matchName,
+          name: _matchName.trim(),
           isPublished: _published,
           date: _matchDate,
           doorOpeningTime: _doorOpeningTime,
-          annotations: _annotations,
+          annotations: _annotations.trim(),
           isDeactivated: false,
           season: _season
         }
@@ -1051,7 +1051,7 @@ export default {
                 .then((res2) => {
                   if (res2.status === 200) {
                     _numberOfParticipants = res2.data.length
-                    this.setInactiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].doorOpeningTime, res.data[index].date, _numberOfParticipants)
+                    this.setInactiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name.trim(), res.data[index].doorOpeningTime, res.data[index].date, _numberOfParticipants)
                   } else {
                     console.log('Unexpected status code:', res2.status)
                   }
