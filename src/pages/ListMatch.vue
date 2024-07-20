@@ -762,7 +762,7 @@ export default {
       _constInactiveNumberOfParticipants.value = _numberOfParticipants
 
       this.participantInactiveMatchObject = []
-      this.$axios.get(`${_URLParticipant}/${_TenantId}/${_matchId}`)
+      this.$axios.get(`${_URLParticipant}/${_TenantId}/${_matchId}/present`)
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
