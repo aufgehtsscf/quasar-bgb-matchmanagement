@@ -14,7 +14,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(card, i) in whereIsMyCardObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onWhereIsMyCardClick(card.cardHolderId, card.cardHolder, card.discounted, card.whoHasTheCard)">
+        <q-item clickable v-ripple @click="onWhereIsMyCardClick(card.cardHolderId, card.cardHolder, card.discounted, card.whoHasTheCard, card.digital)">
           <q-item-section avatar>
             <q-avatar size="50px" color="lime-10" text-color="white" v-if="card.cardHolderAvatar === ''">
               {{ card.cardHolder.substring(0, 1) }}
@@ -36,6 +36,8 @@
             <q-item-label caption v-if="card.discounted">Kind: Ja</q-item-label>
             <q-item-label caption v-if="!card.discounted">Kind: Nein</q-item-label>
             <q-item-label caption>Wer hat die Karte: {{ card.whoHasTheCard }}</q-item-label>
+            <q-item-label caption v-if="card.digital">Digital: Ja</q-item-label>
+            <q-item-label caption v-if="!card.digital">Digital: Nein</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -63,13 +65,20 @@
             />
 
             <q-input filled dense v-model="txtWhoHasTheCardNew" label="Wer hat die Karte *" />
+
+            <q-toggle
+              v-model="tglDigitalNew"
+              color="red"
+              label="Digital"
+              left-label
+            />
           </q-card-section>
 
           <q-separator />
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addWhereIsMyCardSave(txtCardHolderNew, tglDiscountedNew, txtWhoHasTheCardNew)" :disable="txtCardHolderNew === '' || txtWhoHasTheCardNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addWhereIsMyCardSave(txtCardHolderNew, tglDiscountedNew, txtWhoHasTheCardNew, tglDigitalNew)" :disable="txtCardHolderNew === '' || txtWhoHasTheCardNew === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -92,6 +101,13 @@
             />
 
             <q-input filled dense v-model="txtWhoHasTheCard" autofocus label="Wer hat die Karte *" />
+
+            <q-toggle
+              v-model="tglDigital"
+              color="red"
+              label="Digital"
+              left-label
+            />
           </q-card-section>
 
           <q-separator />
@@ -99,7 +115,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delWhereIsMyCard = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(txtCardHolderId, txtCardHolder, txtCardHolderOld, tglDiscounted, txtWhoHasTheCard)" :disable="txtCardHolder === '' || txtWhoHasTheCard === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editWhereIsMyCardSave(txtCardHolderId, txtCardHolder, txtCardHolderOld, tglDiscounted, txtWhoHasTheCard, tglDigital)" :disable="txtCardHolder === '' || txtWhoHasTheCard === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -136,6 +152,7 @@ const _constCardHolder = ref('')
 const _constCardHolderOld = ref('')
 const _constDiscounted = ref('')
 const _constWhoHasTheCard = ref('')
+const _constDigital = ref('')
 
 const _constAdminCode = ref('')
 
@@ -158,10 +175,12 @@ export default {
       txtCardHolderOld: ref(_constCardHolderOld),
       tglDiscounted: ref(_constDiscounted),
       txtWhoHasTheCard: ref(_constWhoHasTheCard),
+      tglDigital: ref(_constDigital),
 
       txtCardHolderNew: ref(''),
       tglDiscountedNew: ref(false),
       txtWhoHasTheCardNew: ref(''),
+      tglDigitalNew: ref(false),
 
       onCardHolderCreated () {
         $q.notify({
@@ -213,7 +232,8 @@ export default {
           discounted: '',
           whoHasTheCard: '',
           whoHasTheCardAvatar: '',
-          whoHasTheCardAvatarIsCustomized: ''
+          whoHasTheCardAvatarIsCustomized: '',
+          digital: ''
         }
       ],
 
@@ -321,7 +341,7 @@ export default {
               if (typeof _whoHasTheCardAvatarIsCustomized === 'undefined') {
                 _whoHasTheCardAvatarIsCustomized = false
               }
-              this.setWhereIsMyCardObject(res.data[index].id, res.data[index].name.trim(), _cardHolderAvatar, _cardHolderAvatarIsCustomized, res.data[index].isDiscounted, res.data[index].whoHasTheCard.trim(), _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized)
+              this.setWhereIsMyCardObject(res.data[index].id, res.data[index].name.trim(), _cardHolderAvatar, _cardHolderAvatarIsCustomized, res.data[index].isDiscounted, res.data[index].whoHasTheCard.trim(), _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized, res.data[index].isDigital)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -330,21 +350,22 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setWhereIsMyCardObject (_cardHolderId, _cardHolder, _cardHolderAvatar, _cardHolderAvatarIsCustomized, _discounted, _whoHasTheCard, _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized) {
-      this.whereIsMyCardObject.push({ cardHolderId: _cardHolderId, cardHolder: _cardHolder, cardHolderAvatar: _cardHolderAvatar, cardHolderAvatarIsCustomized: _cardHolderAvatarIsCustomized, discounted: _discounted, whoHasTheCard: _whoHasTheCard, whoHasTheCardAvatar: _whoHasTheCardAvatar, whoHasTheCardAvatarIsCustomized: _whoHasTheCardAvatarIsCustomized })
+    setWhereIsMyCardObject (_cardHolderId, _cardHolder, _cardHolderAvatar, _cardHolderAvatarIsCustomized, _discounted, _whoHasTheCard, _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized, _digital) {
+      this.whereIsMyCardObject.push({ cardHolderId: _cardHolderId, cardHolder: _cardHolder, cardHolderAvatar: _cardHolderAvatar, cardHolderAvatarIsCustomized: _cardHolderAvatarIsCustomized, discounted: _discounted, whoHasTheCard: _whoHasTheCard, whoHasTheCardAvatar: _whoHasTheCardAvatar, whoHasTheCardAvatarIsCustomized: _whoHasTheCardAvatarIsCustomized, digital: _digital })
     },
 
-    onWhereIsMyCardClick (_cardHolderId, _cardHolder, _discounted, _whoHasTheCard) {
+    onWhereIsMyCardClick (_cardHolderId, _cardHolder, _discounted, _whoHasTheCard, _digital) {
       _constCardHolderId.value = _cardHolderId
       _constCardHolder.value = _cardHolder
       _constCardHolderOld.value = _cardHolder
       _constDiscounted.value = _discounted
       _constWhoHasTheCard.value = _whoHasTheCard
+      _constDigital.value = _digital
 
       this.editWhereIsMyCard = true
     },
 
-    addWhereIsMyCardSave (_cardHolder, _discounted, _whoHasTheCard) {
+    addWhereIsMyCardSave (_cardHolder, _discounted, _whoHasTheCard, _digital) {
       const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
       const _cardHolderExists = _cardHolders.includes(_cardHolder)
 
@@ -360,8 +381,9 @@ export default {
           lastModificationTime: null,
           tenantId: _TenantId,
           name: _cardHolder.trim(),
-          discounted: _discounted,
-          whoHasTheCard: _whoHasTheCard.trim()
+          isDiscounted: _discounted,
+          whoHasTheCard: _whoHasTheCard.trim(),
+          isDigital: _digital
         }
         this.$axios.post(`${_URLWhereIsMyCard}/${_TenantId}`, newCardHolder)
           .then((res) => {
@@ -376,7 +398,7 @@ export default {
       }
     },
 
-    editWhereIsMyCardSave (_cardHolderId, _cardHolder, _cardHolderOld, _discounted, _whoHasTheCard) {
+    editWhereIsMyCardSave (_cardHolderId, _cardHolder, _cardHolderOld, _discounted, _whoHasTheCard, _digital) {
       const _cardHolders = this.whereIsMyCardObject.map(el => el.cardHolder)
       const _cardHolderExists = _cardHolders.includes(_cardHolder) && _cardHolder !== _cardHolderOld
 
@@ -389,8 +411,9 @@ export default {
           lastModificationTime: null,
           tenantId: _TenantId,
           name: _cardHolder.trim(),
-          discounted: _discounted,
-          whoHasTheCard: _whoHasTheCard.trim()
+          isDiscounted: _discounted,
+          whoHasTheCard: _whoHasTheCard.trim(),
+          isDigital: _digital
         }
         this.$axios.put(`${_URLWhereIsMyCard}/${_TenantId}/${_cardHolderId}`, updCardHolder)
           .then((res) => {

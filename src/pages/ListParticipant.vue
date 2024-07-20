@@ -699,7 +699,8 @@ export default {
         {
           cardHolder: '',
           discounted: '',
-          whoHasTheCard: ''
+          whoHasTheCard: '',
+          digital: ''
         }
       ],
 
@@ -1069,9 +1070,11 @@ export default {
         this.$axios.put(`${_URLParticipant}/${_TenantId}/${_ticketParticipantId}`, updParticipant)
           .then((res) => {
             if (res.status === 200) {
-              this.editTicketAssignment = false
               this.onTicketAssigmentUpdated()
               this.loadReloadData(_matchId, _time, _annotationsMatch)
+              this.editTicketAssignment = false
+            } else {
+              console.log('Unexpected status code:', res.status)
             }
           })
           .catch((err) => console.log(err))
@@ -1081,10 +1084,12 @@ export default {
     deleteTicketAssignment (_ticketParticipantId, _matchId, _time, _annotationsMatch) {
       this.$axios.delete(`${_URLParticipant}/${_TenantId}/participant/${_ticketParticipantId}`)
         .then((res) => {
-          if (res.data === 'Success, requested action completed') {
-            this.editTicketAssignment = false
+          if (res.status === 200) {
             this.onTicketAssigmentDeleted()
             this.loadReloadData(_matchId, _time, _annotationsMatch)
+            this.editTicketAssignment = false
+          } else {
+            console.log('Unexpected status code:', res.status)
           }
         })
         .catch((err) => console.log(err))
@@ -1174,12 +1179,15 @@ export default {
         }
 
         if (el.presentParticipantReaction !== '') {
-          const _whoHasTheCard = this.whereIsMyCardObject.find(el2 => el2.cardHolder === el.presentParticipantReaction)?.whoHasTheCard
           let haveCardFrom = el.presentParticipantReaction.trim()
-          if (typeof _whoHasTheCard !== 'undefined' &&
+          const cardObject = this.whereIsMyCardObject.find(el2 => el2.cardHolder === el.presentParticipantReaction)
+          if (cardObject) {
+            if (typeof cardObject.whoHasTheCard !== 'undefined' &&
               !el.presentParticipantMatchName.includes('DFB Pokal') &&
-              !el.presentParticipantMatchName.includes('Europapokal')) {
-            haveCardFrom += ' (Karte bei ' + _whoHasTheCard + ')'
+              !el.presentParticipantMatchName.includes('Europapokal') &&
+              !cardObject.digital) {
+              haveCardFrom += ' (Karte bei ' + cardObject.whoHasTheCard + ')'
+            }
           }
           el.presentParticipantReaction = 'habe Karte von ' + haveCardFrom.trim()
           _constParticipantList.value += ', ' + el.presentParticipantReaction.trim()
@@ -1263,7 +1271,7 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setWhereIsMyCardObject(res.data[index].name.trim(), res.data[index].isDiscounted, res.data[index].whoHasTheCard.trim())
+              this.setWhereIsMyCardObject(res.data[index].name.trim(), res.data[index].isDiscounted, res.data[index].whoHasTheCard.trim(), res.data[index].isDigital)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -1272,8 +1280,8 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setWhereIsMyCardObject (_cardHolder, _discounted, _whoHasTheCard) {
-      this.whereIsMyCardObject.push({ cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard })
+    setWhereIsMyCardObject (_cardHolder, _discounted, _whoHasTheCard, _digital) {
+      this.whereIsMyCardObject.push({ cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard, digital: _digital })
     },
 
     setArrivalElements (_doorOpeningTime) {
