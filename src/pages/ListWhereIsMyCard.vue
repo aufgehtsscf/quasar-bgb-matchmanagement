@@ -55,23 +55,29 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtCardHolderNew" autofocus label="Inhaber *" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtCardHolderNew" autofocus label="Inhaber *" />
+            </div>
 
-            <q-toggle
-              v-model="tglDiscountedNew"
-              color="red"
-              label="Kind"
-              left-label
-            />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-toggle
+                v-model="tglDiscountedNew"
+                color="red"
+                label="Kind"
+                left-label />
+            </div>
 
-            <q-input filled dense v-model="txtWhoHasTheCardNew" label="Wer hat die Karte *" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtWhoHasTheCardNew" label="Wer hat die Karte *" />
+            </div>
 
-            <q-toggle
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-toggle
               v-model="tglDigitalNew"
               color="red"
               label="Digital"
-              left-label
-            />
+              left-label />
+            </div>
           </q-card-section>
 
           <q-separator />
@@ -91,23 +97,29 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtCardHolder" label="Inhaber *" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtCardHolder" label="Inhaber *" />
+            </div>
 
-            <q-toggle
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-toggle
               v-model="tglDiscounted"
               color="red"
               label="Kind"
-              left-label
-            />
+              left-label />
+            </div>
 
-            <q-input filled dense v-model="txtWhoHasTheCard" autofocus label="Wer hat die Karte *" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtWhoHasTheCard" autofocus label="Wer hat die Karte *" />
+            </div>
 
-            <q-toggle
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-toggle
               v-model="tglDigital"
               color="red"
               label="Digital"
-              left-label
-            />
+              left-label />
+            </div>
           </q-card-section>
 
           <q-separator />

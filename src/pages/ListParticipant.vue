@@ -147,47 +147,49 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtParticipantNew" autofocus label="Name *" />
-          </q-card-section>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtParticipantNew" autofocus label="Name *" />
+            </div>
 
-          <q-card-section class="q-pt-none">
-            <q-select
-              filled dense
-              v-model="txtActionNew"
-              :options="cbxActionOptionsHome"
-              label="Aktion *"
-              options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam === homeTeamFromTenant"
-            >
-            </q-select>
-          </q-card-section>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtActionNew"
+                :options="cbxActionOptionsHome"
+                label="Aktion *"
+                options-selected-class="text-deep-orange"
+                v-if="txtHomeTeam === homeTeamFromTenant"
+                >
+              </q-select>
+            </div>
 
-          <q-card-section class="q-pt-none">
-            <q-select
-              filled dense
-              v-model="txtActionNew"
-              :options="cbxActionOptionsAway"
-              label="Aktion *"
-              options-selected-class="text-deep-orange"
-              v-if="txtHomeTeam !== homeTeamFromTenant"
-            >
-            </q-select>
-          </q-card-section>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtActionNew"
+                :options="cbxActionOptionsAway"
+                label="Aktion *"
+                options-selected-class="text-deep-orange"
+                v-if="txtHomeTeam !== homeTeamFromTenant"
+                >
+              </q-select>
+            </div>
 
-          <q-card-section class="q-pt-none">
-            <q-select
-              filled dense
-              v-model="txtArrivalNew"
-              :options="cbxArrivalOptions"
-              label="Ankunft"
-              options-selected-class="text-deep-orange"
-              v-if="txtActionNew === 'bin dabei'"
-            >
-            </q-select>
-          </q-card-section>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtArrivalNew"
+                :options="cbxArrivalOptions"
+                label="Ankunft"
+                options-selected-class="text-deep-orange"
+                v-if="txtActionNew === 'bin dabei'"
+                >
+              </q-select>
+            </div>
 
-          <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtAnnotationsParticipantNew" type="textarea" label="Kommentar"/>
+            <div class="q-pt-md" style="max-width: 350px">
+             <q-input filled dense v-model="txtAnnotationsParticipantNew" type="textarea" label="Kommentar"/>
+            </div>
           </q-card-section>
 
           <q-separator />
@@ -207,71 +209,78 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtParticipantParticipant" label="Name *" :readonly="false" v-if="txtParticipantReaction === ''" />
-            <q-input filled dense v-model="txtParticipantParticipant" label="Name *" :readonly="true" v-if="txtParticipantReaction !== ''" />
-          </q-card-section>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtParticipantParticipant" label="Name *" :readonly="false" v-if="txtParticipantReaction === ''" />
+              <q-input filled dense v-model="txtParticipantParticipant" label="Name *" :readonly="true" v-if="txtParticipantReaction !== ''" />
+            </div>
 
-          <q-card-section class="q-pt-none">
-            <q-select
-              filled dense
-              v-model="txtParticipantAction"
-              :options="cbxActionOptionsHome"
-              label="Aktion *"
-              :readonly="false"
-              options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction === '' &&  txtHomeTeam === homeTeamFromTenant"
-            >
-            </q-select>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtParticipantAction"
+                :options="cbxActionOptionsHome"
+                label="Aktion *"
+                :readonly="false"
+                options-selected-class="text-deep-orange"
+                v-if="txtParticipantReaction === '' &&  txtHomeTeam === homeTeamFromTenant"
+                >
+              </q-select>
+            </div>
 
-            <q-select
-              filled dense
-              v-model="txtParticipantAction"
-              :options="cbxActionOptionsAway"
-              label="Aktion *"
-              :readonly="false"
-              options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction === '' &&  txtHomeTeam !== homeTeamFromTenant"
-            >
-            </q-select>
-          </q-card-section>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtParticipantAction"
+                :options="cbxActionOptionsAway"
+                label="Aktion *"
+                :readonly="false"
+                options-selected-class="text-deep-orange"
+                v-if="txtParticipantReaction === '' &&  txtHomeTeam !== homeTeamFromTenant"
+                >
+              </q-select>
+            </div>
 
-          <q-card-section class="q-pt-none">
-            <q-select
-              filled dense
-              v-model="txtParticipantAction"
-              :options="cbxActionOptionsHome"
-              label="Aktion *"
-              :readonly="true"
-              options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction !== '' &&  txtHomeTeam === homeTeamFromTenant"
-            >
-            </q-select>
-            <q-select
-              filled dense
-              v-model="txtParticipantAction"
-              :options="cbxActionOptionsAway"
-              label="Aktion *"
-              :readonly="true"
-              options-selected-class="text-deep-orange"
-              v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== homeTeamFromTenant"
-            >
-            </q-select>
-          </q-card-section>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtParticipantAction"
+                :options="cbxActionOptionsHome"
+                label="Aktion *"
+                :readonly="true"
+                options-selected-class="text-deep-orange"
+                v-if="txtParticipantReaction !== '' &&  txtHomeTeam === homeTeamFromTenant"
+                >
+              </q-select>
+            </div>
 
-          <q-card-section class="q-pt-none">
-            <q-select
-              filled dense
-              v-model="txtParticipantArrival"
-              :options="cbxArrivalOptions"
-              label="Ankunft"
-              options-selected-class="text-deep-orange"
-              v-if="txtParticipantAction === 'bin dabei'"
-            >
-            </q-select>
-          </q-card-section>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtParticipantAction"
+                :options="cbxActionOptionsAway"
+                label="Aktion *"
+                :readonly="true"
+                options-selected-class="text-deep-orange"
+                v-if="txtParticipantReaction !== '' &&  txtHomeTeam !== homeTeamFromTenant"
+                >
+              </q-select>
+            </div>
 
-          <q-card-section class="q-pt-none">
-            <q-input class="text-italic" dense v-model="txtParticipantReaction" :readonly="true" v-if="txtParticipantReaction !== ''" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtParticipantArrival"
+                :options="cbxArrivalOptions"
+                label="Ankunft"
+                options-selected-class="text-deep-orange"
+                v-if="txtParticipantAction === 'bin dabei'"
+                >
+              </q-select>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input class="text-italic" dense v-model="txtParticipantReaction" :readonly="true" v-if="txtParticipantReaction !== ''" />
+            </div>
             <div class="q-pt-md" style="max-width: 350px">
               <q-input filled dense v-model="txtParticipantAnnotations" type="textarea" label="Kommentar"/>
             </div>

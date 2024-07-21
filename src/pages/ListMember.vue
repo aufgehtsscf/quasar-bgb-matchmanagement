@@ -22,7 +22,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(member, i) in memberObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMemberClick(member.memberId, member.member, member.avatar, member.customized)">
+        <q-item clickable v-ripple @click="onMemberClick(member.memberId, member.member, member.avatar, member.customized, member.numberOfParticipations)">
           <q-item-section avatar>
             <q-avatar size="50px" color="pink-10" text-color="white" v-if="member.avatar === ''">
               {{ member.member.substring(0, 1) }}
@@ -52,30 +52,32 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtMemberNew" autofocus label="Mitglied *" />
-          </q-card-section>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtMemberNew" autofocus label="Mitglied *" />
+            </div>
 
-          <q-card-section class="q-pt-none">
-            <q-select
-              filled dense
-              v-model="txtAvatarNew"
-              :options="avatarImages"
-              label="Avatar"
-              options-selected-class="text-deep-orange"
-            >
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section avatar>
-                    <q-avatar size="50px">
-                      <img :src="scope.opt.avatar">
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtAvatarNew"
+                :options="avatarImages"
+                label="Avatar"
+                options-selected-class="text-deep-orange"
+                >
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <q-avatar size="50px">s
+                        <img :src="scope.opt.avatar">
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
           </q-card-section>
 
           <q-separator />
@@ -91,75 +93,79 @@
       <q-dialog v-model="editMember" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Mitglied ändern</div>
+            <div class="text-h6">Anzahl der Teilnahmen: {{ intNumberOfParticipations }}</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtMember" label="Mitglied *" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtMember" label="Mitglied *" />
+            </div>
 
-            <q-select
-              filled dense
-              v-model="txtAvatar"
-              :options="avatarImages"
-              label="Avatar"
-              options-selected-class="text-deep-orange"
-            >
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section avatar>
-                    <q-avatar size="50px">
-                      <img :src="scope.opt.avatar">
-                    </q-avatar>
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-select
+                filled dense
+                v-model="txtAvatar"
+                :options="avatarImages"
+                label="Avatar"
+                options-selected-class="text-deep-orange"
+                >
+                <template v-slot:option="scope">
+                  <q-item v-bind="scope.itemProps">
+                    <q-item-section avatar>
+                      <q-avatar size="50px">
+                        <img :src="scope.opt.avatar">
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.label }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+
+            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+              <q-avatar
+                v-for="(el, n) in inactiveMatchObject"
+                :key="n"
+                size="40px"
+                class="overlapping"
+                :style="`left: ${n * 32}px`"
+                >
+                <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
+                <img :src="getTeamImage(el.homeTeam)" v-if="n <= 9 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
+                <img :src="getEventImage(el.matchName)" v-if="n <= 9 && el.homeTeam === '' && el.awayTeam === ''">
+              </q-avatar>
+            </div>
+
+            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+              <q-avatar
+                v-for="(el, n) in inactiveMatchObject"
+                :key="n"
+                size="40px"
+                class="overlapping"
+                :style="`left: ${(n - 10) * 32}px`"
+                >
+                <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
+                <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
+                <img :src="getEventImage(el.matchName)" v-if="n > 9 && n <= 19 && el.homeTeam === '' && el.awayTeam === ''">
+              </q-avatar>
+            </div>
+
+            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+              <q-avatar
+                v-for="(el, n) in inactiveMatchObject"
+                :key="n"
+                size="40px"
+                class="overlapping"
+                :style="`left: ${(n - 20) * 32}px`"
+                >
+                <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
+                <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
+                <img :src="getEventImage(el.matchName)" v-if="n > 19 && n <= 29 && el.homeTeam === '' && el.awayTeam === ''">
+              </q-avatar>
+            </div>
           </q-card-section>
-
-          <div class="q-pa-md q-gutter-sm" style="height: 80px">
-            <q-avatar
-              v-for="(el, n) in inactiveMatchObject"
-              :key="n"
-              size="40px"
-              class="overlapping"
-              :style="`left: ${n * 32}px`"
-            >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
-              <img :src="getTeamImage(el.homeTeam)" v-if="n <= 9 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
-              <img :src="getEventImage(el.matchName)" v-if="n <= 9 && el.homeTeam === '' && el.awayTeam === ''">
-            </q-avatar>
-          </div>
-
-          <div class="q-pa-md q-gutter-sm" style="height: 80px">
-            <q-avatar
-              v-for="(el, n) in inactiveMatchObject"
-              :key="n"
-              size="40px"
-              class="overlapping"
-              :style="`left: ${(n - 10) * 32}px`"
-            >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
-              <img :src="getEventImage(el.matchName)" v-if="n > 9 && n <= 19 && el.homeTeam === '' && el.awayTeam === ''">
-            </q-avatar>
-          </div>
-
-          <div class="q-pa-md q-gutter-sm" style="height: 80px">
-            <q-avatar
-              v-for="(el, n) in inactiveMatchObject"
-              :key="n"
-              size="40px"
-              class="overlapping"
-              :style="`left: ${(n - 20) * 32}px`"
-            >
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
-              <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
-              <img :src="getEventImage(el.matchName)" v-if="n > 19 && n <= 29 && el.homeTeam === '' && el.awayTeam === ''">
-            </q-avatar>
-          </div>
 
           <q-separator />
 
@@ -203,6 +209,7 @@ const _constMember = ref('')
 const _constMemberOld = ref('')
 const _constAvatar = ref('')
 const _constIsCustomized = ref(false)
+const _constNumberOfParticipations = ref('')
 
 const _constAdminCode = ref('')
 const _constHomeTeamFromTenant = ref('')
@@ -227,6 +234,7 @@ export default {
       txtMemberOld: ref(_constMemberOld),
       txtAvatar: ref(_constAvatar),
       boolIsCustomized: ref(_constIsCustomized),
+      intNumberOfParticipations: ref(_constNumberOfParticipations),
 
       txtMemberNew: ref(''),
       txtAvatarNew: ref(''),
@@ -388,12 +396,13 @@ export default {
       })
     },
 
-    onMemberClick (_memberId, _member, _avatar, _isCustomized) {
+    onMemberClick (_memberId, _member, _avatar, _isCustomized, _numberOfParticipations) {
       _constMemberId.value = _memberId
       _constMember.value = _member
       _constMemberOld.value = _member
       _constAvatar.value = _avatar
       _constIsCustomized.value = _isCustomized
+      _constNumberOfParticipations.value = _numberOfParticipations
 
       this.inactiveMatchObject = []
       this.$axios.get(`${_URLParticipant}/${_TenantId}/${_Season}/name/${_member.trim()}`)

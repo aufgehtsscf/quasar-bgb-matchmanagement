@@ -97,13 +97,12 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-
             <div class="q-pt-md" style="max-width: 350px">
               <q-toggle
                 v-model="tglIsEventNew"
                 color="red"
                 label="Veranstaltung"
-                left-label/>
+                left-label />
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
@@ -164,7 +163,7 @@
                 v-model="tglPublishedNew"
                 color="red"
                 label="Publizieren"
-                left-label/>
+                left-label />
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
@@ -222,7 +221,6 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input filled dense v-model="txtSeasonNew" label="Saison" :disable="true" />
             </div>
-
           </q-card-section>
 
           <q-separator />
@@ -259,7 +257,7 @@
                 label="Heim *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEvent"
-              >
+                >
                 <template v-slot:option="scope">
                   <q-item v-bind="scope.itemProps">
                     <q-item-section homeTeam>
@@ -283,7 +281,7 @@
                 label="Gast *"
                 options-selected-class="text-deep-orange"
                 v-if="!tglIsEvent"
-              >
+                >
                 <template v-slot:option="scope">
                   <q-item v-bind="scope.itemProps">
                     <q-item-section awayTeam>
@@ -384,76 +382,78 @@
       <q-dialog v-model="showInactiveMatch" persistent>
         <q-card style="min-width: 350px">
           <q-card-section>
-            <div class="text-h6">Anzahl Teilnehmer: {{ intInactiveNumberOfParticipants }}</div>
+            <div class="text-h6">Anzahl der Teilnehmer: {{ intInactiveNumberOfParticipants }}</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtInactiveMatch" label="Spiel" :readonly="true" />
+            <div class="q-pt-md" style="max-width: 350px">
+              <q-input filled dense v-model="txtInactiveMatch" label="Spiel" :readonly="true" />
+            </div>
 
-            <div class="q-pt-md">
+            <div class="q-pt-md" style="max-width: 350px">
               <q-input filled dense v-model="txtInactiveDatetime" label="Wann" :readonly="true" />
             </div>
+
+            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+              <q-avatar
+                v-for="(el, n) in participantInactiveMatchObject"
+                :key="n"
+                size="40px"
+                class="overlapping"
+                :style="`left: ${n * 32}px`"
+                >
+                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n <= 9">
+              </q-avatar>
+            </div>
+
+            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+              <q-avatar
+                v-for="(el, n) in participantInactiveMatchObject"
+                :key="n"
+                size="40px"
+                class="overlapping"
+                :style="`left: ${(n - 10) * 32}px`"
+                >
+                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 9 && n <= 19">
+              </q-avatar>
+            </div>
+
+            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+              <q-avatar
+                v-for="(el, n) in participantInactiveMatchObject"
+                :key="n"
+                size="40px"
+                class="overlapping"
+                :style="`left: ${(n - 20) * 32}px`"
+                >
+                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 19 && n <= 29">
+              </q-avatar>
+            </div>
+
+            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+              <q-avatar
+                v-for="(el, n) in participantInactiveMatchObject"
+                :key="n"
+                size="40px"
+                class="overlapping"
+                :style="`left: ${(n - 30) * 32}px`"
+                >
+                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 29 && n <= 39">
+              </q-avatar>
+            </div>
+
+            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+              <q-avatar
+                v-for="(el, n) in participantInactiveMatchObject"
+                :key="n"
+                size="40px"
+                class="overlapping"
+                :style="`left: ${(n - 40) * 32}px`"
+                >
+                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 39">
+              </q-avatar>
+            </div>
           </q-card-section>
-
-          <div class="q-pa-md q-gutter-sm" style="height: 80px">
-            <q-avatar
-              v-for="(el, n) in participantInactiveMatchObject"
-              :key="n"
-              size="40px"
-              class="overlapping"
-              :style="`left: ${n * 32}px`"
-            >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n <= 9">
-            </q-avatar>
-          </div>
-
-          <div class="q-pa-md q-gutter-sm" style="height: 80px">
-            <q-avatar
-              v-for="(el, n) in participantInactiveMatchObject"
-              :key="n"
-              size="40px"
-              class="overlapping"
-              :style="`left: ${(n - 10) * 32}px`"
-            >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 9 && n <= 19">
-            </q-avatar>
-          </div>
-
-          <div class="q-pa-md q-gutter-sm" style="height: 80px">
-            <q-avatar
-              v-for="(el, n) in participantInactiveMatchObject"
-              :key="n"
-              size="40px"
-              class="overlapping"
-              :style="`left: ${(n - 20) * 32}px`"
-            >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 19 && n <= 29">
-            </q-avatar>
-          </div>
-
-          <div class="q-pa-md q-gutter-sm" style="height: 80px">
-            <q-avatar
-              v-for="(el, n) in participantInactiveMatchObject"
-              :key="n"
-              size="40px"
-              class="overlapping"
-              :style="`left: ${(n - 30) * 32}px`"
-            >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 29 && n <= 39">
-            </q-avatar>
-          </div>
-
-          <div class="q-pa-md q-gutter-sm" style="height: 80px">
-            <q-avatar
-              v-for="(el, n) in participantInactiveMatchObject"
-              :key="n"
-              size="40px"
-              class="overlapping"
-              :style="`left: ${(n - 40) * 32}px`"
-            >
-              <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 39">
-            </q-avatar>
-          </div>
 
           <q-separator />
 
@@ -1047,7 +1047,7 @@ export default {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
               let _numberOfParticipants = 0
-              this.$axios.get(`${_URLParticipant}/${_TenantId}/${res.data[index].id}`)
+              this.$axios.get(`${_URLParticipant}/${_TenantId}/${res.data[index].id}/present`)
                 .then((res2) => {
                   if (res2.status === 200) {
                     _numberOfParticipants = res2.data.length
