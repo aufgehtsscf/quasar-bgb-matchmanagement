@@ -1184,7 +1184,11 @@ export default {
 
         if (el.presentParticipantAnnotations !== '') {
           _constParticipantList.value += ' (' + el.presentParticipantAnnotations.trim() + ')'
-          if (el.presentParticipantArrival !== '') { _constParticipantListFormattedForWhatsApp.value += ' _(' + el.presentParticipantAnnotations.trim() + ')' } else { _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantAnnotations.trim() + ')' }
+          if (el.presentParticipantArrival !== '') {
+            _constParticipantListFormattedForWhatsApp.value += ' _(' + el.presentParticipantAnnotations.trim() + ')'
+          } else {
+            _constParticipantListFormattedForWhatsApp.value += ' (' + el.presentParticipantAnnotations.trim() + ')'
+          }
         }
 
         if (el.presentParticipantReaction !== '') {
@@ -1200,16 +1204,32 @@ export default {
           }
           el.presentParticipantReaction = 'habe Karte von ' + haveCardFrom.trim()
           _constParticipantList.value += ', ' + el.presentParticipantReaction.trim()
-          if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations === '') _constParticipantListFormattedForWhatsApp.value += '_'
+
+          if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations === '') {
+            _constParticipantListFormattedForWhatsApp.value += '_'
+          }
+
           _constParticipantListFormattedForWhatsApp.value += ', ' + el.presentParticipantReaction.trim()
-          if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations === '') _constParticipantListFormattedForWhatsApp.value += '_'
+
+          if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations === '') {
+            _constParticipantListFormattedForWhatsApp.value += '_'
+          }
         } else {
-          if (el.presentParticipantAnnotations !== '') _constParticipantListFormattedForWhatsApp.value += '_'
+          if (el.presentParticipantAnnotations !== '') {
+            _constParticipantListFormattedForWhatsApp.value += '_'
+          }
         }
-        if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations !== '' && el.presentParticipantReaction !== '') _constParticipantListFormattedForWhatsApp.value += '_'
+
+        if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations !== '' && el.presentParticipantReaction !== '') {
+          _constParticipantListFormattedForWhatsApp.value += '_'
+        }
 
         _constParticipantList.value += '\n'
-        if (el.presentParticipantArrival === '') _constParticipantListFormattedForWhatsApp.value += '_'
+
+        if (el.presentParticipantArrival === '') {
+          _constParticipantListFormattedForWhatsApp.value += '_'
+        }
+
         _constParticipantListFormattedForWhatsApp.value += '\n'
       })
 
