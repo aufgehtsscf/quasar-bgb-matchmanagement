@@ -443,7 +443,7 @@
 </template>
 
 <script>
-import useQuasar from 'quasar/src/composables/use-quasar.js'
+import { useQuasar } from 'quasar'
 import { getCookie, getAdminCode, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'

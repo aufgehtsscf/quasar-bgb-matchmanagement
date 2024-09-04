@@ -191,7 +191,7 @@
 </template>
 
 <script>
-import useQuasar from 'quasar/src/composables/use-quasar.js'
+import { useQuasar } from 'quasar'
 import { getCookie, getAdminCode, URLOrderBasis, OrderId1, OrderId2 } from 'src/boot/utils.js'
 import { ref } from 'vue'
 

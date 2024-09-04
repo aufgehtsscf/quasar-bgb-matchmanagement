@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import useQuasar from 'quasar/src/composables/use-quasar.js'
+import { useQuasar } from 'quasar'
 import { getCookie, getAdminCode, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
 

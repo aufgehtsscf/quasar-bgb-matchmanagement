@@ -305,7 +305,7 @@
 </template>
 
 <script>
-import useQuasar from 'quasar/src/composables/use-quasar.js'
+import { useQuasar } from 'quasar'
 import { getCookie, getAdminCode, URLMatchManagementAPI, setCookie, serviceID, templateID, userID, FromName } from 'src/boot/utils.js'
 import emailjs from 'emailjs-com'
 import { ref } from 'vue'

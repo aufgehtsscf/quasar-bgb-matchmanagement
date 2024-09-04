@@ -199,7 +199,7 @@
 </template>
 
 <script>
-import useQuasar from 'quasar/src/composables/use-quasar.js'
+import { useQuasar } from 'quasar'
 import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, avatarImages, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
