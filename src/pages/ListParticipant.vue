@@ -88,7 +88,7 @@
             <q-item-label overline>{{ el.presentParticipantParticipant }}</q-item-label>
             <q-item-label caption>{{ el.presentParticipantArrival }}</q-item-label>
             <q-item-label caption>{{ el.presentParticipantAnnotations }}</q-item-label>
-            <q-item-label caption v-if="el.presentParticipantReaction !== ''">{{ el.presentParticipantReaction }}</q-item-label>
+            <q-item-label caption v-if="el.presentParticipantReaction !== ''">{{ el.presentParticipantReactionText }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -291,7 +291,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delParticipant = true" v-if=" getCookie('isAdministrator') && txtParticipantReaction === ''" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editParticipantSave(txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editParticipantSave(txtParticipantId, txtParticipantParticipant, txtParticipantParticipantOld, txtParticipantArrival, txtParticipantAnnotations, txtParticipantAction, txtParticipantReaction, txtMatchId, txtDoorOpeningTime, txtAnnotationsMatchOriginal)" :disable="txtParticipantParticipant === '' || txtParticipantAction === ''" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -668,7 +668,8 @@ export default {
           presentParticipantArrival: '',
           presentParticipantAnnotations: '',
           presentParticipantAction: '',
-          presentParticipantReaction: ''
+          presentParticipantReaction: '',
+          presentParticipantReactionText: ''
         }
       ],
 
@@ -940,7 +941,7 @@ export default {
       }
     },
 
-    editParticipantSave (_participantId, _participant, _participantOld, _arrival, _annotations, _action, _matchId, _time, _annotationsMatch) {
+    editParticipantSave (_participantId, _participant, _participantOld, _arrival, _annotations, _action, _reaction, _matchId, _time, _annotationsMatch) {
       if (_action !== 'bin dabei') _arrival = ''
 
       const _participants = this.participantObject.map(el => el.participant)
@@ -958,7 +959,7 @@ export default {
           arrival: _arrival,
           annotations: _annotations.trim(),
           action: _action,
-          reaction: '',
+          reaction: _reaction,
           matchId: _matchId
         }
         this.$axios.put(`${_URLParticipant}/${_TenantId}/${_participantId}`, updParticipant)
@@ -1202,14 +1203,14 @@ export default {
               haveCardFrom += ' (Karte bei ' + cardObject.whoHasTheCard + ')'
             }
           }
-          el.presentParticipantReaction = 'habe Karte von ' + haveCardFrom.trim()
-          _constParticipantList.value += ', ' + el.presentParticipantReaction.trim()
+          el.presentParticipantReactionText = 'habe Karte von ' + haveCardFrom.trim()
+          _constParticipantList.value += ', ' + el.presentParticipantReactionText.trim()
 
           if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations === '') {
             _constParticipantListFormattedForWhatsApp.value += '_'
           }
 
-          _constParticipantListFormattedForWhatsApp.value += ', ' + el.presentParticipantReaction.trim()
+          _constParticipantListFormattedForWhatsApp.value += ', ' + el.presentParticipantReactionText.trim()
 
           if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations === '') {
             _constParticipantListFormattedForWhatsApp.value += '_'
@@ -1220,7 +1221,7 @@ export default {
           }
         }
 
-        if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations !== '' && el.presentParticipantReaction !== '') {
+        if (el.presentParticipantArrival !== '' && el.presentParticipantAnnotations !== '' && el.presentParticipantReactionText !== '') {
           _constParticipantListFormattedForWhatsApp.value += '_'
         }
 
