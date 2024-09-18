@@ -1368,6 +1368,8 @@ export default {
             if (_minutes === 120) _constArrivalElements[index + 2] = (parseInt(hour).toString().padStart(2, '0') + 2) + ':45'
             break
           default:
+            _constArrivalElements[2] = parseInt(hour).toString().padStart(2, '0') + ':' + parseInt(minute).toString().padStart(2, '0')
+            _constArrivalElements.splice(3, 1)
             break
         }
       }
