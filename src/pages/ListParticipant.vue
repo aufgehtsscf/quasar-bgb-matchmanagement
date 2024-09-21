@@ -861,11 +861,13 @@ export default {
       _constMatchName.value = _matchName.trim() + ' ' + _date
       _constDoorOpeningTime.value = _doorOpeningTime
 
-      this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch)
+      const isEvent = _homeTeam !== '' && _awayTeam !== ''
+
+      this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch, isEvent)
     },
 
-    loadReloadData (_matchId, _doorOpeningTime, _annotationsMatch) {
-      this.setArrivalElements(_doorOpeningTime)
+    loadReloadData (_matchId, _doorOpeningTime, _annotationsMatch, isEvent = false) {
+      this.setArrivalElements(_doorOpeningTime, isEvent)
       this.getTableParticipant(_matchId, _doorOpeningTime, _annotationsMatch)
     },
 
@@ -1155,8 +1157,9 @@ export default {
     },
 
     fillObjects (_matchId, _doorOpeningTime, _annotationsMatch) {
+      const matchName = this.activeMatchObject.find(el => el.matchId === _matchId)?.matchName
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.participantId, el.matchId, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.participantId, matchName, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
 
         if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 
@@ -1314,63 +1317,66 @@ export default {
       this.whereIsMyCardObject.push({ cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard, digital: _digital })
     },
 
-    setArrivalElements (_doorOpeningTime) {
+    setArrivalElements (_doorOpeningTime, _isEvent) {
       const hour = _doorOpeningTime.substring(0, 2)
       const minute = _doorOpeningTime.substring(3, 5)
       const minuteInterval = 15
       _constArrivalElements[1] = ''
+      _constArrivalElements.splice(2, 10)
 
-      for (let index = 0; index <= 8; index++) {
-        const _minutes = parseInt(minuteInterval * index)
-        switch (minute) {
-          case '00':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':00'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':15'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':30'
-            if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':45'
-            if (_minutes === 60) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':00'
-            if (_minutes === 75) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':15'
-            if (_minutes === 90) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':30'
-            if (_minutes === 105) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':45'
-            if (_minutes === 120) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':00'
-            break
-          case '15':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':15'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':30'
-            if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':45'
-            if (_minutes === 45) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':00'
-            if (_minutes === 60) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':15'
-            if (_minutes === 75) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':30'
-            if (_minutes === 90) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':45'
-            if (_minutes === 105) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':00'
-            if (_minutes === 120) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':15'
-            break
-          case '30':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':30'
-            if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':45'
-            if (_minutes === 30) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':00'
-            if (_minutes === 45) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':15'
-            if (_minutes === 60) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':30'
-            if (_minutes === 75) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':45'
-            if (_minutes === 90) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':00'
-            if (_minutes === 105) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':15'
-            if (_minutes === 120) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':30'
-            break
-          case '45':
-            if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':45'
-            if (_minutes === 15) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':00'
-            if (_minutes === 30) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':15'
-            if (_minutes === 45) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':30'
-            if (_minutes === 60) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':45'
-            if (_minutes === 75) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':00'
-            if (_minutes === 90) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':15'
-            if (_minutes === 105) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':30'
-            if (_minutes === 120) _constArrivalElements[index + 2] = (parseInt(hour).toString().padStart(2, '0') + 2) + ':45'
-            break
-          default:
-            _constArrivalElements[2] = parseInt(hour).toString().padStart(2, '0') + ':' + parseInt(minute).toString().padStart(2, '0')
-            _constArrivalElements.splice(3, 1)
-            break
+      if (!_isEvent) {
+        _constArrivalElements[2] = parseInt(hour).toString().padStart(2, '0') + ':' + parseInt(minute).toString().padStart(2, '0')
+      } else {
+        for (let index = 0; index <= 8; index++) {
+          const _minutes = parseInt(minuteInterval * index)
+          switch (minute) {
+            case '00':
+              if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':00'
+              if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':15'
+              if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':30'
+              if (_minutes === 45) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':45'
+              if (_minutes === 60) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':00'
+              if (_minutes === 75) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':15'
+              if (_minutes === 90) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':30'
+              if (_minutes === 105) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':45'
+              if (_minutes === 120) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':00'
+              break
+            case '15':
+              if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':15'
+              if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':30'
+              if (_minutes === 30) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':45'
+              if (_minutes === 45) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':00'
+              if (_minutes === 60) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':15'
+              if (_minutes === 75) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':30'
+              if (_minutes === 90) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':45'
+              if (_minutes === 105) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':00'
+              if (_minutes === 120) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':15'
+              break
+            case '30':
+              if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':30'
+              if (_minutes === 15) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':45'
+              if (_minutes === 30) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':00'
+              if (_minutes === 45) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':15'
+              if (_minutes === 60) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':30'
+              if (_minutes === 75) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':45'
+              if (_minutes === 90) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':00'
+              if (_minutes === 105) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':15'
+              if (_minutes === 120) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':30'
+              break
+            case '45':
+              if (_minutes === 0) _constArrivalElements[index + 2] = parseInt(hour).toString().padStart(2, '0') + ':45'
+              if (_minutes === 15) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':00'
+              if (_minutes === 30) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':15'
+              if (_minutes === 45) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':30'
+              if (_minutes === 60) _constArrivalElements[index + 2] = (parseInt(hour) + 1).toString().padStart(2, '0') + ':45'
+              if (_minutes === 75) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':00'
+              if (_minutes === 90) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':15'
+              if (_minutes === 105) _constArrivalElements[index + 2] = (parseInt(hour) + 2).toString().padStart(2, '0') + ':30'
+              if (_minutes === 120) _constArrivalElements[index + 2] = (parseInt(hour).toString().padStart(2, '0') + 2) + ':45'
+              break
+            default:
+              break
+          }
         }
       }
     }

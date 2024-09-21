@@ -199,7 +199,7 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input
                 filled dense
-                v-model="txtDoorOpeningTimeNew" @focus="setValueForDoorOpeningTimeNew(txtMatchDateNew.substring(13, 18))" label="Türöffnungszeit">
+                v-model="txtDoorOpeningTimeNew" label="Türöffnungszeit">
                 <template v-slot:append>
                   <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -276,7 +276,6 @@
                 filled dense
                 v-model="txtAwayTeam"
                 :options="teamImages"
-                autofocus
                 @blur="setValueForMatchName(txtHomeTeam.value, txtAwayTeam.value)"
                 label="Gast *"
                 options-selected-class="text-deep-orange"
@@ -343,7 +342,7 @@
             <div class="q-pt-md" style="max-width: 350px">
               <q-input
                 filled dense
-                v-model="txtDoorOpeningTime" @focus="setValueForDoorOpeningTime(txtMatchDate.substring(13, 18))" label="Türöffnungszeit">
+                v-model="txtDoorOpeningTime" label="Türöffnungszeit">
                 <template v-slot:append>
                   <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -884,18 +883,6 @@ export default {
           _labelAwayTeam = this.teamImages.find(el => el.value === _awayTeam)?.label
         }
         _constMatchName.value = _labelHomeTeam + ' vs. ' + _labelAwayTeam
-      }
-    },
-
-    setValueForDoorOpeningTimeNew (_matchTime) {
-      if (parseInt(_matchTime.substring(0, 2)) >= 2) {
-        _constDoorOpeningTimeNew.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString().padStart(2, '0') + _matchTime.substring(2, 5)
-      }
-    },
-
-    setValueForDoorOpeningTime (_matchTime) {
-      if (parseInt(_matchTime.substring(0, 2)) >= 2) {
-        _constDoorOpeningTime.value = (parseInt(_matchTime.substring(0, 2)) - 2).toString().padStart(2, '0') + _matchTime.substring(2, 5)
       }
     },
 
