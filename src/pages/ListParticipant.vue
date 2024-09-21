@@ -861,7 +861,7 @@ export default {
       _constMatchName.value = _matchName.trim() + ' ' + _date
       _constDoorOpeningTime.value = _doorOpeningTime
 
-      const isEvent = _homeTeam !== '' && _awayTeam !== ''
+      const isEvent = _homeTeam === '' && _awayTeam === ''
 
       this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch, isEvent)
     },
@@ -1324,7 +1324,7 @@ export default {
       _constArrivalElements[1] = ''
       _constArrivalElements.splice(2, 10)
 
-      if (!_isEvent) {
+      if (_isEvent) {
         _constArrivalElements[2] = parseInt(hour).toString().padStart(2, '0') + ':' + parseInt(minute).toString().padStart(2, '0')
       } else {
         for (let index = 0; index <= 8; index++) {
