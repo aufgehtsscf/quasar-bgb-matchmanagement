@@ -841,16 +841,12 @@ export default {
       this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, doorOpeningtime: _doorOpeningTime, annotations: _annotations, date: _date })
 
       // Sort array of objects
-      this.activeMatchObject.sort(function (a, b) {
-        let dateA = a.date
-        dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
+      this.activeMatchObject.sort((a, b) => {
+        // Convert date strings to ISO format for accurate comparison
+        const dateA = a.date.slice(6, 10) + '-' + a.date.slice(3, 5) + '-' + a.date.slice(0, 2) + 'T' + a.date.slice(13)
+        const dateB = b.date.slice(6, 10) + '-' + b.date.slice(3, 5) + '-' + b.date.slice(0, 2) + 'T' + b.date.slice(13)
 
-        let dateB = b.date
-        dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
-
-        if (dateA > dateB) return 1
-        if (dateA < dateB) return -1
-        return 0
+        return new Date(dateA) - new Date(dateB)
       })
     },
 
@@ -1143,16 +1139,17 @@ export default {
       this.participantObject.push({ participantId: _participantId, timestamp: _timestamp, matchId: _matchId, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
 
       // Sort array of objects
-      this.participantObject.sort(function (a, b) {
-        let arrivalA = a.arrival.toLowerCase()
-        if (arrivalA === '') arrivalA = '24:00'
+      this.participantObject.sort((a, b) => {
+        // Normalize empty arrival values to '24:00'
+        const arrivalA = a.arrival === '' ? '24:00' : a.arrival
+        const arrivalB = b.arrival === '' ? '24:00' : b.arrival
 
-        let arrivalB = b.arrival.toLowerCase()
-        if (arrivalB === '') arrivalB = '24:00'
+        // Parse arrival times into comparable numbers (hours and minutes)
+        const timeA = arrivalA.split(':').map(Number)
+        const timeB = arrivalB.split(':').map(Number)
 
-        if (arrivalA > arrivalB) return 1
-        if (arrivalA < arrivalB) return -1
-        return 0
+        // Compare hours first, then minutes
+        return timeA[0] - timeB[0] || timeA[1] - timeB[1]
       })
     },
 

@@ -390,9 +390,7 @@ export default {
         const _numberOfParticipationsA = a.numberOfParticipations
         const _numberOfParticipationsB = b.numberOfParticipations
 
-        if (_numberOfParticipationsA > _numberOfParticipationsB) return -1
-        if (_numberOfParticipationsA < _numberOfParticipationsB) return 1
-        return 0
+        return _numberOfParticipationsB - _numberOfParticipationsA
       })
     },
 
@@ -409,7 +407,7 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setInactiveMatchObject(res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].matchName, res.data[index].date)
+              this.setInactiveMatchObject(res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name, res.data[index].date)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -424,16 +422,12 @@ export default {
       this.inactiveMatchObject.push({ homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, date: _date })
 
       // Sort array of objects
-      this.inactiveMatchObject.sort(function (a, b) {
-        let dateA = a.date
-        dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
+      this.inactiveMatchObject.sort((a, b) => {
+        // Convert date strings to ISO format for accurate comparison
+        const dateA = a.date.slice(6, 10) + '-' + a.date.slice(3, 5) + '-' + a.date.slice(0, 2) + 'T' + a.date.slice(13)
+        const dateB = b.date.slice(6, 10) + '-' + b.date.slice(3, 5) + '-' + b.date.slice(0, 2) + 'T' + b.date.slice(13)
 
-        let dateB = b.date
-        dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
-
-        if (dateA > dateB) return 1
-        if (dateA < dateB) return -1
-        return 0
+        return new Date(dateA) - new Date(dateB)
       })
     },
 

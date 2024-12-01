@@ -632,7 +632,7 @@ export default {
           awayTeam: '',
           matchName: '',
           published: '',
-          matchDate: '',
+          date: '',
           doorOpeningTime: '',
           annotations: '',
           season: ''
@@ -739,19 +739,16 @@ export default {
     },
 
     setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
-      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, matchDate: _matchDate, doorOpeningTime: _doorOpeningTime, annotations: _annotations, season: _season })
+      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, date: _matchDate, doorOpeningTime: _doorOpeningTime, annotations: _annotations, season: _season })
 
       // Sort array of objects
-      this.activeMatchObject.sort(function (a, b) {
-        let dateA = a.matchDate
-        dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
+      this.activeMatchObject.sort((a, b) => {
+        // Convert date strings to ISO format for accurate comparison
+        const dateA = a.date.slice(6, 10) + '-' + a.date.slice(3, 5) + '-' + a.date.slice(0, 2) + 'T' + a.date.slice(13)
+        const dateB = b.date.slice(6, 10) + '-' + b.date.slice(3, 5) + '-' + b.date.slice(0, 2) + 'T' + b.date.slice(13)
 
-        let dateB = b.matchDate
-        dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
-
-        if (dateA > dateB) return 1
-        if (dateA < dateB) return -1
-        return 0
+        // Parse strings as Date objects
+        return new Date(dateA) - new Date(dateB)
       })
     },
 
@@ -790,16 +787,17 @@ export default {
       this.participantInactiveMatchObject.push({ participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival })
 
       // Sort array of objects
-      this.participantInactiveMatchObject.sort(function (a, b) {
-        let arrivalA = a.arrival.toLowerCase()
-        if (arrivalA === '') arrivalA = '24:00'
+      this.participantInactiveMatchObject.sort((a, b) => {
+        // Normalize empty arrival values to '24:00'
+        const arrivalA = a.arrival === '' ? '24:00' : a.arrival
+        const arrivalB = b.arrival === '' ? '24:00' : b.arrival
 
-        let arrivalB = b.arrival.toLowerCase()
-        if (arrivalB === '') arrivalB = '24:00'
+        // Parse arrival times into comparable numbers (hours and minutes)
+        const timeA = arrivalA.split(':').map(Number)
+        const timeB = arrivalB.split(':').map(Number)
 
-        if (arrivalA > arrivalB) return 1
-        if (arrivalA < arrivalB) return -1
-        return 0
+        // Compare hours first, then minutes
+        return timeA[0] - timeB[0] || timeA[1] - timeB[1]
       })
     },
 
@@ -1056,16 +1054,13 @@ export default {
       this.inactiveMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, time: _time, date: _date, numberOfParticipants: _numberOfParticipants })
 
       // Sort array of objects
-      this.inactiveMatchObject.sort(function (a, b) {
-        let dateA = a.date
-        dateA = dateA.substring(6, 10) + dateA.substring(3, 5) + dateA.substring(0, 2)
+      this.inactiveMatchObject.sort((a, b) => {
+        // Convert date strings to ISO format for accurate comparison
+        const dateA = a.date.slice(6, 10) + '-' + a.date.slice(3, 5) + '-' + a.date.slice(0, 2) + 'T' + a.date.slice(13)
+        const dateB = b.date.slice(6, 10) + '-' + b.date.slice(3, 5) + '-' + b.date.slice(0, 2) + 'T' + b.date.slice(13)
 
-        let dateB = b.date
-        dateB = dateB.substring(6, 10) + dateB.substring(3, 5) + dateB.substring(0, 2)
-
-        if (dateA < dateB) return 1
-        if (dateA > dateB) return -1
-        return 0
+        // Parse strings as Date objects
+        return new Date(dateB) - new Date(dateA)
       })
     }
 
