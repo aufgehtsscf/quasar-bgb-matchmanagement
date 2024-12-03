@@ -61,7 +61,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in inactiveMatchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onInactiveMatchClick(match.matchId, match.matchName, match.date + ' ' + match.time, match.numberOfParticipants)">
+        <q-item clickable v-ripple @click="onInactiveMatchClick(match.matchId, match.matchName, match.matchDate + ' ' + match.time, match.numberOfParticipants)">
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
@@ -78,7 +78,7 @@
 
             <q-item-section>
               <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
-              <q-item-label caption>{{ match.date }}</q-item-label>
+              <q-item-label caption>{{ match.matchDate }}</q-item-label>
             </q-item-section>
             <q-badge floating color="teal">{{ match.numberOfParticipants }}</q-badge>
         </q-item>
@@ -632,7 +632,7 @@ export default {
           awayTeam: '',
           matchName: '',
           published: '',
-          date: '',
+          matchDate: '',
           doorOpeningTime: '',
           annotations: '',
           season: ''
@@ -645,7 +645,7 @@ export default {
           homeTeam: '',
           awayTeam: '',
           matchName: '',
-          date: '',
+          matchDate: '',
           numberOfParticipants: ''
         }
       ],
@@ -739,13 +739,13 @@ export default {
     },
 
     setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
-      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, date: _matchDate, doorOpeningTime: _doorOpeningTime, annotations: _annotations, season: _season })
+      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, matchDate: _matchDate, doorOpeningTime: _doorOpeningTime, annotations: _annotations, season: _season })
 
       // Sort array of objects
       this.activeMatchObject.sort((a, b) => {
         // Convert date strings to ISO format for accurate comparison
-        const dateA = a.date.slice(6, 10) + '-' + a.date.slice(3, 5) + '-' + a.date.slice(0, 2) + 'T' + a.date.slice(13)
-        const dateB = b.date.slice(6, 10) + '-' + b.date.slice(3, 5) + '-' + b.date.slice(0, 2) + 'T' + b.date.slice(13)
+        const dateA = a.matchDate.slice(6, 10) + '-' + a.matchDate.slice(3, 5) + '-' + a.matchDate.slice(0, 2) + 'T' + a.matchDate.slice(13)
+        const dateB = b.matchDate.slice(6, 10) + '-' + b.matchDate.slice(3, 5) + '-' + b.matchDate.slice(0, 2) + 'T' + b.matchDate.slice(13)
 
         // Parse strings as Date objects
         return new Date(dateA) - new Date(dateB)
@@ -1050,14 +1050,14 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setInactiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _time, _date, _numberOfParticipants) {
-      this.inactiveMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, time: _time, date: _date, numberOfParticipants: _numberOfParticipants })
+    setInactiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _time, _matchDate, _numberOfParticipants) {
+      this.inactiveMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, time: _time, matchDate: _matchDate, numberOfParticipants: _numberOfParticipants })
 
       // Sort array of objects
       this.inactiveMatchObject.sort((a, b) => {
         // Convert date strings to ISO format for accurate comparison
-        const dateA = a.date.slice(6, 10) + '-' + a.date.slice(3, 5) + '-' + a.date.slice(0, 2) + 'T' + a.date.slice(13)
-        const dateB = b.date.slice(6, 10) + '-' + b.date.slice(3, 5) + '-' + b.date.slice(0, 2) + 'T' + b.date.slice(13)
+        const dateA = a.matchDate.slice(6, 10) + '-' + a.matchDate.slice(3, 5) + '-' + a.matchDate.slice(0, 2) + 'T' + a.matchDate.slice(13)
+        const dateB = b.matchDate.slice(6, 10) + '-' + b.matchDate.slice(3, 5) + '-' + b.matchDate.slice(0, 2) + 'T' + b.matchDate.slice(13)
 
         // Parse strings as Date objects
         return new Date(dateB) - new Date(dateA)
