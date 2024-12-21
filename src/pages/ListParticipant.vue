@@ -17,7 +17,7 @@
               clickable
               v-close-popup
               @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.doorOpeningtime, match.annotations, match.date)"
-              :class="getColorClass(match.matchName)"
+              :class="getColorClass(match.homeTeam, match.awayTeam)"
             >
             <q-item-section>
               <q-item-label>{{ match.matchName }}</q-item-label>
@@ -31,7 +31,7 @@
     <!-- Match Card -->
     <q-card
       class="my-card"
-      :class="getColorClass(txtMatchName)"
+      :class="getColorClass(txtHomeTeam, txtAwayTeam)"
       style="max-width: 500px"
     >
       <q-card-section horizontal v-if="txtHomeTeam !== '' && txtAwayTeam !==''">
@@ -748,13 +748,19 @@ export default {
   },
 
   methods: {
-    getColorClass (matchName) {
-      if (matchName.includes(' Frauen')) {
+    getColorClass (homeTeam, awayTeam) {
+      if (homeTeam === 'Freiburg_Frauen') {
         return 'bg-womenleague'
-      } else if (matchName.includes(' II')) {
+      } else if (homeTeam === 'Freiburg_II') {
         return 'bg-thirdleague'
+      } else if (homeTeam === 'Stuttgart' || awayTeam === 'Stuttgart') {
+        return 'bg-hated'
+      } else if (awayTeam === 'Freiburg') {
+        return 'bg-awaygame'
+      } else if (homeTeam === '' && awayTeam === '') {
+        return 'bg-event'
       }
-      return '' // Default styling for "Men" or others
+      return '' // Default styling Heimspiele
     },
 
     setVariables () {
@@ -1419,8 +1425,16 @@ export default {
 .bg-womenleague {
   background-color: #F9423A;
 }
-
 .bg-thirdleague {
   background-color: #20AE80;
+}
+.bg-awaygame {
+  background-color: #D3D3D3;
+}
+.bg-event {
+  background-color: #6FA8DC;
+}
+.bg-hated {
+  background-color: #5A3E36;
 }
 </style>
