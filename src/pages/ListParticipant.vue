@@ -10,10 +10,15 @@
         icon="sports_volleyball"
         label="Spiel auswählen">
 
-        <q-list v-for="(match, i) in activeMatchObject"
-          :key="i"
-          v-ripple>
-          <q-item clickable v-close-popup @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.doorOpeningtime, match.annotations, match.date)">
+        <q-list>
+            <q-item
+              v-for="(match, i) in activeMatchObject"
+              :key="i"
+              clickable
+              v-close-popup
+              @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.doorOpeningtime, match.annotations, match.date)"
+              :class="getColorClass(match.matchName)"
+            >
             <q-item-section>
               <q-item-label>{{ match.matchName }}</q-item-label>
               <q-item-label caption>{{ match.date }}</q-item-label>
@@ -24,17 +29,21 @@
     </div>
 
     <!-- Match Card -->
-    <q-card class="my-card" style="max-width: 500px">
+    <q-card
+      class="my-card"
+      :class="getColorClass(txtMatchName)"
+      style="max-width: 500px"
+    >
       <q-card-section horizontal v-if="txtHomeTeam !== '' && txtAwayTeam !==''">
-        <q-img class="col-5" :src="getTeamImage(txtHomeTeam)"/>
+        <q-img class="col-5" :src="getTeamImage(txtHomeTeam)" lazy-load />
         <q-card-section>
           <div class="absolute-center text-h6 text-center text-black">VS&nbsp;</div>
         </q-card-section>
-        <q-img :src="getTeamImage(txtAwayTeam)"/>
+        <q-img :src="getTeamImage(txtAwayTeam)" lazy-load />
       </q-card-section>
 
       <q-card-section horizontal v-if="txtHomeTeam === '' && txtAwayTeam ===''">
-        <q-img :src="getEventImage(txtMatchName)"/>
+        <q-img :src="getEventImage(txtMatchName)" lazy-load />
       </q-card-section>
 
       <q-separator />
@@ -739,6 +748,15 @@ export default {
   },
 
   methods: {
+    getColorClass (matchName) {
+      if (matchName.includes(' Frauen')) {
+        return 'bg-womenleague'
+      } else if (matchName.includes(' II')) {
+        return 'bg-thirdleague'
+      }
+      return '' // Default styling for "Men" or others
+    },
+
     setVariables () {
       _constAdminCode.value = getAdminCode(getCookie('applicationCode'))
       _URLTenant = URLMatchManagementAPI + '/Tenant'
@@ -1395,4 +1413,14 @@ export default {
 .my-card
   width: 100%
   max-width: 500px
+</style>
+
+<style scoped>
+.bg-womenleague {
+  background-color: #F9423A;
+}
+
+.bg-thirdleague {
+  background-color: #20AE80;
+}
 </style>
