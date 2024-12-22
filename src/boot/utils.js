@@ -1,5 +1,5 @@
-const IsAdministrator = true
-const ApplicationCode = '3NGdo3Lbyd0'
+const IsAdministrator = false
+const ApplicationCode = 'HOME'
 
 // emailjs
 const serviceID = 'service_1z8boq8'
@@ -102,6 +102,8 @@ const getEventImage = function (_matchName) {
   return 'statics/teams/Event.webp'
 }
 
+const isBGB = (ApplicationCode === '3NGdo3Lbyd0' || ApplicationCode === 'NGdoLbyd_330')
+
 const teamImages = [
   { label: 'Arminia', value: 'Arminia_Bielefeld', image: 'statics/teams/Arminia_Bielefeld.svg' },
   { label: 'Augsburg', value: 'Augsburg', image: 'statics/teams/Augsburg.svg' },
@@ -169,7 +171,7 @@ const teamImages = [
   { label: 'SGS Essen Frauen', value: 'SGS_Essen_Frauen', image: 'statics/teams/SGS_Essen.svg' },
   { label: 'SGV Freiberg', value: 'SGV_Freiberg', image: 'statics/teams/SGV_Freiberg.svg' },
   { label: 'St. Pauli', value: 'St._Pauli', image: 'statics/teams/St._Pauli.svg' },
-  { label: 'Stuttgart', value: 'Stuttgart', image: 'statics/teams/Stuttgart_Shit.png' },
+  { label: 'Stuttgart', value: 'Stuttgart', image: isBGB ? 'statics/teams/Stuttgart_Shit.png' : 'statics/teams/Stuttgart.svg' },
   { label: 'Stuttgarter Kickers', value: 'Stuttgarter_Kickers', image: 'statics/teams/Stuttgarter_Kickers.svg' },
   { label: 'TSV Lehnerz', value: 'TSV_Lehnerz', image: 'statics/teams/TSV_Lehnerz.gif' },
   { label: 'TSV Steinbach', value: 'TSV_Steinbach', image: 'statics/teams/TSV_Steinbach.svg' },
