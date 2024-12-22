@@ -753,8 +753,6 @@ export default {
         return 'bg-womenleague'
       } else if (homeTeam === 'Freiburg_II') {
         return 'bg-thirdleague'
-      } else if (homeTeam === 'Stuttgart' || awayTeam === 'Stuttgart') {
-        return 'bg-hated'
       } else if (awayTeam === 'Freiburg') {
         return 'bg-awaygame'
       } else if (homeTeam === '' && awayTeam === '') {
