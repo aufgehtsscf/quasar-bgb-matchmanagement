@@ -1150,9 +1150,7 @@ export default {
             this.setParticipantObject(res.data[index].id, res.data[index].creationTime, res.data[index].matchId, res.data[index].name.trim(), _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival, res.data[index].annotations.trim(), res.data[index].action, res.data[index].reaction)
           }
 
-          if (res.data.length > 0) {
-            this.fillObjects(_matchId, _doorOpeningTime, _annotationsMatch)
-          }
+          this.fillObjects(_matchId, _doorOpeningTime, _annotationsMatch)
         })
         .catch((err) => console.log(err))
     },
@@ -1258,9 +1256,13 @@ export default {
 
       if (this.reservation !== '') this.reservation += ','
 
-      const _standardText = _constStandardTextFromTenant.value.replace('<HH>', parseInt(_doorOpeningTime.substring(0, 2))).replace('<MM>', _doorOpeningTime.substring(3, 5)).replace('<WHO_RESERVES_PLACES>', this.reservation)
+      const _standardText = (_constStandardTextFromTenant?.value ?? '')
+        .replace('<HH>', parseInt(_doorOpeningTime.substring(0, 2) || '0'))
+        .replace('<MM>', _doorOpeningTime.substring(3, 5) || '00')
+        .replace('<WHO_RESERVES_PLACES>', this.reservation ?? '')
 
       _constAnnotationsMatchOriginal.value = _annotationsMatch
+      _constAnnotationsMatch.value = _annotationsMatch
       _constAnnotationsMatch.value = _annotationsMatch.replace('<STANDARDTEXT>', _standardText).replace(',,', ',')
       _constAnnotationsMatch.value = _annotationsMatch.replace('<STANDARDTEXT>', _standardText).replace(',.', '.')
       if (_constAnnotationsMatch.value.substring(_constAnnotationsMatch.value.length - 1, _constAnnotationsMatch.value.length) === ',') {
