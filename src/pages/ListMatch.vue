@@ -30,11 +30,10 @@
             <q-item-label>&ThickSpace;&ThickSpace;&ThickSpace;</q-item-label>
 
             <q-item-section>
-              <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
+              <q-item-label overline>{{ match.homeTeam === '' && match.awayTeam === '' ? 'Veranstaltung' : 'Spiel' }}: {{ match.matchName }}</q-item-label>
               <q-item-label caption>Wann: {{ match.matchDate }}</q-item-label>
               <q-item-label caption>Türöffnungszeit: {{ match.doorOpeningTime }}</q-item-label>
-              <q-item-label caption v-if="match.published">Publiziert: Ja</q-item-label>
-              <q-item-label caption v-if="!match.published">Publiziert: Nein</q-item-label>
+              <q-item-label caption>Publiziert: {{ match.published ? 'Ja' : 'Nein' }}</q-item-label>
               <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
             </q-item-section>
         </q-item>
@@ -77,7 +76,7 @@
             <q-item-label>&ThickSpace;&ThickSpace;&ThickSpace;</q-item-label>
 
             <q-item-section>
-              <q-item-label overline>Spiel: {{ match.matchName }}</q-item-label>
+              <q-item-label overline>{{ match.homeTeam === '' && match.awayTeam === '' ? 'Veranstaltung' : 'Spiel' }}: {{ match.matchName }}</q-item-label>
               <q-item-label caption>{{ match.matchDate }}</q-item-label>
             </q-item-section>
             <q-badge floating color="teal">{{ match.numberOfParticipants }}</q-badge>

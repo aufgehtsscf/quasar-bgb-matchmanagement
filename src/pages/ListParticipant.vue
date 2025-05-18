@@ -114,12 +114,31 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(ticket, i) in ticketObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onTicketAssignmentClick(ticket.ticketParticipantId, ticket.ticketParticipant, ticket.ticketArrival, ticket.ticketAnnotations, ticket.ticketAction, ticket.ticketReaction)">
+          <q-item
+            clickable
+            v-ripple
+            @click="onTicketAssignmentClick(
+              ticket.ticketParticipantId,
+              ticket.ticketParticipant,
+              ticket.ticketArrival,
+              ticket.ticketAnnotations,
+              ticket.ticketAction,
+              ticket.ticketReaction
+            )"
+          >
           <q-item-section>
-            <q-item-label overline v-if="ticket.ticketAction === 'brauche Karte'">??? an {{ ticket.ticketParticipant }}</q-item-label>
-            <q-item-label overline v-if="ticket.ticketAction === 'meine Karte ist frei' && ticket.ticketReaction === ''">{{ ticket.ticketParticipant }} an ???</q-item-label>
-            <q-item-label overline v-if="ticket.ticketAction === 'meine Karte ist frei' && ticket.ticketReaction !== ''">{{ ticket.ticketParticipant }} an {{ ticket.ticketReaction }}</q-item-label>
-            <q-item-label caption>{{ ticket.ticketAnnotations }}</q-item-label>
+            <q-item-label overline>
+              {{
+                ticket.ticketAction === 'brauche Karte'
+                  ? '??? an ' + ticket.ticketParticipant
+                  : ticket.ticketAction === 'meine Karte ist frei' && ticket.ticketReaction === ''
+                    ? ticket.ticketParticipant + ' an ???'
+                    : ticket.ticketAction === 'meine Karte ist frei'
+                      ? ticket.ticketParticipant + ' an ' + ticket.ticketReaction
+                      : ''
+              }}
+              </q-item-label>
+              <q-item-label caption>{{ ticket.ticketAnnotations }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
