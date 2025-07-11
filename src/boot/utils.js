@@ -157,6 +157,7 @@ const teamImages = [
   { label: 'Leipzig', value: 'Leipzig', image: 'statics/teams/Leipzig.svg' },
   { label: 'Leipzig Frauen', value: 'Leipzig_Frauen', image: 'statics/teams/Leipzig.svg' },
   { label: 'RC Lens', value: 'Lens', image: 'statics/teams/Lens.svg' },
+  { label: 'Lotte', value: 'Lotte', image: 'statics/teams/Lotte.svg' },
   { label: 'Magdeburg', value: 'Magdeburg', image: 'statics/teams/Magdeburg.svg' },
   { label: 'Mainz', value: 'Mainz', image: 'statics/teams/Mainz.svg' },
   { label: 'Mainz II', value: 'Mainz_II', image: 'statics/teams/Mainz.svg' },
