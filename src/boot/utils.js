@@ -185,7 +185,7 @@ const teamImages = [
   { label: 'Union Berlin', value: 'Union_Berlin', image: 'statics/teams/Union_Berlin.svg' },
   { label: 'Utrecht', value: 'Utrecht', image: 'statics/teams/Utrecht.svg' },
   { label: 'VfL Osnabrück', value: 'VfL_Osnabrück', image: 'statics/teams/VfL_Osnabrück.svg' },
-  { label: 'Viktoria_Pilsen', value: 'Viktoria_Pilsen', image: 'statics/teams/Viktoria_Pilsen.svg' },
+  { label: 'Viktoria Pilsen', value: 'Viktoria_Pilsen', image: 'statics/teams/Viktoria_Pilsen.svg' },
   { label: 'Werder Bremen', value: 'Werder_Bremen', image: 'statics/teams/Werder_Bremen.svg' },
   { label: 'Werder Bremen Frauen', value: 'Werder_Bremen_Frauen', image: 'statics/teams/Werder_Bremen.svg' },
   { label: 'West Ham', value: 'West_Ham', image: 'statics/teams/West_Ham.svg' },
