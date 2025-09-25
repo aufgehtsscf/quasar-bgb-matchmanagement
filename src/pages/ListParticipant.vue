@@ -16,7 +16,7 @@
               :key="i"
               clickable
               v-close-popup
-              @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.doorOpeningtime, match.annotations, match.date)"
+              @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.doorOpeningtime, match.annotations, match.date, i)"
               :class="getColorClass(match.homeTeam, match.awayTeam)"
             >
             <q-item-section>
@@ -33,6 +33,7 @@
       class="my-card"
       :class="getColorClass(txtHomeTeam, txtAwayTeam)"
       style="max-width: 500px"
+      v-touch-swipe.horizontal="onSwipe"
     >
       <q-card-section horizontal v-if="txtHomeTeam !== '' && txtAwayTeam !==''">
         <q-img class="col-5" :src="getTeamImage(txtHomeTeam)" lazy-load />
@@ -42,7 +43,7 @@
         <q-img :src="getTeamImage(txtAwayTeam)" lazy-load />
       </q-card-section>
 
-      <q-card-section horizontal v-if="txtHomeTeam === '' && txtAwayTeam ===''">
+      <q-card-section horizontal v-else>
         <q-img :src="getEventImage(txtMatchName)" lazy-load />
       </q-card-section>
 
@@ -669,6 +670,7 @@ export default {
           date: ''
         }
       ],
+      currentIndex: -1,
 
       participantObject: [
         {
@@ -872,7 +874,7 @@ export default {
           }
 
           if (res.data.length > 0) {
-            this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].doorOpeningtime, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date)
+            this.onMatchClick(this.activeMatchObject[0].matchId, this.activeMatchObject[0].homeTeam, this.activeMatchObject[0].awayTeam, this.activeMatchObject[0].matchName, this.activeMatchObject[0].doorOpeningtime, this.activeMatchObject[0].annotations, this.activeMatchObject[0].date, 0)
           }
         })
         .catch((err) => console.log(err))
@@ -891,7 +893,7 @@ export default {
       })
     },
 
-    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _doorOpeningTime, _annotationsMatch, _date) {
+    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _doorOpeningTime, _annotationsMatch, _date, _index = null) {
       _constMatchId.value = _matchId
       _constHomeTeam.value = _homeTeam
       _constAwayTeam.value = _awayTeam
@@ -901,6 +903,28 @@ export default {
       const isEvent = _homeTeam === '' && _awayTeam === ''
 
       this.loadReloadData(_matchId, _doorOpeningTime, _annotationsMatch, isEvent)
+
+      // keep track of the current index
+      if (_index !== null) {
+        this.currentIndex = _index
+      } else {
+      // fallback: find the index by matchId
+        this.currentIndex = this.activeMatchObject.findIndex(m => m.matchId === _matchId)
+      }
+    },
+
+    onSwipe ({ direction }) {
+      if (this.activeMatchObject.length === 0) return
+
+      if (direction === 'left' && this.currentIndex < this.activeMatchObject.length - 1) {
+        const nextIndex = this.currentIndex + 1
+        const m = this.activeMatchObject[nextIndex]
+        this.onMatchClick(m.matchId, m.homeTeam, m.awayTeam, m.matchName, m.doorOpeningtime, m.annotations, m.date, nextIndex)
+      } else if (direction === 'right' && this.currentIndex > 0) {
+        const prevIndex = this.currentIndex - 1
+        const m = this.activeMatchObject[prevIndex]
+        this.onMatchClick(m.matchId, m.homeTeam, m.awayTeam, m.matchName, m.doorOpeningtime, m.annotations, m.date, prevIndex)
+      }
     },
 
     loadReloadData (_matchId, _doorOpeningTime, _annotationsMatch, isEvent = false) {
