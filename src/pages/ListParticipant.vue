@@ -28,14 +28,14 @@
       </q-btn-dropdown>
     </div>
 
-    <!-- Match Card -->
     <q-card
       class="my-card"
       :class="getColorClass(txtHomeTeam, txtAwayTeam)"
       style="max-width: 500px"
-      v-touch-swipe.horizontal="onSwipe"
+      v-touch-pan.horizontal.mouse="onPan"
+      :style="cardStyle"
     >
-      <q-card-section horizontal v-if="txtHomeTeam !== '' && txtAwayTeam !==''">
+      <q-card-section horizontal v-if="txtHomeTeam !== '' && txtAwayTeam !== ''">
         <q-img class="col-5" :src="getTeamImage(txtHomeTeam)" lazy-load />
         <q-card-section>
           <div class="absolute-center text-h6 text-center text-black">VS&nbsp;</div>
@@ -671,6 +671,9 @@ export default {
         }
       ],
       currentIndex: -1,
+      offsetX: 0,
+      transition: '',
+      swipeThreshold: 120,
 
       participantObject: [
         {
@@ -755,6 +758,12 @@ export default {
   },
 
   computed: {
+    cardStyle () {
+      return {
+        transform: `translateX(${this.offsetX}px) rotate(${this.offsetX / 20}deg)`,
+        transition: this.transition
+      }
+    }
   },
 
   mounted () {
@@ -769,6 +778,62 @@ export default {
   },
 
   methods: {
+    onPan (evt) {
+      if (evt.isFirst) {
+        this.transition = '' // remove transition while dragging
+      }
+
+      if (evt.isFinal) {
+      // released
+        if (Math.abs(this.offsetX) > this.swipeThreshold) {
+          this.transition = 'transform 0.3s ease-out'
+
+          if (this.offsetX < 0 && this.currentIndex < this.activeMatchObject.length - 1) {
+          // swiped left → next match
+            this.offsetX = -window.innerWidth
+            setTimeout(() => {
+              this.showMatch(this.currentIndex + 1)
+            }, 300)
+          } else if (this.offsetX > 0 && this.currentIndex > 0) {
+          // swiped right → previous match
+            this.offsetX = window.innerWidth
+            setTimeout(() => {
+              this.showMatch(this.currentIndex - 1)
+            }, 300)
+          } else {
+          // no more matches in that direction → snap back
+            this.offsetX = 0
+          }
+        } else {
+        // not far enough → snap back
+          this.transition = 'transform 0.2s ease-out'
+          this.offsetX = 0
+        }
+      } else {
+      // dragging
+        this.offsetX = evt.offset.x
+      }
+    },
+
+    showMatch (index) {
+      const m = this.activeMatchObject[index]
+      this.onMatchClick(
+        m.matchId,
+        m.homeTeam,
+        m.awayTeam,
+        m.matchName,
+        m.doorOpeningtime,
+        m.annotations,
+        m.date,
+        index
+      )
+      this.currentIndex = index
+
+      // reset card position instantly
+      this.transition = ''
+      this.offsetX = 0
+    },
+
     getColorClass (homeTeam, awayTeam) {
       if (homeTeam === 'Freiburg_Frauen') {
         return 'bg-womenleague'
@@ -910,20 +975,6 @@ export default {
       } else {
       // fallback: find the index by matchId
         this.currentIndex = this.activeMatchObject.findIndex(m => m.matchId === _matchId)
-      }
-    },
-
-    onSwipe ({ direction }) {
-      if (this.activeMatchObject.length === 0) return
-
-      if (direction === 'left' && this.currentIndex < this.activeMatchObject.length - 1) {
-        const nextIndex = this.currentIndex + 1
-        const m = this.activeMatchObject[nextIndex]
-        this.onMatchClick(m.matchId, m.homeTeam, m.awayTeam, m.matchName, m.doorOpeningtime, m.annotations, m.date, nextIndex)
-      } else if (direction === 'right' && this.currentIndex > 0) {
-        const prevIndex = this.currentIndex - 1
-        const m = this.activeMatchObject[prevIndex]
-        this.onMatchClick(m.matchId, m.homeTeam, m.awayTeam, m.matchName, m.doorOpeningtime, m.annotations, m.date, prevIndex)
       }
     },
 
