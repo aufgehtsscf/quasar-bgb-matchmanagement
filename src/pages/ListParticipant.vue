@@ -803,16 +803,18 @@ export default {
       const depth = i - this.currentIndex
 
       if (i < this.currentIndex) {
-        // previous card → show partially when swiping right
+        // previous card → peek + subtle tilt when swiping right
+        const peekX = this.offsetX > 0 ? this.offsetX / 3 : 0
+        const tilt = this.offsetX > 0 ? Math.min(this.offsetX / 30, 5) : 0 // max 5deg
         return {
-          transform: `scale(${1 - Math.abs(depth) * 0.05}) translateY(${Math.abs(depth) * 10}px) translateX(${this.offsetX > 0 ? this.offsetX / 3 : 0}px)`,
+          transform: `scale(${1 - Math.abs(depth) * 0.05}) translateY(${Math.abs(depth) * 10}px) translateX(${peekX}px) rotate(${tilt}deg)`,
           zIndex: 100 - Math.abs(depth),
-          opacity: this.offsetX > 0 ? 0.8 : 1
+          opacity: this.offsetX > 0 ? 0.9 : 1
         }
       }
 
       if (i === this.currentIndex) {
-        // top card → draggable
+        // top card → draggable with tilt
         return {
           transform: `translateX(${this.offsetX}px) rotate(${this.offsetX / 20}deg)`,
           transition: this.transition,
