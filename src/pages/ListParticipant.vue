@@ -37,25 +37,39 @@
         v-touch-pan.horizontal.mouse="i === currentIndex ? onPan : null"
       >
         <q-card
-          class="my-card"
+          class="my-card full-height"
           :class="getColorClass(match.homeTeam, match.awayTeam)"
         >
-          <q-card-section horizontal v-if="match.homeTeam && match.awayTeam">
-            <q-img class="col-5" :src="getTeamImage(match.homeTeam)" fit="contain" />
+          <!-- If both teams exist -->
+          <q-card-section horizontal v-if="match.homeTeam && match.awayTeam" class="team-section">
+            <q-img
+              class="team-img"
+              :src="getTeamImage(match.homeTeam)"
+              fit="contain"
+            />
             <q-card-section class="flex flex-center">
               <div class="text-h6 text-center text-black">VS</div>
             </q-card-section>
-            <q-img :src="getTeamImage(match.awayTeam)" fit="contain" />
+            <q-img
+              class="team-img"
+              :src="getTeamImage(match.awayTeam)"
+              fit="contain"
+            />
           </q-card-section>
 
-          <q-card-section horizontal v-else>
-            <q-img :src="getEventImage(match.matchName)" fit="contain" />
+          <!-- If it’s just an event -->
+          <q-card-section horizontal v-else class="event-section">
+            <q-img
+              class="event-img"
+              :src="getEventImage(match.matchName)"
+              fit="contain"
+            />
           </q-card-section>
 
           <q-separator />
 
           <q-card-section class="column items-center">
-            <div class="text-h5 text-center text-black">
+            <div class="text-h5 text-center text-black ellipsis" style="max-width: 100%;">
               {{ match.matchName }}
             </div>
             <div class="text-h6 text-center text-black">
@@ -1543,12 +1557,29 @@ export default {
 }
 
 .my-card {
-  height: 450px;
+  height: 350px;
   max-width: 500px;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.team-section, .event-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.team-img {
+  flex: 1;
+  max-height: 250px;
+}
+
+.event-img {
+  width: 100%;
+  max-height: 250px;
 }
 
 .bg-womenleague {
@@ -1571,7 +1602,7 @@ export default {
   position: relative;
   width: 100%;
   max-width: 500px;
-  height: 450px;
+  height: 350px;
 }
 .card-wrapper {
   position: absolute;
