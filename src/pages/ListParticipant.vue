@@ -800,20 +800,27 @@ export default {
 
   methods: {
     getCardStyle (i) {
+      const depth = i - this.currentIndex
+
       if (i < this.currentIndex) {
-      // cards already swiped → hide them
-        return { display: 'none' }
-      }
-      if (i === this.currentIndex) {
-      // top card: draggable
+        // previous card → show partially when swiping right
         return {
-          transform: this.cardTransform,
+          transform: `scale(${1 - Math.abs(depth) * 0.05}) translateY(${Math.abs(depth) * 10}px) translateX(${this.offsetX > 0 ? this.offsetX / 3 : 0}px)`,
+          zIndex: 100 - Math.abs(depth),
+          opacity: this.offsetX > 0 ? 0.8 : 1
+        }
+      }
+
+      if (i === this.currentIndex) {
+        // top card → draggable
+        return {
+          transform: `translateX(${this.offsetX}px) rotate(${this.offsetX / 20}deg)`,
           transition: this.transition,
           zIndex: 100
         }
       }
-      // stacked cards below: slightly scaled/shifted
-      const depth = i - this.currentIndex
+
+      // next cards → stacked below
       return {
         transform: `scale(${1 - depth * 0.05}) translateY(${depth * 10}px)`,
         zIndex: 100 - depth
@@ -826,45 +833,48 @@ export default {
       }
 
       if (evt.isFinal) {
-        if (Math.abs(this.offsetX) > this.swipeThreshold) {
+        const threshold = 120 // px
+        if (Math.abs(this.offsetX) > threshold) {
           this.transition = 'transform 0.3s ease-out'
 
           if (this.offsetX < 0 && this.currentIndex < this.activeMatchObject.length - 1) {
-          // swipe left → next
+            // swipe left → next card
             this.offsetX = -window.innerWidth
-            setTimeout(() => {
-              this.showNext()
-            }, 300)
+            setTimeout(() => this.showNext(), 300)
           } else if (this.offsetX > 0 && this.currentIndex > 0) {
-          // swipe right → previous (if allowed)
+            // swipe right → previous card
             this.offsetX = window.innerWidth
-            setTimeout(() => {
-              this.showPrev()
-            }, 300)
+            setTimeout(() => this.showPrev(), 300)
           } else {
+            // no card in that direction → snap back
             this.offsetX = 0
           }
         } else {
+          // not far enough → snap back
           this.transition = 'transform 0.2s ease-out'
           this.offsetX = 0
         }
       } else {
+        // dragging
         this.offsetX = evt.offset.x
       }
     },
 
     showNext () {
       this.currentIndex++
-      this.transition = ''
-      this.offsetX = 0
+      this.resetCardPosition()
       this.selectMatch(this.currentIndex)
     },
 
     showPrev () {
       this.currentIndex--
+      this.resetCardPosition()
+      this.selectMatch(this.currentIndex)
+    },
+
+    resetCardPosition () {
       this.transition = ''
       this.offsetX = 0
-      this.selectMatch(this.currentIndex)
     },
 
     selectMatch (index) {
@@ -1610,5 +1620,6 @@ export default {
   height: 100%;
   top: 0;
   left: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 </style>
