@@ -39,27 +39,29 @@
         <q-card
           class="my-card"
           :class="getColorClass(match.homeTeam, match.awayTeam)"
-          style="max-width: 500px; width: 100%;"
         >
           <q-card-section horizontal v-if="match.homeTeam && match.awayTeam">
-            <q-img class="col-5" :src="getTeamImage(match.homeTeam)" lazy-load />
-            <q-card-section>
-              <div class="absolute-center text-h6 text-center text-black">VS&nbsp;</div>
+            <q-img class="col-5" :src="getTeamImage(match.homeTeam)" fit="contain" />
+            <q-card-section class="flex flex-center">
+              <div class="text-h6 text-center text-black">VS</div>
             </q-card-section>
-            <q-img :src="getTeamImage(match.awayTeam)" lazy-load />
+            <q-img :src="getTeamImage(match.awayTeam)" fit="contain" />
           </q-card-section>
 
           <q-card-section horizontal v-else>
-            <q-img :src="getEventImage(match.matchName)" lazy-load />
+            <q-img :src="getEventImage(match.matchName)" fit="contain" />
           </q-card-section>
 
           <q-separator />
 
-          <q-card-actions align="center">
-            <q-btn flat class="text-h5 text-center text-black">
-              {{ match.matchName }} {{ match.date }}
-            </q-btn>
-          </q-card-actions>
+          <q-card-section class="column items-center">
+            <div class="text-h5 text-center text-black">
+              {{ match.matchName }}
+            </div>
+            <div class="text-h6 text-center text-black">
+              {{ match.date }}
+            </div>
+          </q-card-section>
         </q-card>
       </div>
     </div>
@@ -1539,15 +1541,16 @@ export default {
   opacity: 0.2;
   filter: grayscale(100%);
 }
-</style>
 
-<style lang="sass" scoped>
-.my-card
-  width: 100%
-  max-width: 500px
-</style>
+.my-card {
+  height: 450px;
+  max-width: 500px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-<style scoped>
 .bg-womenleague {
   background-color: #F9423A;
 }
