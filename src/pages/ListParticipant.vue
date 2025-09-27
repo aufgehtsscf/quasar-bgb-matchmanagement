@@ -28,33 +28,41 @@
       </q-btn-dropdown>
     </div>
 
-    <q-card
-      class="my-card"
-      :class="getColorClass(txtHomeTeam, txtAwayTeam)"
-      style="max-width: 500px"
-      v-touch-pan.horizontal.mouse="onPan"
-      :style="cardStyle"
-    >
-      <q-card-section horizontal v-if="txtHomeTeam !== '' && txtAwayTeam !== ''">
-        <q-img class="col-5" :src="getTeamImage(txtHomeTeam)" lazy-load />
-        <q-card-section>
-          <div class="absolute-center text-h6 text-center text-black">VS&nbsp;</div>
-        </q-card-section>
-        <q-img :src="getTeamImage(txtAwayTeam)" lazy-load />
-      </q-card-section>
+    <div class="deck-container">
+      <div
+        v-for="(match, i) in activeMatchObject"
+        :key="match.matchId"
+        class="card-wrapper"
+        :style="getCardStyle(i)"
+        v-touch-pan.horizontal.mouse="i === currentIndex ? onPan : null"
+      >
+        <q-card
+          class="my-card"
+          :class="getColorClass(match.homeTeam, match.awayTeam)"
+          style="max-width: 500px; width: 100%;"
+        >
+          <q-card-section horizontal v-if="match.homeTeam && match.awayTeam">
+            <q-img class="col-5" :src="getTeamImage(match.homeTeam)" lazy-load />
+            <q-card-section>
+              <div class="absolute-center text-h6 text-center text-black">VS&nbsp;</div>
+            </q-card-section>
+            <q-img :src="getTeamImage(match.awayTeam)" lazy-load />
+          </q-card-section>
 
-      <q-card-section horizontal v-else>
-        <q-img :src="getEventImage(txtMatchName)" lazy-load />
-      </q-card-section>
+          <q-card-section horizontal v-else>
+            <q-img :src="getEventImage(match.matchName)" lazy-load />
+          </q-card-section>
 
-      <q-separator />
+          <q-separator />
 
-      <q-card-actions align="center">
-        <q-btn flat class="text-h5 text-center text-black">
-          {{ txtMatchName }}
-        </q-btn>
-      </q-card-actions>
-    </q-card>
+          <q-card-actions align="center">
+            <q-btn flat class="text-h5 text-center text-black">
+              {{ match.matchName }} {{ match.date }}
+            </q-btn>
+          </q-card-actions>
+        </q-card>
+      </div>
+    </div>
 
     <!-- Share -->
     <div class="q-pa-md" style="max-width: 500px" v-if="getCookie('isAdministrator')" >
@@ -670,7 +678,7 @@ export default {
           date: ''
         }
       ],
-      currentIndex: -1,
+      currentIndex: 0,
       offsetX: 0,
       transition: '',
       swipeThreshold: 120,
@@ -758,11 +766,8 @@ export default {
   },
 
   computed: {
-    cardStyle () {
-      return {
-        transform: `translateX(${this.offsetX}px) rotate(${this.offsetX / 20}deg)`,
-        transition: this.transition
-      }
+    cardTransform () {
+      return `translateX(${this.offsetX}px) rotate(${this.offsetX / 20}deg)`
     }
   },
 
@@ -778,45 +783,77 @@ export default {
   },
 
   methods: {
+    getCardStyle (i) {
+      if (i < this.currentIndex) {
+      // cards already swiped → hide them
+        return { display: 'none' }
+      }
+      if (i === this.currentIndex) {
+      // top card: draggable
+        return {
+          transform: this.cardTransform,
+          transition: this.transition,
+          zIndex: 100
+        }
+      }
+      // stacked cards below: slightly scaled/shifted
+      const depth = i - this.currentIndex
+      return {
+        transform: `scale(${1 - depth * 0.05}) translateY(${depth * 10}px)`,
+        zIndex: 100 - depth
+      }
+    },
+
     onPan (evt) {
       if (evt.isFirst) {
-        this.transition = '' // remove transition while dragging
+        this.transition = ''
       }
 
       if (evt.isFinal) {
-      // released
         if (Math.abs(this.offsetX) > this.swipeThreshold) {
           this.transition = 'transform 0.3s ease-out'
 
           if (this.offsetX < 0 && this.currentIndex < this.activeMatchObject.length - 1) {
-          // swiped left → next match
+          // swipe left → next
             this.offsetX = -window.innerWidth
             setTimeout(() => {
-              this.showMatch(this.currentIndex + 1)
+              this.showNext()
             }, 300)
           } else if (this.offsetX > 0 && this.currentIndex > 0) {
-          // swiped right → previous match
+          // swipe right → previous (if allowed)
             this.offsetX = window.innerWidth
             setTimeout(() => {
-              this.showMatch(this.currentIndex - 1)
+              this.showPrev()
             }, 300)
           } else {
-          // no more matches in that direction → snap back
             this.offsetX = 0
           }
         } else {
-        // not far enough → snap back
           this.transition = 'transform 0.2s ease-out'
           this.offsetX = 0
         }
       } else {
-      // dragging
         this.offsetX = evt.offset.x
       }
     },
 
-    showMatch (index) {
+    showNext () {
+      this.currentIndex++
+      this.transition = ''
+      this.offsetX = 0
+      this.selectMatch(this.currentIndex)
+    },
+
+    showPrev () {
+      this.currentIndex--
+      this.transition = ''
+      this.offsetX = 0
+      this.selectMatch(this.currentIndex)
+    },
+
+    selectMatch (index) {
       const m = this.activeMatchObject[index]
+      if (!m) return
       this.onMatchClick(
         m.matchId,
         m.homeTeam,
@@ -827,11 +864,6 @@ export default {
         m.date,
         index
       )
-      this.currentIndex = index
-
-      // reset card position instantly
-      this.transition = ''
-      this.offsetX = 0
     },
 
     getColorClass (homeTeam, awayTeam) {
@@ -1530,5 +1562,19 @@ export default {
 }
 .bg-hated {
   background-color: #5A3E36;
+}
+
+.deck-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 450px;
+}
+.card-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 </style>
