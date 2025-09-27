@@ -28,55 +28,66 @@
       </q-btn-dropdown>
     </div>
 
-    <div class="deck-container">
-      <div
-        v-for="(match, i) in activeMatchObject"
-        :key="match.matchId"
-        class="card-wrapper"
-        :style="getCardStyle(i)"
-        v-touch-pan.horizontal.mouse="i === currentIndex ? onPan : null"
-      >
-        <q-card
-          class="my-card full-height"
-          :class="getColorClass(match.homeTeam, match.awayTeam)"
+    <div class="deck-container-wrapper">
+      <!-- Dot indicator -->
+      <div class="card-counter-dots">
+        <span
+          v-for="(match, i) in activeMatchObject"
+          :key="i"
+          :class="{ active: i === currentIndex }"
+        ></span>
+      </div>
+
+      <div class="deck-container">
+        <div
+          v-for="(match, i) in activeMatchObject"
+          :key="match.matchId"
+          class="card-wrapper"
+          :style="getCardStyle(i)"
+          v-touch-pan.horizontal.mouse="i === currentIndex ? onPan : null"
         >
-          <!-- If both teams exist -->
-          <q-card-section horizontal v-if="match.homeTeam && match.awayTeam" class="team-section">
-            <q-img
-              class="team-img"
-              :src="getTeamImage(match.homeTeam)"
-              fit="contain"
-            />
-            <q-card-section class="flex flex-center">
-              <div class="text-h6 text-center text-black">VS</div>
+          <q-card
+            class="my-card full-height"
+            :class="getColorClass(match.homeTeam, match.awayTeam)"
+          >
+            <!-- If both teams exist -->
+            <q-card-section horizontal v-if="match.homeTeam && match.awayTeam" class="team-section">
+              <q-img
+                class="team-img"
+                :src="getTeamImage(match.homeTeam)"
+                fit="contain"
+              />
+              <q-card-section class="flex flex-center">
+                <div class="text-h6 text-center text-black">VS</div>
+              </q-card-section>
+              <q-img
+                class="team-img"
+                :src="getTeamImage(match.awayTeam)"
+                fit="contain"
+              />
             </q-card-section>
-            <q-img
-              class="team-img"
-              :src="getTeamImage(match.awayTeam)"
-              fit="contain"
-            />
-          </q-card-section>
 
-          <!-- If it’s just an event -->
-          <q-card-section horizontal v-else class="event-section">
-            <q-img
-              class="event-img"
-              :src="getEventImage(match.matchName)"
-              fit="contain"
-            />
-          </q-card-section>
+            <!-- If it’s just an event -->
+            <q-card-section horizontal v-else class="event-section">
+              <q-img
+                class="event-img"
+                :src="getEventImage(match.matchName)"
+                fit="contain"
+              />
+            </q-card-section>
 
-          <q-separator />
+            <q-separator />
 
-          <q-card-section class="column items-center">
-            <div class="text-h5 text-center text-black ellipsis" style="max-width: 100%;">
-              {{ match.matchName }}
-            </div>
-            <div class="text-h6 text-center text-black">
-              {{ match.date }}
-            </div>
-          </q-card-section>
-        </q-card>
+            <q-card-section class="column items-center">
+              <div class="text-h5 text-center text-black ellipsis" style="max-width: 100%;">
+                {{ match.matchName }}
+              </div>
+              <div class="text-h6 text-center text-black">
+                {{ match.date }}
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
     </div>
 
@@ -1624,4 +1635,26 @@ export default {
   left: 0;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
+.deck-container-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin-left: 0; /* keep cards aligned left */
+}
+.card-counter-dots {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.card-counter-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ccc;
+}
+.card-counter-dots span.active {
+  background: var(--q-primary);
+}
+
 </style>
