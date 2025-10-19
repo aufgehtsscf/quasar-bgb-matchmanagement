@@ -9,6 +9,14 @@
       </q-toolbar>
     </div>
 
+    <q-toggle
+      v-if="getCookie('isAdministrator')"
+      v-model="showPublishedOnly"
+      color="red"
+      label="Nur publizierte"
+      @update:model-value="getTableActiveMatch"
+    />
+
     <!-- List of active matches -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in activeMatchObject"
@@ -528,6 +536,8 @@ const _constAdminCode = ref('')
 const _constHomeTeamFromTenant = ref('')
 const _constHomeTeamAliasFromTenant = ref('')
 
+const showPublishedOnly = ref(false)
+
 let _TenantId
 let _Season
 let _URLTenant
@@ -571,6 +581,8 @@ export default {
       txtSeasonNew: ref(_constSeasonNew),
 
       homeTeamFromTenant: ref(_constHomeTeamFromTenant),
+
+      showPublishedOnly,
 
       onMatchCreated () {
         $q.notify({
@@ -725,6 +737,9 @@ export default {
       this.activeMatchObject = []
 
       const publishedParam = !getCookie('isAdministrator')
+        ? true
+        : this.showPublishedOnly
+
       this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/active/${publishedParam}`)
         .then((res) => {
           if (res.status === 200) {
