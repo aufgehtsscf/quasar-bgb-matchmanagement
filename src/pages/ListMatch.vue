@@ -22,7 +22,7 @@
       <q-list dark bordered separator style="max-width: 470px" v-for="(match, i) in activeMatchObject"
         :key="i"
         v-ripple>
-        <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.published, match.matchDate, match.doorOpeningTime, match.annotations, match.season)">
+        <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.isPublished, match.publishOnTime, match.matchDate, match.doorOpeningTime, match.annotations, match.season)">
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
               <img :src="getTeamImage(match.homeTeam)">
             </q-avatar>
@@ -41,7 +41,8 @@
               <q-item-label overline>{{ match.homeTeam === '' && match.awayTeam === '' ? 'Veranstaltung' : 'Spiel' }}: {{ match.matchName }}</q-item-label>
               <q-item-label caption>Wann: {{ match.matchDate }}</q-item-label>
               <q-item-label caption>Türöffnungszeit: {{ match.doorOpeningTime }}</q-item-label>
-              <q-item-label caption>Publiziert: {{ match.published ? 'Ja' : 'Nein' }}</q-item-label>
+              <q-item-label caption>Publiziert: {{ match.isPublished ? 'Ja' : 'Nein' }}</q-item-label>
+              <q-item-label v-if="!match.isPublished" caption>Veröffentlichen am: {{ match.publishOnTime }}</q-item-label>
               <q-item-label caption>Kommentar: {{ match.annotations }}</q-item-label>
             </q-item-section>
         </q-item>
@@ -168,10 +169,40 @@
 
             <div class="q-pt-md" style="max-width: 350px">
               <q-toggle
-                v-model="tglPublishedNew"
+                v-model="tglIsPublishedNew"
                 color="red"
                 label="Publizieren"
                 left-label />
+            </div>
+
+            <div class="q-pt-md" style="max-width: 350px" v-if="!tglIsPublishedNew">
+              <q-input
+                filled dense
+                v-model="txtPublishOnTimeNew" label="Veröffentlichen am">
+                <template v-slot:prepend>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-date v-model="txtPublishOnTimeNew" mask="DD.MM.YYYY - HH:mm">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-time v-model="txtPublishOnTimeNew" mask="DD.MM.YYYY - HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
@@ -235,7 +266,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglPublishedNew, txtMatchDateNew, txtDoorOpeningTimeNew, txtAnnotationsNew, txtSeasonNew)" :disable="((txtHomeTeamNew === '' || txtAwayTeamNew === '' || txtMatchNameNew === '') && !tglIsEventNew) || (txtMatchNameNew === '' && tglIsEventNew)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMatchSave(txtHomeTeamNew.value, txtAwayTeamNew.value, txtMatchNameNew, tglIsEventNew, tglIsPublishedNew, txtPublishOnTimeNew, txtMatchDateNew, txtDoorOpeningTimeNew, txtAnnotationsNew, txtSeasonNew)" :disable="((txtHomeTeamNew === '' || txtAwayTeamNew === '' || txtMatchNameNew === '') && !tglIsEventNew) || (txtMatchNameNew === '' && tglIsEventNew)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -311,10 +342,40 @@
 
             <div class="q-pt-md" style="max-width: 350px">
               <q-toggle
-                v-model="tglPublished"
+                v-model="tglIsPublished"
                 color="red"
                 label="Publizieren"
                 left-label/>
+            </div>
+
+            <div class="q-pt-md" style="max-width: 350px" v-if="!tglIsPublished && isFutureMatch(txtMatchDate)">
+              <q-input
+                filled dense
+                v-model="txtPublishOnTime" label="Veröffentlichen am">
+                <template v-slot:prepend>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-date v-model="txtPublishOnTime" mask="DD.MM.YYYY - HH:mm">
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                      <q-time v-model="txtPublishOnTime" mask="DD.MM.YYYY - HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn v-close-popup label="Close" color="primary" flat />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
             </div>
 
             <div class="q-pt-md" style="max-width: 350px">
@@ -380,7 +441,7 @@
             <q-btn icon="archive" color="primary" @click="arcMatch = true" v-if="getCookie('isAdministrator')" />
             <q-btn icon="delete" color="primary" @click="delMatch = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglPublished, txtMatchDate, txtDoorOpeningTime, txtAnnotations, txtSeason)" :disable="((txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === '') && !tglIsEvent) || (txtMatchName === '' && tglIsEvent)" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMatchSave(txtMatchId, txtHomeTeam.value, txtAwayTeam.value, txtMatchName, txtMatchNameOld, tglIsEvent, tglIsPublished, txtPublishOnTime, txtMatchDate, txtDoorOpeningTime, txtAnnotations, txtSeason)" :disable="((txtHomeTeam ==='' || txtAwayTeam === '' || txtMatchName === '') && !tglIsEvent) || (txtMatchName === '' && tglIsEvent)" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -519,6 +580,7 @@ const _constAwayTeam = ref('')
 const _constMatchName = ref('')
 const _constMatchNameOld = ref('')
 const _constPublished = ref(false)
+const _constPublishOnTime = ref(false)
 const _constMatchDate = ref('')
 const _constDoorOpeningTime = ref('')
 const _constAnnotations = ref('')
@@ -560,7 +622,8 @@ export default {
       txtAwayTeam: ref(_constAwayTeam),
       txtMatchName: ref(_constMatchName),
       txtMatchNameOld: ref(_constMatchNameOld),
-      tglPublished: ref(_constPublished),
+      tglIsPublished: ref(_constPublished),
+      txtPublishOnTime: ref(_constPublishOnTime),
       txtMatchDate: ref(_constMatchDate),
       txtDoorOpeningTime: ref(_constDoorOpeningTime),
       txtAnnotations: ref(_constAnnotations),
@@ -574,7 +637,8 @@ export default {
       txtHomeTeamNew: ref(_constHomeTeamFromTenant),
       txtAwayTeamNew: ref(''),
       txtMatchNameNew: ref(_constMatchNameNew),
-      tglPublishedNew: ref(false),
+      tglIsPublishedNew: ref(false),
+      txtPublishOnTimeNew: ref(''),
       txtMatchDateNew: ref(''),
       txtDoorOpeningTimeNew: ref(_constDoorOpeningTimeNew),
       txtAnnotationsNew: ref('<STANDARDTEXT>'),
@@ -643,11 +707,12 @@ export default {
           homeTeam: '',
           awayTeam: '',
           matchName: '',
-          published: '',
+          isPublished: '',
           matchDate: '',
           doorOpeningTime: '',
           annotations: '',
-          season: ''
+          season: '',
+          publishOnTime: ''
         }
       ],
 
@@ -744,7 +809,7 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name.trim(), res.data[index].isPublished, res.data[index].date, res.data[index].doorOpeningTime, res.data[index].annotations.trim(), res.data[index].season)
+              this.setActiveMatchObject(res.data[index].id, res.data[index].homeTeam, res.data[index].awayTeam, res.data[index].name.trim(), res.data[index].isPublished, res.data[index].date, res.data[index].doorOpeningTime, res.data[index].annotations.trim(), res.data[index].season, res.data[index].publishOnTime)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -753,8 +818,12 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
-      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, published: _published, matchDate: _matchDate, doorOpeningTime: _doorOpeningTime, annotations: _annotations, season: _season })
+    setActiveMatchObject (_matchId, _homeTeam, _awayTeam, _matchName, _isPublished, _matchDate, _doorOpeningTime, _annotations, _season, _publishOnTime) {
+      let publishOnTimeFormatted = ''
+      if (_publishOnTime !== null) {
+        publishOnTimeFormatted = this.formatDateToDDMMYYYYHHmm(_publishOnTime)
+      }
+      this.activeMatchObject.push({ matchId: _matchId, homeTeam: _homeTeam, awayTeam: _awayTeam, matchName: _matchName, isPublished: _isPublished, matchDate: _matchDate, doorOpeningTime: _doorOpeningTime, annotations: _annotations, season: _season, publishOnTime: publishOnTimeFormatted })
 
       // Sort array of objects
       this.activeMatchObject.sort((a, b) => {
@@ -843,14 +912,15 @@ export default {
       this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
     },
 
-    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
+    onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _isPublished, _publishOnTime, _matchDate, _doorOpeningTime, _annotations, _season) {
       _constMatchId.value = _matchId
       _constIsEvent.value = _homeTeam === '' && _awayTeam === ''
       _constHomeTeam.value = _homeTeam
       _constAwayTeam.value = _awayTeam
       _constMatchName.value = _matchName
       _constMatchNameOld.value = _matchName
-      _constPublished.value = _published
+      _constPublished.value = _isPublished
+      _constPublishOnTime.value = _publishOnTime
       _constMatchDate.value = _matchDate
       _constDoorOpeningTime.value = _doorOpeningTime
       _constAnnotations.value = _annotations
@@ -899,7 +969,7 @@ export default {
       }
     },
 
-    addMatchSave (_homeTeam, _awayTeam, _matchName, _isEvent, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
+    addMatchSave (_homeTeam, _awayTeam, _matchName, _isEvent, _isPublished, _publishOnTime, _matchDate, _doorOpeningTime, _annotations, _season) {
       if (_isEvent) {
         _homeTeam = ''
         _awayTeam = ''
@@ -909,6 +979,7 @@ export default {
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName)
+      const _publishOnTimeUtc = this.toUtcIso(_publishOnTime)
 
       if (_matchExists) {
         this.onMatchAlreadyExists()
@@ -924,12 +995,13 @@ export default {
           homeTeam: _homeTeam,
           awayTeam: _awayTeam,
           name: _matchName.trim(),
-          isPublished: _published,
+          isPublished: _isPublished,
           date: _matchDate,
           doorOpeningTime: _doorOpeningTime,
           annotations: _annotations.trim(),
           isDeactivated: false,
-          season: _season
+          season: _season,
+          publishOnTime: _publishOnTimeUtc
         }
 
         this.$axios.post(`${_URLMatch}/${_TenantId}`, newMatch)
@@ -947,7 +1019,7 @@ export default {
       }
     },
 
-    editMatchSave (_matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _isEvent, _published, _matchDate, _doorOpeningTime, _annotations, _season) {
+    editMatchSave (_matchId, _homeTeam, _awayTeam, _matchName, _matchNameOld, _isEvent, _isPublished, _publishOnTime, _matchDate, _doorOpeningTime, _annotations, _season) {
       if (_isEvent) {
         _homeTeam = ''
         _awayTeam = ''
@@ -958,6 +1030,7 @@ export default {
 
       const _matches = this.activeMatchObject.map(el => el.matchName)
       const _matchExists = _matches.includes(_matchName) && _matchName !== _matchNameOld
+      const _publishOnTimeUtc = this.toUtcIso(_publishOnTime)
 
       if (_matchExists) {
         this.onMatchAlreadyExists()
@@ -970,12 +1043,13 @@ export default {
           homeTeam: _homeTeam,
           awayTeam: _awayTeam,
           name: _matchName.trim(),
-          isPublished: _published,
+          isPublished: _isPublished,
           date: _matchDate,
           doorOpeningTime: _doorOpeningTime,
           annotations: _annotations.trim(),
           isDeactivated: false,
-          season: _season
+          season: _season,
+          publishOnTime: _publishOnTimeUtc
         }
 
         this.$axios.put(`${_URLMatch}/${_TenantId}/${_matchId}`, updMatch)
@@ -1077,6 +1151,58 @@ export default {
         // Parse strings as Date objects
         return new Date(dateB) - new Date(dateA)
       })
+    },
+
+    toUtcIso (localDateTime) {
+      if (!localDateTime) return null
+
+      // localDateTime = "DD-MM-YYYY - HH:mm"
+      const [date, time] = localDateTime.split(' - ')
+      const [d, m, y] = date.split('.')
+      const [hh, mm] = time.split(':')
+
+      const localDate = new Date(
+        Number(y),
+        Number(m) - 1, // JS months are 0-based
+        Number(d),
+        Number(hh),
+        Number(mm)
+      )
+
+      return localDate.toISOString()
+    },
+
+    formatDateToDDMMYYYYHHmm (isoString) {
+      const date = new Date(isoString)
+
+      const dd = String(date.getDate()).padStart(2, '0')
+      const mm = String(date.getMonth() + 1).padStart(2, '0')
+      const yyyy = date.getFullYear()
+      const hh = String(date.getHours()).padStart(2, '0')
+      const min = String(date.getMinutes()).padStart(2, '0')
+
+      return `${dd}.${mm}.${yyyy} - ${hh}:${min}`
+    },
+
+    isFutureMatch (matchDate) {
+      if (!matchDate) return false
+
+      // expected format: "dd.MM.yyyy - HH:mm"
+      const [datePart, timePart] = matchDate.split(' - ')
+      if (!datePart || !timePart) return false
+
+      const [day, month, year] = datePart.split('.')
+      const [hour, minute] = timePart.split(':')
+
+      const matchDateTime = new Date(
+        year,
+        month - 1, // JS months are 0-based
+        day,
+        hour,
+        minute
+      )
+
+      return matchDateTime > new Date()
     }
 
   }
