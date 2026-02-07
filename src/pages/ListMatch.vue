@@ -1173,7 +1173,11 @@ export default {
     },
 
     formatDateToDDMMYYYYHHmm (isoString) {
-      const date = new Date(isoString)
+      if (!isoString) return ''
+
+      const date = new Date(
+        isoString.endsWith('Z') ? isoString : isoString + 'Z'
+      )
 
       const dd = String(date.getDate()).padStart(2, '0')
       const mm = String(date.getMonth() + 1).padStart(2, '0')
