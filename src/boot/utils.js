@@ -138,6 +138,7 @@ const teamImages = [
   { label: 'Freiburg Frauen', value: 'Freiburg_Frauen', image: 'statics/teams/Freiburg.svg' },
   { label: 'Freiburg II', value: 'Freiburg_II', image: 'statics/teams/Freiburg.svg' },
   { label: 'FSV Frankfurt', value: 'FSV_Frankfurt', image: 'statics/teams/FSV_Frankfurt.svg' },
+  { label: 'Genk', value: 'KRC_Genk', image: 'statics/teams/KRC_Genk.svg' },
   { label: 'Giessen', value: 'Giessen', image: 'statics/teams/Giessen.svg' },
   { label: 'Göppinger', value: 'Göppinger', image: 'statics/teams/Göppinger.svg' },
   { label: 'Greuther Fürth', value: 'Greuther_Fürth', image: 'statics/teams/Greuther_Fürth.svg' },
