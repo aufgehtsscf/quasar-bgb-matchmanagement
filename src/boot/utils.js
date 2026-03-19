@@ -1,5 +1,5 @@
 const IsAdministrator = false
-const ApplicationCode = 'HOME'
+const ApplicationCode = 'NGdoLbyd_330'
 
 // emailjs
 const serviceID = 'service_1z8boq8'
@@ -121,6 +121,7 @@ const teamImages = [
   { label: 'Borussia Mönchengladbach', value: 'Borussia_Mönchengladbach', image: 'statics/teams/Borussia_Mönchengladbach.svg' },
   { label: 'Carl Zeiss Jena Frauen', value: 'Carl_Zeiss_Jena_Frauen', image: 'statics/teams/Carl_Zeiss_Jena.svg' },
   { label: 'Champions League', value: 'Champions_League', image: 'statics/teams/Champions_League.svg' },
+  { label: 'Celta Vigo', value: 'Celta_Vigo', image: 'statics/teams/Celta_Vigo.svg' },
   { label: 'Conference League', value: 'Conference_League', image: 'statics/teams/Conference_League.svg' },
   { label: 'Darmstadt', value: 'Darmstadt', image: 'statics/teams/Darmstadt.svg' },
   { label: 'DFB Pokal', value: 'DFB_Pokal', image: 'statics/teams/DFB_Pokal.png' },
