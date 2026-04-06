@@ -125,7 +125,7 @@
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
             </q-avatar>
             <q-avatar size="70px" v-if="el.presentParticipantParticipantAvatar !== ''">
-              <img :src="getAvatar(varAdminCode, el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized)">
+              <img :src="getAvatar(el.presentParticipantParticipantAvatar, el.presentParticipantParticipantAvatarIsCustomized, el.presentParticipantParticipantImageURL)">
               <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
             </q-avatar>
           </q-item-section>
@@ -717,7 +717,8 @@ export default {
           matchId: '',
           participant: '',
           participantAvatar: '',
-          _participantAvatarIsCustomized: '',
+          participantAvatarIsCustomized: '',
+          participantImageURL: '',
           arrival: '',
           annotations: '',
           action: '',
@@ -733,6 +734,7 @@ export default {
           presentParticipantParticipant: '',
           presentParticipantParticipantAvatar: '',
           presentParticipantParticipantAvatarIsCustomized: '',
+          presentParticipantParticipantImageURL: '',
           presentParticipantArrival: '',
           presentParticipantAnnotations: '',
           presentParticipantAction: '',
@@ -786,7 +788,8 @@ export default {
         {
           member: '',
           avatar: '',
-          customized: ''
+          customized: '',
+          ImageURL: ''
         }
       ]
     }
@@ -975,7 +978,8 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               for (let index = 0; index < res.data.length; index++) {
-                this.setMemberObject(res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized)
+                const _imageURL = res.data[index].ImageURL || res.data[index].imageURL || res.data[index].imageUrl || res.data[index].ImageUrl || ''
+                this.setMemberObject(res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized, _imageURL)
               }
               resolve()
             } else {
@@ -990,8 +994,8 @@ export default {
       })
     },
 
-    setMemberObject (_member, _avatar, _customized) {
-      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
+    setMemberObject (_member, _avatar, _customized, _imageURL) {
+      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized, ImageURL: _imageURL })
     },
 
     getTableActiveMatch () {
@@ -1307,12 +1311,15 @@ export default {
       this.$axios.get(`${_URLParticipant}/${_TenantId}/${_matchId}`)
         .then((res) => {
           for (let index = 0; index < res.data.length; index++) {
-            let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name.trim())?.avatar
+            const _memberEntry = this.memberObject.find(el => el.member === res.data[index].name.trim())
+            let _participantAvatar = _memberEntry?.avatar
             if (typeof _participantAvatar === 'undefined') _participantAvatar = ''
-            let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name.trim())?.customized
+            let _participantAvatarIsCustomized = _memberEntry?.customized
             if (typeof _participantAvatarIsCustomized === 'undefined') _participantAvatarIsCustomized = false
+            let _participantImageURL = _memberEntry?.ImageURL
+            if (typeof _participantImageURL === 'undefined') _participantImageURL = ''
 
-            this.setParticipantObject(res.data[index].id, res.data[index].creationTime, res.data[index].matchId, res.data[index].name.trim(), _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival, res.data[index].annotations.trim(), res.data[index].action, res.data[index].reaction)
+            this.setParticipantObject(res.data[index].id, res.data[index].creationTime, res.data[index].matchId, res.data[index].name.trim(), _participantAvatar, _participantAvatarIsCustomized, _participantImageURL, res.data[index].arrival, res.data[index].annotations.trim(), res.data[index].action, res.data[index].reaction)
           }
 
           this.fillObjects(_matchId, _doorOpeningTime, _annotationsMatch)
@@ -1320,8 +1327,8 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setParticipantObject (_participantId, _timestamp, _matchId, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
-      this.participantObject.push({ participantId: _participantId, timestamp: _timestamp, matchId: _matchId, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
+    setParticipantObject (_participantId, _timestamp, _matchId, _participant, _participantAvatar, _participantAvatarIsCustomized, _participantImageURL, _arrival, _annotations, _action, _reaction) {
+      this.participantObject.push({ participantId: _participantId, timestamp: _timestamp, matchId: _matchId, participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, participantImageURL: _participantImageURL, arrival: _arrival, annotations: _annotations, action: _action, reaction: _reaction })
 
       // Sort array of objects
       this.participantObject.sort((a, b) => {
@@ -1341,7 +1348,7 @@ export default {
     fillObjects (_matchId, _doorOpeningTime, _annotationsMatch) {
       const matchName = this.activeMatchObject.find(el => el.matchId === _matchId)?.matchName
       this.participantObject.forEach(el => {
-        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.participantId, matchName, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.arrival, el.annotations, el.action, el.reaction)
+        if (el.action === 'bin dabei') this.setPresentParticipantObject(el.participantId, matchName, el.participant, el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL, el.arrival, el.annotations, el.action, el.reaction)
 
         if (el.action === 'meine Karte ist frei' || (el.action === 'brauche Karte' && el.reaction === '')) this.setTicketObject(el.participantId, el.participant, el.arrival, el.annotations, el.action, el.reaction)
 
@@ -1464,8 +1471,8 @@ export default {
       })
     },
 
-    setPresentParticipantObject (_participantId, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _arrival, _annotations, _action, _reaction) {
-      this.presentParticipantObject.push({ presentParticipantParticipantId: _participantId, presentParticipantMatchName: _matchName, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantParticipantAvatarIsCustomized: _participantAvatarIsCustomized, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
+    setPresentParticipantObject (_participantId, _matchName, _participant, _participantAvatar, _participantAvatarIsCustomized, _participantImageURL, _arrival, _annotations, _action, _reaction) {
+      this.presentParticipantObject.push({ presentParticipantParticipantId: _participantId, presentParticipantMatchName: _matchName, presentParticipantParticipant: _participant, presentParticipantParticipantAvatar: _participantAvatar, presentParticipantParticipantAvatarIsCustomized: _participantAvatarIsCustomized, presentParticipantParticipantImageURL: _participantImageURL, presentParticipantArrival: _arrival, presentParticipantAnnotations: _annotations, presentParticipantAction: _action, presentParticipantReaction: _reaction })
     },
 
     setTicketObject (_participantId, _participant, _arrival, _annotations, _action, _reaction) {

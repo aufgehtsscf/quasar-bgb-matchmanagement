@@ -30,7 +30,7 @@
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
             <q-avatar size="50px" v-if="member.avatar !== ''">
-              <img :src="getAvatar(varAdminCode, member.avatar, member.customized)">
+              <img :src="getAvatar(member.avatar, member.customized, member.ImageURL)">
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
           </q-item-section>
@@ -293,6 +293,7 @@ export default {
           member: '',
           avatar: '',
           customized: '',
+          ImageURL: '',
           numberOfParticipations: ''
         }
       ],
@@ -369,7 +370,8 @@ export default {
                 .then((res2) => {
                   if (res2.status === 200) {
                     _numberOfParticipations = res2.data.length
-                    this.setMemberObject(res.data[index].id, res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized, _numberOfParticipations)
+                    const _imageURL = res.data[index].ImageURL || res.data[index].imageURL || res.data[index].imageUrl || res.data[index].ImageUrl || ''
+                    this.setMemberObject(res.data[index].id, res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized, _numberOfParticipations, _imageURL)
                   } else {
                     console.log('Unexpected status code:', res2.status)
                   }
@@ -383,8 +385,8 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setMemberObject (_memberId, _member, _avatar, _customized, _numberOfParticipations) {
-      this.memberObject.push({ memberId: _memberId, member: _member, avatar: _avatar, customized: _customized, numberOfParticipations: _numberOfParticipations })
+    setMemberObject (_memberId, _member, _avatar, _customized, _numberOfParticipations, _imageURL) {
+      this.memberObject.push({ memberId: _memberId, member: _member, avatar: _avatar, customized: _customized, ImageURL: _imageURL, numberOfParticipations: _numberOfParticipations })
 
       // Sort array of objects
       this.memberObject.sort(function (a, b) {

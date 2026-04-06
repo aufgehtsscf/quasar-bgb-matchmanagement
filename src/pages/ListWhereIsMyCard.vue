@@ -20,7 +20,7 @@
               {{ card.cardHolder.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.cardHolderAvatar !== ''">
-              <img :src="getAvatar(varAdminCode, card.cardHolderAvatar, card.cardHolderAvatarIsCustomized)">
+              <img :src="getAvatar(card.cardHolderAvatar, card.cardHolderAvatarIsCustomized, card.cardHolderImageURL)">
             </q-avatar>
           </q-item-section>
           <q-item-section avatar>
@@ -28,7 +28,7 @@
               {{ card.whoHasTheCard.substring(0, 1) }}
             </q-avatar>
             <q-avatar size="50px" v-if="card.whoHasTheCardAvatar !== ''">
-              <img :src="getAvatar(varAdminCode, card.whoHasTheCardAvatar, card.whoHasTheCardAvatarIsCustomized)">
+              <img :src="getAvatar(card.whoHasTheCardAvatar, card.whoHasTheCardAvatarIsCustomized, card.whoHasTheCardImageURL)">
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -241,10 +241,12 @@ export default {
           cardHolder: '',
           cardHolderAvatar: '',
           cardHolderAvatarIsCustomized: '',
+          cardHolderImageURL: '',
           discounted: '',
           whoHasTheCard: '',
           whoHasTheCardAvatar: '',
           whoHasTheCardAvatarIsCustomized: '',
+          whoHasTheCardImageURL: '',
           digital: ''
         }
       ],
@@ -253,7 +255,8 @@ export default {
         {
           member: '',
           avatar: '',
-          customized: ''
+          customized: '',
+          ImageURL: ''
         }
       ]
     }
@@ -311,7 +314,8 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               for (let index = 0; index < res.data.length; index++) {
-                this.setMemberObject(res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized)
+                const _imageURL = res.data[index].ImageURL || res.data[index].imageURL || res.data[index].imageUrl || res.data[index].ImageUrl || ''
+                this.setMemberObject(res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized, _imageURL)
               }
               resolve()
             } else {
@@ -326,8 +330,8 @@ export default {
       })
     },
 
-    setMemberObject (_member, _avatar, _customized) {
-      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
+    setMemberObject (_member, _avatar, _customized, _imageURL) {
+      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized, ImageURL: _imageURL })
     },
 
     getTableWhereIsMyCard () {
@@ -337,23 +341,33 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              let _cardHolderAvatar = this.memberObject.find(el => el.member === res.data[index].name.trim())?.avatar
+              const _cardHolderEntry = this.memberObject.find(el => el.member === res.data[index].name.trim())
+              let _cardHolderAvatar = _cardHolderEntry?.avatar
               if (typeof _cardHolderAvatar === 'undefined') {
                 _cardHolderAvatar = ''
               }
-              let _cardHolderAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name.trim())?.customized
+              let _cardHolderAvatarIsCustomized = _cardHolderEntry?.customized
               if (typeof _cardHolderAvatarIsCustomized === 'undefined') {
                 _cardHolderAvatarIsCustomized = false
               }
-              let _whoHasTheCardAvatar = this.memberObject.find(el => el.member === res.data[index].whoHasTheCard)?.avatar
+              let _cardHolderImageURL = _cardHolderEntry?.ImageURL
+              if (typeof _cardHolderImageURL === 'undefined') {
+                _cardHolderImageURL = ''
+              }
+              const _whoHasTheCardEntry = this.memberObject.find(el => el.member === res.data[index].whoHasTheCard)
+              let _whoHasTheCardAvatar = _whoHasTheCardEntry?.avatar
               if (typeof _whoHasTheCardAvatar === 'undefined') {
                 _whoHasTheCardAvatar = ''
               }
-              let _whoHasTheCardAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].whoHasTheCard)?.customized
+              let _whoHasTheCardAvatarIsCustomized = _whoHasTheCardEntry?.customized
               if (typeof _whoHasTheCardAvatarIsCustomized === 'undefined') {
                 _whoHasTheCardAvatarIsCustomized = false
               }
-              this.setWhereIsMyCardObject(res.data[index].id, res.data[index].name.trim(), _cardHolderAvatar, _cardHolderAvatarIsCustomized, res.data[index].isDiscounted, res.data[index].whoHasTheCard.trim(), _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized, res.data[index].isDigital)
+              let _whoHasTheCardImageURL = _whoHasTheCardEntry?.ImageURL
+              if (typeof _whoHasTheCardImageURL === 'undefined') {
+                _whoHasTheCardImageURL = ''
+              }
+              this.setWhereIsMyCardObject(res.data[index].id, res.data[index].name.trim(), _cardHolderAvatar, _cardHolderAvatarIsCustomized, _cardHolderImageURL, res.data[index].isDiscounted, res.data[index].whoHasTheCard.trim(), _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized, _whoHasTheCardImageURL, res.data[index].isDigital)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -362,8 +376,8 @@ export default {
         .catch((err) => console.log(err))
     },
 
-    setWhereIsMyCardObject (_cardHolderId, _cardHolder, _cardHolderAvatar, _cardHolderAvatarIsCustomized, _discounted, _whoHasTheCard, _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized, _digital) {
-      this.whereIsMyCardObject.push({ cardHolderId: _cardHolderId, cardHolder: _cardHolder, cardHolderAvatar: _cardHolderAvatar, cardHolderAvatarIsCustomized: _cardHolderAvatarIsCustomized, discounted: _discounted, whoHasTheCard: _whoHasTheCard, whoHasTheCardAvatar: _whoHasTheCardAvatar, whoHasTheCardAvatarIsCustomized: _whoHasTheCardAvatarIsCustomized, digital: _digital })
+    setWhereIsMyCardObject (_cardHolderId, _cardHolder, _cardHolderAvatar, _cardHolderAvatarIsCustomized, _cardHolderImageURL, _discounted, _whoHasTheCard, _whoHasTheCardAvatar, _whoHasTheCardAvatarIsCustomized, _whoHasTheCardImageURL, _digital) {
+      this.whereIsMyCardObject.push({ cardHolderId: _cardHolderId, cardHolder: _cardHolder, cardHolderAvatar: _cardHolderAvatar, cardHolderAvatarIsCustomized: _cardHolderAvatarIsCustomized, cardHolderImageURL: _cardHolderImageURL, discounted: _discounted, whoHasTheCard: _whoHasTheCard, whoHasTheCardAvatar: _whoHasTheCardAvatar, whoHasTheCardAvatarIsCustomized: _whoHasTheCardAvatarIsCustomized, whoHasTheCardImageURL: _whoHasTheCardImageURL, digital: _digital })
     },
 
     onWhereIsMyCardClick (_cardHolderId, _cardHolder, _discounted, _whoHasTheCard, _digital) {

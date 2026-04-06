@@ -470,7 +470,7 @@
                 class="overlapping"
                 :style="`left: ${n * 32}px`"
                 >
-                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n <= 9">
+                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n <= 9">
               </q-avatar>
             </div>
 
@@ -482,7 +482,7 @@
                 class="overlapping"
                 :style="`left: ${(n - 10) * 32}px`"
                 >
-                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 9 && n <= 19">
+                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n > 9 && n <= 19">
               </q-avatar>
             </div>
 
@@ -494,7 +494,7 @@
                 class="overlapping"
                 :style="`left: ${(n - 20) * 32}px`"
                 >
-                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 19 && n <= 29">
+                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n > 19 && n <= 29">
               </q-avatar>
             </div>
 
@@ -506,7 +506,7 @@
                 class="overlapping"
                 :style="`left: ${(n - 30) * 32}px`"
                 >
-                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 29 && n <= 39">
+                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n > 29 && n <= 39">
               </q-avatar>
             </div>
 
@@ -518,7 +518,7 @@
                 class="overlapping"
                 :style="`left: ${(n - 40) * 32}px`"
                 >
-                <img :src="getAvatar(varAdminCode, el.participantAvatar, el.participantAvatarIsCustomized)" v-if="n > 39">
+                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n > 39">
               </q-avatar>
             </div>
           </q-card-section>
@@ -732,6 +732,7 @@ export default {
           participant: '',
           participantAvatar: '',
           participantAvatarIsCustomized: '',
+          participantImageURL: '',
           arrival: ''
         }
       ],
@@ -740,7 +741,8 @@ export default {
         {
           member: '',
           avatar: '',
-          customized: ''
+          customized: '',
+          ImageURL: ''
         }
       ]
 
@@ -846,17 +848,23 @@ export default {
         .then((res) => {
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
-              let _participantAvatar = this.memberObject.find(el => el.member === res.data[index].name.trim())?.avatar
+              const _memberEntry = this.memberObject.find(el => el.member === res.data[index].name.trim())
+              let _participantAvatar = _memberEntry?.avatar
               if (typeof _participantAvatar === 'undefined') {
                 _participantAvatar = ''
               }
 
-              let _participantAvatarIsCustomized = this.memberObject.find(el => el.member === res.data[index].name.trim())?.customized
+              let _participantAvatarIsCustomized = _memberEntry?.customized
               if (typeof _participantAvatarIsCustomized === 'undefined') {
                 _participantAvatarIsCustomized = false
               }
 
-              this.setParticipantInactiveMatchObject(res.data[index].name.trim(), _participantAvatar, _participantAvatarIsCustomized, res.data[index].arrival)
+              let _participantImageURL = _memberEntry?.ImageURL
+              if (typeof _participantImageURL === 'undefined') {
+                _participantImageURL = ''
+              }
+
+              this.setParticipantInactiveMatchObject(res.data[index].name.trim(), _participantAvatar, _participantAvatarIsCustomized, _participantImageURL, res.data[index].arrival)
             }
           } else {
             console.log('Unexpected status code:', res.status)
@@ -867,8 +875,8 @@ export default {
       this.showInactiveMatch = true
     },
 
-    setParticipantInactiveMatchObject (_participant, _participantAvatar, _participantAvatarIsCustomized, _arrival) {
-      this.participantInactiveMatchObject.push({ participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, arrival: _arrival })
+    setParticipantInactiveMatchObject (_participant, _participantAvatar, _participantAvatarIsCustomized, _participantImageURL, _arrival) {
+      this.participantInactiveMatchObject.push({ participant: _participant, participantAvatar: _participantAvatar, participantAvatarIsCustomized: _participantAvatarIsCustomized, participantImageURL: _participantImageURL, arrival: _arrival })
 
       // Sort array of objects
       this.participantInactiveMatchObject.sort((a, b) => {
@@ -893,7 +901,8 @@ export default {
           .then((res) => {
             if (res.status === 200) {
               for (let index = 0; index < res.data.length; index++) {
-                this.setMemberObject(res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized)
+                const _imageURL = res.data[index].ImageURL || res.data[index].imageURL || res.data[index].imageUrl || res.data[index].ImageUrl || ''
+                this.setMemberObject(res.data[index].name.trim(), res.data[index].avatar.trim(), res.data[index].isCustomized, _imageURL)
               }
               resolve()
             } else {
@@ -908,8 +917,8 @@ export default {
       })
     },
 
-    setMemberObject (_member, _avatar, _customized) {
-      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized })
+    setMemberObject (_member, _avatar, _customized, _imageURL) {
+      this.memberObject.push({ member: _member, avatar: _avatar, customized: _customized, ImageURL: _imageURL })
     },
 
     onMatchClick (_matchId, _homeTeam, _awayTeam, _matchName, _isPublished, _publishOnTime, _matchDate, _doorOpeningTime, _annotations, _season) {
