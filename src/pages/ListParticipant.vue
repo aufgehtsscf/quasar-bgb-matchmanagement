@@ -556,7 +556,6 @@ let _Season
 let _URLTenant
 let _URLMatch
 let _URLParticipant
-let _URLWhereIsMyCard
 let _URLMember
 
 export default {
@@ -775,15 +774,6 @@ export default {
         }
       ],
 
-      whereIsMyCardObject: [
-        {
-          cardHolder: '',
-          discounted: '',
-          whoHasTheCard: '',
-          digital: ''
-        }
-      ],
-
       memberObject: [
         {
           member: '',
@@ -806,7 +796,6 @@ export default {
       this.getTenantId().then(() => {
         this.getTableMember().then(() => {
           this.getTableActiveMatch()
-          this.getTableWhereIsMyCard()
         })
       })
     })
@@ -926,7 +915,6 @@ export default {
       _URLTenant = URLMatchManagementAPI + '/Tenant'
       _URLMatch = URLMatchManagementAPI + '/Match'
       _URLParticipant = URLMatchManagementAPI + '/Participant'
-      _URLWhereIsMyCard = URLMatchManagementAPI + '/CardHolder'
       _URLMember = URLMatchManagementAPI + '/Member'
 
       this.activeMatchObject = []
@@ -1385,16 +1373,7 @@ export default {
         }
 
         if (el.presentParticipantReaction !== '') {
-          let haveCardFrom = el.presentParticipantReaction.trim()
-          const cardObject = this.whereIsMyCardObject.find(el2 => el2.cardHolder === el.presentParticipantReaction)
-          if (cardObject) {
-            if (typeof cardObject.whoHasTheCard !== 'undefined' &&
-              !el.presentParticipantMatchName.includes('DFB Pokal') &&
-              !el.presentParticipantMatchName.includes('Europapokal') &&
-              !cardObject.digital) {
-              haveCardFrom += ' (Karte bei ' + cardObject.whoHasTheCard + ')'
-            }
-          }
+          const haveCardFrom = el.presentParticipantReaction.trim()
           el.presentParticipantReactionText = 'habe Karte von ' + haveCardFrom.trim()
           _constParticipantList.value += ', ' + el.presentParticipantReactionText.trim()
 
@@ -1489,25 +1468,6 @@ export default {
 
     setTicketAssignedObject (_participantId, _participant) {
       this.ticketAssignedObject.push({ ticketAssignedParticipantId: _participantId, ticketAssignedParticipant: _participant })
-    },
-
-    getTableWhereIsMyCard () {
-      this.whereIsMyCardObject = []
-      this.$axios.get(`${_URLWhereIsMyCard}/${_TenantId}`)
-        .then((res) => {
-          if (res.status === 200) {
-            for (let index = 0; index < res.data.length; index++) {
-              this.setWhereIsMyCardObject(res.data[index].name.trim(), res.data[index].isDiscounted, res.data[index].whoHasTheCard.trim(), res.data[index].isDigital)
-            }
-          } else {
-            console.log('Unexpected status code:', res.status)
-          }
-        })
-        .catch((err) => console.log(err))
-    },
-
-    setWhereIsMyCardObject (_cardHolder, _discounted, _whoHasTheCard, _digital) {
-      this.whereIsMyCardObject.push({ cardHolder: _cardHolder, discounted: _discounted, whoHasTheCard: _whoHasTheCard, digital: _digital })
     },
 
     setArrivalElements (_doorOpeningTime, _isEvent) {
