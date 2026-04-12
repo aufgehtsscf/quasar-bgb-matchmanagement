@@ -78,6 +78,13 @@
             <q-item-section> Mitglieder </q-item-section>
           </q-item>
 
+          <q-item to="/team" exact clickable v-ripple v-if="getCookie('isAdministrator')">
+            <q-item-section avatar>
+              <q-icon name="groups" />
+            </q-item-section>
+            <q-item-section> Teams </q-item-section>
+          </q-item>
+
           <q-item to="/order" exact clickable v-ripple v-if="clientNameFromTenant === 'NONE'">
             <q-item-section avatar>
               <q-icon name="shopping_cart" />
