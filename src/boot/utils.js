@@ -11,8 +11,8 @@ const FromName = 'Auf geht\'s SCF'
 const OrderId1 = 'd1f60978-f743-4b6e-88f1-ac7aa7885d2b'
 const OrderId2 = '8f26f0ad-d9d3-4c33-b1c9-f0560ee3ea11'
 
-// const URLMatchManagementAPI = 'https://planthegame.ch'
-const URLMatchManagementAPI = 'https://localhost:5200'
+const URLMatchManagementAPI = 'https://planthegame.ch'
+// const URLMatchManagementAPI = 'https://localhost:5200'
 const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbxpYbKFzUC6iSSlE913vWGLuvRZ7TbT8eXVn54Un7rm0KJa9vVGzuvu7d-V-tSuWSDjOw/exec'
 const URLProperties = 'https://script.google.com/macros/s/AKfycbxMU3wrrJ9m8Qcnpzu-0oC-APSA28i765lF_AHh6tVagXj1JpHz5glq8MY0GCPNbvdK/exec?sh=Properties'
 
@@ -106,6 +106,7 @@ const isBGB = (ApplicationCode === '3NGdo3Lbyd0' || ApplicationCode === 'NGdoLby
 
 const teamImages = [
   { label: 'Arminia', value: 'Arminia_Bielefeld', image: URLMatchManagementAPI + '/images/teams/Arminia_Bielefeld.svg' },
+  { label: 'Aston Villa', value: 'Aston_Villa', image: URLMatchManagementAPI + '/images/teams/Aston_Villa.svg' },
   { label: 'Augsburg', value: 'Augsburg', image: URLMatchManagementAPI + '/images/teams/Augsburg.svg' },
   { label: 'Backa Topola', value: 'Backa_Topola', image: URLMatchManagementAPI + '/images/teams/Backa_Topola.svg' },
   { label: 'Bahlinger SC', value: 'Bahlinger_SC', image: URLMatchManagementAPI + '/images/teams/Bahlinger_SC.jpg' },
@@ -117,6 +118,7 @@ const teamImages = [
   { label: 'Bologna', value: 'Bologna', image: URLMatchManagementAPI + '/images/teams/Bologna.svg' },
   { label: 'Borussia Dortmund', value: 'Borussia_Dortmund', image: URLMatchManagementAPI + '/images/teams/Borussia_Dortmund.svg' },
   { label: 'Borussia Mönchengladbach', value: 'Borussia_Mönchengladbach', image: URLMatchManagementAPI + '/images/teams/Borussia_Mönchengladbach.svg' },
+  { label: 'Braga', value: 'Braga', image: URLMatchManagementAPI + '/images/teams/Braga.svg' },
   { label: 'Celta Vigo', value: 'Celta_Vigo', image: URLMatchManagementAPI + '/images/teams/Celta_Vigo.svg' },
   { label: 'Champions League', value: 'Champions_League', image: URLMatchManagementAPI + '/images/teams/Champions_League.svg' },
   { label: 'Conference League', value: 'Conference_League', image: URLMatchManagementAPI + '/images/teams/Conference_League.svg' },
@@ -125,6 +127,7 @@ const teamImages = [
   { label: 'Eintracht Braunschweig', value: 'Eintracht_Braunschweig', image: URLMatchManagementAPI + '/images/teams/Eintracht_Braunschweig.svg' },
   { label: 'Eintracht Frankfurt', value: 'Eintracht_Frankfurt', image: URLMatchManagementAPI + '/images/teams/Eintracht_Frankfurt.svg' },
   { label: 'Eintracht Trier', value: 'Eintracht_Trier', image: URLMatchManagementAPI + '/images/teams/Eintracht_Trier.svg' },
+  { label: 'Elversberg', value: 'Elversberg', image: URLMatchManagementAPI + '/images/teams/Elversberg.svg' },
   { label: 'Europa League', value: 'Europa_League', image: URLMatchManagementAPI + '/images/teams/Europa_League.svg' },
   { label: 'FCA Walldorf', value: 'FCA_Walldorf', image: URLMatchManagementAPI + '/images/teams/FCA_Walldorf.svg' },
   { label: 'FC Homburg', value: 'FC_Homburg', image: URLMatchManagementAPI + '/images/teams/FC_Homburg.svg' },
