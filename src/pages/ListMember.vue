@@ -11,10 +11,11 @@
 
     <div class="q-pa-md q-gutter-y-md column items-start">
       <q-btn-group push>
-        <q-btn color="primary" glossy text-color="white" push label="2025-26" @click="getTableMember('2025-26')"/>
-        <q-btn color="deep-orange-10" glossy text-color="white" push label="2024-25" @click="getTableMember('2024-25')"/>
-        <q-btn color="deep-orange-9" glossy text-color="white" push label="2023-24" @click="getTableMember('2023-24')"/>
-        <q-btn color="deep-orange-8" glossy text-color="white" push label="2022-23" @click="getTableMember('2022-23')"/>
+        <q-btn color="primary" glossy text-color="white" push label="2026-27" @click="getTableMember('2026-27')"/>
+        <q-btn color="deep-orange" glossy text-color="white" push label="2025-26" @click="getTableMember('2025-26')"/>
+        <q-btn color="amber" glossy text-color="white" push label="2024-25" @click="getTableMember('2024-25')"/>
+        <q-btn color="green-10" glossy text-color="white" push label="2023-24" @click="getTableMember('2023-24')"/>
+        <q-btn color="indigo" glossy text-color="white" push label="2022-23" @click="getTableMember('2022-23')"/>
       </q-btn-group>
     </div>
 
