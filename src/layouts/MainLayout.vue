@@ -132,7 +132,6 @@
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 import { getAdminCode, getCookie, getLogo, URLMatchManagementAPI } from 'src/boot/utils.js'
-import { date } from 'quasar'
 
 const _constAdminCode = ref('')
 const _constClientNameFromTenant = ref('')
@@ -178,8 +177,12 @@ export default defineComponent({
 
   computed: {
     todaysDate () {
-      const timeStamp = Date.now()
-      return date.formatDate(timeStamp, 'dddd D MMMM')
+      return new Date().toLocaleDateString('de-DE', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
     }
   },
 
