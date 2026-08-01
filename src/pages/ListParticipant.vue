@@ -54,7 +54,7 @@
             <q-card-section horizontal v-if="match.homeTeam && match.awayTeam" class="team-section">
               <q-img
                 class="team-img"
-                :src="getTeamImage(match.homeTeam)"
+                :src="getTeamImage(match.homeTeam, teamImages)"
                 fit="contain"
               />
               <q-card-section class="flex flex-center">
@@ -62,7 +62,7 @@
               </q-card-section>
               <q-img
                 class="team-img"
-                :src="getTeamImage(match.awayTeam)"
+                :src="getTeamImage(match.awayTeam, teamImages)"
                 fit="contain"
               />
             </q-card-section>
@@ -508,7 +508,7 @@
 
 <script>
 import { useQuasar } from 'quasar'
-import { getCookie, getAdminCode, getAvatar, teamImages, getTeamImage, getEventImage, URLMatchManagementAPI } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -557,6 +557,7 @@ let _URLTenant
 let _URLMatch
 let _URLParticipant
 let _URLMember
+let _URLTeam
 
 export default {
   name: 'ListParticipant',
@@ -688,10 +689,10 @@ export default {
       getCookie,
       getAdminCode,
       getAvatar,
-      teamImages,
       getTeamImage,
       getEventImage,
       URLMatchManagementAPI,
+      teamImages: [],
 
       activeMatchObject: [
         {
@@ -794,8 +795,10 @@ export default {
   mounted () {
     this.setVariables().then(() => {
       this.getTenantId().then(() => {
-        this.getTableMember().then(() => {
-          this.getTableActiveMatch()
+        this.getTableTeam().then(() => {
+          this.getTableMember().then(() => {
+            this.getTableActiveMatch()
+          })
         })
       })
     })
@@ -916,8 +919,10 @@ export default {
       _URLMatch = URLMatchManagementAPI + '/Match'
       _URLParticipant = URLMatchManagementAPI + '/Participant'
       _URLMember = URLMatchManagementAPI + '/Member'
+      _URLTeam = URLMatchManagementAPI + '/Team'
 
       this.activeMatchObject = []
+      this.teamImages = []
       this.participantObject = []
       this.presentParticipantObject = []
       this.ticketObject = []
@@ -934,6 +939,36 @@ export default {
         _participantArrival.substring(3, 5) === _matchTime.substring(3, 5)) { return true } else { return false }
       }
       return false
+    },
+
+    getTableTeam () {
+      return new Promise((resolve, reject) => {
+        this.teamImages = []
+
+        this.$axios.get(`${_URLTeam}/${_TenantId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              for (let index = 0; index < res.data.length; index++) {
+                const teamName = res.data[index].name.trim()
+                const imageURL = res.data[index].imageURL || ''
+                this.teamImages.push({
+                  label: teamName,
+                  value: teamName,
+                  image: imageURL ? URLMatchManagementAPI + imageURL : URLMatchManagementAPI + '/images/teams/QuestionMark.svg'
+                })
+              }
+              this.teamImages.sort((a, b) => a.label.localeCompare(b.label))
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     getTenantId () {

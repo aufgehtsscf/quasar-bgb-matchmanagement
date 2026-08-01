@@ -134,8 +134,8 @@
                 class="overlapping"
                 :style="`left: ${n * 32}px`"
                 >
-                <img :src="getTeamImage(el.awayTeam)" v-if="n <= 9 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
-                <img :src="getTeamImage(el.homeTeam)" v-if="n <= 9 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
+                <img :src="getTeamImage(el.awayTeam, teamImages)" v-if="n <= 9 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
+                <img :src="getTeamImage(el.homeTeam, teamImages)" v-if="n <= 9 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
                 <img :src="getEventImage(el.matchName)" v-if="n <= 9 && el.homeTeam === '' && el.awayTeam === ''">
               </q-avatar>
             </div>
@@ -148,8 +148,8 @@
                 class="overlapping"
                 :style="`left: ${(n - 10) * 32}px`"
                 >
-                <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
-                <img :src="getTeamImage(el.awayTeam)" v-if="n > 9 && n <= 19 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
+                <img :src="getTeamImage(el.awayTeam, teamImages)" v-if="n > 9 && n <= 19 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
+                <img :src="getTeamImage(el.awayTeam, teamImages)" v-if="n > 9 && n <= 19 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
                 <img :src="getEventImage(el.matchName)" v-if="n > 9 && n <= 19 && el.homeTeam === '' && el.awayTeam === ''">
               </q-avatar>
             </div>
@@ -162,8 +162,8 @@
                 class="overlapping"
                 :style="`left: ${(n - 20) * 32}px`"
                 >
-                <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
-                <img :src="getTeamImage(el.awayTeam)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
+                <img :src="getTeamImage(el.awayTeam, teamImages)" v-if="n > 19 && n <= 29 && el.awayTeam !== '' && el.awayTeam !== homeTeamFromTenant">
+                <img :src="getTeamImage(el.awayTeam, teamImages)" v-if="n > 19 && n <= 29 && el.homeTeam !== '' && el.homeTeam !== homeTeamFromTenant">
                 <img :src="getEventImage(el.matchName)" v-if="n > 19 && n <= 29 && el.homeTeam === '' && el.awayTeam === ''">
               </q-avatar>
             </div>
@@ -202,7 +202,7 @@
 
 <script>
 import { useQuasar } from 'quasar'
-import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, avatarImages, URLMatchManagementAPI } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, avatarImages, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -221,6 +221,7 @@ let _Season
 let _URLTenant
 let _URLMember
 let _URLParticipant
+let _URLTeam
 
 export default {
   name: 'ListMember',
@@ -284,9 +285,9 @@ export default {
       getAvatar,
       getTeamImage,
       getEventImage,
-      teamImages,
       avatarImages,
       URLMatchManagementAPI,
+      teamImages: [],
 
       memberObject: [
         {
@@ -317,7 +318,9 @@ export default {
   mounted () {
     this.setVariables().then(() => {
       this.getTenantId().then(() => {
-        this.getTableMember()
+        this.getTableTeam().then(() => {
+          this.getTableMember()
+        })
       })
     })
   },
@@ -328,10 +331,42 @@ export default {
       _URLTenant = URLMatchManagementAPI + '/Tenant'
       _URLMember = URLMatchManagementAPI + '/Member'
       _URLParticipant = URLMatchManagementAPI + '/Participant'
+      _URLTeam = URLMatchManagementAPI + '/Team'
 
       this.memberObject = []
+      this.teamImages = []
 
       return Promise.resolve()
+    },
+
+    getTableTeam () {
+      return new Promise((resolve, reject) => {
+        this.teamImages = []
+
+        this.$axios.get(`${_URLTeam}/${_TenantId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              for (let index = 0; index < res.data.length; index++) {
+                const teamName = res.data[index].name.trim()
+                const imageURL = res.data[index].imageURL || ''
+                this.teamImages.push({
+                  label: teamName,
+                  value: teamName,
+                  image: imageURL ? URLMatchManagementAPI + imageURL : URLMatchManagementAPI + '/images/teams/QuestionMark.svg'
+                })
+              }
+              this.teamImages.sort((a, b) => a.label.localeCompare(b.label))
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     },
 
     getTenantId () {

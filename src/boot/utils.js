@@ -1,5 +1,5 @@
 const IsAdministrator = false
-const ApplicationCode = 'HOME'
+const ApplicationCode = 'NGdoLbyd_330'
 
 // emailjs
 const serviceID = 'service_1z8boq8'
@@ -11,8 +11,8 @@ const FromName = 'Auf geht\'s SCF'
 const OrderId1 = 'd1f60978-f743-4b6e-88f1-ac7aa7885d2b'
 const OrderId2 = '8f26f0ad-d9d3-4c33-b1c9-f0560ee3ea11'
 
-const URLMatchManagementAPI = 'https://planthegame.ch'
-// const URLMatchManagementAPI = 'https://localhost:5200'
+// const URLMatchManagementAPI = 'https://planthegame.ch'
+const URLMatchManagementAPI = 'https://localhost:5200'
 const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbxpYbKFzUC6iSSlE913vWGLuvRZ7TbT8eXVn54Un7rm0KJa9vVGzuvu7d-V-tSuWSDjOw/exec'
 const URLProperties = 'https://script.google.com/macros/s/AKfycbxMU3wrrJ9m8Qcnpzu-0oC-APSA28i765lF_AHh6tVagXj1JpHz5glq8MY0GCPNbvdK/exec?sh=Properties'
 
@@ -89,12 +89,13 @@ const getAvatar = function (_avatar, _customized, _imageURL) {
   else return URLMatchManagementAPI + '/images/avatars/collection/' + _avatar + '.png'
 }
 
-const getTeamImage = function (_team) {
-  let teamImage = this.teamImages.find(el => el.value === _team)?.image
-  if (typeof teamImage === 'undefined') {
-    teamImage = URLMatchManagementAPI + '/images/teams/QuestionMark.svg'
-  }
-  return teamImage
+const getTeamImage = function (_team, teamImageList = []) {
+  const lookupList = Array.isArray(teamImageList) && teamImageList.length
+    ? teamImageList
+    : (this?.teamImages || teamImages || [])
+
+  const teamImage = lookupList.find(el => el.value === _team)?.image
+  return teamImage || URLMatchManagementAPI + '/images/teams/QuestionMark.svg'
 }
 
 const getEventImage = function (_matchName) {

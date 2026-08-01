@@ -24,11 +24,11 @@
         v-ripple>
         <q-item clickable v-ripple @click="onMatchClick(match.matchId, match.homeTeam, match.awayTeam, match.matchName, match.isPublished, match.publishOnTime, match.matchDate, match.doorOpeningTime, match.annotations, match.season)">
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-              <img :src="getTeamImage(match.homeTeam)">
+              <img :src="getTeamImage(match.homeTeam, teamImages)">
             </q-avatar>
             <q-item-label v-if="match.homeTeam !== '' && match.awayTeam !== ''">&ThickSpace;</q-item-label>
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-              <img :src="getTeamImage(match.awayTeam)">
+              <img :src="getTeamImage(match.awayTeam, teamImages)">
             </q-avatar>
 
             <q-avatar size="50px" v-if="match.homeTeam === '' && match.awayTeam === ''">
@@ -73,11 +73,11 @@
         v-ripple>
         <q-item clickable v-ripple @click="onInactiveMatchClick(match.matchId, match.matchName, match.matchDate + ' ' + match.time, match.numberOfParticipants)">
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-              <img :src="getTeamImage(match.homeTeam)">
+              <img :src="getTeamImage(match.homeTeam, teamImages)">
             </q-avatar>
             <q-item-label v-if="match.homeTeam !== '' && match.awayTeam !== ''">&ThickSpace;</q-item-label>
             <q-avatar size="50px" v-if="match.homeTeam !== '' && match.awayTeam !== ''">
-              <img :src="getTeamImage(match.awayTeam)">
+              <img :src="getTeamImage(match.awayTeam, teamImages)">
             </q-avatar>
 
             <q-avatar size="50px" v-if="match.homeTeam === '' && match.awayTeam === ''">
@@ -570,7 +570,7 @@
 
 <script>
 import { useQuasar } from 'quasar'
-import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, teamImages, URLMatchManagementAPI } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -607,6 +607,7 @@ let _URLTenant
 let _URLMatch
 let _URLParticipant
 let _URLMember
+let _URLTeam
 
 export default {
   name: 'ListMatch',
@@ -699,7 +700,7 @@ export default {
       getAvatar,
       getTeamImage,
       getEventImage,
-      teamImages,
+      teamImages: [],
       URLMatchManagementAPI,
 
       activeMatchObject: [
@@ -756,9 +757,11 @@ export default {
   mounted () {
     this.setVariables().then(() => {
       this.getTenantId().then(() => {
-        this.getTableMember().then(() => {
-          this.getTableActiveMatch()
-          this.getTableInactiveMatch()
+        this.getTableTeam().then(() => {
+          this.getTableMember().then(() => {
+            this.getTableActiveMatch()
+            this.getTableInactiveMatch()
+          })
         })
       })
     })
@@ -771,9 +774,11 @@ export default {
       _URLMatch = URLMatchManagementAPI + '/Match'
       _URLParticipant = URLMatchManagementAPI + '/Participant'
       _URLMember = URLMatchManagementAPI + '/Member'
+      _URLTeam = URLMatchManagementAPI + '/Team'
 
       this.activeMatchObject = []
       this.inactiveMatchObject = []
+      this.teamImages = []
 
       return Promise.resolve()
     },
@@ -891,6 +896,36 @@ export default {
 
         // Compare hours first, then minutes
         return timeA[0] - timeB[0] || timeA[1] - timeB[1]
+      })
+    },
+
+    getTableTeam () {
+      return new Promise((resolve, reject) => {
+        this.teamImages = []
+
+        this.$axios.get(`${_URLTeam}/${_TenantId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              for (let index = 0; index < res.data.length; index++) {
+                const teamName = res.data[index].name.trim()
+                const imageURL = res.data[index].imageURL || ''
+                this.teamImages.push({
+                  label: teamName,
+                  value: teamName,
+                  image: imageURL ? URLMatchManagementAPI + imageURL : URLMatchManagementAPI + '/images/teams/QuestionMark.svg'
+                })
+              }
+              this.teamImages.sort((a, b) => a.label.localeCompare(b.label))
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
       })
     },
 

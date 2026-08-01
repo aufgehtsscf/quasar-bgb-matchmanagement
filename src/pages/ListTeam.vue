@@ -338,14 +338,14 @@ export default {
         const _constCreationTime = new Date()
 
         if (_file) {
-          this.uploadImage(_file, (imageURL) => {
+          this.uploadImage(_file, (imageBase64) => {
             const newTeam = {
               id: _constNewGuid,
               creationTime: _constCreationTime,
               lastModificationTime: null,
               tenantId: _TenantId,
               name: _team.trim(),
-              imageURL
+              file: imageBase64
             }
             this.$axios.post(`${_URLTeam}/${_TenantId}`, newTeam)
               .then((res) => {
@@ -368,7 +368,7 @@ export default {
             lastModificationTime: null,
             tenantId: _TenantId,
             name: _team.trim(),
-            imageURL: ''
+            file: ''
           }
           this.$axios.post(`${_URLTeam}/${_TenantId}`, newTeam)
             .then((res) => {
@@ -394,14 +394,37 @@ export default {
       if (_teamExists) {
         this.onTeamAlreadyExists()
       } else {
-        const saveTeam = (imageURL) => {
+        const _constLastModificationTime = new Date()
+
+        if (_file) {
+          this.uploadImage(_file, (imageBase64) => {
+            const updTeam = {
+              id: _teamId,
+              creationTime: null,
+              lastModificationTime: _constLastModificationTime,
+              tenantId: _TenantId,
+              name: _team.trim(),
+              file: imageBase64
+            }
+            this.$axios.put(`${_URLTeam}/${_TenantId}/${_teamId}`, updTeam)
+              .then((res) => {
+                if (res.status === 200) {
+                  this.onTeamUpdated()
+                  this.getTableTeam()
+                } else {
+                  console.log('Unexpected status code:', res.status)
+                }
+              })
+              .catch((err) => console.log(err))
+          })
+        } else {
           const updTeam = {
             id: _teamId,
             creationTime: null,
-            lastModificationTime: null,
+            lastModificationTime: _constLastModificationTime,
             tenantId: _TenantId,
             name: _team.trim(),
-            imageURL
+            file: ''
           }
           this.$axios.put(`${_URLTeam}/${_TenantId}/${_teamId}`, updTeam)
             .then((res) => {
@@ -413,12 +436,6 @@ export default {
               }
             })
             .catch((err) => console.log(err))
-        }
-
-        if (_file) {
-          this.uploadImage(_file, saveTeam)
-        } else {
-          saveTeam(_constImageURL.value)
         }
       }
     },
@@ -441,8 +458,8 @@ export default {
       const reader = new FileReader()
       reader.onload = (e) => {
         const base64String = e.target.result.split(',')[1]
-        const imageURL = `data:${file.type};base64,${base64String}`
-        callback(imageURL)
+        const imageBase64 = `data:${file.type};base64,${base64String}`
+        callback(imageBase64)
       }
       reader.readAsDataURL(file)
     }
