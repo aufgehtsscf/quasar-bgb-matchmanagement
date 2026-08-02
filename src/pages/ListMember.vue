@@ -351,7 +351,7 @@ export default {
                 const imageURL = res.data[index].imageURL || ''
                 this.teamImages.push({
                   label: teamName,
-                  value: teamName,
+                  value: teamName.replaceAll(' ', '_'),
                   image: imageURL ? URLMatchManagementAPI + imageURL : URLMatchManagementAPI + '/images/teams/QuestionMark.svg'
                 })
               }

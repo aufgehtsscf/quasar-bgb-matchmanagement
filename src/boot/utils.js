@@ -11,8 +11,8 @@ const FromName = 'Auf geht\'s SCF'
 const OrderId1 = 'd1f60978-f743-4b6e-88f1-ac7aa7885d2b'
 const OrderId2 = '8f26f0ad-d9d3-4c33-b1c9-f0560ee3ea11'
 
-// const URLMatchManagementAPI = 'https://planthegame.ch'
-const URLMatchManagementAPI = 'https://localhost:5200'
+const URLMatchManagementAPI = 'https://planthegame.ch'
+// const URLMatchManagementAPI = 'https://localhost:5200'
 const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbxpYbKFzUC6iSSlE913vWGLuvRZ7TbT8eXVn54Un7rm0KJa9vVGzuvu7d-V-tSuWSDjOw/exec'
 const URLProperties = 'https://script.google.com/macros/s/AKfycbxMU3wrrJ9m8Qcnpzu-0oC-APSA28i765lF_AHh6tVagXj1JpHz5glq8MY0GCPNbvdK/exec?sh=Properties'
 
@@ -92,7 +92,7 @@ const getAvatar = function (_avatar, _customized, _imageURL) {
 const getTeamImage = function (_team, teamImageList = []) {
   const lookupList = Array.isArray(teamImageList) && teamImageList.length
     ? teamImageList
-    : (this?.teamImages || teamImages || [])
+    : (this?.teamImages || [])
 
   const teamImage = lookupList.find(el => el.value === _team)?.image
   return teamImage || URLMatchManagementAPI + '/images/teams/QuestionMark.svg'
@@ -102,90 +102,6 @@ const getEventImage = function (_matchName) {
   if (_matchName.toLowerCase().indexOf('test') >= 0) return URLMatchManagementAPI + '/images/teams/Test.svg'
   return URLMatchManagementAPI + '/images/teams/Event.webp'
 }
-
-const isBGB = (ApplicationCode === '3NGdo3Lbyd0' || ApplicationCode === 'NGdoLbyd_330')
-
-const teamImages = [
-  { label: 'Arminia', value: 'Arminia_Bielefeld', image: URLMatchManagementAPI + '/images/teams/Arminia_Bielefeld.svg' },
-  { label: 'Aston Villa', value: 'Aston_Villa', image: URLMatchManagementAPI + '/images/teams/Aston_Villa.svg' },
-  { label: 'Augsburg', value: 'Augsburg', image: URLMatchManagementAPI + '/images/teams/Augsburg.svg' },
-  { label: 'Backa Topola', value: 'Backa_Topola', image: URLMatchManagementAPI + '/images/teams/Backa_Topola.svg' },
-  { label: 'Bahlinger SC', value: 'Bahlinger_SC', image: URLMatchManagementAPI + '/images/teams/Bahlinger_SC.jpg' },
-  { label: 'Basel', value: 'Basel', image: URLMatchManagementAPI + '/images/teams/Basel.png' },
-  { label: 'Bayer Leverkusen', value: 'Bayer_Leverkusen', image: URLMatchManagementAPI + '/images/teams/Bayer_Leverkusen.svg' },
-  { label: 'Bayern', value: 'Bayern_München', image: URLMatchManagementAPI + '/images/teams/Bayern_München.svg' },
-  { label: 'Bayern Alzenau', value: 'Bayern_Alzenau', image: URLMatchManagementAPI + '/images/teams/Bayern_Alzenau.svg' },
-  { label: 'Bochum', value: 'Bochum', image: URLMatchManagementAPI + '/images/teams/Bochum.svg' },
-  { label: 'Bologna', value: 'Bologna', image: URLMatchManagementAPI + '/images/teams/Bologna.svg' },
-  { label: 'Borussia Dortmund', value: 'Borussia_Dortmund', image: URLMatchManagementAPI + '/images/teams/Borussia_Dortmund.svg' },
-  { label: 'Borussia Mönchengladbach', value: 'Borussia_Mönchengladbach', image: URLMatchManagementAPI + '/images/teams/Borussia_Mönchengladbach.svg' },
-  { label: 'Braga', value: 'Braga', image: URLMatchManagementAPI + '/images/teams/Braga.svg' },
-  { label: 'Celta Vigo', value: 'Celta_Vigo', image: URLMatchManagementAPI + '/images/teams/Celta_Vigo.svg' },
-  { label: 'Champions League', value: 'Champions_League', image: URLMatchManagementAPI + '/images/teams/Champions_League.svg' },
-  { label: 'Conference League', value: 'Conference_League', image: URLMatchManagementAPI + '/images/teams/Conference_League.svg' },
-  { label: 'Darmstadt', value: 'Darmstadt', image: URLMatchManagementAPI + '/images/teams/Darmstadt.svg' },
-  { label: 'DFB Pokal', value: 'DFB_Pokal', image: URLMatchManagementAPI + '/images/teams/DFB_Pokal.png' },
-  { label: 'Eintracht Braunschweig', value: 'Eintracht_Braunschweig', image: URLMatchManagementAPI + '/images/teams/Eintracht_Braunschweig.svg' },
-  { label: 'Eintracht Frankfurt', value: 'Eintracht_Frankfurt', image: URLMatchManagementAPI + '/images/teams/Eintracht_Frankfurt.svg' },
-  { label: 'Eintracht Trier', value: 'Eintracht_Trier', image: URLMatchManagementAPI + '/images/teams/Eintracht_Trier.svg' },
-  { label: 'Elversberg', value: 'Elversberg', image: URLMatchManagementAPI + '/images/teams/Elversberg.svg' },
-  { label: 'Europa League', value: 'Europa_League', image: URLMatchManagementAPI + '/images/teams/Europa_League.svg' },
-  { label: 'FCA Walldorf', value: 'FCA_Walldorf', image: URLMatchManagementAPI + '/images/teams/FCA_Walldorf.svg' },
-  { label: 'FC Homburg', value: 'FC_Homburg', image: URLMatchManagementAPI + '/images/teams/FC_Homburg.svg' },
-  { label: 'FC 08 Villingen', value: 'FC_08_Villingen', image: URLMatchManagementAPI + '/images/teams/FC_08_Villingen.svg' },
-  { label: 'Fortuna Düsseldorf', value: 'Fortuna_Düsseldorf', image: URLMatchManagementAPI + '/images/teams/Fortuna_Düsseldorf.svg' },
-  { label: 'Freiburg', value: 'Freiburg', image: URLMatchManagementAPI + '/images/teams/Freiburg.svg' },
-  { label: 'FSV Frankfurt', value: 'FSV_Frankfurt', image: URLMatchManagementAPI + '/images/teams/FSV_Frankfurt.svg' },
-  { label: 'Genk', value: 'KRC_Genk', image: URLMatchManagementAPI + '/images/teams/KRC_Genk.svg' },
-  { label: 'Giessen', value: 'Giessen', image: URLMatchManagementAPI + '/images/teams/Giessen.svg' },
-  { label: 'Göppinger', value: 'Göppinger', image: URLMatchManagementAPI + '/images/teams/Göppinger.svg' },
-  { label: 'Greuther Fürth', value: 'Greuther_Fürth', image: URLMatchManagementAPI + '/images/teams/Greuther_Fürth.svg' },
-  { label: 'Hamburger SV', value: 'Hamburger_SV', image: URLMatchManagementAPI + '/images/teams/Hamburger_SV.svg' },
-  { label: 'Hannover', value: 'Hannover', image: URLMatchManagementAPI + '/images/teams/Hannover.svg' },
-  { label: 'Hansa Rostock', value: 'Hansa_Rostock', image: URLMatchManagementAPI + '/images/teams/Hansa_Rostock.svg' },
-  { label: 'Heidenheim', value: 'Heidenheim', image: URLMatchManagementAPI + '/images/teams/Heidenheim.svg' },
-  { label: 'Hertha', value: 'Hertha', image: URLMatchManagementAPI + '/images/teams/Hertha.svg' },
-  { label: 'Hoffenheim', value: 'Hoffenheim', image: URLMatchManagementAPI + '/images/teams/Hoffenheim.svg' },
-  { label: 'Holstein', value: 'Holstein', image: URLMatchManagementAPI + '/images/teams/Holstein.svg' },
-  { label: 'Jahn Regensburg', value: 'Jahn_Regensburg', image: URLMatchManagementAPI + '/images/teams/Jahn_Regensburg.svg' },
-  { label: 'Juventus Turin', value: 'Juventus_Turin', image: URLMatchManagementAPI + '/images/teams/Juventus_Turin.svg' },
-  { label: 'Kaiserslautern', value: 'Kaiserslautern', image: URLMatchManagementAPI + '/images/teams/Kaiserslautern.svg' },
-  { label: 'Karlsruher', value: 'Karlsruher', image: URLMatchManagementAPI + '/images/teams/Karlsruher.svg' },
-  { label: 'Köln', value: 'Köln', image: URLMatchManagementAPI + '/images/teams/Köln.svg' },
-  { label: 'KSV Hessen', value: 'KSV_Hessen', image: URLMatchManagementAPI + '/images/teams/KSV_Hessen.svg' },
-  { label: 'Leipzig', value: 'Leipzig', image: URLMatchManagementAPI + '/images/teams/Leipzig.svg' },
-  { label: 'RC Lens', value: 'Lens', image: URLMatchManagementAPI + '/images/teams/Lens.svg' },
-  { label: 'Lille', value: 'Lille', image: URLMatchManagementAPI + '/images/teams/Lille.svg' },
-  { label: 'Lotte', value: 'Lotte', image: URLMatchManagementAPI + '/images/teams/Lotte.svg' },
-  { label: 'Maccabi Tel Aviv', value: 'Maccabi_Tel_Aviv', image: URLMatchManagementAPI + '/images/teams/Maccabi_Tel_Aviv.png' },
-  { label: 'Magdeburg', value: 'Magdeburg', image: URLMatchManagementAPI + '/images/teams/Magdeburg.svg' },
-  { label: 'Mainz', value: 'Mainz', image: URLMatchManagementAPI + '/images/teams/Mainz.svg' },
-  { label: 'Nice', value: 'Nice', image: URLMatchManagementAPI + '/images/teams/Nice.svg' },
-  { label: 'Nürnberg', value: 'Nürnberg', image: URLMatchManagementAPI + '/images/teams/Nürnberg.svg' },
-  { label: 'Oberachern', value: 'Oberachern', image: URLMatchManagementAPI + '/images/teams/Oberachern.svg' },
-  { label: 'Offenbach', value: 'Offenbach', image: URLMatchManagementAPI + '/images/teams/Offenbach.svg' },
-  { label: 'Olympiakos Piräus', value: 'Olympiakos_Piräus', image: URLMatchManagementAPI + '/images/teams/Olympiakos_Piräus.svg' },
-  { label: 'Paderborn', value: 'Paderborn', image: URLMatchManagementAPI + '/images/teams/Paderborn.svg' },
-  { label: 'Salzburg', value: 'Salzburg', image: URLMatchManagementAPI + '/images/teams/Salzburg.png' },
-  { label: 'Sandhausen', value: 'Sandhausen', image: URLMatchManagementAPI + '/images/teams/Sandhausen.svg' },
-  { label: 'Schalke', value: 'Schalke', image: URLMatchManagementAPI + '/images/teams/Schalke.svg' },
-  { label: 'SG Barockstadt', value: 'SG_Barockstadt', image: URLMatchManagementAPI + '/images/teams/SG_Barockstadt.png' },
-  { label: 'SG Sonnenhof Großaspach', value: 'SG_Sonnenhof_Großaspach', image: URLMatchManagementAPI + '/images/teams/SG_Sonnenhof_Großaspach.svg' },
-  { label: 'SGV Freiberg', value: 'SGV_Freiberg', image: URLMatchManagementAPI + '/images/teams/SGV_Freiberg.svg' },
-  { label: 'St. Pauli', value: 'St._Pauli', image: URLMatchManagementAPI + '/images/teams/St._Pauli.svg' },
-  { label: 'Stuttgart', value: 'Stuttgart', image: isBGB ? URLMatchManagementAPI + '/images/teams/Stuttgart_Shit.png' : URLMatchManagementAPI + '/images/teams/Stuttgart.svg' },
-  { label: 'Stuttgarter Kickers', value: 'Stuttgarter_Kickers', image: URLMatchManagementAPI + '/images/teams/Stuttgarter_Kickers.svg' },
-  { label: 'TSG Balingen', value: 'TSG_Balingen', image: URLMatchManagementAPI + '/images/teams/TSG_Balingen.png' },
-  { label: 'TSV Schott Mainz', value: 'TSV_Schott_Mainz', image: URLMatchManagementAPI + '/images/teams/TSV_Schott_Mainz.png' },
-  { label: 'TSV Steinbach', value: 'TSV_Steinbach', image: URLMatchManagementAPI + '/images/teams/TSV_Steinbach.svg' },
-  { label: 'Union Berlin', value: 'Union_Berlin', image: URLMatchManagementAPI + '/images/teams/Union_Berlin.svg' },
-  { label: 'Utrecht', value: 'Utrecht', image: URLMatchManagementAPI + '/images/teams/Utrecht.svg' },
-  { label: 'VfL Osnabrück', value: 'VfL_Osnabrück', image: URLMatchManagementAPI + '/images/teams/VfL_Osnabrück.svg' },
-  { label: 'Viktoria Pilsen', value: 'Viktoria_Pilsen', image: URLMatchManagementAPI + '/images/teams/Viktoria_Pilsen.svg' },
-  { label: 'Werder Bremen', value: 'Werder_Bremen', image: URLMatchManagementAPI + '/images/teams/Werder_Bremen.svg' },
-  { label: 'West Ham', value: 'West_Ham', image: URLMatchManagementAPI + '/images/teams/West_Ham.svg' },
-  { label: 'Wolfsburg', value: 'Wolfsburg', image: URLMatchManagementAPI + '/images/teams/Wolfsburg.svg' }
-]
 
 const avatarImages = [
   { label: 'Abraham Simpson', value: 'Abraham_Simpson', avatar: URLMatchManagementAPI + '/images/avatars/collection/Abraham_Simpson.png' },
@@ -258,5 +174,4 @@ export { getLogo }
 export { getAvatar }
 export { getTeamImage }
 export { getEventImage }
-export { teamImages }
 export { avatarImages }
