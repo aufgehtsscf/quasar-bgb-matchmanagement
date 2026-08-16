@@ -66,21 +66,21 @@
 
           <q-item to="/match" exact clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="sports_volleyball" />
+              <q-icon name="sports_soccer" />
             </q-item-section>
             <q-item-section> Spiele </q-item-section>
           </q-item>
 
           <q-item to="/member" exact clickable v-ripple>
             <q-item-section avatar>
-              <q-icon name="person" />
+              <q-icon name="people" />
             </q-item-section>
             <q-item-section> Mitglieder </q-item-section>
           </q-item>
 
           <q-item to="/team" exact clickable v-ripple v-if="getCookie('isAdministrator')">
             <q-item-section avatar>
-              <q-icon name="groups" />
+              <q-icon name="shield" />
             </q-item-section>
             <q-item-section> Teams </q-item-section>
           </q-item>
