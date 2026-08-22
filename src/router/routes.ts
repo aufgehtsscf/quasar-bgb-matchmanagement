@@ -10,6 +10,7 @@ const routes: RouteRecordRaw[] = [
       { path: '/match', component: () => import('src/pages/ListMatch.vue') },
       { path: '/member', component: () => import('src/pages/ListMember.vue') },
       { path: '/team', component: () => import('src/pages/ListTeam.vue') },
+      { path: '/avatar', component: () => import('src/pages/ListAvatar.vue') },
       { path: '/order', component: () => import('src/pages/ListOrder.vue') },
       { path: '/setting', component: () => import('src/pages/ListSetting.vue') },
       { path: '/link', component: () => import('src/pages/ListLink.vue') }

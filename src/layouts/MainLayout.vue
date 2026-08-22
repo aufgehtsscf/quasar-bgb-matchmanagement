@@ -85,6 +85,13 @@
             <q-item-section> Teams </q-item-section>
           </q-item>
 
+          <q-item to="/avatar" exact clickable v-ripple v-if="getCookie('isAdministrator')">
+            <q-item-section avatar>
+              <q-icon name="face" />
+            </q-item-section>
+            <q-item-section> Avatare </q-item-section>
+          </q-item>
+
           <q-item to="/order" exact clickable v-ripple v-if="clientNameFromTenant === 'NONE'">
             <q-item-section avatar>
               <q-icon name="shopping_cart" />
