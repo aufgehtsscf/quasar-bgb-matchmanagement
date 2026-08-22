@@ -202,7 +202,7 @@
 
 <script>
 import { useQuasar } from 'quasar'
-import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, avatarImages, URLMatchManagementAPI } from 'src/boot/utils.js'
+import { getCookie, getAdminCode, getAvatar, getTeamImage, getEventImage, URLMatchManagementAPI } from 'src/boot/utils.js'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -222,6 +222,7 @@ let _URLTenant
 let _URLMember
 let _URLParticipant
 let _URLTeam
+let _URLAvatar
 
 export default {
   name: 'ListMember',
@@ -285,7 +286,7 @@ export default {
       getAvatar,
       getTeamImage,
       getEventImage,
-      avatarImages,
+      avatarImages: [],
       URLMatchManagementAPI,
       teamImages: [],
 
@@ -319,7 +320,9 @@ export default {
     this.setVariables().then(() => {
       this.getTenantId().then(() => {
         this.getTableTeam().then(() => {
-          this.getTableMember()
+          this.getTableAvatar().then(() => {
+            this.getTableMember()
+          })
         })
       })
     })
@@ -332,9 +335,11 @@ export default {
       _URLMember = URLMatchManagementAPI + '/Member'
       _URLParticipant = URLMatchManagementAPI + '/Participant'
       _URLTeam = URLMatchManagementAPI + '/Team'
+      _URLAvatar = URLMatchManagementAPI + '/Avatar'
 
       this.memberObject = []
       this.teamImages = []
+      this.avatarImages = []
 
       return Promise.resolve()
     },
@@ -356,6 +361,36 @@ export default {
                 })
               }
               this.teamImages.sort((a, b) => a.label.localeCompare(b.label))
+              resolve()
+            } else {
+              console.log('Unexpected status code:', res.status)
+              reject(new Error('Unexpected status code'))
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
+    },
+
+    getTableAvatar () {
+      return new Promise((resolve, reject) => {
+        this.avatarImages = []
+
+        this.$axios.get(`${_URLAvatar}/${_TenantId}`)
+          .then((res) => {
+            if (res.status === 200) {
+              for (let index = 0; index < res.data.length; index++) {
+                const avatarName = res.data[index].name.trim()
+                const imageURL = res.data[index].imageURL || ''
+                this.avatarImages.push({
+                  label: avatarName,
+                  value: avatarName.replaceAll(' ', '_'),
+                  avatar: imageURL ? URLMatchManagementAPI + imageURL : ''
+                })
+              }
+              this.avatarImages.sort((a, b) => a.label.localeCompare(b.label))
               resolve()
             } else {
               console.log('Unexpected status code:', res.status)

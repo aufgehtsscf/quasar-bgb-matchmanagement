@@ -84,9 +84,9 @@ const getLogo = function (_adminCode) {
 }
 
 const getAvatar = function (_avatar, _customized, _imageURL) {
-  if (_avatar === '') return URLMatchManagementAPI + '/images/avatars/collection/Placeholder.png'
+  if (_avatar === '') return URLMatchManagementAPI + '/images/avatars/Placeholder.png'
   else if (_customized) return URLMatchManagementAPI + _imageURL
-  else return URLMatchManagementAPI + '/images/avatars/collection/' + _avatar + '.png'
+  else return URLMatchManagementAPI + '/images/avatars/' + _avatar + '.png'
 }
 
 const getTeamImage = function (_team, teamImageList = []) {
@@ -102,60 +102,6 @@ const getEventImage = function (_matchName) {
   if (_matchName.toLowerCase().indexOf('test') >= 0) return URLMatchManagementAPI + '/images/teams/Test.svg'
   return URLMatchManagementAPI + '/images/teams/Event.webp'
 }
-
-const avatarImages = [
-  { label: 'Abraham Simpson', value: 'Abraham_Simpson', avatar: URLMatchManagementAPI + '/images/avatars/collection/Abraham_Simpson.png' },
-  { label: 'Alien', value: 'Alien', avatar: URLMatchManagementAPI + '/images/avatars/collection/Alien.png' },
-  { label: 'Ariel', value: 'Ariel', avatar: URLMatchManagementAPI + '/images/avatars/collection/Ariel.png' },
-  { label: 'Barney Gumble', value: 'Barney_Gumble', avatar: URLMatchManagementAPI + '/images/avatars/collection/Barney_Gumble.png' },
-  { label: 'Bart Simpson', value: 'Bart_Simpson', avatar: URLMatchManagementAPI + '/images/avatars/collection/Bart_Simpson.png' },
-  { label: 'Charlie Brown', value: 'Charlie_Brown', avatar: URLMatchManagementAPI + '/images/avatars/collection/Charlie_Brown.png' },
-  { label: 'Charlie Chaplin', value: 'Charlie_Chaplin', avatar: URLMatchManagementAPI + '/images/avatars/collection/Charlie_Chaplin.png' },
-  { label: 'Clancy Wiggum', value: 'Clancy_Wiggum', avatar: URLMatchManagementAPI + '/images/avatars/collection/Clancy_Wiggum.png' },
-  { label: 'Cupid', value: 'Cupid', avatar: URLMatchManagementAPI + '/images/avatars/collection/Cupid.png' },
-  { label: 'Doctor Strange', value: 'Doctor_Strange', avatar: URLMatchManagementAPI + '/images/avatars/collection/Doctor_Strange.png' },
-  { label: 'Ed Sheeran', value: 'Ed_Sheeran', avatar: URLMatchManagementAPI + '/images/avatars/collection/Ed_Sheeran.png' },
-  { label: 'Eeyore', value: 'Eeyore', avatar: URLMatchManagementAPI + '/images/avatars/collection/Eeyore.png' },
-  { label: 'Elon Musk', value: 'Elon_Musk', avatar: URLMatchManagementAPI + '/images/avatars/collection/Elon_Musk.png' },
-  { label: 'Fat Cat', value: 'Fat_Cat', avatar: URLMatchManagementAPI + '/images/avatars/collection/Fat_Cat.png' },
-  { label: 'Garfield', value: 'Garfield', avatar: URLMatchManagementAPI + '/images/avatars/collection/Garfield.png' },
-  { label: 'Hello Kitty', value: 'Hello_Kitty', avatar: URLMatchManagementAPI + '/images/avatars/collection/Hello_Kitty.png' },
-  { label: 'Homer Simpson', value: 'Homer_Simpson', avatar: URLMatchManagementAPI + '/images/avatars/collection/Homer_Simpson.png' },
-  { label: 'Ironman', value: 'Ironman', avatar: URLMatchManagementAPI + '/images/avatars/collection/Ironman.png' },
-  { label: 'Jerry', value: 'Jerry', avatar: URLMatchManagementAPI + '/images/avatars/collection/Jerry.png' },
-  { label: 'John Lennon', value: 'John_Lennon', avatar: URLMatchManagementAPI + '/images/avatars/collection/John_Lennon.png' },
-  { label: 'Joker', value: 'Joker', avatar: URLMatchManagementAPI + '/images/avatars/collection/Joker.png' },
-  { label: 'Krusty The Clown', value: 'Krusty_The_Clown', avatar: URLMatchManagementAPI + '/images/avatars/collection/Krusty_The_Clown.png' },
-  { label: 'Linus', value: 'Linus', avatar: URLMatchManagementAPI + '/images/avatars/collection/Linus.png' },
-  { label: 'Lisa Simpson', value: 'Lisa_Simpson', avatar: URLMatchManagementAPI + '/images/avatars/collection/Lisa_Simpson.png' },
-  { label: 'Lucy', value: 'Lucy', avatar: URLMatchManagementAPI + '/images/avatars/collection/Lucy.png' },
-  { label: 'Maggie Simpson', value: 'Maggie_Simpson', avatar: URLMatchManagementAPI + '/images/avatars/collection/Maggie_Simpson.png' },
-  { label: 'Marcie', value: 'Marcie', avatar: URLMatchManagementAPI + '/images/avatars/collection/Marcie.png' },
-  { label: 'Marge Simpson', value: 'Marge_Simpson', avatar: URLMatchManagementAPI + '/images/avatars/collection/Marge_Simpson.png' },
-  { label: 'Marie', value: 'Marie', avatar: URLMatchManagementAPI + '/images/avatars/collection/Marie.png' },
-  { label: 'Marilyn Monroe', value: 'Marilyn_Monroe', avatar: URLMatchManagementAPI + '/images/avatars/collection/Marilyn_Monroe.png' },
-  { label: 'Messi', value: 'Messi', avatar: URLMatchManagementAPI + '/images/avatars/collection/Messi.png' },
-  { label: 'Michael Jackson', value: 'Michael_Jackson', avatar: URLMatchManagementAPI + '/images/avatars/collection/Michael_Jackson.png' },
-  { label: 'Mondtor01', value: 'Mondtor01', avatar: URLMatchManagementAPI + '/images/avatars/collection/Mondtor01.png' },
-  { label: 'Mondtor02', value: 'Mondtor02', avatar: URLMatchManagementAPI + '/images/avatars/collection/Mondtor02.png' },
-  { label: 'Mr Beans Teddy', value: 'Mr_Beans_Teddy', avatar: URLMatchManagementAPI + '/images/avatars/collection/Mr_Beans_Teddy.png' },
-  { label: 'Mr Burns', value: 'Mr_Burns', avatar: URLMatchManagementAPI + '/images/avatars/collection/Mr_Burns.png' },
-  { label: 'Ms Wicket', value: 'Ms_Wicket', avatar: URLMatchManagementAPI + '/images/avatars/collection/Ms_Wicket.png' },
-  { label: 'Pelé', value: 'Pelé', avatar: URLMatchManagementAPI + '/images/avatars/collection/Pelé.png' },
-  { label: 'Peppermint Patty', value: 'Peppermint_Patty', avatar: URLMatchManagementAPI + '/images/avatars/collection/Peppermint_Patty.png' },
-  { label: 'Pile Of Poo', value: 'Pile_Of_Poo', avatar: URLMatchManagementAPI + '/images/avatars/collection/Pile_Of_Poo.png' },
-  { label: 'Sally', value: 'Sally', avatar: URLMatchManagementAPI + '/images/avatars/collection/Sally.png' },
-  { label: 'Santa', value: 'Santa', avatar: URLMatchManagementAPI + '/images/avatars/collection/Santa.png' },
-  { label: 'Sea Calf', value: 'Sea_Calf', avatar: URLMatchManagementAPI + '/images/avatars/collection/Sea_Calf.png' },
-  { label: 'Snoop Dogg', value: 'Snoop_Dogg', avatar: URLMatchManagementAPI + '/images/avatars/collection/Snoop_Dogg.png' },
-  { label: 'Stan Marsh', value: 'Stan_Marsh', avatar: URLMatchManagementAPI + '/images/avatars/collection/Stan_Marsh.png' },
-  { label: 'Sumo', value: 'Sumo', avatar: URLMatchManagementAPI + '/images/avatars/collection/Sumo.png' },
-  { label: 'Super Mario', value: 'Super_Mario', avatar: URLMatchManagementAPI + '/images/avatars/collection/Super_Mario.png' },
-  { label: 'Tom', value: 'Tom', avatar: URLMatchManagementAPI + '/images/avatars/collection/Tom.png' },
-  { label: 'Tom Kid', value: 'Tom_Kid', avatar: URLMatchManagementAPI + '/images/avatars/collection/Tom_Kid.png' },
-  { label: 'Tweety', value: 'Tweety', avatar: URLMatchManagementAPI + '/images/avatars/collection/Tweety.png' },
-  { label: 'Woodstock', value: 'Woodstock', avatar: URLMatchManagementAPI + '/images/avatars/collection/Woodstock.png' }
-]
 
 export { serviceID }
 export { templateID }
@@ -174,4 +120,3 @@ export { getLogo }
 export { getAvatar }
 export { getTeamImage }
 export { getEventImage }
-export { avatarImages }
