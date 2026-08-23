@@ -57,13 +57,13 @@
     </div>
 
     <div class="q-pa-md q-gutter-y-md column items-start">
-      <q-btn-group push>
-        <q-btn color="primary" glossy text-color="white" push label="2026-27" @click="getTableInactiveMatch('2026-27')"/>
-        <q-btn color="deep-orange" glossy text-color="white" push label="2025-26" @click="getTableInactiveMatch('2025-26')"/>
-        <q-btn color="amber" glossy text-color="white" push label="2024-25" @click="getTableInactiveMatch('2024-25')"/>
-        <q-btn color="green-10" glossy text-color="white" push label="2023-24" @click="getTableInactiveMatch('2023-24')"/>
-        <q-btn color="indigo" glossy text-color="white" push label="2022-23" @click="getTableInactiveMatch('2022-23')"/>
-      </q-btn-group>
+      <q-btn-dropdown color="primary" glossy text-color="white" push :label="selectedSeason || 'Saison auswählen'">
+        <q-list>
+          <q-item v-for="season in seasonOptions" :key="season" clickable v-close-popup @click="selectSeason(season)">
+            <q-item-section>{{ season }}</q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
     </div>
 
     <!-- List of inactive matches -->
@@ -701,6 +701,8 @@ export default {
       getTeamImage,
       getEventImage,
       teamImages: [],
+      selectedSeason: '',
+      seasonOptions: [],
       URLMatchManagementAPI,
 
       activeMatchObject: [
@@ -791,6 +793,8 @@ export default {
               _TenantId = res.data.id
               _constSeasonNew.value = res.data.season
               _Season = res.data.season
+              this.selectedSeason = _Season
+              this.seasonOptions = this.createSeasonOptions(_Season, res.data.creationTime)
               _constHomeTeamFromTenant.value = res.data.homeTeam
               _constHomeTeamAliasFromTenant.value = res.data.homeTeamAlias
               resolve()
@@ -1154,11 +1158,32 @@ export default {
       this.deactivateDeleteMatch(_matchId, false)
     },
 
+    selectSeason (_season) {
+      this.selectedSeason = _season
+      this.getTableInactiveMatch(_season)
+    },
+
+    createSeasonOptions (_season, _creationTime) {
+      const seasonStart = Number.parseInt(String(_season).slice(0, 4), 10)
+      const creationYear = new Date(_creationTime).getFullYear()
+      const currentYear = new Date().getFullYear()
+
+      if (Number.isNaN(seasonStart) || Number.isNaN(creationYear)) return []
+
+      const seasonCount = Math.max(1, currentYear - creationYear + 1)
+
+      return Array.from({ length: seasonCount }, (_value, index) => {
+        const startYear = seasonStart - index
+        return `${startYear}-${String(startYear + 1).slice(-2)}`
+      })
+    },
+
     getTableInactiveMatch (_seasonParam) {
       this.inactiveMatchObject = []
 
       if (typeof _seasonParam !== 'undefined') {
         _Season = _seasonParam
+        this.selectedSeason = _Season
       }
 
       this.$axios.get(`${_URLMatch}/${_TenantId}/${_Season}/inactive`)
