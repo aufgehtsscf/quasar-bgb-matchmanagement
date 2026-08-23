@@ -123,7 +123,7 @@
         />
       </q-scroll-area>
 
-      <q-img class="absolute-top" :src="getLogo(getAdminCode(getCookie('applicationCode')))" style="height: 182px">
+      <q-img class="absolute-top" :src="getLogo(getAdminCode(getCookie('applicationCode')))" style="height: 188px">
       </q-img>
     </q-drawer>
 
