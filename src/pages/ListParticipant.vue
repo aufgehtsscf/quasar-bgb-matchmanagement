@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="q-pa-md">
+    <div class="q-pa-md participant-control-rail">
       <q-btn-dropdown
         split
         color="primary"
@@ -28,7 +28,7 @@
       </q-btn-dropdown>
     </div>
 
-    <div class="deck-container-wrapper">
+    <div class="deck-container-wrapper participant-deck-rail">
       <!-- Dot indicator -->
       <div class="card-counter-dots">
         <span
@@ -1639,9 +1639,31 @@ export default {
 }
 .deck-container-wrapper {
   position: relative;
+  width: calc(100% - 32px);
+  max-width: 760px;
+  margin: 0 auto 24px;
+}
+
+.participant-control-rail {
+  width: calc(100% - 32px);
+  max-width: 760px;
+  margin: 0 auto 14px;
+  padding: 0;
+}
+
+.participant-control-rail .q-btn-dropdown {
+  margin: 0;
+}
+
+.participant-deck-rail .deck-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.participant-deck-rail .card-counter-dots {
   width: 100%;
   max-width: 500px;
-  margin-left: 0; /* keep cards aligned left */
+  margin: 0 auto 8px;
 }
 .card-counter-dots {
   display: flex;

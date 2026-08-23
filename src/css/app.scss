@@ -1,1 +1,230 @@
 // app global css in SCSS form
+
+body {
+	background: #f5f0e8;
+	color: #17252b;
+	font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+.q-header {
+	background: #17252b !important;
+	box-shadow: 0 8px 24px rgba(23, 37, 43, 0.18);
+}
+
+.q-header .q-toolbar {
+	min-height: 56px;
+}
+
+.q-header .text-h4 {
+	font-family: "Arial Narrow", "Trebuchet MS", sans-serif;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
+.q-drawer {
+	background: #f7f3ec;
+}
+
+.q-drawer .q-item {
+	margin: 3px 10px;
+	border-radius: 10px;
+	color: #38515a;
+	font-weight: 700;
+}
+
+.q-drawer .q-item--active,
+.q-drawer .q-item:hover {
+	background: rgba(227, 93, 69, 0.12);
+	color: #c74732;
+}
+
+.q-page {
+	min-height: 100vh;
+	padding: 24px 0 48px;
+	background:
+		radial-gradient(circle at 90% 6%, rgba(242, 184, 75, 0.2), transparent 22rem),
+		linear-gradient(135deg, #f7f3ec 0%, #eee7dc 100%);
+}
+
+.q-page > .q-pa-md[style*="max-width: 500px"] {
+	width: calc(100% - 32px);
+	box-sizing: border-box;
+	max-width: 760px !important;
+	margin: 0 auto;
+	padding: 0 0 14px;
+}
+
+.q-page > .q-pa-md[style*="max-width: 500px"] > .q-toolbar {
+	min-height: 68px;
+	padding: 0 20px;
+	border-radius: 14px;
+	background: #17252b !important;
+	box-shadow: 0 12px 30px rgba(23, 37, 43, 0.18);
+	position: relative;
+	overflow: hidden;
+}
+
+.q-page > .q-pa-md[style*="max-width: 500px"] > .q-toolbar::after {
+	content: "";
+	position: absolute;
+	right: -28px;
+	top: -46px;
+	width: 150px;
+	height: 150px;
+	border: 2px solid rgba(242, 184, 75, 0.6);
+	border-radius: 50%;
+}
+
+.q-toolbar-title {
+	font-family: "Arial Narrow", "Trebuchet MS", sans-serif;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	font-size: 1rem;
+	z-index: 1;
+}
+
+.q-toolbar .q-btn {
+	border-radius: 9px;
+	font-weight: 700;
+	z-index: 1;
+}
+
+.q-page > .q-pa-md.bg-grey-10 {
+	width: calc(100% - 32px);
+	max-width: 760px !important;
+	margin: 0 auto 24px;
+	padding: 10px;
+	border-radius: 16px;
+	background: #17252b !important;
+	box-shadow: 0 18px 38px rgba(23, 37, 43, 0.16);
+}
+
+.q-page > .q-pa-md.bg-grey-10 > .q-list,
+.q-page > .q-pa-md.bg-grey-10 > div > .q-list {
+	max-width: none !important;
+	margin: 0 0 8px;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 11px;
+	background: rgba(255, 255, 255, 0.045);
+	overflow: hidden;
+}
+
+.q-page > .q-pa-md.bg-grey-10 > .q-list:last-child,
+.q-page > .q-pa-md.bg-grey-10 > div > .q-list:last-child {
+	margin-bottom: 0;
+}
+
+.q-page > .q-pa-md.bg-grey-10 .q-item {
+	min-height: 72px;
+	padding: 12px 16px;
+	transition: background 160ms ease, transform 160ms ease;
+}
+
+.q-page > .q-pa-md.bg-grey-10 .q-item:hover {
+	background: rgba(227, 93, 69, 0.14);
+	transform: translateX(3px);
+}
+
+.q-page > .q-pa-md.bg-grey-10 .q-item__label--overline {
+	color: #fff;
+	font-size: 0.85rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+}
+
+.q-page > .q-pa-md.bg-grey-10 .q-item__label--caption {
+	color: rgba(255, 255, 255, 0.64);
+}
+
+.q-page > .q-pa-md.q-gutter-y-md {
+	width: calc(100% - 32px);
+	max-width: 760px;
+	margin: 0 auto 14px;
+	padding: 0 0 8px;
+}
+
+.q-page .match-filter-row {
+	width: calc(100% - 32px);
+	max-width: 760px;
+	margin: 0 auto 14px;
+	padding: 0;
+}
+
+.match-filter-row .q-toggle {
+	min-height: 44px;
+	padding: 0 12px;
+	border-radius: 10px;
+	background: rgba(227, 93, 69, 0.1);
+	color: #38515a;
+	font-weight: 700;
+}
+
+.q-page .q-btn-dropdown {
+	border-radius: 10px;
+	font-weight: 700;
+	box-shadow: 0 8px 18px rgba(31, 122, 140, 0.2);
+}
+
+.q-menu {
+	border: 1px solid rgba(23, 37, 43, 0.1);
+	border-radius: 12px;
+	box-shadow: 0 14px 32px rgba(23, 37, 43, 0.2);
+}
+
+.q-dialog__inner--minimized > .q-card {
+	width: min(520px, calc(100vw - 32px));
+	border-radius: 16px;
+	box-shadow: 0 22px 60px rgba(23, 37, 43, 0.28);
+}
+
+.q-dialog .q-card__section:first-child {
+	background: #17252b;
+	color: #fff;
+}
+
+.q-dialog .q-card__section:first-child .text-h6 {
+	font-family: "Arial Narrow", "Trebuchet MS", sans-serif;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+}
+
+.q-dialog .q-input,
+.q-dialog .q-select,
+.q-dialog .q-file {
+	margin-bottom: 10px;
+}
+
+.q-dialog .q-field--filled .q-field__control {
+	border-radius: 9px;
+	background: #f4f0e8;
+}
+
+.q-page .header-image {
+	opacity: 0.08;
+}
+
+/* The participant page has a denser, more editorial match card. */
+.deck-container-wrapper {
+	width: calc(100% - 32px);
+	max-width: 760px;
+	margin: 0 auto 24px;
+}
+
+.deck-container-wrapper .q-card {
+	border-radius: 18px;
+	box-shadow: 0 18px 38px rgba(23, 37, 43, 0.16);
+}
+
+@media (max-width: 600px) {
+	.q-page {
+		padding-top: 16px;
+	}
+
+	.q-page > .q-pa-md[style*="max-width: 500px"] > .q-toolbar {
+		min-height: 60px;
+	}
+
+	.q-toolbar-title {
+		font-size: 0.9rem;
+	}
+}

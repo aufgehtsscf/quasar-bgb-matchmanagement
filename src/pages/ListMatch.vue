@@ -9,13 +9,14 @@
       </q-toolbar>
     </div>
 
-    <q-toggle
-      v-if="getCookie('isAdministrator')"
-      v-model="showPublishedOnly"
-      color="red"
-      label="Nur publizierte"
-      @update:model-value="getTableActiveMatch"
-    />
+    <div class="q-pa-md match-filter-row" v-if="getCookie('isAdministrator')">
+      <q-toggle
+        v-model="showPublishedOnly"
+        color="primary"
+        label="Nur publizierte"
+        @update:model-value="getTableActiveMatch"
+      />
+    </div>
 
     <!-- List of active matches -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
