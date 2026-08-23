@@ -175,7 +175,7 @@ export default {
     },
 
     addAvatarSave (_avatar, _file) {
-      const avatarName = _avatar.trim()
+      const avatarName = _avatar.replaceAll('.', '').trim()
       if (this.avatarObject.some(el => el.avatar === avatarName)) {
         this.onAvatarAlreadyExists()
         return
@@ -199,7 +199,7 @@ export default {
     },
 
     editAvatarSave (_avatarId, _avatar, _avatarOld, _file) {
-      const avatarName = _avatar.trim()
+      const avatarName = _avatar.replaceAll('.', '').trim()
       if (this.avatarObject.some(el => el.avatar === avatarName && avatarName !== _avatarOld)) {
         this.onAvatarAlreadyExists()
         return

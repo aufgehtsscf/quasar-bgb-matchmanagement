@@ -85,7 +85,7 @@ const getLogo = function (_adminCode) {
 
 const getAvatar = function (_avatar) {
   if (_avatar === '') return URLMatchManagementAPI + '/images/avatars/Placeholder.png'
-  else return URLMatchManagementAPI + '/images/avatars/' + _avatar + '.png'
+  else return URLMatchManagementAPI + '/images/avatars/' + _avatar.replaceAll(' ', '_') + '.png'
 }
 
 const getTeamImage = function (_team, teamImageList = []) {

@@ -63,13 +63,22 @@
                 filled dense
                 v-model="txtAvatarNew"
                 :options="avatarImages"
-                label="Avatar"
+                label="Avatar *"
+                :rules="[val => !!val || 'Avatar ist erforderlich']"
                 options-selected-class="text-deep-orange"
                 >
+                <template v-slot:selected-item="scope">
+                  <q-item-section avatar>
+                    <q-avatar size="32px">
+                      <img :src="getAvatarOptionImage(scope.opt)">
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>{{ getAvatarOptionLabel(scope.opt) }}</q-item-section>
+                </template>
                 <template v-slot:option="scope">
                   <q-item v-bind="scope.itemProps">
                     <q-item-section avatar>
-                      <q-avatar size="50px">s
+                      <q-avatar size="50px">
                         <img :src="scope.opt.avatar">
                       </q-avatar>
                     </q-item-section>
@@ -86,7 +95,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, txtAvatarNew.value)" :disable="txtMemberNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addMemberSave(txtMemberNew, getAvatarValue(txtAvatarNew))" :disable="txtMemberNew.trim() === '' || !txtAvatarNew" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -108,9 +117,18 @@
                 filled dense
                 v-model="txtAvatar"
                 :options="avatarImages"
-                label="Avatar"
+                label="Avatar *"
+                :rules="[val => !!val || 'Avatar ist erforderlich']"
                 options-selected-class="text-deep-orange"
                 >
+                <template v-slot:selected-item="scope">
+                  <q-item-section avatar>
+                    <q-avatar size="32px">
+                      <img :src="getAvatarOptionImage(scope.opt)">
+                    </q-avatar>
+                  </q-item-section>
+                  <q-item-section>{{ getAvatarOptionLabel(scope.opt) }}</q-item-section>
+                </template>
                 <template v-slot:option="scope">
                   <q-item v-bind="scope.itemProps">
                     <q-item-section avatar>
@@ -174,7 +192,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delMember = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, txtAvatar.value)" :disable="txtMember === '' || boolIsCustomized" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editMemberSave(txtMemberId, txtMember, txtMemberOld, getAvatarValue(txtAvatar))" :disable="txtMember.trim() === '' || !txtAvatar || boolIsCustomized" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -344,6 +362,29 @@ export default {
       return Promise.resolve()
     },
 
+    getAvatarOption (_avatar) {
+      if (!_avatar) return null
+      if (typeof _avatar === 'object') return _avatar
+
+      return this.avatarImages.find((el) => el.value === _avatar || el.label === _avatar) || {
+        label: _avatar,
+        value: _avatar,
+        avatar: ''
+      }
+    },
+
+    getAvatarOptionImage (_avatar) {
+      return this.getAvatarOption(_avatar)?.avatar || ''
+    },
+
+    getAvatarOptionLabel (_avatar) {
+      return this.getAvatarOption(_avatar)?.label || ''
+    },
+
+    getAvatarValue (_avatar) {
+      return this.getAvatarOption(_avatar)?.value || ''
+    },
+
     getTableTeam () {
       return new Promise((resolve, reject) => {
         this.teamImages = []
@@ -506,6 +547,8 @@ export default {
     },
 
     addMemberSave (_member, _avatar) {
+      if (!_avatar) return
+
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member)
 
@@ -539,6 +582,7 @@ export default {
 
     editMemberSave (_memberId, _member, _memberOld, _avatar) {
       if (typeof _avatar === 'undefined') _avatar = _constAvatar.value
+      if (!_avatar) return
 
       const _members = this.memberObject.map(el => el.member)
       const _memberExists = _members.includes(_member) && _member !== _memberOld
