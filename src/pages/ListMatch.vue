@@ -471,7 +471,7 @@
                 class="overlapping"
                 :style="`left: ${n * 32}px`"
                 >
-                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n <= 9">
+                <img :src="getAvatar(el.participantAvatar)" v-if="n <= 9">
               </q-avatar>
             </div>
 
@@ -483,7 +483,7 @@
                 class="overlapping"
                 :style="`left: ${(n - 10) * 32}px`"
                 >
-                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n > 9 && n <= 19">
+                <img :src="getAvatar(el.participantAvatar)" v-if="n > 9 && n <= 19">
               </q-avatar>
             </div>
 
@@ -495,7 +495,7 @@
                 class="overlapping"
                 :style="`left: ${(n - 20) * 32}px`"
                 >
-                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n > 19 && n <= 29">
+                <img :src="getAvatar(el.participantAvatar)" v-if="n > 19 && n <= 29">
               </q-avatar>
             </div>
 
@@ -507,7 +507,7 @@
                 class="overlapping"
                 :style="`left: ${(n - 30) * 32}px`"
                 >
-                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n > 29 && n <= 39">
+                <img :src="getAvatar(el.participantAvatar)" v-if="n > 29 && n <= 39">
               </q-avatar>
             </div>
 
@@ -519,7 +519,7 @@
                 class="overlapping"
                 :style="`left: ${(n - 40) * 32}px`"
                 >
-                <img :src="getAvatar(el.participantAvatar, el.participantAvatarIsCustomized, el.participantImageURL)" v-if="n > 39">
+                <img :src="getAvatar(el.participantAvatar)" v-if="n > 39">
               </q-avatar>
             </div>
           </q-card-section>

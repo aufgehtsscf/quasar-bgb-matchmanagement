@@ -83,9 +83,8 @@ const getLogo = function (_adminCode) {
   return URLMatchManagementAPI + '/images/' + _adminCode + '/Logo.png'
 }
 
-const getAvatar = function (_avatar, _customized, _imageURL) {
+const getAvatar = function (_avatar) {
   if (_avatar === '') return URLMatchManagementAPI + '/images/avatars/Placeholder.png'
-  else if (_customized) return URLMatchManagementAPI + _imageURL
   else return URLMatchManagementAPI + '/images/avatars/' + _avatar + '.png'
 }
 

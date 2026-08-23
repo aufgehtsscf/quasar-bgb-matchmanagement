@@ -31,7 +31,7 @@
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
             <q-avatar size="50px" v-if="member.avatar !== ''">
-              <img :src="getAvatar(member.avatar, member.customized, member.ImageURL)">
+              <img :src="getAvatar(member.avatar)">
               <q-badge floating color="teal">{{ member.numberOfParticipations }}</q-badge>
             </q-avatar>
           </q-item-section>
