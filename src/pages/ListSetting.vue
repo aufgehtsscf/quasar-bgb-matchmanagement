@@ -45,14 +45,37 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtClientName" label="Fanclub" :disable="true" />
-            <q-input filled dense v-model="txtAdminCode" label="Admin-Zugriffscode" :disable="true" />
-            <q-input filled dense v-model="txtUserCode" label="User-Zugriffscode" :disable="true" />
-            <q-input filled dense v-model="txtHomeTeam" label="Heimmannschaft" :disable="true" />
-            <q-input filled dense v-model="txtEmail" label="E-Mail-Adresse" />
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtClientName" label="Fanclub" :disable="true" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtAdminCode" label="Admin-Zugriffscode" :disable="true" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtUserCode" label="User-Zugriffscode" :disable="true" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtHomeTeam" label="Heimmannschaft" :disable="true" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtEmail" label="E-Mail-Adresse" />
+            </div>
+
+            <div class="q-pt-md">
             <q-input filled dense v-model="txtHomeTeamAlias" label="Heimmannschaft-Alias" />
-            <q-input filled dense v-model="txtStandardText" type="textarea" label="Standardtext" />
-            <q-input filled dense v-model="txtSeason" label="Saison" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtStandardText" type="textarea" label="Standardtext" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtSeason" label="Saison" />
+            </div>
           </q-card-section>
 
           <q-separator />
