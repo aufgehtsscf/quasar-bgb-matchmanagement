@@ -1,4 +1,4 @@
-<template>
+copilot<template>
   <q-page>
 
     <!-- Team area (Titel) -->
@@ -52,7 +52,8 @@
                 dense
                 v-model="fileImageNew"
                 accept="image/*"
-                label="Team Logo"
+                label="Team Logo *"
+                :rules="[val => !!val || 'Team Logo ist erforderlich']"
                 @rejected="onFileRejected"
               />
             </div>
@@ -66,7 +67,7 @@
 
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="addTeamSave(txtTeamNew, fileImageNew)" :disable="txtTeamNew === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="addTeamSave(txtTeamNew, fileImageNew)" :disable="txtTeamNew.trim() === '' || !fileImageNew" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -89,7 +90,8 @@
                 dense
                 v-model="fileImage"
                 accept="image/*"
-                label="Team Logo"
+                label="Team Logo *"
+                :rules="[val => !!val || 'Team Logo ist erforderlich']"
                 @rejected="onFileRejected"
               />
             </div>
@@ -104,7 +106,7 @@
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delTeam = true" v-if="getCookie('isAdministrator')" />
             <q-btn flat label="Abbrechen" v-close-popup />
-            <q-btn icon="save" label="Speichern" @click="editTeamSave(txtTeamId, txtTeam, txtTeamOld, fileImage)" :disable="txtTeam === ''" v-close-popup />
+            <q-btn icon="save" label="Speichern" @click="editTeamSave(txtTeamId, txtTeam, txtTeamOld, fileImage)" :disable="txtTeam.trim() === '' || !fileImage" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -328,116 +330,72 @@ export default {
     },
 
     addTeamSave (_team, _file) {
+      if (!_file) return
+
       const _teams = this.teamObject.map(el => el.team)
       const _teamExists = _teams.includes(_team)
 
       if (_teamExists) {
         this.onTeamAlreadyExists()
-      } else {
-        const _constNewGuid = uuidv4()
-        const _constCreationTime = new Date()
-
-        if (_file) {
-          this.uploadImage(_file, (imageBase64) => {
-            const newTeam = {
-              id: _constNewGuid,
-              creationTime: _constCreationTime,
-              lastModificationTime: null,
-              tenantId: _TenantId,
-              name: _team.trim(),
-              file: imageBase64
-            }
-            this.$axios.post(`${_URLTeam}/${_TenantId}`, newTeam)
-              .then((res) => {
-                if (res.status === 201) {
-                  this.onTeamCreated()
-                  this.getTableTeam()
-                  this.txtTeamNew = ''
-                  this.fileImageNew = null
-                  this.previewImageNew = ''
-                } else {
-                  console.log('Unexpected status code:', res.status)
-                }
-              })
-              .catch((err) => console.log(err))
-          })
-        } else {
-          const newTeam = {
-            id: _constNewGuid,
-            creationTime: _constCreationTime,
-            lastModificationTime: null,
-            tenantId: _TenantId,
-            name: _team.trim(),
-            file: ''
-          }
-          this.$axios.post(`${_URLTeam}/${_TenantId}`, newTeam)
-            .then((res) => {
-              if (res.status === 201) {
-                this.onTeamCreated()
-                this.getTableTeam()
-                this.txtTeamNew = ''
-                this.fileImageNew = null
-                this.previewImageNew = ''
-              } else {
-                console.log('Unexpected status code:', res.status)
-              }
-            })
-            .catch((err) => console.log(err))
-        }
+        return
       }
+
+      this.uploadImage(_file, (imageBase64) => {
+        const newTeam = {
+          id: uuidv4(),
+          creationTime: new Date(),
+          lastModificationTime: null,
+          tenantId: _TenantId,
+          name: _team.trim(),
+          file: imageBase64
+        }
+        this.$axios.post(`${_URLTeam}/${_TenantId}`, newTeam)
+          .then((res) => {
+            if (res.status === 201) {
+              this.onTeamCreated()
+              this.getTableTeam()
+              this.txtTeamNew = ''
+              this.fileImageNew = null
+              this.previewImageNew = ''
+            } else {
+              console.log('Unexpected status code:', res.status)
+            }
+          })
+          .catch((err) => console.log(err))
+      })
     },
 
     editTeamSave (_teamId, _team, _teamOld, _file) {
+      if (!_file) return
+
       const _teams = this.teamObject.map(el => el.team)
       const _teamExists = _teams.includes(_team) && _team !== _teamOld
 
       if (_teamExists) {
         this.onTeamAlreadyExists()
-      } else {
-        const _constLastModificationTime = new Date()
-
-        if (_file) {
-          this.uploadImage(_file, (imageBase64) => {
-            const updTeam = {
-              id: _teamId,
-              creationTime: null,
-              lastModificationTime: _constLastModificationTime,
-              tenantId: _TenantId,
-              name: _team.trim(),
-              file: imageBase64
-            }
-            this.$axios.put(`${_URLTeam}/${_TenantId}/${_teamId}`, updTeam)
-              .then((res) => {
-                if (res.status === 200) {
-                  this.onTeamUpdated()
-                  this.getTableTeam()
-                } else {
-                  console.log('Unexpected status code:', res.status)
-                }
-              })
-              .catch((err) => console.log(err))
-          })
-        } else {
-          const updTeam = {
-            id: _teamId,
-            creationTime: null,
-            lastModificationTime: _constLastModificationTime,
-            tenantId: _TenantId,
-            name: _team.trim(),
-            file: ''
-          }
-          this.$axios.put(`${_URLTeam}/${_TenantId}/${_teamId}`, updTeam)
-            .then((res) => {
-              if (res.status === 200) {
-                this.onTeamUpdated()
-                this.getTableTeam()
-              } else {
-                console.log('Unexpected status code:', res.status)
-              }
-            })
-            .catch((err) => console.log(err))
-        }
+        return
       }
+
+      this.uploadImage(_file, (imageBase64) => {
+        const updTeam = {
+          id: _teamId,
+          creationTime: null,
+          lastModificationTime: new Date(),
+          tenantId: _TenantId,
+          name: _team.trim(),
+          file: imageBase64
+        }
+        this.$axios.put(`${_URLTeam}/${_TenantId}/${_teamId}`, updTeam)
+          .then((res) => {
+            if (res.status === 200) {
+              this.onTeamUpdated()
+              this.getTableTeam()
+            } else {
+              console.log('Unexpected status code:', res.status)
+            }
+          })
+          .catch((err) => console.log(err))
+      })
     },
 
     deleteTeam (_teamId) {
