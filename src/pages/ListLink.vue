@@ -36,9 +36,17 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtLinkTitleNew" autofocus label="Titel *" />
-            <q-input filled dense v-model="txtLinkCaptionNew" label="Untertitel" />
-            <q-input filled dense v-model="txtLinkUrlNew" label="URL" />
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtLinkTitleNew" autofocus label="Titel *" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtLinkCaptionNew" label="Untertitel" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtLinkUrlNew" label="URL" />
+            </div>
           </q-card-section>
 
           <q-separator />
@@ -58,9 +66,17 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <q-input filled dense v-model="txtLinkTitle" label="Title *" />
-            <q-input filled dense v-model="txtLinkCaption" autofocus label="Untertitel" />
-            <q-input filled dense v-model="txtLinkUrl" autofocus label="URL" />
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtLinkTitle" label="Title *" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtLinkCaption" autofocus label="Untertitel" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-input filled dense v-model="txtLinkUrl" autofocus label="URL" />
+            </div>
           </q-card-section>
 
           <q-separator />

@@ -29,12 +29,31 @@
       <q-dialog v-model="addAvatar" persistent>
         <q-card style="min-width: 350px">
           <q-card-section><div class="text-h6">Avatar erfassen</div></q-card-section>
+
           <q-card-section class="q-pt-none">
-            <q-input v-model="txtAvatarNew" filled dense autofocus label="Avatar *" />
-            <q-file v-model="fileImageNew" class="q-pt-md" filled dense accept="image/*" label="Avatar Bild *" @rejected="onFileRejected" />
-            <q-img v-if="previewImageNew" :src="previewImageNew" class="q-mt-md" style="max-width: 150px" />
+            <div class="q-pt-md">
+              <q-input v-model="txtAvatarNew" filled dense autofocus label="Avatar *" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-file
+                filled
+                dense
+                v-model="fileImageNew"
+                accept="image/*"
+                label="Avatar Bild *"
+                :rules="[val => !!val || 'Avatar Bild ist erforderlich']"
+                @rejected="onFileRejected"
+              />
+            </div>
+
+            <div v-if="previewImage" class="q-pt-md">
+              <q-img :src="previewImage" style="max-width: 150px" />
+            </div>
           </q-card-section>
+
           <q-separator />
+
           <q-card-actions class="text-primary" align="right">
             <q-btn flat label="Abbrechen" v-close-popup />
             <q-btn icon="save" label="Speichern" :disable="txtAvatarNew.trim() === '' || !fileImageNew" @click="addAvatarSave(txtAvatarNew, fileImageNew)" v-close-popup />
@@ -46,11 +65,29 @@
         <q-card style="min-width: 350px">
           <q-card-section><div class="text-h6">Avatar bearbeiten</div></q-card-section>
           <q-card-section class="q-pt-none">
-            <q-input v-model="txtAvatar" filled dense label="Avatar *" />
-            <q-file v-model="fileImage" class="q-pt-md" filled dense accept="image/*" label="Avatar Bild" @rejected="onFileRejected" />
-            <q-img v-if="previewImage" :src="previewImage" class="q-mt-md" style="max-width: 150px" />
+            <div class="q-pt-md" >
+              <q-input v-model="txtAvatar" filled dense label="Avatar *" />
+            </div>
+
+            <div class="q-pt-md">
+              <q-file
+                filled
+                dense
+                v-model="fileImage"
+                accept="image/*"
+                label="Avatar Bild *"
+                :rules="[val => !!val || 'Avatar Bild ist erforderlich']"
+                @rejected="onFileRejected"
+              />
+            </div>
+
+            <div v-if="previewImage" class="q-pt-md">
+              <q-img :src="previewImage" style="max-width: 150px" />
+            </div>
           </q-card-section>
+
           <q-separator />
+
           <q-card-actions class="text-primary" align="right">
             <q-btn icon="delete" color="primary" @click="delAvatar = true" />
             <q-btn flat label="Abbrechen" v-close-popup />

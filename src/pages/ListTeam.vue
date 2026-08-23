@@ -1,4 +1,4 @@
-copilot<template>
+<template>
   <q-page>
 
     <!-- Team area (Titel) -->
@@ -42,11 +42,11 @@ copilot<template>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtTeamNew" autofocus label="Team *" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-file
                 filled
                 dense
@@ -80,11 +80,11 @@ copilot<template>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtTeam" label="Team *" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-file
                 filled
                 dense

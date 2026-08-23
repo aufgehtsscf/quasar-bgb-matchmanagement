@@ -3,7 +3,7 @@
     <!-- Dialog: Start now -->
     <div class="q-pa-md q-gutter-sm">
       <q-dialog v-model="codeRequest" persistent>
-        <q-card style="max-width: 350px">
+        <q-card>
           <q-card-section>
             <div class="text-h6">Ich möchte einen Code!</div>
             <div class="text-subtitle2">Sende mir bitte einen kostenlosen Code, um mit meiner Spieltagsplanung zu starten!</div>
@@ -43,7 +43,7 @@
     <!-- Dialog: Enter code -->
     <div class="q-pa-md q-gutter-sm">
       <q-dialog v-model="enterCode" persistent>
-        <q-card style="max-width: 350px">
+        <q-card>
 
           <q-card-section>
             <div class="text-h6">Ich habe einen Code!</div>

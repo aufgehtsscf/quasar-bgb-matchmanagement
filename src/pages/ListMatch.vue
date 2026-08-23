@@ -108,7 +108,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-toggle
                 v-model="tglIsEventNew"
                 color="red"
@@ -116,7 +116,7 @@
                 left-label />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtHomeTeamNew"
@@ -138,7 +138,9 @@
                   </q-item>
                 </template>
               </q-select>
+            </div>
 
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtAwayTeamNew"
@@ -164,12 +166,12 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtMatchNameNew" label="Spielname *" v-if="!tglIsEventNew" />
               <q-input filled dense v-model="txtMatchNameNew" label="Veranstaltungsname *" v-if="tglIsEventNew" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-toggle
                 v-model="tglIsPublishedNew"
                 color="red"
@@ -177,7 +179,7 @@
                 left-label />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px" v-if="!tglIsPublishedNew">
+            <div class="q-pt-md" v-if="!tglIsPublishedNew">
               <q-input
                 filled dense
                 v-model="txtPublishOnTimeNew" label="Veröffentlichen am">
@@ -207,7 +209,7 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input
                 filled dense
                 v-model="txtMatchDateNew" label="Spieldatum">
@@ -237,7 +239,7 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input
                 filled dense
                 v-model="txtDoorOpeningTimeNew" label="Türöffnungszeit">
@@ -255,11 +257,11 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtAnnotationsNew" type="textarea" label="Kommentar"/>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtSeasonNew" label="Saison" :disable="true" />
             </div>
           </q-card-section>
@@ -281,7 +283,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-toggle
                 v-model="tglIsEvent"
                 color="red"
@@ -289,7 +291,7 @@
                 left-label/>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtHomeTeam"
@@ -312,7 +314,9 @@
                   </q-item>
                 </template>
               </q-select>
+            </div>
 
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtAwayTeam"
@@ -337,12 +341,12 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtMatchName" label="Spielname *" v-if="!tglIsEvent" />
               <q-input filled dense v-model="txtMatchName" label="Veranstaltungsname *" v-if="tglIsEvent" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-toggle
                 v-model="tglIsPublished"
                 color="red"
@@ -350,7 +354,7 @@
                 left-label/>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px" v-if="!tglIsPublished && isFutureMatch(txtMatchDate)">
+            <div class="q-pt-md" v-if="!tglIsPublished && isFutureMatch(txtMatchDate)">
               <q-input
                 filled dense
                 v-model="txtPublishOnTime" label="Veröffentlichen am">
@@ -380,7 +384,7 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input
                 filled dense
                 v-model="txtMatchDate" label="Spieldatum">
@@ -410,7 +414,7 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input
                 filled dense
                 v-model="txtDoorOpeningTime" label="Türöffnungszeit">
@@ -428,11 +432,11 @@
               </q-input>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtAnnotations" type="textarea" label="Kommentar"/>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtSeason" label="Saison" :disable="true" />
             </div>
           </q-card-section>
@@ -456,15 +460,15 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtInactiveMatch" label="Spiel" :readonly="true" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtInactiveDatetime" label="Wann" :readonly="true" />
             </div>
 
-            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+            <div class="q-pa-md q-gutter-sm" style="height: 80px">
               <q-avatar
                 v-for="(el, n) in participantInactiveMatchObject"
                 :key="n"
@@ -476,7 +480,7 @@
               </q-avatar>
             </div>
 
-            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+            <div class="q-pa-md q-gutter-sm" style="height: 80px">
               <q-avatar
                 v-for="(el, n) in participantInactiveMatchObject"
                 :key="n"
@@ -488,7 +492,7 @@
               </q-avatar>
             </div>
 
-            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+            <div class="q-pa-md q-gutter-sm" style="height: 80px">
               <q-avatar
                 v-for="(el, n) in participantInactiveMatchObject"
                 :key="n"
@@ -500,7 +504,7 @@
               </q-avatar>
             </div>
 
-            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+            <div class="q-pa-md q-gutter-sm" style="height: 80px">
               <q-avatar
                 v-for="(el, n) in participantInactiveMatchObject"
                 :key="n"
@@ -512,7 +516,7 @@
               </q-avatar>
             </div>
 
-            <div class="q-pa-md q-gutter-sm" style="max-width: 350px; height: 80px">
+            <div class="q-pa-md q-gutter-sm" style="height: 80px">
               <q-avatar
                 v-for="(el, n) in participantInactiveMatchObject"
                 :key="n"

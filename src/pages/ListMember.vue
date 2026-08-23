@@ -54,11 +54,11 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtMemberNew" autofocus label="Mitglied *" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtAvatarNew"
@@ -108,11 +108,11 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtMember" label="Mitglied *" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtAvatar"

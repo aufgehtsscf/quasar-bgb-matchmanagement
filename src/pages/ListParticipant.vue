@@ -97,17 +97,17 @@
     </div>
 
     <!-- List of participants and tickets -->
-    <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
+    <div class="q-pa-md bg-grey-10 text-white">
 
       <!-- Reservation area -->
-      <div class="q-gutter-y-md column" style="max-width: 470px">
+      <div class="q-gutter-y-md column">
         <q-input dark outlined v-model="txtAnnotationsMatch" input-class="text-overline"
           type="textarea" :readonly="true">
         </q-input>
       </div>
 
       <!-- Participant area (Titel) -->
-      <div class="q-pa-md" style="max-width: 470px">
+      <div class="q-pa-md">
         <q-toolbar class="bg-primary text-white">
           <q-toolbar-title class="text-overline">Anwesend ({{ presentParticipantObject.length }})</q-toolbar-title>
           <q-btn class="bg-white text-primary" icon="add" label="Neu" @click="addParticipant = true" />
@@ -115,7 +115,7 @@
       </div>
 
       <!-- List of participants -->
-      <q-list dark bordered separator style="max-width: 470px" v-for="(el, i) in presentParticipantObject"
+      <q-list dark bordered separator v-for="(el, i) in presentParticipantObject"
         :key="i"
         v-ripple>
         <q-item clickable v-ripple @click="onParticipantClick(el.presentParticipantParticipantId, el.presentParticipantParticipant, el.presentParticipantArrival, el.presentParticipantAnnotations, el.presentParticipantAction, el.presentParticipantReaction)">
@@ -139,7 +139,7 @@
       </q-list>
 
       <!-- Ticket assignment area (Titel) -->
-      <div class="q-pa-md" style="max-width: 470px" v-if="txtHomeTeam === homeTeamFromTenant">
+      <div class="q-pa-md" v-if="txtHomeTeam === homeTeamFromTenant">
         <q-toolbar class="bg-primary text-white">
             <q-toolbar-title class="text-overline">Karte weitergeben ({{ ticketGivenObject.length }}) oder bedarf ({{ ticketRequiredObject.length }})</q-toolbar-title>
             <q-btn class="bg-white text-primary" icon="credit_card" label="Zuweisung" @click="addTicketAssignment = true" v-if="getCookie('isAdministrator')" />
@@ -147,7 +147,7 @@
       </div>
 
       <!-- List of ticket assignments -->
-      <q-list dark bordered separator style="max-width: 470px" v-for="(ticket, i) in ticketObject"
+      <q-list dark bordered separator v-for="(ticket, i) in ticketObject"
         :key="i"
         v-ripple>
           <q-item
@@ -189,7 +189,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input v-model="txtShare" filled type="textarea" rows="35" />
             </div>
           </q-card-section>
@@ -211,11 +211,11 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtParticipantNew" autofocus label="Name *" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtActionNew"
@@ -227,7 +227,7 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtActionNew"
@@ -239,7 +239,7 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtArrivalNew"
@@ -251,7 +251,7 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
              <q-input filled dense v-model="txtAnnotationsParticipantNew" type="textarea" label="Kommentar"/>
             </div>
           </q-card-section>
@@ -273,12 +273,12 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtParticipantParticipant" label="Name *" :readonly="false" v-if="txtParticipantReaction === ''" />
               <q-input filled dense v-model="txtParticipantParticipant" label="Name *" :readonly="true" v-if="txtParticipantReaction !== ''" />
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtParticipantAction"
@@ -291,7 +291,7 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtParticipantAction"
@@ -304,7 +304,7 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtParticipantAction"
@@ -317,7 +317,7 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtParticipantAction"
@@ -330,7 +330,7 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-select
                 filled dense
                 v-model="txtParticipantArrival"
@@ -342,10 +342,10 @@
               </q-select>
             </div>
 
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input class="text-italic" dense v-model="txtParticipantReaction" :readonly="true" v-if="txtParticipantReaction !== ''" />
             </div>
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input filled dense v-model="txtParticipantAnnotations" type="textarea" label="Kommentar"/>
             </div>
           </q-card-section>
@@ -434,7 +434,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <div class="q-pt-md" style="max-width: 350px">
+            <div class="q-pt-md">
               <q-input v-model="txtTicketAnnotations" filled type="textarea" label="Kommentar"/>
             </div>
           </q-card-section>
