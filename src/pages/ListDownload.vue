@@ -11,9 +11,17 @@
     <!-- List of Downloads -->
     <div class="q-pa-md bg-grey-10 text-white" style="max-width: 500px">
     <q-list dark bordered separator style="max-width: 470px">
-      <q-item clickable v-ripple class="download-item">
+      <q-item clickable v-ripple class="download-item download-item-first">
         <q-item-section>
           <q-item-label class="overline">BGB-Beitritt</q-item-label>
+        </q-item-section>
+
+        <q-item-section class="download-qr-section">
+          <img
+            :src="URLDownloadBGBBeitrittSVG"
+            alt="QR-Code BGB-Beitritt"
+            class="download-qr-image"
+          />
         </q-item-section>
 
         <q-item-section side class="download-action">
@@ -29,9 +37,19 @@
         </q-item-section>
       </q-item>
 
-      <q-item clickable v-ripple class="download-item">
+      <div class="download-separator" aria-hidden="true"></div>
+
+      <q-item clickable v-ripple class="download-item download-item-second">
         <q-item-section>
           <q-item-label class="overline">FG-Mitgliedsantrag</q-item-label>
+        </q-item-section>
+
+        <q-item-section class="download-qr-section">
+          <img
+            :src="URLDownloadFGMitgliedsantragSVG"
+            alt="QR-Code FG-Mitgliedsantrag"
+            class="download-qr-image"
+          />
         </q-item-section>
 
         <q-item-section side class="download-action">
@@ -54,7 +72,12 @@
 </template>
 
 <script>
-import { URLDownloadBGBBeitritt, URLDownloadFGMitgliedsantrag } from 'src/boot/utils.js'
+import {
+  URLDownloadBGBBeitritt,
+  URLDownloadBGBBeitrittSVG,
+  URLDownloadFGMitgliedsantrag,
+  URLDownloadFGMitgliedsantragSVG
+} from 'src/boot/utils.js'
 
 export default {
   name: 'ListDownload',
@@ -62,7 +85,9 @@ export default {
   data () {
     return {
       URLDownloadBGBBeitritt,
-      URLDownloadFGMitgliedsantrag
+      URLDownloadBGBBeitrittSVG,
+      URLDownloadFGMitgliedsantrag,
+      URLDownloadFGMitgliedsantragSVG
     }
   }
 }
@@ -70,11 +95,50 @@ export default {
 
 <style lang="scss">
 .download-item {
-  min-height: 72px;
+  min-height: 84px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.download-item-first {
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.download-item-second {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.download-separator {
+  height: 200px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.01)
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .download-action {
   margin-left: 16px;
+}
+
+.download-qr-section {
+  min-width: 84px;
+  justify-content: center;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.download-qr-image {
+  display: block;
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  background: white;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0;
 }
 
 .download-button {

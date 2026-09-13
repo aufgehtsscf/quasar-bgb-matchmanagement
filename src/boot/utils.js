@@ -14,7 +14,9 @@ const OrderId2 = '8f26f0ad-d9d3-4c33-b1c9-f0560ee3ea11'
 const URLMatchManagementAPI = 'https://planthegame.ch'
 // const URLMatchManagementAPI = 'https://localhost:5200'
 const URLDownloadBGBBeitritt = 'https://planthegame.ch/downloads/BGB-Beitritt.pdf'
+const URLDownloadBGBBeitrittSVG = 'https://planthegame.ch/downloads/BGB-Beitritt.svg'
 const URLDownloadFGMitgliedsantrag = 'https://planthegame.ch/downloads/FG-Mitgliedsantrag.pdf'
+const URLDownloadFGMitgliedsantragSVG = 'https://planthegame.ch/downloads/FG-Mitgliedsantrag.svg'
 const URLOrderBasis = 'https://script.google.com/macros/s/AKfycbxpYbKFzUC6iSSlE913vWGLuvRZ7TbT8eXVn54Un7rm0KJa9vVGzuvu7d-V-tSuWSDjOw/exec'
 const URLProperties = 'https://script.google.com/macros/s/AKfycbxMU3wrrJ9m8Qcnpzu-0oC-APSA28i765lF_AHh6tVagXj1JpHz5glq8MY0GCPNbvdK/exec?sh=Properties'
 
@@ -112,7 +114,9 @@ export { OrderId1 }
 export { OrderId2 }
 export { URLMatchManagementAPI }
 export { URLDownloadBGBBeitritt }
+export { URLDownloadBGBBeitrittSVG }
 export { URLDownloadFGMitgliedsantrag }
+export { URLDownloadFGMitgliedsantragSVG }
 export { URLProperties }
 export { URLOrderBasis }
 export { getCookie }

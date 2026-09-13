@@ -122,11 +122,11 @@
           <q-item-section avatar>
             <q-avatar size="70px" color="deep-orange-14" text-color="white" v-if="el.presentParticipantParticipantAvatar === ''">
               {{ el.presentParticipantParticipant.substring(0, 1) }}
-              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
+              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reservieren</q-badge>
             </q-avatar>
             <q-avatar size="70px" v-if="el.presentParticipantParticipantAvatar !== ''">
               <img :src="getAvatar(el.presentParticipantParticipantAvatar)">
-              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reserviert</q-badge>
+              <q-badge floating color="teal" v-if="isReservation(el.presentParticipantArrival, txtDoorOpeningTime)">reservieren</q-badge>
             </q-avatar>
           </q-item-section>
           <q-item-section>

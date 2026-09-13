@@ -91,7 +91,9 @@
               <q-item-label overline>{{ match.homeTeam === '' && match.awayTeam === '' ? 'Veranstaltung' : 'Spiel' }}: {{ match.matchName }}</q-item-label>
               <q-item-label caption>{{ match.matchDate }}</q-item-label>
             </q-item-section>
-            <q-badge floating color="teal">{{ match.numberOfParticipants }}</q-badge>
+            <q-item-section side>
+              <q-badge color="teal">{{ match.numberOfParticipants }}</q-badge>
+            </q-item-section>
         </q-item>
       </q-list>
     </div>
