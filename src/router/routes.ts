@@ -13,7 +13,8 @@ const routes: RouteRecordRaw[] = [
       { path: '/avatar', component: () => import('src/pages/ListAvatar.vue') },
       { path: '/order', component: () => import('src/pages/ListOrder.vue') },
       { path: '/setting', component: () => import('src/pages/ListSetting.vue') },
-      { path: '/link', component: () => import('src/pages/ListLink.vue') }
+      { path: '/link', component: () => import('src/pages/ListLink.vue') },
+      { path: '/download', component: () => import('src/pages/ListDownload.vue') }
     ]
   },
 

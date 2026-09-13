@@ -112,6 +112,13 @@
             </q-item-section>
             <q-item-section> Settings </q-item-section>
           </q-item>
+
+          <q-item to="/download" exact clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="download" />
+            </q-item-section>
+            <q-item-section> Downloads </q-item-section>
+          </q-item>
         </q-list>
 
         <q-item-label header>  </q-item-label>
