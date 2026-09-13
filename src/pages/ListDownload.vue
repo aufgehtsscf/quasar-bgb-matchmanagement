@@ -16,24 +16,20 @@
           <q-item-label class="overline">BGB-Beitritt</q-item-label>
         </q-item-section>
 
-        <q-item-section class="download-qr-section">
+        <q-item-section class="download-qr-column">
           <img
             :src="URLDownloadBGBBeitrittSVG"
             alt="QR-Code BGB-Beitritt"
             class="download-qr-image"
           />
-        </q-item-section>
-
-        <q-item-section side class="download-action">
-          <q-btn
-            class="bg-white text-primary download-button"
-            icon="download"
-            label="Download"
-            type="a"
+          <a
             :href="URLDownloadBGBBeitritt"
             target="_blank"
             download
-          />
+            class="download-url"
+          >
+            planthegame.ch/downloads/BGB-Beitritt.pdf
+          </a>
         </q-item-section>
       </q-item>
 
@@ -44,24 +40,20 @@
           <q-item-label class="overline">FG-Mitgliedsantrag</q-item-label>
         </q-item-section>
 
-        <q-item-section class="download-qr-section">
+        <q-item-section class="download-qr-column">
           <img
             :src="URLDownloadFGMitgliedsantragSVG"
             alt="QR-Code FG-Mitgliedsantrag"
             class="download-qr-image"
           />
-        </q-item-section>
-
-        <q-item-section side class="download-action">
-          <q-btn
-            class="bg-white text-primary download-button"
-            icon="download"
-            label="Download"
-            type="a"
+          <a
             :href="URLDownloadFGMitgliedsantrag"
             target="_blank"
             download
-          />
+            class="download-url"
+          >
+            planthegame.ch/downloads/FG-Mitgliedsantrag.pdf
+          </a>
         </q-item-section>
       </q-item>
     </q-list>
@@ -120,29 +112,33 @@ export default {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.download-action {
-  margin-left: 16px;
-}
-
-.download-qr-section {
-  min-width: 84px;
+.download-qr-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  min-width: 84px;
   margin-left: 8px;
   margin-right: 8px;
 }
 
 .download-qr-image {
   display: block;
-  width: 200px;
-  height: 200px;
+  width: 124px;
+  height: 124px;
   object-fit: contain;
   background: white;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 0;
 }
 
-.download-button {
-  border-radius: 4px;
+.download-url {
+  margin-top: 8px;
+  color: #ffffff;
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: center;
+  word-break: break-all;
 }
 
 .header-image {
