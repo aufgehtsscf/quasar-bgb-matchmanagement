@@ -9,7 +9,8 @@
       v-if="icon"
       avatar
     >
-      <q-icon :name="icon" />
+      <q-icon v-if="!icon.startsWith('fa-')" :name="icon" />
+      <i v-else :class="['q-icon', icon]" aria-hidden="true" />
     </q-item-section>
 
     <q-item-section>

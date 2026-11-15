@@ -243,18 +243,34 @@ export default defineComponent({
           if (res.status === 200) {
             for (let index = 0; index < res.data.length; index++) {
               let _icon = ''
-              switch (res.data[index].title) {
-                case 'E-Mail':
+              switch (res.data[index].title.trim().toLowerCase()) {
+                case 'e-mail':
                   _icon = 'drafts'
                   break
-                case 'Facebook':
-                  _icon = 'public'
+                case 'facebook':
+                  _icon = 'fa-brands fa-facebook'
                   break
-                case 'Z':
+                case 'z':
                   _icon = 'rss_feed'
                   break
-                case 'Instagram':
-                  _icon = 'record_voice_over'
+                case 'instagram':
+                  _icon = 'fa-brands fa-instagram'
+                  break
+                case 'twitter':
+                case 'x':
+                  _icon = 'fa-brands fa-twitter'
+                  break
+                case 'youtube':
+                  _icon = 'fa-brands fa-youtube'
+                  break
+                case 'tiktok':
+                  _icon = 'fa-brands fa-tiktok'
+                  break
+                case 'linkedin':
+                  _icon = 'fa-brands fa-linkedin'
+                  break
+                case 'whatsapp':
+                  _icon = 'fa-brands fa-whatsapp'
                   break
 
                 default:
